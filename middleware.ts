@@ -2,32 +2,40 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Chemins protégés : ceux du groupe de routes `app/(eleve)/`.
+ * Chemins protégés du groupe `app/(eleve)/` : accessibles à tout
+ * utilisateur connecté, quel que soit son rôle.
+ *
+ * Chemins protégés du groupe `app/(admin)/` : accessibles uniquement aux
+ * utilisateurs connectés dont `profils.role = 'admin'`.
  *
  * ATTENTION : les groupes de routes Next.js entre parenthèses, comme
  * `(eleve)` ou `(admin)`, n'apparaissent JAMAIS dans l'URL réelle. Ce
- * middleware ne voit donc que le chemin final (ex. `/tableau-de-bord`),
- * jamais `(eleve)`. Il faut donc lister ici, à la main, chaque chemin
- * créé dans `app/(eleve)/` pour qu'il reste protégé.
+ * middleware ne voit donc que le chemin final (ex. `/administration`),
+ * jamais `(admin)`. Il faut donc lister ici, à la main, chaque chemin
+ * créé dans ces deux groupes pour qu'il reste protégé.
  */
 const CHEMINS_PROTEGES = ["/tableau-de-bord"];
+const CHEMINS_ADMIN = ["/administration"];
 
-function estCheminProtege(chemin: string) {
-  return CHEMINS_PROTEGES.some(
-    (cheminProtege) =>
-      chemin === cheminProtege || chemin.startsWith(`${cheminProtege}/`),
+function cheminCorrespond(chemin: string, liste: string[]) {
+  return liste.some(
+    (cheminRef) => chemin === cheminRef || chemin.startsWith(`${cheminRef}/`),
   );
 }
 
 /**
  * Ce middleware s'exécute avant chaque requête correspondant au
- * `matcher` défini plus bas. Il a deux rôles :
+ * `matcher` défini plus bas. Il a trois rôles :
  *
  * 1. Rafraîchir la session Supabase à chaque requête (le jeton d'accès
  *    expire régulièrement ; sans ce rafraîchissement, un utilisateur
  *    actif finirait par être déconnecté).
  * 2. Rediriger vers /connexion toute personne non authentifiée qui
- *    tente d'accéder à un chemin protégé (voir CHEMINS_PROTEGES).
+ *    tente d'accéder à un chemin protégé (CHEMINS_PROTEGES ou
+ *    CHEMINS_ADMIN).
+ * 3. Pour les chemins de CHEMINS_ADMIN, vérifier en plus que
+ *    l'utilisateur connecté a bien le rôle 'admin' (table `profils`),
+ *    et le rediriger vers /tableau-de-bord sinon.
  */
 export async function middleware(requete: NextRequest) {
   let reponse = NextResponse.next({ request: requete });
@@ -61,10 +69,32 @@ export async function middleware(requete: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && estCheminProtege(requete.nextUrl.pathname)) {
+  const { pathname } = requete.nextUrl;
+  const cheminEleve = cheminCorrespond(pathname, CHEMINS_PROTEGES);
+  const cheminAdmin = cheminCorrespond(pathname, CHEMINS_ADMIN);
+
+  if (!user && (cheminEleve || cheminAdmin)) {
     const urlConnexion = requete.nextUrl.clone();
     urlConnexion.pathname = "/connexion";
     return NextResponse.redirect(urlConnexion);
+  }
+
+  if (user && cheminAdmin) {
+    // La policy RLS "les utilisateurs voient leur propre profil" permet
+    // à l'utilisateur connecté de lire uniquement sa propre ligne : cette
+    // requête ne peut donc pas servir à consulter le rôle de quelqu'un
+    // d'autre.
+    const { data: profil } = await supabase
+      .from("profils")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profil?.role !== "admin") {
+      const urlTableauDeBord = requete.nextUrl.clone();
+      urlTableauDeBord.pathname = "/tableau-de-bord";
+      return NextResponse.redirect(urlTableauDeBord);
+    }
   }
 
   return reponse;

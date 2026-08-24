@@ -1,14 +1,18 @@
 # Groupe (admin)
 
-Dossier réservé pour les futures pages d'administration
-(`app/(admin)/...`).
+Contient les pages réservées aux utilisateurs dont `profils.role = 'admin'`.
 
-Aucune page n'est créée ici dans cette session : c'était explicitement
-hors périmètre (« aucune page métier »). Seule la structure existe.
+Protection : `middleware.ts`, liste `CHEMINS_ADMIN`. Contrairement au
+groupe `(eleve)` (simple authentification), l'accès ici nécessite en
+plus une vérification du rôle dans la table `profils`.
 
-À faire lors d'une prochaine session, si besoin :
+Pages existantes :
 
-- Ajouter les pages d'administration sous ce groupe.
-- Étendre `middleware.ts` pour protéger ces chemins (comme c'est déjà
-  fait pour le groupe `(eleve)`), probablement avec une vérification de
-  rôle en plus de la simple authentification.
+- `/administration` — page minimale confirmant l'accès et affichant
+  l'email de l'admin connecté. Aucune fonctionnalité métier pour
+  l'instant.
+
+Pour ajouter une nouvelle page ici : créer le dossier sous
+`app/(admin)/...`, puis ajouter son chemin à `CHEMINS_ADMIN` dans
+`middleware.ts` (les groupes de routes n'apparaissent pas dans l'URL,
+donc cette liste ne peut pas être déduite automatiquement).
