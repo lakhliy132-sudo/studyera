@@ -1,14 +1,21 @@
 /**
- * Fichier réservé pour les types générés depuis le schéma Supabase.
+ * Types correspondant au schéma Supabase.
  *
- * Aucune table n'existe encore dans ce projet (hors périmètre de cette
- * session). Une fois des tables créées, ces types pourront être générés
- * automatiquement avec la CLI Supabase :
+ * Écrits à la main pour l'instant, en miroir de
+ * supabase/migrations/20260825120000_creation_profils.sql. Une fois la
+ * CLI Supabase installée et liée au projet, ce fichier pourra être
+ * régénéré automatiquement (et gardé à jour à chaque migration) avec :
  *
  *   npx supabase gen types typescript --project-id <reference-du-projet> \
  *     > types/base-de-donnees.ts
- *
- * Le `export {}` ci-dessous sert uniquement à faire de ce fichier un
- * module TypeScript valide en attendant.
  */
-export {};
+
+export type RoleUtilisateur = "eleve" | "admin";
+
+export interface Profil {
+  id: string;
+  email: string;
+  nom_complet: string | null;
+  role: RoleUtilisateur;
+  date_creation: string;
+}
