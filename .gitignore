@@ -35,6 +35,11 @@ yarn-error.log*
 # ... sauf le gabarit, qui ne contient aucun secret et doit être suivi par git
 !.env.example
 
+# donnees de contenu (tableurs Excel, etc.) : pas destinees a git,
+# seule la structure du dossier est suivie
+data/*
+!data/.gitkeep
+
 # vercel
 .vercel
 
