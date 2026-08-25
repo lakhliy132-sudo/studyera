@@ -31,6 +31,8 @@ export interface Oeuvre {
   auteur: string | null;
   filiere: string | null;
   mode: ModeOeuvre;
+  essentiel_fr: string | null;
+  essentiel_ar: string | null;
   created_at: string;
 }
 
@@ -41,6 +43,11 @@ export interface Chapitre {
   titre_fr: string;
   titre_ar: string | null;
   resume_court: string | null;
+  lieux: string[];
+  citation_reference: string | null;
+  /** Etat editorial interne (ex. "brouillon", "a relire"). N'affecte
+   * pas la visibilite publique du chapitre. */
+  statut: string;
   created_at: string;
 }
 
@@ -53,14 +60,19 @@ export interface Paragraphe {
   created_at: string;
 }
 
+export interface ThemesFiche {
+  principal: string | null;
+  secondaires: string[];
+}
+
 export interface Fiche {
   id: string;
   chapitre_id: string;
   resume_fr: string | null;
   resume_ar: string | null;
-  personnages: unknown[];
-  themes: unknown[];
-  points_cles: unknown[];
+  themes: ThemesFiche;
+  points_cles_fr: string[];
+  points_cles_ar: string[];
   created_at: string;
 }
 
@@ -88,9 +100,21 @@ export interface Cours {
 export interface Sujet {
   id: string;
   oeuvre_id: string | null;
+  chapitre_id: string | null;
   titre: string;
   consigne: string | null;
   type: string | null;
+  created_at: string;
+}
+
+export interface Personnage {
+  id: string;
+  oeuvre_id: string;
+  nom: string;
+  nom_ar: string | null;
+  role: string | null;
+  description_fr: string | null;
+  chapitre_apparition_id: string | null;
   created_at: string;
 }
 
