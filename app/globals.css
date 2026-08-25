@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+/**
+ * Tokens de design.
+ *
+ * Toutes les couleurs, polices, etc. utilisées dans les composants
+ * doivent passer par un nom défini ici (ex. `bg-surface`,
+ * `text-muted-foreground`, `font-arabe`), jamais par une valeur brute
+ * (`bg-[#f3f4f6]`, `text-[14px]`) ni par la palette grise/bleue par
+ * défaut de Tailwind directement dans les composants. Pour changer la
+ * palette du site plus tard, il suffit de modifier les valeurs
+ * ci-dessous : aucun composant n'a besoin d'être touché.
+ *
+ * Palette volontairement neutre pour l'instant (pas de design
+ * approfondi demandé cette session) : à affiner plus tard.
+ */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #1a1a1a;
+
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f4f6;
+
+  --color-border: #e5e7eb;
+
+  --color-primary: #1d4ed8;
+  --color-primary-foreground: #ffffff;
+
+  --color-muted-foreground: #6b7280;
+
+  --color-accent: #b45309;
+
+  /* --font-amiri est fournie par next/font/google dans app/layout.tsx
+   * (variable CSS injectée sur <html>). `font-arabe` est le nom
+   * sémantique à utiliser dans les composants ; si la police change un
+   * jour, seule cette ligne bouge. */
+  --font-arabe: var(--font-amiri), "Traditional Arabic", serif;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

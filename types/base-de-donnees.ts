@@ -33,6 +33,9 @@ export interface Oeuvre {
   mode: ModeOeuvre;
   essentiel_fr: string | null;
   essentiel_ar: string | null;
+  couverture_url: string | null;
+  biographie_fr: string | null;
+  biographie_ar: string | null;
   created_at: string;
 }
 
