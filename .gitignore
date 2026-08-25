@@ -43,6 +43,9 @@ data/*
 # vercel
 .vercel
 
+# fichiers temporaires generes localement par la CLI Supabase
+/supabase/.temp
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

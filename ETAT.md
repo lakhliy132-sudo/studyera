@@ -1,8 +1,14 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après la création de la page `/oeuvres/[slug]/[numero]` (correction du
-> lien mort signalé en fin de Session 3).
+> après la création de la page `/oeuvres/[slug]/[numero]` et de la liste
+> des copies dans `/administration`.
+>
+> ⚠️ **Action requise avant de tester `/administration`** : la migration
+> `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
+> été appliquée automatiquement (pas de CLI Supabase liée dans ce dépôt).
+> À exécuter manuellement dans l'éditeur SQL du dashboard Supabase, comme
+> pour les migrations précédentes.
 
 ## 1. C'est quoi ce projet ?
 
@@ -30,7 +36,7 @@ de doc projet séparée à comparer à l'existant — voir section 4.
 
 ## 2. Inventaire
 
-### Tables Supabase (9 migrations, `supabase/migrations/`)
+### Tables Supabase (10 migrations, `supabase/migrations/`)
 
 RLS activé sur **toutes** les tables. Modèle constant : contenu
 pédagogique = lecture publique (`using (true)`) + écriture réservée aux
@@ -39,7 +45,7 @@ que les siennes (`auth.uid() = user_id`).
 
 | Table | Contenu | RLS |
 |---|---|---|
-| `profils` | id, email, nom_complet, role (`eleve`/`admin`), date_creation | lecture de sa propre ligne seulement ; **aucune policy INSERT/UPDATE** (remplie uniquement par trigger `on_auth_user_created`) |
+| `profils` | id, email, nom_complet, role (`eleve`/`admin`), date_creation | lecture de sa propre ligne + lecture de tous les profils par un admin (⚠️ migration à appliquer, voir en tête de fichier) ; **aucune policy INSERT/UPDATE** (remplie uniquement par trigger `on_auth_user_created`) |
 | `oeuvres` | slug, titre_fr/ar, auteur, filiere, mode, essentiel_fr/ar, couverture_url, biographie_fr/ar | lecture publique, écriture admin |
 | `chapitres` | oeuvre_id, numero, titre_fr/ar, resume_court, lieux, citation_reference, statut | lecture publique, écriture admin |
 | `paragraphes` | chapitre_id, ordre, texte_fr/ar | lecture publique, écriture admin |
@@ -63,7 +69,7 @@ la vérification de rôle pour toutes les policies d'écriture.
 | `/connexion` | `(public)` | aucune | ✅ fonctionne (bouton Google OAuth) |
 | `/api/auth/retour` | — | aucune | ✅ fonctionne (échange le code OAuth contre une session) |
 | `/tableau-de-bord` | `(eleve)` | middleware, connecté requis | ✅ page minimale (affiche l'email) |
-| `/administration` | `(admin)` | middleware, connecté + `role=admin` | ✅ page minimale (affiche l'email), **aucune fonctionnalité métier** |
+| `/administration` | `(admin)` | middleware, connecté + `role=admin` | ✅ affiche l'email + liste des copies déposées (`TableauCopies`), vide tant qu'aucune UI élève ne permet d'en déposer une |
 | `/oeuvres` | `(public)` | aucune | ✅ grille des œuvres, filière codée en dur (`"1bac"`) |
 | `/oeuvres/[slug]` | `(public)` | aucune | ⚠️ header + barre d'onglets fonctionnels ; seul l'onglet **Résumé** a du contenu réel, les 4 autres (Personnages, Lexique, Sujets, Biographie) affichent "Bientôt disponible" alors que les données existent déjà en base |
 | `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ créée : texte intégral (ou "Bientôt disponible"), fiche de synthèse, lexique du chapitre, navigation chapitre précédent/suivant |
@@ -79,7 +85,8 @@ table `progression`), `TexteChapitre` (texte intégral d'un chapitre ou
 message "Bientôt disponible"), `FicheChapitre` (résumé/thèmes/points
 clés d'un chapitre), `LexiqueChapitre` (mots de vocabulaire d'un
 chapitre) — ces trois derniers utilisés par la page
-`/oeuvres/[slug]/[numero]`.
+`/oeuvres/[slug]/[numero]`. `TableauCopies` (liste des copies pour
+`/administration`, ou message "Aucune copie déposée pour l'instant").
 
 ### `lib/`
 
@@ -87,7 +94,9 @@ chapitre) — ces trois derniers utilisés par la page
 - `lib/supabase/server.ts` — client serveur (`createServerClient`,
   cookies), à recréer à chaque requête
 - `lib/supabase/contenu.ts` — lecture du contenu public (œuvres,
-  chapitres) pour les Server Components
+  chapitres, fiches, paragraphes, lexique) pour les Server Components
+- `lib/supabase/admin.ts` — lecture des données réservées à l'espace
+  admin (copies, avec sujet et identité élève joints manuellement)
 
 ### Scripts
 
@@ -133,6 +142,8 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
 **Corrigé cette session :**
 - ✅ `/oeuvres/[slug]/[numero]` (détail d'un chapitre) créée — le lien
   depuis `SommaireChapitres` ne renvoie plus de 404.
+- ✅ `/administration` liste désormais les copies déposées (vide pour
+  l'instant, voir plus bas).
 
 **Commencé mais incomplet :**
 - Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]` :
@@ -141,16 +152,16 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   `sujets`, `oeuvres.biographie_fr/ar`).
 - Case de progression dans `SommaireChapitres` : affichée, pas
   cochable, pas connectée à la table `progression`.
-- `/administration` : accès protégé correctement mais aucune
-  fonctionnalité (pas de gestion de contenu, pas de gestion des rôles).
+- `/administration` : affiche les copies, mais aucune gestion de
+  contenu (œuvres/chapitres) ni gestion des rôles.
 - Filière codée en dur (`"1bac"`) dans `app/(public)/oeuvres/page.tsx` —
   signalé en commentaire dans le code lui-même comme dépendant d'une
   colonne `profils.filiere` qui n'existe pas encore.
 
 **Pas commencé :**
-- Aucune UI pour les copies (soumission photo, transcription,
-  correction) — la table `copies` et ses policies existent, rien côté
-  `app/`.
+- Aucune UI **élève** pour déposer une copie (photo, transcription) —
+  seule la consultation admin existe désormais (`/administration`), la
+  table `copies` reste donc vide en pratique.
 - Aucun mécanisme serveur pour incrémenter `quota_jour` ou remplir les
   champs de correction de `copies` (prévu pour un contexte
   `service_role`, explicitement hors périmètre des sessions passées).
@@ -185,6 +196,11 @@ Points corrects observés :
 - `.env.local` et le contenu de `data/` correctement ignorés par git.
 
 Points de vigilance (pas des failles actives, mais à garder en tête) :
+- Nouvelle policy `SELECT` sur `profils` pour les admins (migration
+  `20260829000000_lecture_admin_profils.sql`) : volontairement lecture
+  seule, aucune capacité d'écriture ajoutée. À appliquer manuellement
+  (voir en tête de fichier) avant de tester `/administration` avec de
+  vraies données.
 - Aucune policy ne permet à un admin de changer le rôle d'un profil
   depuis l'application : tant que ça reste vrai, c'est plutôt une
   garantie de sécurité qu'un manque — mais le jour où une page de
@@ -202,13 +218,16 @@ Aucune clé ou secret trouvé committé dans le code ou les migrations.
 
 ## 5. Prochaines étapes suggérées
 
-1. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
+1. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
+   dans le dashboard Supabase (voir avertissement en tête de fichier).
+2. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
    `/oeuvres/[slug]` sur les données déjà en base.
-2. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
+3. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
    de la filière codée en dur) ou reporté.
-3. Donner un minimum de contenu métier à `/administration` (au moins
-   consulter les copies déposées, table déjà prête).
-4. Si le texte intégral des œuvres devient disponible, ajouter une
+4. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
+   pièce manquante pour que `/administration` affiche des données
+   réelles.
+5. Si le texte intégral des œuvres devient disponible, ajouter une
    feuille "Paragraphes" au fichier Excel (colonnes : oeuvre_slug,
    chapitre_numero, ordre, texte_fr, texte_ar) puis relancer
    `npm run importer` — le script est déjà prêt à la lire.

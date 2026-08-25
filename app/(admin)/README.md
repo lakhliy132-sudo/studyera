@@ -8,9 +8,9 @@ plus une vérification du rôle dans la table `profils`.
 
 Pages existantes :
 
-- `/administration` — page minimale confirmant l'accès et affichant
-  l'email de l'admin connecté. Aucune fonctionnalité métier pour
-  l'instant.
+- `/administration` — confirme l'accès, affiche l'email de l'admin
+  connecté, et liste les copies déposées par les élèves (table vide
+  tant qu'aucune UI élève ne permet d'en déposer une).
 
 Pour ajouter une nouvelle page ici : créer le dossier sous
 `app/(admin)/...`, puis ajouter son chemin à `CHEMINS_ADMIN` dans
