@@ -21,6 +21,13 @@
  * La feuille "Légende" est ignorée (c'est une notice d'utilisation du
  * fichier, pas des données).
  *
+ * Feuille "Paragraphes" (texte intégral des chapitres, colonnes
+ * oeuvre_slug, chapitre_numero, ordre, texte_fr, texte_ar) : lue si
+ * présente, mais ABSENTE du fichier actuel. Contrairement aux autres
+ * feuilles, son absence n'est donc volontairement pas signalée comme
+ * une erreur : le texte intégral n'est pas encore prêt pour les œuvres
+ * importées jusqu'ici, ce n'est pas un problème d'import.
+ *
  * La feuille "Chapitres" alimente DEUX tables à partir des mêmes
  * lignes : `chapitres` (identité du chapitre) et `fiches` (résumé,
  * thèmes, points clés) — voir CHAMPS_CHAPITRE_VERS_FICHE plus bas.
@@ -103,6 +110,7 @@ const compteurs = {
   motsLexique: 0,
   personnages: 0,
   sujets: 0,
+  paragraphes: 0,
 };
 
 function signalerErreur(feuille: string, ligne: number, err: unknown) {
@@ -424,6 +432,55 @@ async function main() {
     erreurs.push({ feuille: "Sujets", ligne: 0, message: "Feuille introuvable" });
   }
 
+  // --- 6. Paragraphes (texte intégral) ---
+  //
+  // Contrairement aux feuilles précédentes, absente du fichier actuel :
+  // son absence n'est PAS ajoutée à `erreurs`, voir le commentaire en
+  // tête de fichier.
+  const feuilleParagraphes = classeur.getWorksheet("Paragraphes");
+  if (feuilleParagraphes) {
+    const entetes = indexEntetes(feuilleParagraphes);
+    for (let n = 2; n <= feuilleParagraphes.rowCount; n++) {
+      const ligne = feuilleParagraphes.getRow(n);
+      if (ligne.actualCellCount === 0) continue;
+
+      const oeuvreSlug = texte(valeur(ligne, entetes, "oeuvre_slug"));
+      const chapitreNumero = nombre(valeur(ligne, entetes, "chapitre_numero"));
+      const ordre = nombre(valeur(ligne, entetes, "ordre"));
+      const texteFr = texte(valeur(ligne, entetes, "texte_fr"));
+      if (!oeuvreSlug || chapitreNumero === null || ordre === null || !texteFr) {
+        continue;
+      }
+
+      const chapitreId = idChapitreParCle.get(`${oeuvreSlug}::${chapitreNumero}`);
+      if (!chapitreId) {
+        signalerErreur(
+          "Paragraphes",
+          n,
+          `chapitre introuvable pour "${oeuvreSlug}" numero ${chapitreNumero}`,
+        );
+        continue;
+      }
+
+      try {
+        const { error } = await supabase.from("paragraphes").upsert(
+          {
+            chapitre_id: chapitreId,
+            ordre,
+            texte_fr: texteFr,
+            texte_ar: texte(valeur(ligne, entetes, "texte_ar")),
+          },
+          { onConflict: "chapitre_id,ordre" },
+        );
+
+        if (error) throw error;
+        compteurs.paragraphes++;
+      } catch (err) {
+        signalerErreur("Paragraphes", n, err);
+      }
+    }
+  }
+
   // --- Résumé final ---
   console.log("\n--- Résumé de l'import ---");
   console.log(`Oeuvres      : ${compteurs.oeuvres}`);
@@ -432,6 +489,7 @@ async function main() {
   console.log(`Mots lexique : ${compteurs.motsLexique}`);
   console.log(`Personnages  : ${compteurs.personnages}`);
   console.log(`Sujets       : ${compteurs.sujets}`);
+  console.log(`Paragraphes  : ${compteurs.paragraphes}`);
   console.log(`Erreurs      : ${erreurs.length}`);
 
   if (erreurs.length > 0) {
