@@ -22,11 +22,16 @@ export default function CarteBilingue({ contenuFr, contenuAr }: CarteBilinguePro
       </div>
 
       {contenuAr && (
-        <div dir="rtl" className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
+        <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
+          {/* `dir="rtl"` seulement sur le texte, pas sur toute la carte :
+              sinon il inverse aussi la ligne d'en-tête (flex), qui doit
+              rester alignée comme celle de la carte française (icône à
+              gauche, cohérent visuellement entre les deux cartes). */}
           <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <span aria-hidden="true">📖</span> ملخص
           </p>
           <div
+            dir="rtl"
             lang="ar"
             className="whitespace-pre-line font-arabe text-base leading-loose text-foreground"
           >

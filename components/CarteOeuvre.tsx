@@ -21,7 +21,10 @@ export default function CarteOeuvre({ oeuvre, nombreChapitres }: CarteOeuvreProp
       <div className="flex flex-1 flex-col gap-1 p-4">
         <h2 className="text-base font-semibold text-foreground">{oeuvre.titre_fr}</h2>
         {oeuvre.titre_ar && (
-          <p dir="rtl" lang="ar" className="font-arabe text-base leading-loose text-foreground">
+          // `w-fit` : garde ce titre aligné à gauche avec le h2
+          // au-dessus (voir le même correctif sur les pages œuvre et
+          // chapitre).
+          <p dir="rtl" lang="ar" className="w-fit font-arabe text-base leading-loose text-foreground">
             {oeuvre.titre_ar}
           </p>
         )}

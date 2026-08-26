@@ -101,7 +101,14 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </p>
         <h1 className="font-serif text-2xl text-primary md:text-4xl">{chapitre.titre_fr}</h1>
         {chapitre.titre_ar && (
-          <p dir="rtl" lang="ar" className="font-arabe text-lg leading-loose text-foreground">
+          // Voir le même correctif sur /oeuvres/[slug]/page.tsx : `w-fit`
+          // garde ce titre arabe aligné à gauche avec le h1 au-dessus,
+          // au lieu de le laisser filer vers la droite du conteneur.
+          <p
+            dir="rtl"
+            lang="ar"
+            className="w-fit font-arabe text-lg leading-loose text-foreground"
+          >
             {chapitre.titre_ar}
           </p>
         )}

@@ -1,11 +1,12 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après un correctif de fidélité visuelle aux maquettes (tokens de
-> couleur, police serif des titres, cartes avec ombre) sur la session
-> Design : nav globale, bannières/onglets/pilules repris de deux
-> maquettes de référence, mot de lexique cliquable dans le résumé d'un
-> chapitre.
+> après un correctif d'un vrai bug visuel (titre arabe mal aligné,
+> trouvé par capture d'écran réelle, pas juste relu dans le code) sur
+> la session Design : nav globale, bannières/onglets/pilules repris de
+> deux maquettes de référence, tokens de couleur (fond bleu pâle,
+> bordures bleu clair, ombres), police serif des titres, mot de
+> lexique cliquable dans le résumé d'un chapitre.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -257,6 +258,42 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   de dossier de tests).
 - `README.md` est resté celui par défaut de `create-next-app`, non
   spécifique au projet.
+
+### Bug visuel trouvé et corrigé par capture d'écran réelle
+
+Après un retour "ce n'est pas élégant", plutôt que de continuer à
+deviner à partir du code, une vraie capture d'écran (Playwright) a été
+prise du rendu réel. Elle a révélé un bug que la relecture du code
+n'avait pas montré : le titre arabe (œuvre et chapitre) apparaissait
+détaché, plaqué à droite de la page, sans rapport visuel avec le titre
+français juste au-dessus.
+
+**Cause** : un bloc `<p dir="rtl">` en pleine largeur aligne son texte
+à droite de TOUTE la largeur disponible (comportement RTL normal), pas
+à droite de son propre contenu — donc loin du titre français, aligné
+à gauche, plus étroit. Idem pour l'en-tête "ملخص" de la carte de
+résumé arabe : le `dir="rtl"` était posé sur toute la carte (au lieu
+du texte seul), ce qui inversait aussi la ligne d'en-tête en flex et
+poussait l'icône + le mot à droite, incohérent avec la carte française.
+
+**Correctif** : `w-fit` sur les titres arabes (le bloc se réduit à son
+contenu, reste donc calé au même bord gauche que le titre français
+au-dessus) ; `dir="rtl"` déplacé du conteneur de la carte "ملخص" vers
+le seul bloc de texte, en laissant la ligne d'en-tête en LTR comme
+celle de la carte française. Appliqué partout où le même motif
+existait : `/oeuvres/[slug]`, `/oeuvres/[slug]/[numero]`, `CarteOeuvre`
+(grille de `/oeuvres`), `CarteBilingue`.
+
+**Leçon pour la suite** : pour tout retour visuel/esthétique sur ce
+projet, prendre une vraie capture d'écran (Playwright, voir
+`scripts/_screenshot_temp.mjs` — pas committé, à recréer si besoin :
+`npm install --no-save playwright` puis `npx playwright install
+chromium`) avant de faire des hypothèses sur ce qui ne va pas. Le vide
+apparent en bas de `/oeuvres/[slug]/boite-a-merveilles` n'est PAS un
+bug : `essentiel_fr`/`essentiel_ar` sont vides pour les 3 œuvres en
+base (colonnes existantes, jamais remplies dans le fichier Excel), la
+page est donc légitimement courte tant que ce contenu n'est pas
+rédigé.
 
 ### Adaptations pragmatiques par rapport aux maquettes littérales
 

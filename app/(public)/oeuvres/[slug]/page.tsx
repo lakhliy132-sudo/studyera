@@ -60,7 +60,17 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
         <div>
           <h1 className="font-serif text-3xl text-primary md:text-5xl">{oeuvre.titre_fr}</h1>
           {oeuvre.titre_ar && (
-            <p dir="rtl" lang="ar" className="font-arabe text-lg leading-loose text-foreground">
+            // `w-fit` : sans ça, ce bloc RTL prend toute la largeur
+            // disponible et son texte se retrouve aligné à DROITE de
+            // cette largeur, donc visuellement décroché du titre
+            // français au-dessus. En largeur "juste contenu", le bloc
+            // démarre au même bord gauche que le h1 (comportement
+            // normal d'un bloc), ce qui les garde alignés.
+            <p
+              dir="rtl"
+              lang="ar"
+              className="w-fit font-arabe text-lg leading-loose text-foreground"
+            >
               {oeuvre.titre_ar}
             </p>
           )}
