@@ -16,7 +16,7 @@ export default function LexiqueChapitre({ entrees }: LexiqueChapitreProps) {
   return (
     <section className="flex flex-col gap-3">
       <h2 className="text-lg font-semibold text-foreground">Lexique</h2>
-      <dl className="divide-y divide-border rounded-lg border border-border">
+      <dl className="divide-y divide-border rounded-lg border border-border bg-surface shadow-sm">
         {entrees.map((entree) => (
           <div key={entree.id} className="flex flex-col gap-1 p-4">
             <dt className="font-medium text-foreground">

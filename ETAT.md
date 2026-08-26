@@ -1,9 +1,11 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après la session Design : nav globale, bannières/onglets/pilules
-> repris de deux maquettes de référence, mot de lexique cliquable dans
-> le résumé d'un chapitre.
+> après un correctif de fidélité visuelle aux maquettes (tokens de
+> couleur, police serif des titres, cartes avec ombre) sur la session
+> Design : nav globale, bannières/onglets/pilules repris de deux
+> maquettes de référence, mot de lexique cliquable dans le résumé d'un
+> chapitre.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -209,6 +211,17 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   onglets **du chapitre** qui sont branchés cette session, pas les
   onglets **de l'œuvre** (Personnages/Lexique/Sujets/Biographie de
   `/oeuvres/[slug]`), toujours "Bientôt disponible".
+- ✅ Correctif de fidélité visuelle (même session Design, suite à un
+  retour direct comparant au rendu réel des maquettes) : fond de page
+  bleu très pâle (`--color-background`) au lieu de blanc, bordures des
+  cartes en bleu clair (`--color-border`) au lieu de gris neutre,
+  ombre légère (`shadow-sm`) sur toutes les cartes, police serif
+  (Playfair Display, `font-serif`) sur les grands titres d'œuvre et de
+  chapitre en bleu foncé, barres d'onglets sur fond bleu pâle avec
+  soulignement épais (`border-b-4`) de l'onglet actif, cartes de
+  chapitre simplifiées ("Chapitre N" en gras + titre réel en sous-titre,
+  sans répétition). Vérifié dans la CSS compilée après build, pas
+  seulement dans le code source.
 
 **Commencé mais incomplet :**
 - Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]`

@@ -38,7 +38,7 @@ export default function SommaireChapitres({
           <li key={chapitre.id}>
             <Link
               href={`/oeuvres/${slug}/${chapitre.numero}`}
-              className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 hover:shadow-md"
+              className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm hover:shadow-md"
             >
               <span
                 aria-hidden="true"
@@ -63,15 +63,13 @@ export default function SommaireChapitres({
                 )}
               </span>
               <span className="flex flex-1 flex-col gap-0.5">
-                <span className="font-medium text-foreground">
+                <span className="font-semibold text-foreground">
                   {lu && <span className="sr-only">Lu. </span>}
-                  Chapitre {chapitre.numero} — {chapitre.titre_fr}
+                  Chapitre {chapitre.numero}
                 </span>
-                {chapitre.resume_court && (
-                  <span className="line-clamp-2 text-sm text-muted-foreground">
-                    {chapitre.resume_court}
-                  </span>
-                )}
+                <span className="line-clamp-2 text-sm text-muted-foreground">
+                  {chapitre.titre_fr}
+                </span>
               </span>
               <span aria-hidden="true" className="shrink-0 text-primary">
                 →

@@ -99,7 +99,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         <p className="inline-flex w-fit items-center rounded-full bg-primary-tint px-3 py-1 text-sm font-medium text-primary">
           Chapitre {chapitre.numero}
         </p>
-        <h1 className="text-2xl font-semibold text-foreground">{chapitre.titre_fr}</h1>
+        <h1 className="font-serif text-2xl text-primary md:text-4xl">{chapitre.titre_fr}</h1>
         {chapitre.titre_ar && (
           <p dir="rtl" lang="ar" className="font-arabe text-lg leading-loose text-foreground">
             {chapitre.titre_ar}
@@ -183,7 +183,7 @@ function BlocApercu({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
       <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <span aria-hidden="true">{icone}</span> {titre}
       </p>

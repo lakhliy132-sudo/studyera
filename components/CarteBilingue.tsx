@@ -14,7 +14,7 @@ interface CarteBilingueProps {
 export default function CarteBilingue({ contenuFr, contenuAr }: CarteBilingueProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+      <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
         <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <span aria-hidden="true">📖</span> Résumé
         </p>
@@ -22,7 +22,7 @@ export default function CarteBilingue({ contenuFr, contenuAr }: CarteBilinguePro
       </div>
 
       {contenuAr && (
-        <div dir="rtl" className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+        <div dir="rtl" className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
           <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <span aria-hidden="true">📖</span> ملخص
           </p>

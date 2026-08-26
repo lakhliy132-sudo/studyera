@@ -35,7 +35,7 @@ export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsCh
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="sticky top-0 z-10 overflow-x-auto border-b border-border bg-surface"
+      className="sticky top-0 z-10 overflow-x-auto border-b border-border bg-surface-muted"
     >
       <ul className="mx-auto flex min-w-max max-w-3xl gap-1 px-4">
         {ONGLETS.map((onglet) => {
@@ -52,8 +52,8 @@ export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsCh
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "flex items-center gap-1.5 border-b-2 border-primary px-3 py-3 text-sm font-medium whitespace-nowrap text-primary"
-                    : "flex items-center gap-1.5 border-b-2 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
+                    ? "flex items-center gap-1.5 border-b-4 border-primary px-3 py-3 text-sm font-medium whitespace-nowrap text-primary"
+                    : "flex items-center gap-1.5 border-b-4 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
                 }
               >
                 <span aria-hidden="true">{onglet.icone}</span>

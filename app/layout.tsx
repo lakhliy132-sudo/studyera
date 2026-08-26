@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri } from "next/font/google";
+import { Amiri, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -24,6 +24,19 @@ const amiri = Amiri({
 });
 
 /**
+ * Police serif des grands titres (titre d'une œuvre, d'un chapitre),
+ * reprise des maquettes de référence. Exposée comme variable CSS
+ * `--font-playfair`, reprise par le token `font-serif` défini dans
+ * app/globals.css : les composants utilisent `font-serif`, jamais
+ * `--font-playfair` directement.
+ */
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  variable: "--font-playfair",
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -40,7 +53,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="fr" className={amiri.variable}>
+    <html lang="fr" className={`${amiri.variable} ${playfair.variable}`}>
       <body>
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}

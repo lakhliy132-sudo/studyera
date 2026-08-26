@@ -58,9 +58,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
 
       <header className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-8 pb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
-            {oeuvre.titre_fr}
-          </h1>
+          <h1 className="font-serif text-3xl text-primary md:text-5xl">{oeuvre.titre_fr}</h1>
           {oeuvre.titre_ar && (
             <p dir="rtl" lang="ar" className="font-arabe text-lg leading-loose text-foreground">
               {oeuvre.titre_ar}

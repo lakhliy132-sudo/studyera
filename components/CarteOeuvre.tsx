@@ -13,7 +13,7 @@ export default function CarteOeuvre({ oeuvre, nombreChapitres }: CarteOeuvreProp
   return (
     <Link
       href={`/oeuvres/${oeuvre.slug}`}
-      className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition hover:shadow-md"
+      className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition hover:shadow-md"
     >
       <div className="relative aspect-[3/4] w-full">
         <CouvertureOeuvre url={oeuvre.couverture_url} titre={oeuvre.titre_fr} />
