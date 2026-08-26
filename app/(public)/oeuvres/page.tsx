@@ -1,10 +1,6 @@
 import CarteOeuvre from "@/components/CarteOeuvre";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererOeuvresParFiliere } from "@/lib/supabase/contenu";
-
-// Filière en dur pour cette session : à terme, dépendra de la filière
-// de l'élève connecté (profils.filiere, qui n'existe pas encore —
-// signalé séparément).
-const FILIERE_ACTUELLE = "1bac";
 
 /**
  * /oeuvres — liste des œuvres au programme, sous forme de grille de

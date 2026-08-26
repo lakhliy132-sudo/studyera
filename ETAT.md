@@ -1,8 +1,8 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après la Session 4 (progression de lecture) : bouton "Marquer comme
-> lu", coche dans le sommaire, barre d'avancement, journal d'activité.
+> après la Session 5 (tableau de bord) : blocs Reprendre / Rédaction /
+> Progression / Dernières activités sur `/tableau-de-bord`.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -68,7 +68,9 @@ la vérification de rôle pour toutes les policies d'écriture.
 |---|---|---|---|
 | `/connexion` | `(public)` | aucune | ✅ fonctionne (bouton Google OAuth) |
 | `/api/auth/retour` | — | aucune | ✅ fonctionne (échange le code OAuth contre une session) |
-| `/tableau-de-bord` | `(eleve)` | middleware, connecté requis | ✅ page minimale (affiche l'email) |
+| `/tableau-de-bord` | `(eleve)` | middleware, connecté requis | ✅ quatre blocs empilés : Reprendre, Rédaction, Progression, Dernières activités — chacun avec un état "invitation" si vide (voir section 3) |
+| `/redaction/nouvelle` | `(eleve)` | middleware, connecté requis | ✅ page minimale ("Bientôt disponible"), destination du bouton "Corriger une copie" |
+| `/activite` | `(eleve)` | middleware, connecté requis | ✅ historique complet ("Tout voir" depuis le tableau de bord) |
 | `/administration` | `(admin)` | middleware, connecté + `role=admin` | ✅ affiche l'email + liste des copies déposées (`TableauCopies`), vide tant qu'aucune UI élève ne permet d'en déposer une |
 | `/oeuvres` | `(public)` | aucune | ✅ grille des œuvres, filière codée en dur (`"1bac"`) |
 | `/oeuvres/[slug]` | `(public)` | aucune | ⚠️ header (+ barre d'avancement si connecté) et barre d'onglets fonctionnels ; seul l'onglet **Résumé** a du contenu réel, les 4 autres (Personnages, Lexique, Sujets, Biographie) affichent "Bientôt disponible" alors que les données existent déjà en base |
@@ -91,6 +93,11 @@ total", affichée dans l'en-tête de `/oeuvres/[slug]` si connecté).
 `TableauCopies` (liste des copies pour `/administration`, ou message
 "Aucune copie déposée pour l'instant").
 
+Blocs du tableau de bord (session 5), chacun avec son propre état
+"invitation" quand il n'y a rien à montrer (voir section 3, règle
+"aucun bloc vide") : `BlocReprendre`, `BlocRedaction`, `BlocProgression`
+(3 chiffres + une barre par œuvre), `BlocDernieresActivites`.
+
 ### `lib/`
 
 - `lib/supabase/client.ts` — client navigateur (`createBrowserClient`)
@@ -104,6 +111,12 @@ total", affichée dans l'en-tête de `/oeuvres/[slug]` si connecté).
   de l'utilisateur connecté (par œuvre entière ou par chapitre)
 - `lib/supabase/activite.ts` — écriture dans le journal d'activité,
   avec déduplication (pas de doublon si rechargement dans la minute)
+- `lib/supabase/tableauDeBord.ts` — agrégations pour `/tableau-de-bord`
+  et `/activite` : activités récentes résolues en liens, chapitre
+  recommandé, progression par œuvre, stats copies, quota restant
+- `lib/filiere.ts` / `lib/quota.ts` — constantes partagées codées en dur
+  (`FILIERE_ACTUELLE = "1bac"`, `QUOTA_QUOTIDIEN_MAX = 3`), un seul
+  endroit à changer le jour où elles deviendront de vraies données
 
 ### Scripts
 
@@ -156,6 +169,13 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   barre d'avancement sur la page œuvre, journal d'activité à chaque
   consultation de chapitre. Isolation RLS entre élèves vérifiée
   concrètement (voir section 4).
+- ✅ Tableau de bord (Session 5) : quatre blocs (Reprendre, Rédaction,
+  Progression, Dernières activités). Règle "aucun bloc vide" appliquée
+  systématiquement — chaque bloc a un état invitation distinct de son
+  état avec données (détail dans les commentaires des composants
+  `Bloc*`) plutôt qu'un "0" ou une zone blanche pour un nouvel élève.
+  `/redaction/nouvelle` (stub) et `/activite` (historique complet)
+  créées comme destinations de ce tableau de bord.
 
 **Commencé mais incomplet :**
 - Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]` :
@@ -164,9 +184,12 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   `sujets`, `oeuvres.biographie_fr/ar`).
 - `/administration` : affiche les copies, mais aucune gestion de
   contenu (œuvres/chapitres) ni gestion des rôles.
-- Filière codée en dur (`"1bac"`) dans `app/(public)/oeuvres/page.tsx` —
-  signalé en commentaire dans le code lui-même comme dépendant d'une
-  colonne `profils.filiere` qui n'existe pas encore.
+- Filière codée en dur (`"1bac"`, désormais centralisée dans
+  `lib/filiere.ts`) — dépend d'une colonne `profils.filiere` qui
+  n'existe pas encore.
+- Quota quotidien codé en dur à **3** (`lib/quota.ts`, `QUOTA_QUOTIDIEN_MAX`) :
+  valeur inventée faute de vraie décision produit, à ajuster (⚠️ à
+  confirmer avec l'équipe, pas une valeur métier validée).
 
 **Pas commencé :**
 - Aucune UI **élève** pour déposer une copie (photo, transcription) —
@@ -247,23 +270,21 @@ Aucune clé ou secret trouvé committé dans le code ou les migrations.
 
 ## 5. Prochaines étapes suggérées
 
-1. **Session 5 (en attente)** : refonte de `/tableau-de-bord` (blocs
-   Reprendre / Rédaction / Progression / Dernières activités),
-   demandée dans le même message que la session 4, pas encore traitée.
-2. **Design (en attente)** : refonte visuelle générale sur la base de
+1. **Design (en attente)** : refonte visuelle générale sur la base de
    deux maquettes fournies (nav bar, sélecteur d'œuvre en pilules,
-   bannière, onglets, cartes de chapitres, popover de lexique) — décrite
-   mais pas encore codée, à faire après la session 5 pour éviter de
-   restyler deux fois le même écran.
-3. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
+   bannière, onglets, cartes de chapitres, popover de lexique) — pas
+   encore décrite ni codée.
+2. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
    dans le dashboard Supabase (voir avertissement en tête de fichier).
+3. Confirmer la vraie valeur de `QUOTA_QUOTIDIEN_MAX` (actuellement 3,
+   inventé — voir section 3).
 4. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
    `/oeuvres/[slug]` sur les données déjà en base.
 5. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
    de la filière codée en dur) ou reporté.
 6. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
-   pièce manquante pour que `/administration` affiche des données
-   réelles.
+   pièce manquante pour que `/administration` et le bloc Progression du
+   tableau de bord affichent des données réelles côté rédaction.
 7. Si le texte intégral des œuvres devient disponible, ajouter une
    feuille "Paragraphes" au fichier Excel (colonnes : oeuvre_slug,
    chapitre_numero, ordre, texte_fr, texte_ar) puis relancer
