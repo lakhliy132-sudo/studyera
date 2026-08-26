@@ -1,8 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import BarreProgression from "@/components/BarreProgression";
-import CarteBilingue from "@/components/CarteBilingue";
+import BanniereOeuvre from "@/components/BanniereOeuvre";
 import OngletResume from "@/components/OngletResume";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import SelecteurOeuvres from "@/components/SelecteurOeuvres";
@@ -23,7 +21,9 @@ interface PagePropsOeuvre {
 /**
  * /oeuvres/[slug] — sélecteur d'œuvre, bannière (résumé bilingue
  * toujours visible, quel que soit l'onglet actif), barre d'onglets,
- * contenu de l'onglet actif.
+ * contenu de l'onglet actif. Reprend la maquette de référence
+ * (page-oeuvre.html) : fond de page bleu pâle, bannière et onglets en
+ * cartes blanches posées dessus, contenu centré à 1180px maximum.
  *
  * Seul l'onglet Résumé a un vrai contenu pour l'instant : les autres
  * affichent un message temporaire.
@@ -56,68 +56,28 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
     <main className="flex flex-col">
       <SelecteurOeuvres oeuvres={oeuvresFiliere} slugActif={slug} />
 
-      <header className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 pt-8 pb-6">
-        <div>
-          <h1 className="font-serif text-3xl text-primary md:text-5xl">{oeuvre.titre_fr}</h1>
-          {oeuvre.titre_ar && (
-            // `w-fit` : sans ça, ce bloc RTL prend toute la largeur
-            // disponible et son texte se retrouve aligné à DROITE de
-            // cette largeur, donc visuellement décroché du titre
-            // français au-dessus. En largeur "juste contenu", le bloc
-            // démarre au même bord gauche que le h1 (comportement
-            // normal d'un bloc), ce qui les garde alignés.
-            <p
-              dir="rtl"
-              lang="ar"
-              className="w-fit font-arabe text-lg leading-loose text-foreground"
-            >
-              {oeuvre.titre_ar}
-            </p>
-          )}
-          {oeuvre.auteur && (
-            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-primary-tint px-3 py-1 text-sm font-medium text-primary">
-              <span aria-hidden="true">✎</span> {oeuvre.auteur}
+      <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 px-6 pb-16">
+        <BanniereOeuvre
+          slug={slug}
+          oeuvre={oeuvre}
+          premierChapitre={premierChapitre}
+          // Pas de progression personnelle à montrer à un visiteur non
+          // connecté (BarreProgression se masque de toute façon si
+          // l'œuvre n'a aucun chapitre).
+          progression={user ? { lus: chapitresLusIds.size, total: chapitres.length } : null}
+        />
+
+        <OngletsOeuvre slug={slug} ongletActif={ongletActif} />
+
+        <div className="py-2">
+          {ongletActif === "resume" ? (
+            <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
+          ) : (
+            <p className="rounded-md border border-dashed border-border-strong bg-surface p-11 text-center text-muted-foreground">
+              Bientôt disponible.
             </p>
           )}
         </div>
-
-        {/* Pas de progression personnelle à montrer à un visiteur non
-            connecté : le bloc n'apparaît que pour un utilisateur
-            authentifié (voir aussi BarreProgression, qui se masque déjà
-            elle-même si l'œuvre n'a aucun chapitre). */}
-        {user && <BarreProgression lus={chapitresLusIds.size} total={chapitres.length} />}
-
-        <CarteBilingue
-          contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
-          contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
-        />
-
-        {premierChapitre && (
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Link
-              href={`/oeuvres/${slug}/${premierChapitre.numero}`}
-              className="rounded-md bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              Lire le texte intégral →
-            </Link>
-            <Link
-              href={`/oeuvres/${slug}/${premierChapitre.numero}`}
-              className="rounded-md border border-primary px-4 py-2 text-center text-sm font-medium text-primary hover:bg-primary-tint"
-            >
-              Lecteur bilingue →
-            </Link>
-          </div>
-        )}
-      </header>
-
-      <OngletsOeuvre slug={slug} ongletActif={ongletActif} />
-
-      <div className="mx-auto w-full max-w-4xl px-4 py-8">
-        {ongletActif === "resume" ? (
-          <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
-        ) : (
-          <p className="text-muted-foreground">Bientôt disponible.</p>
-        )}
       </div>
     </main>
   );

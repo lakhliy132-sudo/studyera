@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri, Playfair_Display, Source_Sans_3 } from "next/font/google";
+import { Amiri, DM_Sans, Playfair_Display, Spectral } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -25,42 +25,49 @@ const amiri = Amiri({
 
 /**
  * Police serif des grands titres (titre d'une œuvre, d'un chapitre),
- * reprise des maquettes de référence. Exposée comme variable CSS
- * `--font-playfair`, reprise par le token `font-serif` défini dans
- * app/globals.css : les composants utilisent `font-serif`, jamais
- * `--font-playfair` directement.
+ * reprise de la maquette de référence. Exposée comme `--font-playfair`,
+ * reprise par le token `font-serif` dans app/globals.css.
  */
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["700"],
+  weight: ["600", "700"],
   variable: "--font-playfair",
 });
 
 /**
- * Police de tout le texte courant (résumés, listes, interface) —
- * jusqu'ici sans police chargée du tout pour ce texte-là, il retombait
- * sur la police système par défaut du visiteur (Segoe UI sous Windows,
- * etc.), ce qui donnait un rendu plat à côté des grands titres en
- * Playfair Display. Exposée comme `--font-source-sans`, reprise par le
- * token `--font-sans` dans app/globals.css : devient la police par
- * défaut de tout le site (l'utilitaire Tailwind `font-sans` — donc
- * aussi le corps de page, sans classe à ajouter nulle part).
+ * Police du texte de lecture longue (résumés bilingues) — distincte de
+ * la police d'interface : un serif de labeur (Spectral), plus confortable
+ * à lire sur plusieurs paragraphes qu'un sans-serif d'interface. Exposée
+ * comme `--font-spectral`, reprise par le token `font-lecture`.
  */
-const sourceSans = Source_Sans_3({
+const spectral = Spectral({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-source-sans",
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-spectral",
+});
+
+/**
+ * Police de tout le texte d'interface (nav, boutons, listes, labels).
+ * Exposée comme `--font-dm-sans`, reprise par le token `--font-sans`
+ * (l'utilitaire Tailwind par défaut, donc aussi le corps de page, sans
+ * classe à ajouter nulle part).
+ */
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-dm-sans",
 });
 
 /**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
- * Session design : affiche BarreNavigation partout, avec l'état de
- * connexion résolu une seule fois ici (plutôt que de le refaire dans
- * chaque page) et transmis en props. Rend chaque page dynamique (plus
- * de rendu statique pur), acceptable pour une nav qui doit refléter la
- * vraie session de l'utilisateur.
+ * Affiche BarreNavigation partout, avec l'état de connexion résolu une
+ * seule fois ici (plutôt que de le refaire dans chaque page) et
+ * transmis en props. Rend chaque page dynamique (plus de rendu
+ * statique pur), acceptable pour une nav qui doit refléter la vraie
+ * session de l'utilisateur.
  */
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await creerClientServeur();
@@ -69,7 +76,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="fr" className={`${amiri.variable} ${playfair.variable} ${sourceSans.variable}`}>
+    <html
+      lang="fr"
+      className={`${amiri.variable} ${playfair.variable} ${spectral.variable} ${dmSans.variable}`}
+    >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}

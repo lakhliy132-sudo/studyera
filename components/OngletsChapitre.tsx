@@ -1,11 +1,13 @@
 import Link from "next/link";
 
+import { IconeLien, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne } from "@/components/icones";
+
 const ONGLETS = [
-  { cle: "resume", libelle: "Résumé", icone: "📖" },
-  { cle: "personnages", libelle: "Personnages", icone: "👤" },
-  { cle: "lexique", libelle: "Lexique", icone: "📖" },
-  { cle: "lieux", libelle: "Lieux", icone: "📍" },
-  { cle: "sujets", libelle: "Sujets liés", icone: "🔗" },
+  { cle: "resume", libelle: "Résumé", Icone: IconeLivre },
+  { cle: "personnages", libelle: "Personnages", Icone: IconePersonne },
+  { cle: "lexique", libelle: "Lexique", Icone: IconeLivreOuvert },
+  { cle: "lieux", libelle: "Lieux", Icone: IconeLieu },
+  { cle: "sujets", libelle: "Sujets liés", Icone: IconeLien },
 ] as const;
 
 export type CleOngletChapitre = (typeof ONGLETS)[number]["cle"];
@@ -28,36 +30,36 @@ interface OngletsChapitreProps {
   ongletActif: CleOngletChapitre;
 }
 
-/** Barre d'onglets de la page d'un chapitre — même mécanisme que
- * OngletsOeuvre (Server Component, navigation par query param, défilement
- * horizontal en CSS pur sous `md`). */
+/** Barre d'onglets de la page d'un chapitre — même carte de pilules
+ * que OngletsOeuvre (Server Component, navigation par query param,
+ * défilement horizontal en CSS pur sous `md`, sticky sous la nav). */
 export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsChapitreProps) {
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="sticky top-0 z-10 overflow-x-auto border-b border-border bg-surface-muted"
+      className="sticky top-[74px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-lg border border-border bg-surface p-1.5 shadow-sm"
     >
-      <ul className="mx-auto flex min-w-max max-w-3xl gap-1 px-4">
-        {ONGLETS.map((onglet) => {
-          const actif = onglet.cle === ongletActif;
+      <ul className="flex min-w-max gap-0.5">
+        {ONGLETS.map(({ cle, libelle, Icone }) => {
+          const actif = cle === ongletActif;
           const href =
-            onglet.cle === "resume"
+            cle === "resume"
               ? `/oeuvres/${slug}/${numero}`
-              : `/oeuvres/${slug}/${numero}?onglet=${onglet.cle}`;
+              : `/oeuvres/${slug}/${numero}?onglet=${cle}`;
 
           return (
-            <li key={onglet.cle}>
+            <li key={cle}>
               <Link
                 href={href}
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "flex items-center gap-1.5 border-b-4 border-primary px-3 py-3 text-sm font-medium whitespace-nowrap text-primary"
-                    : "flex items-center gap-1.5 border-b-4 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
+                    ? "flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-[15px] font-medium whitespace-nowrap text-white"
+                    : "flex items-center gap-2 rounded-md px-5 py-3 text-[15px] font-medium whitespace-nowrap text-muted-foreground hover:bg-background hover:text-ink"
                 }
               >
-                <span aria-hidden="true">{onglet.icone}</span>
-                {onglet.libelle}
+                <Icone />
+                {libelle}
               </Link>
             </li>
           );

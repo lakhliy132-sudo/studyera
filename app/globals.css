@@ -3,70 +3,101 @@
 /**
  * Tokens de design.
  *
- * Toutes les couleurs, polices, etc. utilisées dans les composants
- * doivent passer par un nom défini ici (ex. `bg-surface`,
+ * Toutes les couleurs, polices, rayons, etc. utilisés dans les
+ * composants doivent passer par un nom défini ici (ex. `bg-surface`,
  * `text-muted-foreground`, `font-arabe`), jamais par une valeur brute
- * (`bg-[#f3f4f6]`, `text-[14px]`) ni par la palette grise/bleue par
- * défaut de Tailwind directement dans les composants. Pour changer la
- * palette du site plus tard, il suffit de modifier les valeurs
- * ci-dessous : aucun composant n'a besoin d'être touché.
+ * (`bg-[#f3f4f6]`, `text-[14px]`). Pour changer la palette du site plus
+ * tard, il suffit de modifier les valeurs ci-dessous : aucun composant
+ * n'a besoin d'être touché.
  *
- * Palette (session design, calée sur les maquettes de référence) :
- * fond de page bleu très pâle, cartes blanches avec bordure bleu clair
- * et ombre légère — le bleu reste réservé à la navigation et aux
- * actions normales, le rouge (`--color-erreur`) est réservé au
- * correcteur de copie et aux messages d'erreur, jamais à la navigation.
+ * Palette extraite telle quelle de la maquette de référence fournie
+ * (page-oeuvre.html, variables du `:root`) — noms français ci-dessous
+ * choisis pour rester cohérents avec le reste du code, valeurs
+ * identiques à l'original :
+ *   --encre → --color-ink          --encre-2 → --color-primary
+ *   --encre-3 → --color-primary-tint   --papier → --color-background
+ *   --carte → --color-surface      --trait → --color-border
+ *   --trait-fort → --color-border-strong
+ *   --texte → --color-foreground   --texte-2 → --color-muted-foreground
+ *   --texte-3 → --color-subtle-foreground
+ *   --correction → --color-erreur  --validation → --color-validation
+ *   --or → --color-or (accent réservé au lexique)
+ *
+ * Le bleu (`--color-primary`, `--color-ink`) reste réservé à la
+ * navigation et aux actions normales ; le rouge (`--color-erreur`) est
+ * réservé au correcteur de copie et aux messages d'erreur — jamais à
+ * la navigation.
  */
 @theme {
-  /* Fond de page (body, bannières, barres d'onglets, sections) : bleu
-   * très pâle, jamais blanc pur — c'est ce qui fait ressortir les
-   * cartes blanches posées dessus. */
-  --color-background: #eff6ff;
-  --color-foreground: #1a1a1a;
+  /* Fond de page : bleu très pâle, jamais blanc pur — fait ressortir
+   * les cartes blanches posées dessus. */
+  --color-background: #f5f8ff;
+  --color-foreground: #1a2338;
 
   /* Cartes : toujours blanches, quel que soit le fond de la section
    * qui les contient. */
   --color-surface: #ffffff;
-  /* Même teinte que le fond de page : utilisé pour les sections "en
-   * retrait" (barre d'onglets, bandeau du sélecteur d'œuvre...), qui
-   * doivent se fondre dans le fond bleu pâle plutôt que trancher en
-   * blanc ou en gris neutre. */
-  --color-surface-muted: #eff6ff;
+  /* Sections "en retrait" qui doivent se fondre dans le fond de page
+   * plutôt que trancher : même teinte que --color-background. */
+  --color-surface-muted: #f5f8ff;
 
-  /* Bleu clair, pas gris neutre : bordure des cartes et séparateurs. */
-  --color-border: #bfdbfe;
+  --color-border: #dce6f8;
+  /* Bordure plus marquée : état hover d'une carte/pilule. */
+  --color-border-strong: #c3d4f2;
 
-  --color-primary: #1d4ed8;
+  /* Bleu "actif" : boutons, liens, onglet/pilule sélectionnés. */
+  --color-primary: #2453c4;
   --color-primary-foreground: #ffffff;
-  /* Fond clair pour un état "actif discret" (pilule/onglet inactif,
-   * mot de lexique surligné) : même teinte que primary, très éclaircie. */
-  --color-primary-tint: #dbeafe;
+  /* Bleu très pâle : fond des pilules/badges/cercles inactifs. */
+  --color-primary-tint: #e7eefc;
+  /* Bleu profond : grands titres, logo — plus sombre que --color-primary,
+   * réservé à l'affichage (jamais un élément cliquable). */
+  --color-ink: #16307b;
 
-  --color-muted-foreground: #6b7280;
-
-  --color-accent: #b45309;
+  --color-muted-foreground: #5a6580;
+  /* Encore plus atténué que --color-muted-foreground : texte des
+   * chapitres "à venir", légende de la couverture typographique. */
+  --color-subtle-foreground: #8b95ac;
 
   /* Réservé au correcteur de copie (notes, erreurs signalées dans une
    * copie) et aux messages d'erreur d'interface. Ne jamais utiliser
-   * pour un lien, un bouton de navigation ou un état actif normal —
-   * voir le commentaire en tête de fichier. */
-  --color-erreur: #dc2626;
+   * pour un lien, un bouton de navigation ou un état actif normal. */
+  --color-erreur: #c2372f;
   --color-erreur-foreground: #ffffff;
 
-  /* --font-amiri, --font-playfair et --font-source-sans sont fournies
-   * par next/font/google dans app/layout.tsx (variables CSS injectées
-   * sur <html>). `font-arabe` et `font-serif` sont les noms sémantiques
-   * à utiliser explicitement dans les composants qui en ont besoin ;
-   * `--font-sans` réécrit l'utilitaire Tailwind PAR DÉFAUT (`font-sans`,
-   * hérité par `body` sans classe à poser nulle part) : c'est la police
-   * de tout le texte courant du site (résumés, listes, interface), qui
-   * jusqu'ici retombait sur la police système du visiteur faute de
-   * police chargée pour lui. `font-serif` reste réservé aux grands
-   * titres (titre d'une œuvre, d'un chapitre), posé explicitement là où
-   * demandé — le reste du texte n'en hérite pas automatiquement. */
-  --font-arabe: var(--font-amiri), "Traditional Arabic", serif;
+  /* Validation (ex. badge "chapitre lu"). */
+  --color-validation: #0f6e4c;
+  --color-validation-tint: #dff3ea;
+
+  /* Accent réservé au Lexique (mot cliquable, icône), pour le
+   * distinguer visuellement de la navigation en bleu. */
+  --color-or: #b8873b;
+
+  /* Rayons de coin, plus généreux que les valeurs par défaut de
+   * Tailwind : cartes et boutons arrondis, cohérent avec la maquette. */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Ombre légère à teinte bleutée (pas un simple gris), utilisée par
+   * tous les `shadow-sm` du site : cartes, bannière, barre d'onglets. */
+  --shadow-sm: 0 1px 2px rgba(22, 48, 123, 0.04), 0 4px 16px rgba(22, 48, 123, 0.05);
+
+  /* --font-dm-sans, --font-playfair, --font-spectral et --font-amiri
+   * sont fournies par next/font/google dans app/layout.tsx (variables
+   * CSS injectées sur <html>).
+   * - `--font-sans` (DM Sans) : police par défaut de tout le site
+   *   (utilitaire Tailwind `font-sans`, hérité par `body` sans classe à
+   *   poser nulle part) — interface, navigation, listes.
+   * - `--font-serif` (Playfair Display) : grands titres uniquement
+   *   (titre d'une œuvre, d'un chapitre), posé explicitement.
+   * - `--font-lecture` (Spectral) : texte de lecture longue (résumés) —
+   *   posé explicitement sur ce contenu-là seulement, pas hérité.
+   * - `--font-arabe` (Amiri) : tout texte arabe. */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-lecture: var(--font-spectral), Georgia, serif;
+  --font-arabe: var(--font-amiri), "Traditional Arabic", serif;
 }
 
 body {

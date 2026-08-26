@@ -30,7 +30,7 @@ export default function MotLexique({ entree, children }: MotLexiqueProps) {
         type="button"
         onClick={() => setOuvert((v) => !v)}
         aria-expanded={ouvert}
-        className="rounded-sm bg-primary-tint px-0.5 text-foreground underline decoration-primary decoration-dotted underline-offset-2"
+        className="rounded-sm px-0.5 text-foreground underline decoration-or decoration-dotted underline-offset-2"
       >
         {children}
       </button>

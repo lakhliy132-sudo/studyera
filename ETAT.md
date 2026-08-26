@@ -1,12 +1,17 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après un passage typographie (police de lecture chargée, tailles et
-> interlignes du texte courant, en-têtes éditoriaux) sur la session
-> Design : nav globale, bannières/onglets/pilules repris de deux
-> maquettes de référence, tokens de couleur (fond bleu pâle, bordures
-> bleu clair, ombres), titre arabe réaligné, mot de lexique cliquable
-> dans le résumé d'un chapitre.
+> après une refonte complète du design sur la base d'un fichier
+> HTML/CSS de référence fourni par l'utilisateur (page-oeuvre.html) :
+> nouvelle palette et nouveaux tokens (extraits 1:1 du `:root` de ce
+> fichier), 3 polices (DM Sans / Playfair Display / Spectral, en plus
+> d'Amiri), jeu d'icônes SVG remplaçant tous les emoji, nav/pilules/
+> bannière/onglets/cartes de chapitre reconstruits pour correspondre au
+> pixel près à la référence. Nouvelle règle métier : les boutons "Lire
+> le texte intégral"/"Lecteur bilingue" n'apparaissent que si
+> `oeuvre.mode === "texte_integral"` **et** qu'un premier chapitre
+> existe réellement (avant, ils étaient toujours affichés, même sans
+> destination valable).
 >
 > ⚠️ **Si le serveur de dev devient très lent ou plante (out of
 > memory)** : vérifier `tasklist` pour des processus `node.exe`
@@ -92,6 +97,12 @@ la vérification de rôle pour toutes les policies d'écriture.
 | `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ fil d'Ariane, en-tête, barre d'onglets (Résumé/Personnages/Lexique/Lieux/Sujets liés), résumé bilingue avec **mots de lexique cliquables**, texte intégral (si dispo), aperçu 3 colonnes, bouton "Marquer comme lu", journal d'activité |
 
 ### Composants (`components/`)
+
+⚠️ Liste ci-dessous partiellement périmée sur le style visuel exact
+(rédigée avant la refonte sur fichier de référence, voir la section
+"Refonte visuelle complète" plus bas pour les composants réellement
+nouveaux : `BanniereOeuvre`, `LiensNavigation`, `icones.tsx`) — les
+noms de composants et leur rôle fonctionnel, eux, restent à jour.
 
 `BoutonConnexionGoogle`, `CarteOeuvre`, `CouvertureOeuvre` (image ou
 bloc de remplacement avec le titre), `OngletResume`, `OngletsOeuvre`
@@ -337,13 +348,94 @@ défaut du visiteur — aucune police n'était chargée pour lui.
   en dessous en texte atténué, plutôt qu'une seule ligne dense séparée
   par un tiret.
 
+### Refonte visuelle complète sur fichier de référence fourni
+
+L'utilisateur a fourni un fichier HTML/CSS autonome et déjà abouti
+(`page-oeuvre.html`, non committé — reçu dans la conversation, pas
+dans le dépôt) avec instruction explicite : "reproduis exactement...
+ne change rien au rendu visuel". Traité comme référence faisant
+autorité, remplaçant la palette/les polices/le style de tous les
+passages design précédents (voir sections ci-dessus, en grande partie
+obsolètes depuis).
+
+**Tokens** (`app/globals.css`) — extraits 1:1 du `:root` du fichier de
+référence, noms français choisis pour rester cohérents avec le code :
+fond de page `#f5f8ff`, cartes blanches, bordure `#dce6f8` (+ variante
+`--color-border-strong` `#c3d4f2` pour le survol), bleu actif
+`#2453c4` (`--color-primary`), bleu profond `#16307b`
+(`--color-ink`, réservé à l'affichage — titres/logo, jamais un élément
+cliquable), plus `--color-validation` (vert, badge "lu"),
+`--color-or` (accent réservé au Lexique). Rayons de coin agrandis
+(10/14/20px) et ombre bleutée personnalisée, tous deux appliqués
+globalement via les tokens Tailwind `--radius-*`/`--shadow-sm` — aucun
+composant n'a eu besoin d'être touché pour ça spécifiquement.
+
+**Polices** (`app/layout.tsx`) — trois polices latines au lieu d'une :
+DM Sans (interface, `--font-sans`, par défaut sur tout le site),
+Playfair Display (grands titres, `--font-serif`), Spectral (texte de
+lecture longue — résumés —, nouveau token `--font-lecture`), plus
+Amiri (arabe, inchangé).
+
+**Icônes** (`components/icones.tsx`) — tous les emoji du site (📖 👤 📍
+🔗 ✎ 📚 ☰) remplacés par un jeu d'icônes SVG cohérent (trait
+`currentColor`), repris des chemins exacts du fichier de référence
+quand ils y figurent, complétés dans le même style pour les icônes
+propres à la page chapitre (Lieux, Sujets liés) qui n'y figurent pas.
+
+**Composants reconstruits** : `BarreNavigation` (74px, logo "Medrasti"
+en serif, liens Accueil/Œuvres/Langue/Rédaction, avatar rond pour un
+utilisateur connecté), `LiensNavigation` (nouveau, **client** —
+seul moyen fiable de connaître l'URL courante pour surligner le lien
+actif, `BarreNavigation` étant un Server Component partagé par toutes
+les pages), `SelecteurOeuvres` (fond blanc, pilule inactive fondue
+dans le fond de page), `BanniereOeuvre` (nouveau — carte blanche
+unique encadrant tout le haut de page, avec panneau de couverture
+typographique en dégradé bleu + cercles décoratifs, PAS une
+illustration générée), `CarteBilingue` (cartes imbriquées
+`--color-background`, plus de blanc, texte en `font-lecture`),
+`OngletsOeuvre`/`OngletsChapitre` (carte de pilules avec ombre, onglet
+actif en pastille bleu plein — remplace l'ancien style à
+soulignement), `SommaireChapitres` (carte de chapitre sans ombre,
+titre en Playfair, effet de levée au survol), `BarreProgression`
+("Ta progression" + barre fine).
+
+**Nouvelle règle métier** : `oeuvre.mode === "texte_integral"` ET un
+premier chapitre existant conditionnent désormais l'affichage de "Lire
+le texte intégral"/"Lecteur bilingue" (avant : toujours affichés).
+Vérifié sur les 3 œuvres réelles : `boite-a-merveilles` et `antigone`
+sont en `accompagnement` (pas de bouton, comme dans le fichier de
+référence), `dernier-jour-condamne` est en `texte_integral` mais n'a
+aucun chapitre importé (pas de bouton non plus, faute de destination).
+
+**Écarts assumés par rapport au fichier de référence** :
+- Pas d'année de publication dans le badge auteur ("Ahmed Sefrioui",
+  pas "Ahmed Sefrioui — 1954" comme dans le fichier) : aucune colonne
+  `annee`/`date_publication` n'existe sur `oeuvres`, rien à afficher
+  sans l'inventer.
+- Liste de chapitres : seuls les chapitres réellement importés
+  s'affichent (1 pour `boite-a-merveilles`) — le fichier de référence
+  montre une liste de 12 avec des titres fictifs ("Le Msid", "Les
+  Bijoux"...) pour les chapitres non encore rédigés ; ces titres
+  n'existent dans aucune source de données réelle, ils n'ont donc pas
+  été reproduits (pas de fabrication de contenu).
+- Page chapitre (fil d'Ariane, en-tête, largeur `max-w-3xl` au lieu de
+  1180px) : non couverte par le fichier de référence (qui ne montre
+  que la page œuvre) — même système de tokens/polices/cartes appliqué
+  par cohérence, largeur de lecture plus étroite choisie délibérément
+  (confort de lecture d'un texte long).
+- Points de repère de breakpoints (960px/600px dans le fichier
+  d'origine) approximés par les paliers `sm`/`md` standards de
+  Tailwind plutôt que reproduits au pixel près.
+
 ### Adaptations pragmatiques par rapport aux maquettes littérales
 
-- **Nav** : "Accueil", "Correcteur IA", "Ressources", "À propos" mènent
-  à des pages minimales sans contenu réel (créées cette session pour
-  éviter des liens morts). "Se connecter" et "S'inscrire" pointent tous
-  les deux vers `/connexion` : le site n'a qu'un seul flux (Google
-  OAuth), qui gère indifféremment inscription et connexion.
+- **Nav** (⚠️ description ci-dessous périmée, voir "Refonte visuelle
+  complète" au-dessus pour les liens réels actuels — conservé pour
+  l'historique) : "Accueil", "Correcteur IA", "Ressources", "À propos"
+  menaient à des pages minimales sans contenu réel. "Se connecter" et
+  "S'inscrire" pointent tous les deux vers `/connexion` : le site n'a
+  qu'un seul flux (Google OAuth), qui gère indifféremment inscription
+  et connexion — ce point-là reste vrai.
 - **Bannière d'œuvre** : "Lire le texte intégral" et "Lecteur bilingue"
   mènent tous les deux au premier chapitre — il n'existe qu'une seule
   expérience de lecture aujourd'hui (déjà bilingue), pas un second mode

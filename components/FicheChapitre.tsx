@@ -1,4 +1,5 @@
 import CarteBilingue from "@/components/CarteBilingue";
+import { IconeLivreOuvert } from "@/components/icones";
 import MotLexique from "@/components/MotLexique";
 import { indexerLexique, normaliserMot } from "@/lib/lexique";
 import type { EntreeLexique, Fiche } from "@/types/base-de-donnees";
@@ -73,10 +74,7 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-medium text-muted-foreground">Thèmes</span>
           {themes.map((theme) => (
-            <span
-              key={theme}
-              className="rounded-full bg-primary-tint px-3 py-1 text-sm text-primary"
-            >
+            <span key={theme} className="rounded-full bg-primary-tint px-3 py-1 text-sm text-primary">
               {theme}
             </span>
           ))}
@@ -84,13 +82,14 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
       )}
 
       {aDesPointsCles && (
-        <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5 shadow-sm">
-          <p className="text-xs font-semibold tracking-wide text-primary uppercase">
+        <div className="flex flex-col gap-2.5 rounded-md border border-border bg-background p-5">
+          <p className="flex items-center gap-2 text-sm font-bold text-primary">
+            <IconeLivreOuvert />
             Points clés
           </p>
           <ul className="flex flex-col gap-2">
             {fiche.points_cles_fr.map((point) => (
-              <li key={point} className="flex gap-2 text-base leading-relaxed text-foreground">
+              <li key={point} className="flex gap-2 font-lecture text-[15px] leading-relaxed text-foreground">
                 <span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-primary" />
                 {point}
               </li>
