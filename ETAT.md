@@ -1,7 +1,16 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après une refonte complète du design sur la base d'un fichier
+> après l'ajout d'un vrai résumé (`essentiel_fr`/`essentiel_ar`) pour
+> *La Boîte à Merveilles* — rédigé par Claude à partir de sa
+> connaissance du roman, PAS tiré du fichier Excel (⚠️ la version arabe
+> n'a pas été relue par un locuteur, à vérifier avant usage en classe)
+> — et d'une illustration originale au trait (`IllustrationEnfantBoite`,
+> un enfant portant sa boîte à merveilles) remplaçant le dégradé nu du
+> panneau de couverture. Ni photo ni image générée par IA : dessinée à
+> la main en SVG.
+>
+> Contexte : refonte complète du design sur la base d'un fichier
 > HTML/CSS de référence fourni par l'utilisateur (page-oeuvre.html) :
 > nouvelle palette et nouveaux tokens (extraits 1:1 du `:root` de ce
 > fichier), 3 polices (DM Sans / Playfair Display / Spectral, en plus
@@ -347,6 +356,27 @@ défaut du visiteur — aucune police n'était chargée pour lui.
 - Personnages/lieux/sujets : nom en gras sur une ligne, rôle/description
   en dessous en texte atténué, plutôt qu'une seule ligne dense séparée
   par un tiret.
+
+### Contenu rédigé par Claude (à réviser) et illustration ajoutée
+
+- `oeuvres.essentiel_fr`/`essentiel_ar` de `boite-a-merveilles` : ces
+  deux colonnes existaient depuis le début mais étaient vides pour les
+  3 œuvres (la feuille Excel ne les remplit pas). Sur demande directe,
+  rédigé un résumé de l'intrigue à partir de la connaissance générale
+  du roman (pas de sa source Excel) et écrit directement en base via
+  `SUPABASE_SERVICE_ROLE_KEY` (même clé que `scripts/importer.ts`).
+  ⚠️ **La version arabe est une traduction de Claude, non relue par un
+  locuteur** — à faire vérifier avant un usage en classe. Si le fichier
+  Excel est un jour réimporté avec ces colonnes remplies, il écrasera
+  ce texte (comportement normal de l'upsert).
+- `components/IllustrationEnfantBoite.tsx` (nouveau) : illustration
+  originale au trait (SVG dessiné à la main, pas une photo ni une
+  image générée par IA) représentant un enfant portant sa boîte à
+  merveilles, dans le même langage graphique que `components/icones.tsx`.
+  Remplace le dégradé nu du panneau de couverture de `BanniereOeuvre`
+  — le titre n'y est plus répété (déjà affiché en grand dans la
+  colonne de gauche), l'illustration devient le centre d'attention du
+  panneau.
 
 ### Refonte visuelle complète sur fichier de référence fourni
 

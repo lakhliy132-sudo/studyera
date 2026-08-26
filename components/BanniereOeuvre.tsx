@@ -3,6 +3,7 @@ import Link from "next/link";
 import BarreProgression from "@/components/BarreProgression";
 import CarteBilingue from "@/components/CarteBilingue";
 import { IconeAuteur } from "@/components/icones";
+import IllustrationEnfantBoite from "@/components/IllustrationEnfantBoite";
 import type { Chapitre, Oeuvre } from "@/types/base-de-donnees";
 
 interface BanniereOeuvreProps {
@@ -85,14 +86,21 @@ export default function BanniereOeuvre({
 }
 
 /**
- * Panneau de couverture typographique : dégradé bleu + titre, PAS une
- * illustration générée (demande explicite). Deux cercles décoratifs en
- * bordure fine reproduisent les pseudo-éléments `::before`/`::after` de
- * la maquette d'origine (non disponibles directement en JSX).
+ * Panneau de couverture : dégradé bleu + illustration au trait d'un
+ * enfant portant sa boîte à merveilles (IllustrationEnfantBoite) — pas
+ * une photo ni une image générée par IA, un dessin original dans le
+ * même langage graphique que les icônes du site. Deux cercles
+ * décoratifs en bordure fine reproduisent les pseudo-éléments
+ * `::before`/`::after` de la maquette d'origine (non disponibles
+ * directement en JSX).
+ *
+ * Le titre n'est volontairement pas répété ici (il l'est déjà, en
+ * grand, dans la colonne de gauche) : l'illustration devient le
+ * centre d'attention du panneau plutôt que du texte redondant.
  */
 function CouverturePanneau({ oeuvre }: { oeuvre: Oeuvre }) {
   return (
-    <div className="relative order-first flex min-h-[220px] flex-col justify-center overflow-hidden bg-[linear-gradient(150deg,#1b3a8f,#16307b_55%,#0f1f4f)] px-7 py-8 text-white md:order-none md:min-h-0 md:px-9 md:py-11">
+    <div className="relative order-first flex min-h-[260px] flex-col items-center overflow-hidden bg-[linear-gradient(150deg,#1b3a8f,#16307b_55%,#0f1f4f)] px-7 py-8 text-center text-white md:order-none md:min-h-0 md:px-9 md:py-11">
       <div
         aria-hidden="true"
         className="absolute -top-[40%] -right-[30%] size-[340px] rounded-full border border-white/[0.13]"
@@ -105,15 +113,13 @@ function CouverturePanneau({ oeuvre }: { oeuvre: Oeuvre }) {
       <p className="relative text-[11px] font-medium tracking-[0.24em] text-[#9db6ec] uppercase">
         Œuvre au programme
       </p>
-      <p className="relative mt-4 font-serif text-[28px] leading-[1.15] font-semibold md:text-[36px]">
-        {oeuvre.titre_fr}
-      </p>
-      {oeuvre.titre_ar && (
-        <p dir="rtl" lang="ar" className="relative mt-3.5 w-fit font-arabe text-xl text-[#bacdf4]">
-          {oeuvre.titre_ar}
-        </p>
-      )}
-      <p className="relative mt-auto pt-6 text-sm text-[#9db6ec] md:pt-8">{oeuvre.auteur}</p>
+
+      <div className="relative flex flex-1 items-center justify-center py-4">
+        <IllustrationEnfantBoite className="size-36 text-[#bacdf4] md:size-40" />
+      </div>
+
+      <p className="relative font-serif text-lg font-semibold">{oeuvre.titre_fr}</p>
+      <p className="relative mt-1 text-sm text-[#9db6ec]">{oeuvre.auteur}</p>
     </div>
   );
 }
