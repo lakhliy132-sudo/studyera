@@ -1,8 +1,8 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après la création de la page `/oeuvres/[slug]/[numero]` et de la liste
-> des copies dans `/administration`.
+> après la Session 4 (progression de lecture) : bouton "Marquer comme
+> lu", coche dans le sommaire, barre d'avancement, journal d'activité.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -55,8 +55,8 @@ que les siennes (`auth.uid() = user_id`).
 | `cours` | slug, titre, categorie, contenu_mdx, filiere, ordre | lecture publique, écriture admin |
 | `sujets` | oeuvre_id, chapitre_id, titre, consigne, type | lecture publique, écriture admin |
 | `copies` | user_id, sujet_id, image_url, transcription, note_forme/fond/total, erreurs, points_forts, axes, commentaire, cout_tokens | élève : select+insert sur ses copies, **pas d'update** (réservé à un futur traitement serveur via service_role) ; admin : select+update de toutes |
-| `progression` | user_id, chapitre_id, lu, termine_le (PK composite) | élève gère librement les siennes |
-| `activite` | user_id, type, ressource_id/titre | élève : select+insert (append-only, pas d'update) |
+| `progression` | user_id, chapitre_id, lu, termine_le (PK composite) | élève gère librement les siennes ; **isolation testée concrètement**, voir section 4 |
+| `activite` | user_id, type, ressource_id/titre | élève : select+insert (append-only, pas d'update) ; alimentée à chaque ouverture de chapitre (type `consultation_chapitre`) |
 | `quota_jour` | user_id, date, corrections_utilisees | élève : select seule (pas d'écriture — l'incrément devra venir d'un contexte serveur de confiance) |
 
 Fonction utilitaire : `public.est_admin()` (SQL, `stable`), centralise
@@ -71,22 +71,25 @@ la vérification de rôle pour toutes les policies d'écriture.
 | `/tableau-de-bord` | `(eleve)` | middleware, connecté requis | ✅ page minimale (affiche l'email) |
 | `/administration` | `(admin)` | middleware, connecté + `role=admin` | ✅ affiche l'email + liste des copies déposées (`TableauCopies`), vide tant qu'aucune UI élève ne permet d'en déposer une |
 | `/oeuvres` | `(public)` | aucune | ✅ grille des œuvres, filière codée en dur (`"1bac"`) |
-| `/oeuvres/[slug]` | `(public)` | aucune | ⚠️ header + barre d'onglets fonctionnels ; seul l'onglet **Résumé** a du contenu réel, les 4 autres (Personnages, Lexique, Sujets, Biographie) affichent "Bientôt disponible" alors que les données existent déjà en base |
-| `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ créée : texte intégral (ou "Bientôt disponible"), fiche de synthèse, lexique du chapitre, navigation chapitre précédent/suivant |
+| `/oeuvres/[slug]` | `(public)` | aucune | ⚠️ header (+ barre d'avancement si connecté) et barre d'onglets fonctionnels ; seul l'onglet **Résumé** a du contenu réel, les 4 autres (Personnages, Lexique, Sujets, Biographie) affichent "Bientôt disponible" alors que les données existent déjà en base |
+| `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ texte intégral (ou "Bientôt disponible"), fiche de synthèse, lexique, navigation précédent/suivant, bouton "Marquer comme lu" (si connecté), journal d'activité |
 
 ### Composants (`components/`)
 
 `BoutonConnexionGoogle`, `CarteOeuvre`, `CouvertureOeuvre` (image ou
 bloc de remplacement avec le titre), `OngletResume`, `OngletsOeuvre`
 (barre d'onglets, Server Component, navigation par query param
-`?onglet=`), `SommaireChapitres` (liste des chapitres avec case de
-progression **affichée mais non cochable**, pas encore branchée à la
-table `progression`), `TexteChapitre` (texte intégral d'un chapitre ou
-message "Bientôt disponible"), `FicheChapitre` (résumé/thèmes/points
-clés d'un chapitre), `LexiqueChapitre` (mots de vocabulaire d'un
-chapitre) — ces trois derniers utilisés par la page
-`/oeuvres/[slug]/[numero]`. `TableauCopies` (liste des copies pour
-`/administration`, ou message "Aucune copie déposée pour l'instant").
+`?onglet=`), `SommaireChapitres` (liste des chapitres, coche de
+progression en lecture seule — cochage réel uniquement depuis la page
+du chapitre), `TexteChapitre` (texte intégral d'un chapitre ou message
+"Bientôt disponible"), `FicheChapitre` (résumé/thèmes/points clés d'un
+chapitre), `LexiqueChapitre` (mots de vocabulaire d'un chapitre),
+`BoutonMarquerLu` (**client**, bascule "Marquer comme lu" / "Lu ✓" avec
+mise à jour optimiste ; affiche une invite de connexion si le
+visiteur n'est pas connecté), `BarreProgression` ("N chapitres sur
+total", affichée dans l'en-tête de `/oeuvres/[slug]` si connecté).
+`TableauCopies` (liste des copies pour `/administration`, ou message
+"Aucune copie déposée pour l'instant").
 
 ### `lib/`
 
@@ -97,6 +100,10 @@ chapitre) — ces trois derniers utilisés par la page
   chapitres, fiches, paragraphes, lexique) pour les Server Components
 - `lib/supabase/admin.ts` — lecture des données réservées à l'espace
   admin (copies, avec sujet et identité élève joints manuellement)
+- `lib/supabase/progression.ts` — lecture de la progression de lecture
+  de l'utilisateur connecté (par œuvre entière ou par chapitre)
+- `lib/supabase/activite.ts` — écriture dans le journal d'activité,
+  avec déduplication (pas de doublon si rechargement dans la minute)
 
 ### Scripts
 
@@ -144,14 +151,17 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   depuis `SommaireChapitres` ne renvoie plus de 404.
 - ✅ `/administration` liste désormais les copies déposées (vide pour
   l'instant, voir plus bas).
+- ✅ Progression de lecture (Session 4) : bouton "Marquer comme lu" sur
+  la page d'un chapitre (mise à jour optimiste), coche dans le sommaire,
+  barre d'avancement sur la page œuvre, journal d'activité à chaque
+  consultation de chapitre. Isolation RLS entre élèves vérifiée
+  concrètement (voir section 4).
 
 **Commencé mais incomplet :**
 - Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]` :
   UI présente (barre d'onglets fonctionnelle), contenu non branché alors
   que les tables/colonnes existent déjà (`personnages`, `lexique`,
   `sujets`, `oeuvres.biographie_fr/ar`).
-- Case de progression dans `SommaireChapitres` : affichée, pas
-  cochable, pas connectée à la table `progression`.
 - `/administration` : affiche les copies, mais aucune gestion de
   contenu (œuvres/chapitres) ni gestion des rôles.
 - Filière codée en dur (`"1bac"`) dans `app/(public)/oeuvres/page.tsx` —
@@ -165,8 +175,6 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
 - Aucun mécanisme serveur pour incrémenter `quota_jour` ou remplir les
   champs de correction de `copies` (prévu pour un contexte
   `service_role`, explicitement hors périmètre des sessions passées).
-- Table `activite` (journal d'activité) non alimentée nulle part dans
-  l'UI.
 - Texte intégral des chapitres (`paragraphes`) : le fichier Excel n'a
   pas de feuille "Paragraphes" — rien à importer tant qu'elle n'existe
   pas. Le script est prêt à la lire dès qu'elle sera ajoutée (colonnes
@@ -194,6 +202,27 @@ Points corrects observés :
   documenté dans `.env.example`) — sécurité réelle reposant sur les
   policies RLS, ce qui est le modèle correct pour Supabase.
 - `.env.local` et le contenu de `data/` correctement ignorés par git.
+- **Isolation RLS de `progression` testée concrètement** (session 4,
+  script jetable non committé) : deux vrais comptes élève créés via
+  l'API admin Supabase (puis supprimés à la fin du test), connectés
+  chacun avec leur propre session. Résultat : élève A ne voit aucune
+  ligne de la progression d'élève B (`select` filtré à 0 ligne, pas une
+  erreur masquée), ne peut pas la modifier (`update` : 0 ligne
+  affectée), et une tentative d'insérer une ligne de progression *au
+  nom* de B (`user_id = B` depuis la session de A) est explicitement
+  rejetée par Postgres ("new row violates row-level security policy").
+  Les trois angles (lecture, modification, usurpation à l'insertion)
+  sont couverts.
+- **Visiteur non connecté sur une page de chapitre** (public par
+  design, pas de redirection) : `user` vaut `null` côté serveur, ce qui
+  fait "tomber" en cascade tous les points touchant la progression sans
+  aucune requête tentée — `recupererProgressionChapitre`/`Oeuvre`
+  renvoient un résultat vide sans appeler Supabase, `enregistrerActivite`
+  s'arrête avant toute requête, `BoutonMarquerLu` affiche une invite
+  "Connecte-toi" à la place du bouton, `BarreProgression` n'est pas
+  rendue. Aucun de ces chemins ne tente d'écrire en tant qu'anonyme :
+  il n'y a donc rien à bloquer côté RLS pour ce cas (contrairement à
+  l'isolation entre élèves, qui elle repose sur les policies).
 
 Points de vigilance (pas des failles actives, mais à garder en tête) :
 - Nouvelle policy `SELECT` sur `profils` pour les admins (migration
@@ -218,16 +247,24 @@ Aucune clé ou secret trouvé committé dans le code ou les migrations.
 
 ## 5. Prochaines étapes suggérées
 
-1. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
+1. **Session 5 (en attente)** : refonte de `/tableau-de-bord` (blocs
+   Reprendre / Rédaction / Progression / Dernières activités),
+   demandée dans le même message que la session 4, pas encore traitée.
+2. **Design (en attente)** : refonte visuelle générale sur la base de
+   deux maquettes fournies (nav bar, sélecteur d'œuvre en pilules,
+   bannière, onglets, cartes de chapitres, popover de lexique) — décrite
+   mais pas encore codée, à faire après la session 5 pour éviter de
+   restyler deux fois le même écran.
+3. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
    dans le dashboard Supabase (voir avertissement en tête de fichier).
-2. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
+4. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
    `/oeuvres/[slug]` sur les données déjà en base.
-3. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
+5. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
    de la filière codée en dur) ou reporté.
-4. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
+6. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
    pièce manquante pour que `/administration` affiche des données
    réelles.
-5. Si le texte intégral des œuvres devient disponible, ajouter une
+7. Si le texte intégral des œuvres devient disponible, ajouter une
    feuille "Paragraphes" au fichier Excel (colonnes : oeuvre_slug,
    chapitre_numero, ordre, texte_fr, texte_ar) puis relancer
    `npm run importer` — le script est déjà prêt à la lire.

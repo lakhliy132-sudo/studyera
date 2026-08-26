@@ -5,6 +5,7 @@ import type { Chapitre, Oeuvre } from "@/types/base-de-donnees";
 interface OngletResumeProps {
   oeuvre: Oeuvre;
   chapitres: Chapitre[];
+  chapitresLusIds: Set<string>;
 }
 
 /**
@@ -18,7 +19,7 @@ interface OngletResumeProps {
  *   couverture, qui apparaît pourtant en premier dans le DOM pour le
  *   mobile)
  */
-export default function OngletResume({ oeuvre, chapitres }: OngletResumeProps) {
+export default function OngletResume({ oeuvre, chapitres, chapitresLusIds }: OngletResumeProps) {
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
@@ -40,7 +41,11 @@ export default function OngletResume({ oeuvre, chapitres }: OngletResumeProps) {
         </div>
       </div>
 
-      <SommaireChapitres slug={oeuvre.slug} chapitres={chapitres} />
+      <SommaireChapitres
+        slug={oeuvre.slug}
+        chapitres={chapitres}
+        chapitresLusIds={chapitresLusIds}
+      />
     </div>
   );
 }

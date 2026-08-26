@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import BoutonMarquerLu from "@/components/BoutonMarquerLu";
 import FicheChapitre from "@/components/FicheChapitre";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
+import { enregistrerActivite } from "@/lib/supabase/activite";
 import {
   recupererChapitreParNumero,
   recupererChapitresOeuvre,
@@ -12,6 +14,8 @@ import {
   recupererOeuvreParSlug,
   recupererParagraphesChapitre,
 } from "@/lib/supabase/contenu";
+import { recupererProgressionChapitre } from "@/lib/supabase/progression";
+import { creerClientServeur } from "@/lib/supabase/server";
 
 interface PagePropsChapitre {
   params: Promise<{ slug: string; numero: string }>;
@@ -34,12 +38,27 @@ export default async function PageChapitre({ params }: PagePropsChapitre) {
   const chapitre = await recupererChapitreParNumero(oeuvre.id, numero);
   if (!chapitre) notFound();
 
-  const [tousLesChapitres, fiche, paragraphes, lexique] = await Promise.all([
+  const supabase = await creerClientServeur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [tousLesChapitres, fiche, paragraphes, lexique, chapitreLu] = await Promise.all([
     recupererChapitresOeuvre(oeuvre.id),
     recupererFicheChapitre(chapitre.id),
     recupererParagraphesChapitre(chapitre.id),
     recupererLexiqueChapitre(chapitre.id),
+    recupererProgressionChapitre(user?.id ?? null, chapitre.id),
   ]);
+
+  // Journalisation de la consultation (session 4) : ne bloque jamais le
+  // rendu de la page en cas d'erreur, et n'écrit rien pour un visiteur
+  // non connecté — voir les commentaires dans lib/supabase/activite.ts.
+  await enregistrerActivite(user?.id ?? null, {
+    type: "consultation_chapitre",
+    ressourceId: chapitre.id,
+    ressourceTitre: `${oeuvre.titre_fr} — ${chapitre.titre_fr}`,
+  });
 
   const indexActuel = tousLesChapitres.findIndex((c) => c.id === chapitre.id);
   const chapitrePrecedent = indexActuel > 0 ? tousLesChapitres[indexActuel - 1] : null;
@@ -77,6 +96,8 @@ export default async function PageChapitre({ params }: PagePropsChapitre) {
       <FicheChapitre fiche={fiche} />
 
       <LexiqueChapitre entrees={lexique} />
+
+      <BoutonMarquerLu connecte={Boolean(user)} chapitreId={chapitre.id} luInitial={chapitreLu} />
 
       <nav
         aria-label="Chapitres précédent et suivant"
