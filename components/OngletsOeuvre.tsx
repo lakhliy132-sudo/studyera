@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 const ONGLETS = [
-  { cle: "resume", libelle: "Résumé" },
-  { cle: "personnages", libelle: "Personnages" },
-  { cle: "lexique", libelle: "Lexique" },
-  { cle: "sujets", libelle: "Sujets" },
-  { cle: "biographie", libelle: "Biographie" },
+  { cle: "resume", libelle: "Résumé", icone: "📖" },
+  { cle: "personnages", libelle: "Personnages", icone: "👤" },
+  { cle: "lexique", libelle: "Lexique", icone: "📖" },
+  { cle: "sujets", libelle: "Sujets", icone: "📄" },
+  { cle: "biographie", libelle: "Biographie", icone: "✎" },
 ] as const;
 
 export type CleOnglet = (typeof ONGLETS)[number]["cle"];
@@ -31,7 +31,11 @@ interface OngletsOeuvreProps {
  * qui change le query param `onglet` dans l'URL (navigation gérée par
  * Next.js, pas de JavaScript client nécessaire pour ce composant). Le
  * défilement horizontal en mobile est du CSS pur (`overflow-x-auto` +
- * largeur minimale sur la liste, voir `min-w-max`).
+ * largeur minimale sur la liste, voir `min-w-max`) : si l'onglet actif
+ * n'est pas dans les premiers visibles à l'ouverture (ex. lien direct
+ * vers `?onglet=biographie`), il reste atteignable en faisant défiler
+ * mais n'est pas recentré automatiquement — accepté comme limite plutôt
+ * que d'ajouter du JS à ce composant pour un cas rare.
  *
  * `sticky top-0` : reste visible pendant le défilement de la page, comme
  * demandé.
@@ -42,7 +46,7 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
       aria-label="Sections de l'œuvre"
       className="sticky top-0 z-10 overflow-x-auto border-b border-border bg-surface"
     >
-      <ul className="flex min-w-max gap-1 px-4">
+      <ul className="mx-auto flex min-w-max max-w-4xl gap-1 px-4">
         {ONGLETS.map((onglet) => {
           const actif = onglet.cle === ongletActif;
           const href =
@@ -57,10 +61,11 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "block border-b-2 border-primary px-3 py-3 text-sm font-medium whitespace-nowrap text-primary"
-                    : "block border-b-2 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground"
+                    ? "flex items-center gap-1.5 border-b-2 border-primary px-3 py-3 text-sm font-medium whitespace-nowrap text-primary"
+                    : "flex items-center gap-1.5 border-b-2 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
                 }
               >
+                <span aria-hidden="true">{onglet.icone}</span>
                 {onglet.libelle}
               </Link>
             </li>

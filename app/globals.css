@@ -11,8 +11,10 @@
  * palette du site plus tard, il suffit de modifier les valeurs
  * ci-dessous : aucun composant n'a besoin d'être touché.
  *
- * Palette volontairement neutre pour l'instant (pas de design
- * approfondi demandé cette session) : à affiner plus tard.
+ * Palette (session design) : le bleu reste réservé à la navigation et
+ * aux actions normales, le rouge (`--color-erreur`) est réservé au
+ * correcteur de copie et aux messages d'erreur — jamais utilisé pour de
+ * la navigation ou un état actif normal.
  */
 @theme {
   --color-background: #ffffff;
@@ -25,10 +27,20 @@
 
   --color-primary: #1d4ed8;
   --color-primary-foreground: #ffffff;
+  /* Fond clair pour un état "actif discret" (pilule/onglet inactif,
+   * mot de lexique surligné) : même teinte que primary, très éclaircie. */
+  --color-primary-tint: #dbeafe;
 
   --color-muted-foreground: #6b7280;
 
   --color-accent: #b45309;
+
+  /* Réservé au correcteur de copie (notes, erreurs signalées dans une
+   * copie) et aux messages d'erreur d'interface. Ne jamais utiliser
+   * pour un lien, un bouton de navigation ou un état actif normal —
+   * voir le commentaire en tête de fichier. */
+  --color-erreur: #dc2626;
+  --color-erreur-foreground: #ffffff;
 
   /* --font-amiri est fournie par next/font/google dans app/layout.tsx
    * (variable CSS injectée sur <html>). `font-arabe` est le nom

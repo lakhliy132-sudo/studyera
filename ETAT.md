@@ -1,8 +1,9 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après la Session 5 (tableau de bord) : blocs Reprendre / Rédaction /
-> Progression / Dernières activités sur `/tableau-de-bord`.
+> après la session Design : nav globale, bannières/onglets/pilules
+> repris de deux maquettes de référence, mot de lexique cliquable dans
+> le résumé d'un chapitre.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -72,9 +73,11 @@ la vérification de rôle pour toutes les policies d'écriture.
 | `/redaction/nouvelle` | `(eleve)` | middleware, connecté requis | ✅ page minimale ("Bientôt disponible"), destination du bouton "Corriger une copie" |
 | `/activite` | `(eleve)` | middleware, connecté requis | ✅ historique complet ("Tout voir" depuis le tableau de bord) |
 | `/administration` | `(admin)` | middleware, connecté + `role=admin` | ✅ affiche l'email + liste des copies déposées (`TableauCopies`), vide tant qu'aucune UI élève ne permet d'en déposer une |
+| `/` | `(public)` | aucune | ✅ accueil minimal, lien vers /oeuvres |
+| `/ressources`, `/a-propos` | `(public)` | aucune | ✅ pages minimales ("Bientôt disponible"), destinations de la nav |
 | `/oeuvres` | `(public)` | aucune | ✅ grille des œuvres, filière codée en dur (`"1bac"`) |
-| `/oeuvres/[slug]` | `(public)` | aucune | ⚠️ header (+ barre d'avancement si connecté) et barre d'onglets fonctionnels ; seul l'onglet **Résumé** a du contenu réel, les 4 autres (Personnages, Lexique, Sujets, Biographie) affichent "Bientôt disponible" alors que les données existent déjà en base |
-| `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ texte intégral (ou "Bientôt disponible"), fiche de synthèse, lexique, navigation précédent/suivant, bouton "Marquer comme lu" (si connecté), journal d'activité |
+| `/oeuvres/[slug]` | `(public)` | aucune | ✅ sélecteur d'œuvre en pilules, bannière (cartes résumé fr/ar, badge auteur, boutons d'action, barre d'avancement si connecté) toujours visible, barre d'onglets ; seul l'onglet **Résumé** a du contenu réel |
+| `/oeuvres/[slug]/[numero]` (détail d'un chapitre) | `(public)` | aucune | ✅ fil d'Ariane, en-tête, barre d'onglets (Résumé/Personnages/Lexique/Lieux/Sujets liés), résumé bilingue avec **mots de lexique cliquables**, texte intégral (si dispo), aperçu 3 colonnes, bouton "Marquer comme lu", journal d'activité |
 
 ### Composants (`components/`)
 
@@ -98,13 +101,31 @@ Blocs du tableau de bord (session 5), chacun avec son propre état
 "aucun bloc vide") : `BlocReprendre`, `BlocRedaction`, `BlocProgression`
 (3 chiffres + une barre par œuvre), `BlocDernieresActivites`.
 
+Session design (nav + maquettes) : `BarreNavigation` (nav globale,
+menu mobile en `<details>` natif, sans JS), `BoutonDeconnexion`
+(**client**, seul morceau interactif de la nav), `SelecteurOeuvres`
+(pilules d'œuvre), `CarteBilingue` (paire de cartes résumé fr/ar,
+réutilisée dans la bannière d'œuvre et l'onglet Résumé d'un chapitre),
+`MotLexique` (**client**, mot cliquable ouvrant sa définition — popover
+en desktop, feuille pleine largeur depuis le bas en mobile),
+`OngletsChapitre` (barre d'onglets du chapitre, même mécanisme que
+`OngletsOeuvre`), `PersonnagesChapitre`, `LieuxChapitre`,
+`SujetsChapitre` (listes utilisées à la fois en aperçu 3 colonnes et
+comme contenu de leur propre onglet).
+
 ### `lib/`
 
 - `lib/supabase/client.ts` — client navigateur (`createBrowserClient`)
 - `lib/supabase/server.ts` — client serveur (`createServerClient`,
   cookies), à recréer à chaque requête
 - `lib/supabase/contenu.ts` — lecture du contenu public (œuvres,
-  chapitres, fiches, paragraphes, lexique) pour les Server Components
+  chapitres, fiches, paragraphes, lexique, personnages et sujets d'un
+  chapitre précis) pour les Server Components
+- `lib/lexique.ts` — normalisation d'un mot pour faire correspondre le
+  texte d'un chapitre à une entrée `lexique.mot` (retire les articles
+  de tête, élidés ou séparés — voir les commentaires du fichier pour
+  les limites connues : pas d'expressions à plusieurs mots, pas
+  d'accord singulier/pluriel)
 - `lib/supabase/admin.ts` — lecture des données réservées à l'espace
   admin (copies, avec sujet et identité élève joints manuellement)
 - `lib/supabase/progression.ts` — lecture de la progression de lecture
@@ -176,12 +197,24 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   `Bloc*`) plutôt qu'un "0" ou une zone blanche pour un nouvel élève.
   `/redaction/nouvelle` (stub) et `/activite` (historique complet)
   créées comme destinations de ce tableau de bord.
+- ✅ Session Design : nav globale (`BarreNavigation`, avec état connecté/
+  déconnecté), sélecteur d'œuvre en pilules, bannière d'œuvre et de
+  chapitre reprises des deux maquettes fournies, mots de lexique
+  cliquables dans le résumé d'un chapitre (popover desktop / feuille
+  mobile), nouveaux onglets **du chapitre** Personnages/Lieux/Sujets
+  liés branchés sur les vraies données. Détail des choix et des
+  quelques écarts assumés par rapport aux maquettes littérales
+  ci-dessous ("Adaptations pragmatiques").
+- Attention à ne pas confondre avec le point suivant : ce sont les
+  onglets **du chapitre** qui sont branchés cette session, pas les
+  onglets **de l'œuvre** (Personnages/Lexique/Sujets/Biographie de
+  `/oeuvres/[slug]`), toujours "Bientôt disponible".
 
 **Commencé mais incomplet :**
-- Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]` :
-  UI présente (barre d'onglets fonctionnelle), contenu non branché alors
-  que les tables/colonnes existent déjà (`personnages`, `lexique`,
-  `sujets`, `oeuvres.biographie_fr/ar`).
+- Onglets Personnages, Lexique, Sujets, Biographie de `/oeuvres/[slug]`
+  (au niveau de l'**œuvre** entière, pas du chapitre) : UI présente
+  (barre d'onglets fonctionnelle, restylée cette session), contenu
+  toujours non branché alors que les tables/colonnes existent déjà.
 - `/administration` : affiche les copies, mais aucune gestion de
   contenu (œuvres/chapitres) ni gestion des rôles.
 - Filière codée en dur (`"1bac"`, désormais centralisée dans
@@ -211,6 +244,39 @@ local et est correctement ignoré par git (`.gitignore`), tout comme
   de dossier de tests).
 - `README.md` est resté celui par défaut de `create-next-app`, non
   spécifique au projet.
+
+### Adaptations pragmatiques par rapport aux maquettes littérales
+
+- **Nav** : "Accueil", "Correcteur IA", "Ressources", "À propos" mènent
+  à des pages minimales sans contenu réel (créées cette session pour
+  éviter des liens morts). "Se connecter" et "S'inscrire" pointent tous
+  les deux vers `/connexion` : le site n'a qu'un seul flux (Google
+  OAuth), qui gère indifféremment inscription et connexion.
+- **Bannière d'œuvre** : "Lire le texte intégral" et "Lecteur bilingue"
+  mènent tous les deux au premier chapitre — il n'existe qu'une seule
+  expérience de lecture aujourd'hui (déjà bilingue), pas un second mode
+  "lecteur bilingue" distinct.
+- **Illustrations** : portraits d'auteur générés par IA retirés
+  partout (demandé explicitement) ; illustration décorative de la
+  bannière de chapitre non reprise du tout (pas seulement masquée en
+  mobile) pour rester cohérent avec l'absence d'illustration générée
+  côté œuvre.
+- **Popover de lexique** : feuille pleine largeur en mobile (recommandé
+  avant codage), popover flottante ancrée sous le mot en desktop —
+  aucune librairie de positionnement dans le projet, donc pas de
+  recalage automatique en cas de débordement proche du bord d'écran
+  (rare en desktop vu la largeur de colonne).
+- **Onglets** (œuvre et chapitre) : pas de scroll-into-view JS si on
+  arrive directement sur un onglet non visible au chargement — accepté
+  comme limite d'un composant volontairement sans JS.
+- **Sommaire des chapitres** : reste une liste verticale (cartes
+  empilées, badge numéroté rond) plutôt que la rangée de cartes à
+  défilement horizontal de la maquette — plus accessible et plus sûr
+  sur mobile pour un nombre de chapitres qui peut grandir.
+- **Mot de lexique cliquable** : ne détecte qu'un mot isolé par
+  occurrence (première seulement), pas les expressions à plusieurs mots
+  ni les accords singulier/pluriel/conjugaison — voir les limites
+  documentées dans `lib/lexique.ts`.
 
 ## 4. Sécurité — état des lieux
 
@@ -270,21 +336,22 @@ Aucune clé ou secret trouvé committé dans le code ou les migrations.
 
 ## 5. Prochaines étapes suggérées
 
-1. **Design (en attente)** : refonte visuelle générale sur la base de
-   deux maquettes fournies (nav bar, sélecteur d'œuvre en pilules,
-   bannière, onglets, cartes de chapitres, popover de lexique) — pas
-   encore décrite ni codée.
-2. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
+1. Appliquer la migration `20260829000000_lecture_admin_profils.sql`
    dans le dashboard Supabase (voir avertissement en tête de fichier).
-3. Confirmer la vraie valeur de `QUOTA_QUOTIDIEN_MAX` (actuellement 3,
+2. Confirmer la vraie valeur de `QUOTA_QUOTIDIEN_MAX` (actuellement 3,
    inventé — voir section 3).
-4. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
-   `/oeuvres/[slug]` sur les données déjà en base.
-5. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
+3. Brancher les onglets Personnages / Lexique / Sujets / Biographie de
+   `/oeuvres/[slug]` (niveau œuvre) sur les données déjà en base — les
+   onglets équivalents du **chapitre** le sont déjà depuis cette session.
+4. Décider si `profils.filiere` doit être ajouté maintenant (déblocage
    de la filière codée en dur) ou reporté.
-6. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
+5. Construire l'UI élève de dépôt de copie (photo → `copies`), seule
    pièce manquante pour que `/administration` et le bloc Progression du
    tableau de bord affichent des données réelles côté rédaction.
+6. Revoir les adaptations pragmatiques listées en section 3 si l'une
+   d'elles doit finalement suivre la maquette à la lettre (ex. un vrai
+   contenu pour Correcteur IA/Ressources/À propos, ou une distinction
+   réelle entre "texte intégral" et "lecteur bilingue").
 7. Si le texte intégral des œuvres devient disponible, ajouter une
    feuille "Paragraphes" au fichier Excel (colonnes : oeuvre_slug,
    chapitre_numero, ordre, texte_fr, texte_ar) puis relancer

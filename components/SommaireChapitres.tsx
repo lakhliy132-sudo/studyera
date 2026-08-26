@@ -9,15 +9,16 @@ interface SommaireChapitresProps {
 }
 
 /**
- * Liste des chapitres d'une œuvre (bloc du bas de l'onglet Résumé).
+ * Liste des chapitres d'une œuvre (contenu de l'onglet Résumé).
  *
- * La coche de progression (session 4) reflète `chapitresLusIds` mais
- * n'est pas cliquable ici : le seul endroit où on marque un chapitre
- * comme lu est sa propre page (bouton BoutonMarquerLu), pour éviter de
- * pouvoir cocher un chapitre qu'on n'a pas encore ouvert. Pour un
+ * Badge numéroté rond (style repris de la maquette de référence) : un
+ * chapitre lu (session 4) affiche une coche à la place du numéro plutôt
+ * qu'une case séparée. Pas cliquable en tant que tel : le seul endroit
+ * où on marque un chapitre comme lu est sa propre page (BoutonMarquerLu),
+ * pour éviter de cocher un chapitre qu'on n'a pas encore ouvert. Pour un
  * visiteur non connecté, `chapitresLusIds` est toujours vide (voir
- * lib/supabase/progression.ts) : toutes les cases apparaissent donc
- * naturellement décochées, sans état spécial à gérer ici.
+ * lib/supabase/progression.ts) : tous les badges affichent donc
+ * naturellement leur numéro, sans état spécial à gérer ici.
  */
 export default function SommaireChapitres({
   slug,
@@ -29,7 +30,7 @@ export default function SommaireChapitres({
   }
 
   return (
-    <ul className="divide-y divide-border rounded-lg border border-border">
+    <ul className="flex flex-col gap-3">
       {chapitres.map((chapitre) => {
         const lu = chapitresLusIds.has(chapitre.id);
 
@@ -37,18 +38,18 @@ export default function SommaireChapitres({
           <li key={chapitre.id}>
             <Link
               href={`/oeuvres/${slug}/${chapitre.numero}`}
-              className="flex items-start gap-3 p-4 hover:bg-surface-muted"
+              className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 hover:shadow-md"
             >
               <span
                 aria-hidden="true"
                 className={
                   lu
-                    ? "mt-1 flex size-4 shrink-0 items-center justify-center rounded-sm border border-primary bg-primary text-primary-foreground"
-                    : "mt-1 size-4 shrink-0 rounded-sm border border-border"
+                    ? "flex size-9 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground"
+                    : "flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-tint font-semibold text-primary"
                 }
               >
-                {lu && (
-                  <svg viewBox="0 0 16 16" className="size-3" fill="none">
+                {lu ? (
+                  <svg viewBox="0 0 16 16" className="size-4" fill="none">
                     <path
                       d="M3 8l3 3 7-7"
                       stroke="currentColor"
@@ -57,21 +58,23 @@ export default function SommaireChapitres({
                       strokeLinejoin="round"
                     />
                   </svg>
+                ) : (
+                  String(chapitre.numero).padStart(2, "0")
                 )}
               </span>
-              <span className="w-6 shrink-0 font-medium text-foreground">
-                {chapitre.numero}.
-              </span>
-              <span className="flex flex-col gap-1">
+              <span className="flex flex-1 flex-col gap-0.5">
                 <span className="font-medium text-foreground">
                   {lu && <span className="sr-only">Lu. </span>}
-                  {chapitre.titre_fr}
+                  Chapitre {chapitre.numero} — {chapitre.titre_fr}
                 </span>
                 {chapitre.resume_court && (
                   <span className="line-clamp-2 text-sm text-muted-foreground">
                     {chapitre.resume_court}
                   </span>
                 )}
+              </span>
+              <span aria-hidden="true" className="shrink-0 text-primary">
+                →
               </span>
             </Link>
           </li>

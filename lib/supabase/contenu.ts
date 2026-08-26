@@ -12,6 +12,8 @@ import type {
   Fiche,
   Oeuvre,
   Paragraphe,
+  Personnage,
+  Sujet,
 } from "@/types/base-de-donnees";
 
 export interface OeuvreAvecNombreChapitres extends Oeuvre {
@@ -168,4 +170,38 @@ export async function recupererLexiqueChapitre(
 
   if (error) throw error;
   return (data as EntreeLexique[]) ?? [];
+}
+
+/** Personnages qui apparaissent pour la première fois dans un chapitre
+ * précis (onglet Personnages de /oeuvres/[slug]/[numero], session
+ * design). Ne renvoie PAS tous les personnages de l'œuvre : seulement
+ * ceux dont `chapitre_apparition_id` pointe vers ce chapitre. */
+export async function recupererPersonnagesChapitre(
+  chapitreId: string,
+): Promise<Personnage[]> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("personnages")
+    .select("*")
+    .eq("chapitre_apparition_id", chapitreId)
+    .order("nom");
+
+  if (error) throw error;
+  return (data as Personnage[]) ?? [];
+}
+
+/** Sujets d'exercice rattachés à un chapitre précis (onglet "Sujets
+ * liés" de /oeuvres/[slug]/[numero], session design). */
+export async function recupererSujetsChapitre(chapitreId: string): Promise<Sujet[]> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("sujets")
+    .select("*")
+    .eq("chapitre_id", chapitreId)
+    .order("titre");
+
+  if (error) throw error;
+  return (data as Sujet[]) ?? [];
 }
