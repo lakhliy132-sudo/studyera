@@ -10,9 +10,10 @@ export default function LieuxChapitre({ lieux }: LieuxChapitreProps) {
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {lieux.map((lieu) => (
-        <li key={lieu} className="text-foreground">
+        <li key={lieu} className="flex items-center gap-2 text-foreground">
+          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-primary" />
           {lieu}
         </li>
       ))}

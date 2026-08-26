@@ -12,11 +12,13 @@ export default function PersonnagesChapitre({ personnages }: PersonnagesChapitre
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {personnages.map((personnage) => (
-        <li key={personnage.id} className="text-foreground">
-          <span className="font-medium">{personnage.nom}</span>
-          {personnage.role && <span className="text-muted-foreground"> — {personnage.role}</span>}
+        <li key={personnage.id} className="flex flex-col">
+          <span className="font-semibold text-foreground">{personnage.nom}</span>
+          {personnage.role && (
+            <span className="text-sm text-muted-foreground">{personnage.role}</span>
+          )}
         </li>
       ))}
     </ul>

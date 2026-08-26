@@ -1,12 +1,21 @@
 # État du projet MADRASTI
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
-> après un correctif d'un vrai bug visuel (titre arabe mal aligné,
-> trouvé par capture d'écran réelle, pas juste relu dans le code) sur
-> la session Design : nav globale, bannières/onglets/pilules repris de
-> deux maquettes de référence, tokens de couleur (fond bleu pâle,
-> bordures bleu clair, ombres), police serif des titres, mot de
-> lexique cliquable dans le résumé d'un chapitre.
+> après un passage typographie (police de lecture chargée, tailles et
+> interlignes du texte courant, en-têtes éditoriaux) sur la session
+> Design : nav globale, bannières/onglets/pilules repris de deux
+> maquettes de référence, tokens de couleur (fond bleu pâle, bordures
+> bleu clair, ombres), titre arabe réaligné, mot de lexique cliquable
+> dans le résumé d'un chapitre.
+>
+> ⚠️ **Si le serveur de dev devient très lent ou plante (out of
+> memory)** : vérifier `tasklist` pour des processus `node.exe`
+> orphelins — chaque redémarrage de `npm run dev` dans une session
+> laisse l'ancien processus tourner en arrière-plan si on ne le tue pas
+> explicitement (le port change alors à chaque fois : 3000, 3001,
+> 3002...). Un jour, 8 serveurs de dev tournaient simultanément sur
+> cette machine et ont fini par saturer la RAM. Toujours `taskkill //F
+> //PID <pid>` l'ancien processus avant/après en relancer un nouveau.
 >
 > ⚠️ **Action requise avant de tester `/administration`** : la migration
 > `supabase/migrations/20260829000000_lecture_admin_profils.sql` n'a pas
@@ -285,15 +294,48 @@ existait : `/oeuvres/[slug]`, `/oeuvres/[slug]/[numero]`, `CarteOeuvre`
 (grille de `/oeuvres`), `CarteBilingue`.
 
 **Leçon pour la suite** : pour tout retour visuel/esthétique sur ce
-projet, prendre une vraie capture d'écran (Playwright, voir
-`scripts/_screenshot_temp.mjs` — pas committé, à recréer si besoin :
-`npm install --no-save playwright` puis `npx playwright install
-chromium`) avant de faire des hypothèses sur ce qui ne va pas. Le vide
-apparent en bas de `/oeuvres/[slug]/boite-a-merveilles` n'est PAS un
-bug : `essentiel_fr`/`essentiel_ar` sont vides pour les 3 œuvres en
-base (colonnes existantes, jamais remplies dans le fichier Excel), la
-page est donc légitimement courte tant que ce contenu n'est pas
-rédigé.
+projet, prendre une vraie capture d'écran (Playwright) avant de faire
+des hypothèses sur ce qui ne va pas — mais **jamais** en installant
+Playwright dans le `node_modules` du projet pendant que `next dev`
+tourne dessus : la première tentative (`npm install --no-save
+playwright` directement dans le projet) a corrompu le cache webpack et
+cassé le serveur en cours d'utilisation (voir plus bas, section
+mémoire des processus). Depuis, Playwright est installé dans un
+répertoire complètement séparé (le scratchpad de la session, avec son
+propre `package.json`), qui pointe juste vers le serveur de dev déjà
+lancé via son URL `localhost` — aucun risque pour `node_modules` du
+projet. Le vide apparent en bas de `/oeuvres/[slug]/boite-a-merveilles`
+n'est PAS un bug : `essentiel_fr`/`essentiel_ar` sont vides pour les 3
+œuvres en base (colonnes existantes, jamais remplies dans le fichier
+Excel), la page est donc légitimement courte tant que ce contenu n'est
+pas rédigé.
+
+### Passage typographie (texte courant, pas seulement les titres)
+
+Après un retour "l'écriture est catastrophique", constat : la session
+précédente avait donné un traitement soigné aux grands titres (police
+serif Playfair Display, taille, couleur) mais rien au texte courant
+(résumés, listes, thèmes...), qui retombait sur la police système par
+défaut du visiteur — aucune police n'était chargée pour lui.
+
+- Nouvelle police **Source Sans 3** (`app/layout.tsx`), câblée comme
+  police par défaut de tout le site via le token Tailwind `--font-sans`
+  (`app/globals.css`) : aucune classe à ajouter dans les composants
+  existants, tout le texte courant en bénéficie automatiquement.
+- Texte des cartes de résumé (`CarteBilingue`) : `text-sm` → `text-base`
+  + `leading-relaxed` — c'est le contenu principal de lecture de la
+  page, il ne doit pas être traité comme un `text-sm` d'interface.
+- En-têtes de section ("Résumé", "ملخص", "Points clés", "Personnages",
+  "Lieux", "Sujets liés") : petites capitales bleues avec filet
+  (`text-xs uppercase tracking-wide text-primary border-b`), motif
+  éditorial cohérent repris partout où un tel en-tête existe.
+- Thèmes d'un chapitre : passés d'une phrase brute ("Thèmes : a, b, c")
+  à des pastilles (même style que les autres badges du site).
+- Points clés, lieux, sujets liés : puce ronde colorée au lieu du
+  disque HTML par défaut, plus d'espacement vertical entre les lignes.
+- Personnages/lieux/sujets : nom en gras sur une ligne, rôle/description
+  en dessous en texte atténué, plutôt qu'une seule ligne dense séparée
+  par un tiret.
 
 ### Adaptations pragmatiques par rapport aux maquettes littérales
 

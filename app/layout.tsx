@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri, Playfair_Display } from "next/font/google";
+import { Amiri, Playfair_Display, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -37,6 +37,22 @@ const playfair = Playfair_Display({
 });
 
 /**
+ * Police de tout le texte courant (résumés, listes, interface) —
+ * jusqu'ici sans police chargée du tout pour ce texte-là, il retombait
+ * sur la police système par défaut du visiteur (Segoe UI sous Windows,
+ * etc.), ce qui donnait un rendu plat à côté des grands titres en
+ * Playfair Display. Exposée comme `--font-source-sans`, reprise par le
+ * token `--font-sans` dans app/globals.css : devient la police par
+ * défaut de tout le site (l'utilitaire Tailwind `font-sans` — donc
+ * aussi le corps de page, sans classe à ajouter nulle part).
+ */
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-source-sans",
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -53,8 +69,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="fr" className={`${amiri.variable} ${playfair.variable}`}>
-      <body>
+    <html lang="fr" className={`${amiri.variable} ${playfair.variable} ${sourceSans.variable}`}>
+      <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}
       </body>

@@ -12,9 +12,10 @@ export default function SujetsChapitre({ sujets }: SujetsChapitreProps) {
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {sujets.map((sujet) => (
-        <li key={sujet.id} className="text-foreground">
+        <li key={sujet.id} className="flex items-center gap-2 text-foreground">
+          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-primary" />
           {sujet.titre}
         </li>
       ))}

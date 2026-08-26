@@ -70,15 +70,33 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
       )}
 
       {themes.length > 0 && (
-        <p className="text-sm text-muted-foreground">Thèmes : {themes.join(", ")}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium text-muted-foreground">Thèmes</span>
+          {themes.map((theme) => (
+            <span
+              key={theme}
+              className="rounded-full bg-primary-tint px-3 py-1 text-sm text-primary"
+            >
+              {theme}
+            </span>
+          ))}
+        </div>
       )}
 
       {aDesPointsCles && (
-        <ul className="list-disc pl-5 text-sm text-foreground">
-          {fiche.points_cles_fr.map((point) => (
-            <li key={point}>{point}</li>
-          ))}
-        </ul>
+        <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5 shadow-sm">
+          <p className="text-xs font-semibold tracking-wide text-primary uppercase">
+            Points clés
+          </p>
+          <ul className="flex flex-col gap-2">
+            {fiche.points_cles_fr.map((point) => (
+              <li key={point} className="flex gap-2 text-base leading-relaxed text-foreground">
+                <span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </section>
   );

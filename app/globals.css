@@ -53,16 +53,20 @@
   --color-erreur: #dc2626;
   --color-erreur-foreground: #ffffff;
 
-  /* --font-amiri et --font-playfair sont fournies par next/font/google
-   * dans app/layout.tsx (variables CSS injectées sur <html>).
-   * `font-arabe` et `font-serif` sont les noms sémantiques à utiliser
-   * dans les composants ; si une police change un jour, seule la ligne
-   * correspondante bouge ici. `font-serif` réécrit l'utilitaire Tailwind
-   * du même nom : les grands titres (titre d'une œuvre, d'un chapitre)
-   * l'utilisent pour reprendre le rendu "serif bleu foncé" des
-   * maquettes, tout le reste du texte reste dans la police par défaut. */
+  /* --font-amiri, --font-playfair et --font-source-sans sont fournies
+   * par next/font/google dans app/layout.tsx (variables CSS injectées
+   * sur <html>). `font-arabe` et `font-serif` sont les noms sémantiques
+   * à utiliser explicitement dans les composants qui en ont besoin ;
+   * `--font-sans` réécrit l'utilitaire Tailwind PAR DÉFAUT (`font-sans`,
+   * hérité par `body` sans classe à poser nulle part) : c'est la police
+   * de tout le texte courant du site (résumés, listes, interface), qui
+   * jusqu'ici retombait sur la police système du visiteur faute de
+   * police chargée pour lui. `font-serif` reste réservé aux grands
+   * titres (titre d'une œuvre, d'un chapitre), posé explicitement là où
+   * demandé — le reste du texte n'en hérite pas automatiquement. */
   --font-arabe: var(--font-amiri), "Traditional Arabic", serif;
   --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {

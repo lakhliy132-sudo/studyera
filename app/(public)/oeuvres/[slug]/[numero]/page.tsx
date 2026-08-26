@@ -190,8 +190,8 @@ function BlocApercu({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm">
-      <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 shadow-sm">
+      <p className="flex items-center gap-2 border-b border-border pb-2 text-xs font-semibold tracking-wide text-primary uppercase">
         <span aria-hidden="true">{icone}</span> {titre}
       </p>
       {children}
