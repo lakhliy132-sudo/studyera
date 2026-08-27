@@ -28,8 +28,12 @@ interface OngletsOeuvreProps {
 
 /**
  * Barre d'onglets de la page d'une œuvre — bandeau `bg-surface-muted`
- * centré, onglet actif en texte bleu + trait souligné (pas de pastille
- * pleine) : reprend la maquette de référence (page-oeuvre (2).html).
+ * centré, onglet actif en pastille bleue pleine et arrondie (pas un
+ * soulignement) : demandé explicitement par l'utilisateur pour
+ * revenir au style pilule d'avant la refonte v2, en gardant sinon le
+ * contenu/les libellés actuels des onglets et le même mécanisme de
+ * défilement. Même traitement visuel que les pilules de
+ * `SelecteurOeuvres` (rayon, ombre) pour rester cohérent.
  *
  * Composant Serveur volontairement : chaque onglet est un lien
  * classique qui change le query param `onglet` dans l'URL, pas de
@@ -43,7 +47,7 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
   return (
     <nav
       aria-label="Sections de l'œuvre"
-      className="mx-auto mt-6 w-full max-w-[1240px] overflow-x-auto rounded-md bg-surface-muted px-3"
+      className="mx-auto mt-6 w-full max-w-[1240px] overflow-x-auto rounded-md bg-surface-muted p-1.5"
     >
       <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {
@@ -57,8 +61,8 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "flex items-center gap-2.5 border-b-[3px] border-primary px-6 py-[21px] text-base font-bold whitespace-nowrap text-primary"
-                    : "flex items-center gap-2.5 border-b-[3px] border-transparent px-6 py-[21px] text-base font-medium whitespace-nowrap text-foreground hover:text-primary"
+                    ? "flex items-center gap-2.5 rounded-[10px] bg-primary px-5 py-[15px] text-base font-bold whitespace-nowrap text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)]"
+                    : "flex items-center gap-2.5 rounded-[10px] px-5 py-[15px] text-base font-medium whitespace-nowrap text-foreground transition-colors hover:bg-white/70 hover:text-primary"
                 }
               >
                 <Icone />

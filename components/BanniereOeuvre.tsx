@@ -96,7 +96,7 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
           {/* Bande photo pleine largeur en mobile, sans masque. */}
           <div
             aria-hidden="true"
-            className="h-[160px] w-full bg-cover bg-[center_62%] sm:hidden"
+            className="h-[160px] w-full bg-cover bg-[center_74%] sm:hidden"
             style={{ backgroundImage: `url(${oeuvre.couverture_url})` }}
           />
           {/* Photo en fondu, desktop uniquement : masquée à gauche,
@@ -104,7 +104,7 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
               garder le titre lisible côté gauche. */}
           <div
             aria-hidden="true"
-            className="absolute inset-y-0 top-0 right-0 left-[22%] hidden bg-cover bg-[center_62%] sm:block md:left-[30%]"
+            className="absolute inset-y-0 top-0 right-0 left-[22%] hidden bg-cover bg-[center_74%] sm:block md:left-[30%]"
             style={{
               backgroundImage: `url(${oeuvre.couverture_url})`,
               maskImage:

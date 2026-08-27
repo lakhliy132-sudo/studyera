@@ -31,14 +31,16 @@ interface OngletsChapitreProps {
 }
 
 /** Barre d'onglets de la page d'un chapitre — même bandeau
- * `bg-surface-muted` à soulignement bleu que OngletsOeuvre (Server
- * Component, navigation par query param, défilement horizontal en CSS
- * pur sous `md`, sticky sous la nav — 88px de haut). */
+ * `bg-surface-muted` et même pastille bleue pleine et arrondie que
+ * OngletsOeuvre (style pilule demandé par l'utilisateur, plutôt que le
+ * soulignement de la refonte v2 — voir OngletsOeuvre pour le détail).
+ * Server Component, navigation par query param, défilement horizontal
+ * en CSS pur sous `md`, sticky sous la nav — 88px de haut. */
 export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsChapitreProps) {
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="sticky top-[88px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted px-2"
+      className="sticky top-[88px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted p-1"
     >
       <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {
@@ -55,8 +57,8 @@ export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsCh
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "flex items-center gap-2 border-b-[3px] border-primary px-5 py-[18px] text-[15px] font-bold whitespace-nowrap text-primary"
-                    : "flex items-center gap-2 border-b-[3px] border-transparent px-5 py-[18px] text-[15px] font-medium whitespace-nowrap text-foreground hover:text-primary"
+                    ? "flex items-center gap-2 rounded-[10px] bg-primary px-4 py-3 text-[15px] font-bold whitespace-nowrap text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)]"
+                    : "flex items-center gap-2 rounded-[10px] px-4 py-3 text-[15px] font-medium whitespace-nowrap text-foreground transition-colors hover:bg-white/70 hover:text-primary"
                 }
               >
                 <Icone />
