@@ -230,3 +230,20 @@ export async function recupererSujetsChapitre(chapitreId: string): Promise<Sujet
   if (error) throw error;
   return (data as Sujet[]) ?? [];
 }
+
+/** Tous les sujets d'exercice rattachés à une œuvre entière (onglet
+ * "Sujets d'analyse" de /oeuvres/[slug]), quel que soit leur chapitre.
+ * `sujets.oeuvre_id` est renseigné par le script d'import pour les
+ * sujets liés à une œuvre précise (voir scripts/importer.ts). */
+export async function recupererSujetsOeuvre(oeuvreId: string): Promise<Sujet[]> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("sujets")
+    .select("*")
+    .eq("oeuvre_id", oeuvreId)
+    .order("titre");
+
+  if (error) throw error;
+  return (data as Sujet[]) ?? [];
+}

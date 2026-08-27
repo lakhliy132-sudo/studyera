@@ -29,7 +29,7 @@ const ROLES_PRINCIPAUX = new Set(["Narrateur et personnage principal", "La mère
  * ignoré (ex. "La Chouafa (tante Kenza)" -> "LC", pas "L(") : c'est un
  * surnom/complément, pas le nom principal.
  */
-function initiales(nom: string): string {
+export function initiales(nom: string): string {
   const motsPrincipaux = nom.replace(/\(.*?\)/g, "").trim().split(/\s+/);
   return motsPrincipaux
     .slice(0, 2)

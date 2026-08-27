@@ -3,12 +3,11 @@ import { notFound } from "next/navigation";
 
 import BoutonMarquerLu from "@/components/BoutonMarquerLu";
 import FicheChapitre from "@/components/FicheChapitre";
-import { IconeDocument, IconeLieu, IconePersonne } from "@/components/icones";
+import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
 import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletsChapitre, { versCleOngletChapitre } from "@/components/OngletsChapitre";
-import PersonnagesChapitre from "@/components/PersonnagesChapitre";
 import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
 import { enregistrerActivite } from "@/lib/supabase/activite";
@@ -47,9 +46,12 @@ interface PagePropsChapitre {
  *
  * L'onglet Résumé reste le plus riche : fiche de synthèse (résumé
  * bilingue avec mots de lexique cliquables), texte intégral si
- * disponible, puis un aperçu Personnages/Lieux/Sujets liés en trois
- * colonnes — chacune de ces trois sections a aussi son propre onglet
- * pour une vue dédiée.
+ * disponible, puis la "Fiche du chapitre" (FicheChapitreApercu) —
+ * Personnages/Lieux/Sujets liés en 2/3 + 1/3, design repris du fichier
+ * de référence fourni par l'utilisateur ("Chapitre 3 — La Boîte à
+ * Merveilles"), qui remplace l'ancien aperçu à trois colonnes égales.
+ * Chacune de ces trois sections a aussi son propre onglet pour une vue
+ * dédiée.
  */
 export default async function PageChapitre({ params, searchParams }: PagePropsChapitre) {
   const { slug, numero: numeroBrut } = await params;
@@ -144,17 +146,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
               <FicheChapitre fiche={fiche} lexique={lexique} />
               <TexteChapitre paragraphes={paragraphes} />
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <BlocApercu titre="Personnages" Icone={IconePersonne}>
-                  <PersonnagesChapitre personnages={personnages} />
-                </BlocApercu>
-                <BlocApercu titre="Lieux" Icone={IconeLieu}>
-                  <LieuxChapitre lieux={chapitre.lieux} />
-                </BlocApercu>
-                <BlocApercu titre="Sujets liés" Icone={IconeDocument}>
-                  <SujetsChapitre sujets={sujets} />
-                </BlocApercu>
-              </div>
+              <FicheChapitreApercu chapitre={chapitre} personnages={personnages} sujets={sujets} />
 
               <BoutonMarquerLu
                 connecte={Boolean(user)}
@@ -197,29 +189,5 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </div>
       </div>
     </main>
-  );
-}
-
-/** Colonne du bloc d'aperçu (Personnages/Lieux/Sujets liés) affiché
- * sous le résumé, sur l'onglet Résumé uniquement — même habillage que
- * les cartes de résumé (fond `--color-background`, pas blanc : contenu
- * "en retrait" par rapport à la carte englobante). */
-function BlocApercu({
-  titre,
-  Icone,
-  children,
-}: {
-  titre: string;
-  Icone: (props: { className?: string }) => React.ReactElement;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-2.5 rounded-md border border-border bg-surface-muted p-5">
-      <p className="flex items-center gap-2 text-sm font-bold text-primary">
-        <Icone />
-        {titre}
-      </p>
-      {children}
-    </div>
   );
 }

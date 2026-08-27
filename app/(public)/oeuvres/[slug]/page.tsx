@@ -2,14 +2,17 @@ import { notFound } from "next/navigation";
 
 import BanniereOeuvre from "@/components/BanniereOeuvre";
 import OngletLexique from "@/components/OngletLexique";
+import OngletLieux from "@/components/OngletLieux";
 import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletResume from "@/components/OngletResume";
+import OngletSujets from "@/components/OngletSujets";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import {
   recupererChapitresOeuvre,
   recupererLexiqueOeuvre,
   recupererOeuvreParSlug,
   recupererPersonnagesOeuvre,
+  recupererSujetsOeuvre,
 } from "@/lib/supabase/contenu";
 import { recupererProgressionOeuvre } from "@/lib/supabase/progression";
 import { creerClientServeur } from "@/lib/supabase/server";
@@ -59,6 +62,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const personnages = ongletActif === "personnages" ? await recupererPersonnagesOeuvre(oeuvre.id) : [];
   const lexique =
     ongletActif === "lexique" ? await recupererLexiqueOeuvre(chapitres.map((c) => c.id)) : [];
+  const sujets = ongletActif === "sujets" ? await recupererSujetsOeuvre(oeuvre.id) : [];
   const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
 
   return (
@@ -86,7 +90,9 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           {ongletActif === "lexique" && (
             <OngletLexique entrees={lexique} numeroParChapitreId={numeroParChapitreId} />
           )}
-          {ongletActif !== "resume" && ongletActif !== "personnages" && ongletActif !== "lexique" && (
+          {ongletActif === "lieux" && <OngletLieux chapitres={chapitres} />}
+          {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
+          {ongletActif === "themes" && (
             <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
               Bientôt disponible.
             </p>

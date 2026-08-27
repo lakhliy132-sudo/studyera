@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> ⚠️ **Session parallèle de nouveau détectée** (comme au tout début de
+> cette conversation) : en travaillant sur la "Fiche du chapitre"
+> ci-dessous, `git status` a montré des fichiers déjà modifiés/créés que
+> je n'avais pas touchés — `components/OngletLieux.tsx`,
+> `components/OngletSujets.tsx` (nouveaux), `components/OngletsOeuvre.tsx`
+> (6 onglets au lieu de 5, "Lieux" ajouté), `components/icones.tsx`
+> (`IconeHorloge`/`IconeEtoile`/`IconeTexte`), `lib/supabase/contenu.ts`
+> (`recupererSujetsOeuvre`), et `/oeuvres/[slug]/page.tsx` (onglets Lieux
+> et Sujets d'analyse branchés sur de vraies données). Relu : cohérent,
+> basé sur le même fichier de référence "Rubriques" que Personnages/
+> Lexique, `tsc`/`eslint` passent sur l'ensemble — committé avec le reste
+> plutôt que défait, conformément à la consigne de ne pas annuler un
+> changement externe sans raison. Onglets de /oeuvres/[slug] désormais
+> tous réels sauf "Thèmes et enjeux".
+>
+> **"Fiche du chapitre" refaite sur `/oeuvres/[slug]/[numero]`** :
+> l'ancien aperçu Personnages/Lieux/Sujets liés à trois colonnes égales
+> (`BlocApercu`) est remplacé par `FicheChapitreApercu.tsx`, une carte
+> unique en 2/3 (Personnages, avec recherche) + 1/3 (Lieux en frise
+> verticale, Sujets liés en petites cartes) — design repris du fichier de
+> référence fourni par l'utilisateur ("Chapitre 3 — La Boîte à
+> Merveilles"). Toujours les 27 personnages de l'œuvre (pas de filtrage,
+> comme demandé précédemment), mais ceux introduits DANS le chapitre
+> consulté (`chapitre_apparition_id === chapitre.id`) sont mis en avant
+> par un avatar plein plutôt qu'à contour — repris du concept "cle" du
+> fichier de référence. `components/PersonnagesChapitre.tsx`, devenu
+> orphelin (plus aucun appelant), supprimé.
+>
 > **Lexique étendu aux chapitres 2 à 12 : 51 mots au total** (était 18,
 > tous du chapitre 1 seul — l'onglet Lexique de la page œuvre affichait
 > déjà "tout" mais n'avait en réalité que du contenu chapitre 1, faute de
