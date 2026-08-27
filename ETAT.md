@@ -2,6 +2,29 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Chapitres 2 et 3 de *La Boîte à Merveilles* ajoutés** (l'œuvre n'avait
+> que le chapitre 1 jusqu'ici). Source : l'utilisateur a fourni, dans la
+> conversation, le déroulé événement par événement de chaque chapitre (9
+> points pour le ch. 2, 11 pour le ch. 3) — ce contenu n'est donc PAS
+> inventé, il vient de l'utilisateur. À partir de ces points, Claude a :
+> rédigé un résumé français suivi (`resume_fr`), reformaté les points en
+> `points_cles_fr` (numérotation et légères corrections orthographiques),
+> proposé des thèmes (`theme_principal`/`themes_secondaires`) et un titre
+> court et descriptif par chapitre (aucun titre fourni par l'utilisateur —
+> "Le pèlerinage à Sidi Ali Boughaleb" et "La disparition de Zineb",
+> choisis d'après l'événement central de chaque chapitre, même logique que
+> "Dar Chouafa" pour le chapitre 1) ; puis traduit l'ensemble en arabe
+> (`resume_ar`, `points_cles_ar`, `titre_ar`). **⚠️ Comme pour le chapitre
+> 1, la traduction arabe et les thèmes/titres proposés sont signalés
+> `statut = "à relire"` — non relus par un locuteur/enseignant.** Ajouté
+> via le pipeline normal (2 lignes dans la feuille "Chapitres" de
+> `data/contenu-plateforme-bac.xlsx`, fichier non versionné — voir
+> `.gitignore` — puis `npm run importer`, 0 erreur). Les onglets
+> Personnages/Sujets liés de ces deux chapitres restent "Bientôt
+> disponible" : l'utilisateur n'a pas fourni cette information, donc rien
+> n'y a été ajouté (ex. Lalla Aïcha, nouveau personnage du ch. 2, n'est
+> pas dans la feuille "Personnages" — à faire si besoin).
+>
 > ⚠️ **Incident résolu cette session : le site paraissait "catastrophique"
 > à l'utilisateur, cause réelle = mémoire système épuisée, pas le design.**
 > Après le déploiement v2, `/oeuvres/[slug]` répondait par intermittence en
