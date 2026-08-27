@@ -25,11 +25,24 @@ function iconePourOeuvre(slug: string) {
  * Sélecteur d'œuvre en pilules horizontales, au-dessus de la bannière
  * de /oeuvres/[slug] — permet de passer d'une œuvre à l'autre sans
  * repasser par /oeuvres. Défilement horizontal en dessous de `md`, même
- * mécanisme (CSS pur, pas de JS) que OngletsOeuvre.
+ * mécanisme (CSS pur, pas de JS) que OngletsOeuvre : `nav` porte
+ * `overflow-x-auto`, la rangée interne `min-w-max` pour que les pilules
+ * gardent leur largeur naturelle et débordent (scrollables) plutôt que
+ * de se faire compresser.
+ *
+ * ⚠️ Piège corrigé (repéré via une vraie capture d'écran mobile, pas en
+ * lisant le code) : `flex-1` posé directement sur chaque pilule, sans
+ * `md:`, entrait en conflit avec `overflow-x-auto` — un enfant
+ * `flex-1` (flex-basis:0, shrink autorisé) se fait comprimer pour
+ * tenir dans le conteneur au lieu de déborder, donc le scroll ne se
+ * déclenchait jamais : les pilules étaient écrasées et leur texte
+ * tronqué en dessous de `md`. `flex-1` est maintenant réservé à `md:`
+ * (largeur égale desktop, comme voulu par la maquette), les pilules
+ * restent à largeur naturelle (`flex-none`) en dessous.
  *
  * Reprend la maquette de référence : bandeau `bg-surface-muted`,
- * pilules de largeur égale (`flex-1`), pilule active pleine largeur
- * bleue avec ombre.
+ * pilules de largeur égale (`flex-1`) à partir de `md`, pilule active
+ * pleine largeur bleue avec ombre.
  */
 export default function SelecteurOeuvres({ oeuvres, slugActif }: SelecteurOeuvresProps) {
   if (oeuvres.length === 0) return null;
@@ -37,33 +50,35 @@ export default function SelecteurOeuvres({ oeuvres, slugActif }: SelecteurOeuvre
   return (
     <nav
       aria-label="Choisir une œuvre"
-      className="mx-auto mt-6 flex w-full max-w-[1240px] gap-1 overflow-x-auto rounded-md bg-surface-muted p-1.5 px-6"
+      className="mx-auto mt-6 w-full max-w-[1240px] overflow-x-auto rounded-md bg-surface-muted px-6 py-1.5"
     >
-      {oeuvres.map((oeuvre) => {
-        const actif = oeuvre.slug === slugActif;
-        const Icone = iconePourOeuvre(oeuvre.slug);
+      <div className="flex min-w-max gap-1">
+        {oeuvres.map((oeuvre) => {
+          const actif = oeuvre.slug === slugActif;
+          const Icone = iconePourOeuvre(oeuvre.slug);
 
-        return (
-          <Link
-            key={oeuvre.id}
-            href={`/oeuvres/${oeuvre.slug}`}
-            aria-current={actif ? "page" : undefined}
-            className={
-              actif
-                ? "flex flex-1 items-center justify-center gap-2.5 rounded-[10px] bg-primary px-[22px] py-[15px] text-base font-semibold whitespace-nowrap text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)]"
-                : "flex flex-1 items-center justify-center gap-2.5 rounded-[10px] px-[22px] py-[15px] text-base font-semibold whitespace-nowrap text-ink transition-colors hover:bg-white/75"
-            }
-          >
-            <Icone className="size-[19px]" />
-            {oeuvre.titre_fr}
-            {oeuvre.auteur && (
-              <em className={actif ? "font-normal text-[#bdd2f8] not-italic" : "font-normal text-muted-foreground not-italic"}>
-                ({oeuvre.auteur})
-              </em>
-            )}
-          </Link>
-        );
-      })}
+          return (
+            <Link
+              key={oeuvre.id}
+              href={`/oeuvres/${oeuvre.slug}`}
+              aria-current={actif ? "page" : undefined}
+              className={
+                actif
+                  ? "flex flex-none items-center justify-center gap-2.5 rounded-[10px] bg-primary px-[22px] py-[15px] text-base font-semibold whitespace-nowrap text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] md:flex-1"
+                  : "flex flex-none items-center justify-center gap-2.5 rounded-[10px] px-[22px] py-[15px] text-base font-semibold whitespace-nowrap text-ink transition-colors hover:bg-white/75 md:flex-1"
+              }
+            >
+              <Icone className="size-[19px]" />
+              {oeuvre.titre_fr}
+              {oeuvre.auteur && (
+                <em className={actif ? "font-normal text-[#bdd2f8] not-italic" : "font-normal text-muted-foreground not-italic"}>
+                  ({oeuvre.auteur})
+                </em>
+              )}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

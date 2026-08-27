@@ -2,6 +2,37 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> ⚠️ **Incident résolu cette session : le site paraissait "catastrophique"
+> à l'utilisateur, cause réelle = mémoire système épuisée, pas le design.**
+> Après le déploiement v2, `/oeuvres/[slug]` répondait par intermittence en
+> 500 ("Jest worker encountered 2 child process exceptions") ou restait
+> bloqué 10-15s : la RAM de la machine (8 Go) était descendue à ~267 Mo
+> libres, à cause de **~25 processus `chrome.exe` zombies** accumulés par
+> des sessions Playwright précédentes non refermées proprement (chacune
+> lançait un navigateur sans toujours le fermer en cas d'échec du script).
+> Sous cette pression mémoire, les workers de compilation du serveur de
+> dev plantaient et le rendaient intermittent, pas le CSS/JS livré. Fixé
+> en tuant tous les `chrome.exe`, en vidant `.next` et en relançant le
+> serveur (RAM libre repassée à ~2 Go). **Leçon pour la suite** : après
+> tout script Playwright (même en cas d'échec), tuer explicitement les
+> process `chrome.exe`/`playwright` restants avant de continuer — ne pas
+> supposer que `browser.close()` suffit si le script a pu planter avant.
+>
+> En creusant plus loin (13 pages, desktop + mobile, capturées une fois le
+> serveur stable), un vrai bug visuel a aussi été trouvé et corrigé :
+> `components/SelecteurOeuvres.tsx` posait `flex-1` directement sur
+> chaque pilule d'œuvre, ce qui entre en conflit avec le
+> `overflow-x-auto` du conteneur — un enfant `flex-1` (flex-basis:0) se
+> fait comprimer pour tenir dans la largeur disponible au lieu de
+> déborder, donc en dessous de `md` (mobile) les pilules étaient
+> écrasées et leur texte tronqué à l'écran, au lieu de défiler
+> horizontalement comme prévu. `OngletsOeuvre`/`OngletsChapitre`
+> n'avaient pas ce bug (ils utilisent le bon motif : rangée `min-w-max`,
+> items à largeur naturelle). Corrigé en réservant `flex-1` à `md:` et
+> en gardant `flex-none` en dessous — vérifié par une vraie capture
+> d'écran mobile + une mesure DOM (`scrollWidth > clientWidth`), pas
+> seulement en relisant le code.
+>
 > ⚠️ **Fichiers non committés laissés par une session parallèle/antérieure,
 > toujours en attente d'une décision de l'utilisateur** : `PROJECT_CHARTER.md`
 > (un audit du projet, non lu en détail par Claude — jamais committé, jamais
