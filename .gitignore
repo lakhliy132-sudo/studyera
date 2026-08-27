@@ -46,6 +46,14 @@ data/*
 # fichiers temporaires generes localement par la CLI Supabase
 /supabase/.temp
 
+# journal du serveur de dev local (genere par une session anterieure,
+# jamais destine a git)
+dev-server.log
+
+# metadonnees internes d'outils locaux (ex. continuation de session),
+# pas du code du projet
+/.omo/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

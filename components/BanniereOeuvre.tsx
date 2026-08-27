@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import BarreProgression from "@/components/BarreProgression";
@@ -33,7 +34,9 @@ export default function BanniereOeuvre({
   progression,
 }: BanniereOeuvreProps) {
   return (
-    <section className="my-6 grid overflow-hidden rounded-lg border border-border bg-surface shadow-sm md:grid-cols-[1fr_380px]">
+    <section className="my-6 overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+      <CouverturePanneau oeuvre={oeuvre} />
+
       <div className="flex flex-col gap-5 p-7 pb-8 md:p-11 md:pb-9">
         <div>
           <h1 className="font-serif text-3xl leading-[1.05] font-semibold tracking-tight text-ink md:text-[52px]">
@@ -79,8 +82,6 @@ export default function BanniereOeuvre({
           </div>
         )}
       </div>
-
-      <CouverturePanneau oeuvre={oeuvre} />
     </section>
   );
 }
@@ -99,6 +100,22 @@ export default function BanniereOeuvre({
  * centre d'attention du panneau plutôt que du texte redondant.
  */
 function CouverturePanneau({ oeuvre }: { oeuvre: Oeuvre }) {
+  if (oeuvre.couverture_url) {
+    // Pleine largeur de la carte (pas de max-width centré) : garde une
+    // vraie forme de bannière rectangulaire au lieu d'une photo isolée
+    // avec des marges blanches de chaque côté.
+    return (
+      <div className="relative aspect-[16/9] w-full overflow-hidden">
+        <Image
+          src={oeuvre.couverture_url}
+          alt={`Couverture de ${oeuvre.titre_fr}`}
+          fill
+          className="object-cover"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative order-first flex min-h-[260px] flex-col items-center overflow-hidden bg-[linear-gradient(150deg,#1b3a8f,#16307b_55%,#0f1f4f)] px-7 py-8 text-center text-white md:order-none md:min-h-0 md:px-9 md:py-11">
       <div
