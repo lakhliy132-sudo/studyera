@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Lexique étoffé : 106 mots au total** (était 51). Demandé explicitement
+> par l'utilisateur ("ajoute plus de lexique dans les chapitres") : les
+> chapitres 2 à 12 n'avaient que 3 mots chacun (contre 18 pour le
+> chapitre 1) — 5 mots de plus ajoutés par chapitre (55 au total),
+> toujours choisis par Claude à partir du contenu déjà rédigé (résumés,
+> points clés), pas fournis par l'utilisateur, donc dans le même esprit
+> "à relire" que le reste du lexique. Chapitre 1 non touché (déjà riche,
+> contenu d'origine). Ajouté via le pipeline Excel habituel (`npm run
+> importer`, 0 erreur, `essentiel_fr`/`essentiel_ar` vérifiés intacts
+> avant relance) ; vérifié par capture d'écran (chapitre 9 : 8 mots au
+> lieu de 3).
+>
 > **Réagencement de la "Fiche du chapitre" (bug réel repéré par
 > l'utilisateur, pas juste une préférence)** : en 2/3 (Personnages) +
 > 1/3 (Lexique/Lieux/Sujets liés empilés), l'ajout du bloc Lexique la
