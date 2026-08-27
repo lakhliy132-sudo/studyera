@@ -21,34 +21,44 @@
 > l'effacer sans avertissement (`0 erreur` dans le résumé de l'import : ce
 > n'est pas un cas signalé comme un problème par le script).
 >
-> **Chapitres 2 à 6 de *La Boîte à Merveilles* ajoutés** (en deux vagues
-> cette session : 2-3 puis 4-6 ; l'œuvre n'avait que le chapitre 1 avant).
-> Source à chaque fois : l'utilisateur a fourni, dans la conversation, le
-> déroulé événement par événement de chaque chapitre — ce contenu n'est
-> donc PAS inventé, il vient de l'utilisateur. À partir de ces points,
-> Claude a systématiquement : rédigé un résumé français suivi
-> (`resume_fr`), reformaté les points en `points_cles_fr` (numérotation et
-> légères corrections orthographiques), proposé des thèmes
+> **Les 12 chapitres de *La Boîte à Merveilles* sont tous ajoutés — le
+> roman est complet** (en trois vagues cette session : 2-3, puis 4-6, puis
+> 7-12 ; l'œuvre n'avait que le chapitre 1 avant). Source à chaque fois :
+> l'utilisateur a fourni, dans la conversation, le déroulé événement par
+> événement de chaque chapitre — ce contenu n'est donc PAS inventé, il
+> vient de l'utilisateur (y compris l'ordre d'arrivée un peu particulier :
+> les chapitres 9 à 12 ont été envoyés avant les chapitres 7 et 8, qui ont
+> comblé le trou juste après — les 12 chapitres sont bien tous présents et
+> dans le bon ordre en base). À partir de ces points, Claude a
+> systématiquement : rédigé un résumé français suivi (`resume_fr`),
+> reformaté les points en `points_cles_fr` (numérotation et légères
+> corrections orthographiques), proposé des thèmes
 > (`theme_principal`/`themes_secondaires`) et un titre court et descriptif
 > par chapitre (aucun titre fourni par l'utilisateur pour aucun chapitre —
-> "Le pèlerinage à Sidi Ali Boughaleb", "La disparition de Zineb", "La
-> visite chez Lalla Aïcha", "La mort du coiffeur", "Les préparatifs de
-> l'Achoura", choisis d'après l'événement central de chaque chapitre, même
-> logique que "Dar Chouafa" pour le chapitre 1) ; puis traduit l'ensemble
-> en arabe (`resume_ar`, `points_cles_ar`, `titre_ar`). **⚠️ Comme pour le
-> chapitre 1, la traduction arabe et les thèmes/titres proposés sont
-> signalés `statut = "à relire"` — non relus par un locuteur/enseignant.**
-> Ajouté via le pipeline normal (lignes dans la feuille "Chapitres" de
-> `data/contenu-plateforme-bac.xlsx`, fichier non versionné — voir
-> `.gitignore` — puis `npm run importer`, 0 erreur à chaque fois ; avant
-> chaque relance, vérifié que `essentiel_fr`/`essentiel_ar` étaient bien
-> restés dans la feuille "Oeuvres" — voir le piège documenté juste
-> au-dessus). Les onglets Personnages/Sujets liés de ces cinq chapitres
-> restent "Bientôt disponible" : l'utilisateur n'a pas fourni cette
-> information, donc rien n'y a été ajouté (nouveaux personnages mentionnés
-> mais pas dans la feuille "Personnages" : Lalla Aïcha, Moulay Larbi,
-> Sidi Mohammed Ben Taher le coiffeur, l'oncle Othmane et Lalla Khadija —
-> à faire si besoin).
+> même logique que "Dar Chouafa" pour le chapitre 1, un titre par
+> événement/lieu central : "Le pèlerinage à Sidi Ali Boughaleb", "La
+> disparition de Zineb", "La visite chez Lalla Aïcha", "La mort du
+> coiffeur", "Les préparatifs de l'Achoura", "Le jour de l'Achoura", "La
+> bagarre chez les bijoutiers", "La faillite de Maâlem Abdeslem", "La
+> visite au voyant Sidi El Arafi", "Le mariage malheureux de Moulay
+> Larbi", "Le retour du père") ; puis traduit l'ensemble en arabe
+> (`resume_ar`, `points_cles_ar`, `titre_ar`). **⚠️ Comme pour le chapitre
+> 1, la traduction arabe et les thèmes/titres proposés sont signalés
+> `statut = "à relire"` — non relus par un locuteur/enseignant, à faire
+> avant tout usage en classe.** Ajouté via le pipeline normal (lignes dans
+> la feuille "Chapitres" de `data/contenu-plateforme-bac.xlsx`, fichier
+> non versionné — voir `.gitignore` — puis `npm run importer`, 0 erreur à
+> chaque fois ; avant chaque relance, vérifié que
+> `essentiel_fr`/`essentiel_ar` étaient bien restés dans la feuille
+> "Oeuvres" — voir le piège documenté juste au-dessus). Les onglets
+> Personnages/Sujets liés restent "Bientôt disponible" pour tous les
+> chapitres : l'utilisateur n'a pas fourni cette information, donc rien
+> n'y a été ajouté (nouveaux personnages mentionnés au fil des chapitres
+> mais pas dans la feuille "Personnages" : Hamoussa, Lalla Aïcha, Moulay
+> Larbi, le courtier malhonnête, Abderrahman le coiffeur et sa fille, Sidi
+> Mohammed Ben Taher le coiffeur, Sidi El Arafi le voyant et sa femme,
+> Salama la marieuse, Zhour, l'oncle Othmane et Lalla Khadija — à faire si
+> besoin).
 >
 > ⚠️ **Incident résolu cette session : le site paraissait "catastrophique"
 > à l'utilisateur, cause réelle = mémoire système épuisée, pas le design.**
