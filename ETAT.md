@@ -2,6 +2,25 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Casting complet : 27 personnages** (était 13). Ajout des 14
+> personnages secondaires mentionnés au fil des chapitres 2 à 12 mais
+> absents de la feuille "Personnages" jusqu'ici — demandé explicitement
+> ("ajoute tous les personnages principaux et secondaires") : Moulay
+> Larbi, Abdelkader, Sidi Mohammed Ben Taher (le coiffeur défunt),
+> Hamoussa, Abderrahman le coiffeur, la fille du coiffeur (2ᵉ épouse de
+> Moulay Larbi), le courtier malhonnête du souk des bijoutiers, Sidi El
+> Arafi (le voyant) et sa femme, Salama la marieuse, Zhour, l'oncle
+> Othmane et Lalla Khadija (personnages d'un récit dans le récit, chez
+> Rahma — n'apparaissent jamais directement), et Khadija la sœur de
+> Rahma (mentionnée seulement, chapitre 3). Contenu (rôle, description,
+> chapitre de première apparition — au sens large : y compris une simple
+> mention pour les personnages qui n'apparaissent jamais physiquement)
+> rédigé par Claude à partir des résumés de chapitres déjà écrits cette
+> session, pas inventé. Ajouté via le pipeline Excel habituel (`npm run
+> importer`, 0 erreur, `essentiel_fr`/`essentiel_ar` vérifiés intacts
+> avant relance) ; vérifié par capture d'écran (27 cartes, tous les
+> champs corrects).
+>
 > **Onglet "Personnages" branché sur de vraies données, partout**
 > (page œuvre ET chaque page chapitre — jusqu'ici "Bientôt disponible" ou
 > vide sur la quasi-totalité des chapitres). Nouveau composant
