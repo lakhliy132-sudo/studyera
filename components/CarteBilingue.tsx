@@ -9,9 +9,13 @@ interface CarteBilingueProps {
    * Résumé long (résumé de chapitre) : la carte s'affiche repliée sur
    * quelques lignes avec un bouton "Lire la suite", au lieu de pousser
    * toute la hauteur de la page — demandé explicitement par
-   * l'utilisateur ("le résumé... ne soit pas longue comme ça"). Un
-   * résumé court (résumé "essentiel" d'une œuvre) n'a pas besoin de ce
-   * traitement : `false` par défaut affiche tout, sans repli ni bouton.
+   * l'utilisateur ("le résumé... ne soit pas longue comme ça"). Coins
+   * francs (`rounded-none`) plutôt qu'arrondis dans ce cas aussi —
+   * demandé juste après ("la partie de résumé qui se trouve dans les
+   * chapitres" en "forme rectanglée"). Un résumé court (résumé
+   * "essentiel" d'une œuvre) n'a besoin ni de l'un ni de l'autre :
+   * `false` par défaut affiche tout, sans repli, coins arrondis comme
+   * avant.
    */
   long?: boolean;
 }
@@ -44,10 +48,13 @@ interface CarteBilingueProps {
 export default function CarteBilingue({ contenuFr, contenuAr, long = false }: CarteBilingueProps) {
   const idFr = useId();
   const idAr = useId();
+  const coins = long ? "rounded-none" : "rounded-lg";
 
   return (
     <div className="grid grid-cols-1 gap-[22px] md:grid-cols-2">
-      <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+      <div
+        className={`${coins} border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]`}
+      >
         <p className="mb-[18px] flex items-center gap-[11px] font-serif text-lg font-bold text-primary">
           <IconeLivre className="size-[22px]" />
           Résumé
@@ -66,7 +73,9 @@ export default function CarteBilingue({ contenuFr, contenuAr, long = false }: Ca
       </div>
 
       {contenuAr && (
-        <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+        <div
+          className={`${coins} border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]`}
+        >
           <p className="mb-[18px] flex flex-row-reverse items-center justify-end gap-[11px] font-serif text-lg font-bold text-primary">
             <IconeLivre className="size-[22px]" />
             ملخص
