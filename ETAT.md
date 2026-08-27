@@ -1,6 +1,23 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26,
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26.
+>
+> ⚠️ **Une session parallèle/antérieure a travaillé sur ce dépôt sans
+> passer par cette conversation** (détecté via des fichiers non
+> committés trouvés en tout début de session : `PROJECT_CHARTER.md`,
+> `.omo/`, `dev-server.log`, une capture d'écran à la racine, et un
+> `BanniereOeuvre.tsx` déjà modifié). Elle a ajouté une vraie photo de
+> couverture pour *La Boîte à Merveilles* (`public/couvertures/
+> boite-a-merveilles.png` + migration `20260830000000_
+> couverture_boite_a_merveilles.sql`, commitées cette session après
+> correctif de mise en page — voir plus bas) et généré
+> `PROJECT_CHARTER.md`, un audit du projet resté **non committé et non
+> lu en détail par Claude** (à décider : le garder, le supprimer, ou le
+> fusionner avec ce fichier ETAT.md, qui a la même fonction). La
+> capture d'écran à la racine est aussi restée non committée. `.omo/`
+> et `dev-server.log` ont été ajoutés à `.gitignore` (métadonnées
+> d'outils locaux, pas du code).
+>
 > après l'ajout d'un vrai résumé (`essentiel_fr`/`essentiel_ar`) pour
 > *La Boîte à Merveilles* — rédigé par Claude à partir de sa
 > connaissance du roman, PAS tiré du fichier Excel (⚠️ la version arabe
@@ -356,6 +373,28 @@ défaut du visiteur — aucune police n'était chargée pour lui.
 - Personnages/lieux/sujets : nom en gras sur une ligne, rôle/description
   en dessous en texte atténué, plutôt qu'une seule ligne dense séparée
   par un tiret.
+
+### Couverture photo de La Boîte à Merveilles (session parallèle + correctif)
+
+`oeuvres.couverture_url` de `boite-a-merveilles` pointe désormais vers
+`/couvertures/boite-a-merveilles.png` — un **fichier local du dépôt**
+(`public/couvertures/`, servi directement par Next.js), pas un objet
+Supabase Storage comme le suggérait le commentaire original de la
+migration de création d'`oeuvres`. `couverture_url` accepte les deux :
+une URL distante (bucket public, ce que `next.config.ts` autorise déjà
+via `remotePatterns` pour `*.supabase.co`) ou un chemin public local —
+`CouverturePanneau` (dans `BanniereOeuvre.tsx`) ne fait aucune
+distinction, `next/image` gère les deux de la même façon.
+
+Correctif apporté cette session : la photo s'affichait centrée avec de
+grandes marges blanches de chaque côté (`max-w-[800px] mx-auto`), ce
+qui cassait l'effet de bannière rectangulaire attendu. Passée en
+pleine largeur de la carte, `aspect-[16/9]`.
+
+`CouvertureOeuvre.tsx` (la grille `/oeuvres`) et `CouverturePanneau`
+(la bannière `/oeuvres/[slug]`) sont deux composants distincts qui
+lisent chacun `couverture_url` séparément : les deux en bénéficient
+déjà sans changement supplémentaire.
 
 ### Contenu rédigé par Claude (à réviser) et illustration ajoutée
 
