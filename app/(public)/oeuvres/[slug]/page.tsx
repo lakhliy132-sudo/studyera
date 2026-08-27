@@ -23,11 +23,15 @@ interface PagePropsOeuvre {
 }
 
 /**
- * /oeuvres/[slug] — bannière (résumé bilingue toujours visible, quel
- * que soit l'onglet actif), barre d'onglets, contenu de l'onglet
+ * /oeuvres/[slug] — bannière, barre d'onglets, contenu de l'onglet
  * actif. Reprend la maquette de référence (page-oeuvre.html) : fond de
  * page bleu pâle, bannière et onglets en cartes blanches posées
  * dessus, contenu centré à 1180px maximum.
+ *
+ * Le résumé bilingue de la bannière ne s'affiche que sur l'onglet
+ * Chapitres (`BanniereOeuvre` prop `afficherResume`) — demandé
+ * explicitement par l'utilisateur : sur les autres onglets, seule
+ * l'image de la bannière reste visible.
  *
  * Pas de sélecteur des 3 œuvres ici (retiré à la demande explicite de
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
@@ -76,6 +80,11 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           // connecté (BarreProgression se masque de toute façon si
           // l'œuvre n'a aucun chapitre).
           progression={user ? { lus: chapitresLusIds.size, total: chapitres.length } : null}
+          // Le résumé essentiel fr/ar ne s'affiche que sur l'onglet
+          // Chapitres — demandé explicitement par l'utilisateur, qui le
+          // trouvait superflu une fois sur Personnages/Lexique/Lieux/
+          // Thèmes et enjeux/Sujets d'analyse (seule l'image reste).
+          afficherResume={ongletActif === "resume"}
         />
 
         <OngletsOeuvre slug={slug} ongletActif={ongletActif} />

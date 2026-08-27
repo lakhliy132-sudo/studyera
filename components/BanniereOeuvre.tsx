@@ -12,6 +12,13 @@ interface BanniereOeuvreProps {
   /** `null` pour un visiteur non connecté (pas de progression
    * personnelle à montrer) — voir l'appelant, /oeuvres/[slug]/page.tsx. */
   progression: { lus: number; total: number } | null;
+  /** Affiche la carte résumé "essentiel" fr/ar sous l'image. `true` par
+   * défaut. Mis à `false` par la page appelante quand l'onglet actif
+   * n'est pas "Chapitres" — demandé explicitement par l'utilisateur : le
+   * résumé n'a plus lieu d'être une fois qu'on consulte Personnages/
+   * Lexique/Lieux/Thèmes et enjeux/Sujets d'analyse, seule l'image
+   * (Hero) doit rester visible dans ce cas. */
+  afficherResume?: boolean;
 }
 
 /**
@@ -30,17 +37,20 @@ export default function BanniereOeuvre({
   oeuvre,
   premierChapitre,
   progression,
+  afficherResume = true,
 }: BanniereOeuvreProps) {
   return (
     <>
       <Hero oeuvre={oeuvre} />
 
-      <div className="mt-6">
-        <CarteBilingue
-          contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
-          contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
-        />
-      </div>
+      {afficherResume && (
+        <div className="mt-6">
+          <CarteBilingue
+            contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
+            contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
+          />
+        </div>
+      )}
 
       {oeuvre.mode === "texte_integral" && premierChapitre && (
         <div className="mt-[22px] flex flex-wrap justify-center gap-3.5">

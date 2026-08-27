@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Résumé "essentiel" de la bannière œuvre masqué hors de l'onglet
+> Chapitres** — message de l'utilisateur coupé en cours de frappe
+> ("...sujets d'analyses" sans suite), clarifié via une question posée
+> puis un message de suivi ("le resumé dispare") : sur
+> `/oeuvres/[slug]`, une fois sur Personnages/Lexique/Lieux/Thèmes et
+> enjeux/Sujets d'analyse, les deux cartes résumé fr/ar disparaissent de
+> la bannière — seules l'image et le titre restent visibles. Nouveau
+> prop `BanniereOeuvre` `afficherResume` (`true` par défaut, mis à
+> `ongletActif === "resume"` par la page appelante). Le résumé reste
+> affiché normalement sur l'onglet Chapitres. Vérifié par capture
+> d'écran sur les deux cas.
+>
 > ⚠️ **Barre d'onglets de la page chapitre complètement retirée** (pas
 > seulement rendue non-`sticky`, voir l'entrée juste en dessous — le
 > premier correctif n'a pas suffi : l'utilisateur voulait la barre
