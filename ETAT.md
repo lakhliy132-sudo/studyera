@@ -2,6 +2,25 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Sujets "argumentation" recentrés sur l'œuvre** — demandé explicitement
+> par l'utilisateur ("fait que les sujets de l'argumentation [soient]
+> conforme[s] au[x] œuvres"). 11 des sujets de type `argumentation`
+> (les 10 ajoutés cette session pour les chapitres 2-12, plus un déjà
+> présent au chapitre 1) posaient une question de société généraliste,
+> reliée à l'œuvre seulement par une phrase d'accroche ("Faut-il toujours
+> dire la vérité à ses proches ?", "Le commerce honnête est-il toujours
+> possible ?"...) — corrigées pour que la consigne exige explicitement un
+> appui sur le texte ("en vous appuyant sur des éléments précis du
+> chapitre/du texte") plutôt qu'une opinion générale déconnectée du
+> roman. **Titres volontairement inchangés** (clé d'unicité de l'upsert
+> `oeuvre_id+chapitre_id+titre` : les changer aurait créé des lignes en
+> double au lieu de mettre à jour celles-ci) — seule la consigne a été
+> réécrite. Vérifié en base (la consigne corrigée y est bien) et sur
+> l'onglet Sujets de la page œuvre (qui affiche la consigne complète,
+> contrairement à l'aperçu compact de la page chapitre qui n'affiche que
+> le titre). Compteur `npm run importer` resté à 37 sujets après import
+> (confirme l'absence de doublon).
+>
 > **Sur la page chapitre : personnages filtrés au chapitre + 3 sujets par
 > chapitre partout.** Deux demandes explicites de l'utilisateur :
 >
