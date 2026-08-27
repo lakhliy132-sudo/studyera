@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 const LIENS = [
   { href: "/", libelle: "Accueil" },
   { href: "/oeuvres", libelle: "Œuvres" },
-  { href: "/langue", libelle: "Langue" },
-  { href: "/redaction/nouvelle", libelle: "Rédaction" },
+  { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
+  { href: "/ressources", libelle: "Ressources" },
+  { href: "/a-propos", libelle: "À propos" },
 ] as const;
 
 interface LiensNavigationProps {
@@ -18,8 +19,9 @@ interface LiensNavigationProps {
 
 /**
  * Liste des liens de navigation principale, avec surlignage du lien
- * correspondant à la page courante (pilule bleu pâle, comme dans la
- * maquette de référence).
+ * correspondant à la page courante (texte bleu + trait sous le lien,
+ * comme dans la maquette de référence — un `<span>` positionné plutôt
+ * qu'un pseudo-élément `::after`, non disponible directement en JSX).
  *
  * Composant client : c'est le seul moyen fiable de connaître l'URL
  * courante ici, `BarreNavigation` étant un Server Component partagé
@@ -40,12 +42,19 @@ export default function LiensNavigation({ pleineLargeur = false }: LiensNavigati
             href={lien.href}
             aria-current={actif ? "page" : undefined}
             className={
-              actif
-                ? `rounded-sm bg-primary-tint px-3.5 py-2 text-[15px] font-medium text-primary ${pleineLargeur ? "block" : ""}`
-                : `rounded-sm px-3.5 py-2 text-[15px] font-medium text-muted-foreground hover:bg-background hover:text-ink ${pleineLargeur ? "block" : ""}`
+              (actif
+                ? "text-primary font-semibold"
+                : "text-foreground hover:text-primary") +
+              ` relative px-3.5 py-2.5 text-base ${pleineLargeur ? "block" : ""}`
             }
           >
             {lien.libelle}
+            {actif && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-3.5 bottom-0.5 h-[2.5px] rounded-full bg-primary"
+              />
+            )}
           </Link>
         );
       })}

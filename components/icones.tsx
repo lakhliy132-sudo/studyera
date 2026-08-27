@@ -107,3 +107,33 @@ export function IconeFleche({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Ampoule — onglet "Thèmes et enjeux". */
+export function IconeIdee({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden="true">
+      <path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z" />
+    </svg>
+  );
+}
+
+/** Masques de théâtre — pilule de sélection d'œuvre pour une pièce
+ * (ex. Antigone). */
+export function IconeMasques({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" className={className} aria-hidden="true">
+      <path d="M4 5h7v6a3.5 3.5 0 01-7 0V5zM13 5h7v6a3.5 3.5 0 01-7 0V5z" />
+      <path d="M6.5 14.5c.8.8 1.7.8 2.5 0M15 14.5c.8.8 1.7.8 2.5 0" />
+    </svg>
+  );
+}
+
+/** Maison — pilule de sélection d'œuvre pour un roman (ex. La Boîte à
+ * Merveilles). */
+export function IconeMaison({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true">
+      <path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" />
+    </svg>
+  );
+}

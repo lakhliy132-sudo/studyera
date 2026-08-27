@@ -12,11 +12,11 @@ interface CarteBilingueProps {
  * cas, seul le contenu change. `contenuAr` à `null` masque entièrement
  * la carte arabe plutôt que d'afficher une carte vide.
  *
- * Fond `--color-background` (pas blanc) : ces cartes sont un niveau "en
- * retrait" par rapport à la carte englobante (la bannière ou la fiche
- * de chapitre, elles blanches) — reprend la maquette de référence.
- * Texte en `font-lecture` (Spectral, serif de labeur) : c'est le
- * contenu principal de lecture de la page.
+ * Fond blanc (pas teinté) : ces cartes sont au même niveau que la
+ * bannière, pas "en retrait" par rapport à elle — reprend la maquette
+ * de référence. Texte en `font-lecture` (Lora, serif de labeur), assez
+ * grand (18px, interligne généreux) : c'est le contenu principal de
+ * lecture de la page.
  *
  * En-tête arabe en `flex-row-reverse` (pas `dir="rtl"` sur l'en-tête) :
  * mirroir visuel correct sans faire hériter le sens RTL à la ligne
@@ -25,27 +25,27 @@ interface CarteBilingueProps {
  */
 export default function CarteBilingue({ contenuFr, contenuAr }: CarteBilingueProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div className="rounded-md border border-border bg-background p-5">
-        <p className="mb-2.5 flex items-center gap-2 text-sm font-bold text-primary">
-          <IconeLivre />
+    <div className="grid grid-cols-1 gap-[22px] md:grid-cols-2">
+      <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+        <p className="mb-[18px] flex items-center gap-[11px] font-serif text-lg font-bold text-primary">
+          <IconeLivre className="size-[22px]" />
           Résumé
         </p>
-        <div className="font-lecture text-[15px] leading-[1.7] whitespace-pre-line text-foreground">
+        <div className="font-lecture text-lg leading-[1.95] whitespace-pre-line text-foreground">
           {contenuFr}
         </div>
       </div>
 
       {contenuAr && (
-        <div className="rounded-md border border-border bg-background p-5">
-          <p className="mb-2.5 flex flex-row-reverse items-center justify-end gap-2 text-sm font-bold text-primary">
-            <IconeLivre />
+        <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+          <p className="mb-[18px] flex flex-row-reverse items-center justify-end gap-[11px] font-serif text-lg font-bold text-primary">
+            <IconeLivre className="size-[22px]" />
             ملخص
           </p>
           <div
             dir="rtl"
             lang="ar"
-            className="font-arabe text-base leading-[1.7] whitespace-pre-line text-foreground"
+            className="font-arabe text-lg leading-[2.3] whitespace-pre-line text-foreground"
           >
             {contenuAr}
           </div>

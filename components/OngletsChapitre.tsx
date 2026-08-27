@@ -30,16 +30,17 @@ interface OngletsChapitreProps {
   ongletActif: CleOngletChapitre;
 }
 
-/** Barre d'onglets de la page d'un chapitre — même carte de pilules
- * que OngletsOeuvre (Server Component, navigation par query param,
- * défilement horizontal en CSS pur sous `md`, sticky sous la nav). */
+/** Barre d'onglets de la page d'un chapitre — même bandeau
+ * `bg-surface-muted` à soulignement bleu que OngletsOeuvre (Server
+ * Component, navigation par query param, défilement horizontal en CSS
+ * pur sous `md`, sticky sous la nav — 88px de haut). */
 export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsChapitreProps) {
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="sticky top-[74px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-lg border border-border bg-surface p-1.5 shadow-sm"
+      className="sticky top-[88px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted px-2"
     >
-      <ul className="flex min-w-max gap-0.5">
+      <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {
           const actif = cle === ongletActif;
           const href =
@@ -54,8 +55,8 @@ export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsCh
                 aria-current={actif ? "page" : undefined}
                 className={
                   actif
-                    ? "flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-[15px] font-medium whitespace-nowrap text-white"
-                    : "flex items-center gap-2 rounded-md px-5 py-3 text-[15px] font-medium whitespace-nowrap text-muted-foreground hover:bg-background hover:text-ink"
+                    ? "flex items-center gap-2 border-b-[3px] border-primary px-5 py-[18px] text-[15px] font-bold whitespace-nowrap text-primary"
+                    : "flex items-center gap-2 border-b-[3px] border-transparent px-5 py-[18px] text-[15px] font-medium whitespace-nowrap text-foreground hover:text-primary"
                 }
               >
                 <Icone />

@@ -82,7 +82,7 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
       )}
 
       {aDesPointsCles && (
-        <div className="flex flex-col gap-2.5 rounded-md border border-border bg-background p-5">
+        <div className="flex flex-col gap-2.5 rounded-md border border-border bg-surface-muted p-5">
           <p className="flex items-center gap-2 text-sm font-bold text-primary">
             <IconeLivreOuvert />
             Points clés

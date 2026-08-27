@@ -10,9 +10,6 @@ interface LexiqueChapitreProps {
  * liste est vide (contenu complémentaire, pas un onglet à part entière
  * ici — voir le futur onglet Lexique de /oeuvres/[slug] pour la vue par
  * œuvre entière).
- *
- * Couleur `--color-or` sur le mot lui-même : accent réservé au lexique
- * dans la palette, pour le distinguer du bleu de navigation.
  */
 export default function LexiqueChapitre({ entrees }: LexiqueChapitreProps) {
   if (entrees.length === 0) return null;
@@ -26,7 +23,7 @@ export default function LexiqueChapitre({ entrees }: LexiqueChapitreProps) {
       <dl className="divide-y divide-border rounded-md border border-border bg-surface">
         {entrees.map((entree) => (
           <div key={entree.id} className="flex flex-col gap-1 p-4">
-            <dt className="font-bold text-or">
+            <dt className="font-bold text-primary">
               {entree.mot}
               {entree.nature && (
                 <span className="ml-2 text-sm font-normal text-muted-foreground">({entree.nature})</span>

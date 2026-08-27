@@ -56,7 +56,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
     <main className="flex flex-col">
       <SelecteurOeuvres oeuvres={oeuvresFiliere} slugActif={slug} />
 
-      <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 px-6 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
         <BanniereOeuvre
           slug={slug}
           oeuvre={oeuvre}
@@ -73,7 +73,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           {ongletActif === "resume" ? (
             <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
           ) : (
-            <p className="rounded-md border border-dashed border-border-strong bg-surface p-11 text-center text-muted-foreground">
+            <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
               Bientôt disponible.
             </p>
           )}

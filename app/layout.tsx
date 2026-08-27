@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri, DM_Sans, Playfair_Display, Spectral } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 };
 
 /**
- * Police arabe (Amiri), chargée et auto-hébergée par Next.js au build
- * (pas de requête vers Google au chargement de la page). Exposée comme
- * variable CSS `--font-amiri` sur <html>, reprise par le token
- * `font-arabe` défini dans app/globals.css : les composants utilisent
- * `font-arabe`, jamais `--font-amiri` directement.
+ * Police arabe (IBM Plex Sans Arabic), chargée et auto-hébergée par
+ * Next.js au build (pas de requête vers Google au chargement de la
+ * page). Exposée comme variable CSS `--font-ibm-plex-arabic`, reprise
+ * par le token `font-arabe` défini dans app/globals.css : les
+ * composants utilisent `font-arabe`, jamais la variable directement.
  */
-const amiri = Amiri({
+const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
-  weight: ["400", "700"],
-  variable: "--font-amiri",
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-plex-arabic",
 });
 
 /**
@@ -30,33 +30,34 @@ const amiri = Amiri({
  */
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
   variable: "--font-playfair",
 });
 
 /**
  * Police du texte de lecture longue (résumés bilingues) — distincte de
- * la police d'interface : un serif de labeur (Spectral), plus confortable
+ * la police d'interface : un serif de labeur (Lora), plus confortable
  * à lire sur plusieurs paragraphes qu'un sans-serif d'interface. Exposée
- * comme `--font-spectral`, reprise par le token `font-lecture`.
+ * comme `--font-lora`, reprise par le token `font-lecture`.
  */
-const spectral = Spectral({
+const lora = Lora({
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["400", "500"],
   style: ["normal", "italic"],
-  variable: "--font-spectral",
+  variable: "--font-lora",
 });
 
 /**
  * Police de tout le texte d'interface (nav, boutons, listes, labels).
- * Exposée comme `--font-dm-sans`, reprise par le token `--font-sans`
+ * Exposée comme `--font-inter`, reprise par le token `--font-sans`
  * (l'utilitaire Tailwind par défaut, donc aussi le corps de page, sans
  * classe à ajouter nulle part).
  */
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
 });
 
 /**
@@ -78,7 +79,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${amiri.variable} ${playfair.variable} ${spectral.variable} ${dmSans.variable}`}
+      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable}`}
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />

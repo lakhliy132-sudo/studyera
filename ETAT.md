@@ -1,43 +1,78 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-26.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
-> ⚠️ **Une session parallèle/antérieure a travaillé sur ce dépôt sans
-> passer par cette conversation** (détecté via des fichiers non
-> committés trouvés en tout début de session : `PROJECT_CHARTER.md`,
-> `.omo/`, `dev-server.log`, une capture d'écran à la racine, et un
-> `BanniereOeuvre.tsx` déjà modifié). Elle a ajouté une vraie photo de
-> couverture pour *La Boîte à Merveilles* (`public/couvertures/
-> boite-a-merveilles.png` + migration `20260830000000_
-> couverture_boite_a_merveilles.sql`, commitées cette session après
-> correctif de mise en page — voir plus bas) et généré
-> `PROJECT_CHARTER.md`, un audit du projet resté **non committé et non
-> lu en détail par Claude** (à décider : le garder, le supprimer, ou le
-> fusionner avec ce fichier ETAT.md, qui a la même fonction). La
-> capture d'écran à la racine est aussi restée non committée. `.omo/`
-> et `dev-server.log` ont été ajoutés à `.gitignore` (métadonnées
-> d'outils locaux, pas du code).
+> ⚠️ **Fichiers non committés laissés par une session parallèle/antérieure,
+> toujours en attente d'une décision de l'utilisateur** : `PROJECT_CHARTER.md`
+> (un audit du projet, non lu en détail par Claude — jamais committé, jamais
+> supprimé) et une capture d'écran à la racine (`Capture d'écran 2026-08-26
+> 162006.png`). À décider : les garder, les supprimer, ou fusionner
+> `PROJECT_CHARTER.md` avec ce fichier ETAT.md qui a la même fonction.
+> `.omo/` et `dev-server.log` (métadonnées d'outils locaux de cette même
+> session parallèle, pas du code) ont déjà été ajoutés à `.gitignore`.
 >
-> après l'ajout d'un vrai résumé (`essentiel_fr`/`essentiel_ar`) pour
-> *La Boîte à Merveilles* — rédigé par Claude à partir de sa
-> connaissance du roman, PAS tiré du fichier Excel (⚠️ la version arabe
-> n'a pas été relue par un locuteur, à vérifier avant usage en classe)
-> — et d'une illustration originale au trait (`IllustrationEnfantBoite`,
-> un enfant portant sa boîte à merveilles) remplaçant le dégradé nu du
-> panneau de couverture. Ni photo ni image générée par IA : dessinée à
-> la main en SVG.
+> ### Refonte visuelle v2 (remplace intégralement la v1)
 >
-> Contexte : refonte complète du design sur la base d'un fichier
-> HTML/CSS de référence fourni par l'utilisateur (page-oeuvre.html) :
-> nouvelle palette et nouveaux tokens (extraits 1:1 du `:root` de ce
-> fichier), 3 polices (DM Sans / Playfair Display / Spectral, en plus
-> d'Amiri), jeu d'icônes SVG remplaçant tous les emoji, nav/pilules/
-> bannière/onglets/cartes de chapitre reconstruits pour correspondre au
-> pixel près à la référence. Nouvelle règle métier : les boutons "Lire
-> le texte intégral"/"Lecteur bilingue" n'apparaissent que si
-> `oeuvre.mode === "texte_integral"` **et** qu'un premier chapitre
-> existe réellement (avant, ils étaient toujours affichés, même sans
-> destination valable).
+> La session précédente avait reconstruit tout le design sur la base d'un
+> premier fichier de référence (`page-oeuvre.html`, pour *La Boîte à
+> Merveilles*) : palette DM Sans/Playfair/Spectral, pilules pleines pour
+> les onglets, bannière en rectangle plein, résumé sur carte teintée.
+> **L'utilisateur a ensuite fourni un second fichier de référence, plus
+> abouti** (`page-oeuvre (2).html`, pour *Le Dernier Jour d'un Condamné*)
+> et a explicitement demandé, via question posée, de **remplacer le
+> design v1 par celui-ci comme version définitive** — ce qui a été fait
+> cette session sur toute la partie œuvre/chapitre du site :
+>
+> - **Tokens** (`app/globals.css`, système `@theme` de Tailwind v4) :
+>   nouvelle palette bleue/encre (`--color-primary:#1d4ed8`,
+>   `--color-ink:#1b3a8f`, `--color-surface`/`--color-surface-muted`,
+>   `--color-validation`/`--color-erreur`...), rayons et ombre repensés.
+>   Le token `--color-or` (accent ambre du lexique en v1) a été supprimé
+>   sans remplaçant dédié — voir bug corrigé plus bas.
+> - **Polices** (`app/layout.tsx`) : Inter (texte courant), Playfair
+>   Display (titres), Lora (texte de lecture fr), IBM Plex Sans Arabic
+>   (texte arabe) — remplacent DM Sans/Spectral.
+> - **Icônes** (`components/icones.tsx`) : nouvelles icônes ajoutées
+>   (`IconeIdee`, `IconeMasques`, `IconeMaison`) pour coller à la
+>   maquette v2 ; ⚠️ piège connu du composant — passer un `className`
+>   personnalisé remplace entièrement la taille par défaut (`size-4`),
+>   il faut toujours inclure un `size-*` explicite sinon l'icône rend
+>   énorme/non stylée (bug rencontré et corrigé sur `IconeFleche`).
+> - **Nav/bannière/onglets** : `BarreNavigation.tsx` reconstruite (logo
+>   SVG deux tons, hauteur 88px), `SelecteurOeuvres.tsx` en pilules
+>   égales avec icône par œuvre, `BanniereOeuvre.tsx` refaite avec un
+>   effet de fondu CSS `mask-image` (photo de couverture qui se fond en
+>   dégradé vers la carte blanche, au lieu du rectangle plein v1),
+>   `OngletsOeuvre.tsx`/`OngletsChapitre.tsx` passés en soulignement actif
+>   (au lieu de pilules pleines), `SommaireChapitres.tsx` en grille de
+>   cartes verticales avec badge numéroté/coche si lu.
+> - **Règle métier inchangée** : les boutons "Lire le texte intégral"/
+>   "Lecteur bilingue" n'apparaissent que si `oeuvre.mode ===
+>   "texte_integral"` **et** qu'un premier chapitre existe réellement.
+> - **Couvertures photo** : en plus de la photo *Boîte à Merveilles*
+>   ajoutée par la session parallèle (corrigée en rectangle plein cette
+>   session, `max-w-[800px] mx-auto` → pleine largeur `aspect-[16/9]`),
+>   une photo de couverture pour *Le Dernier Jour d'un Condamné* a été
+>   extraite du fichier de référence v2 lui-même (image encodée en
+>   base64 dans son CSS) et posée dans `public/couvertures/
+>   dernier-jour-condamne.jpg` + migration `20260831000000_
+>   couverture_dernier_jour_condamne.sql`.
+> - **Illustration SVG abandonnée** : `components/IllustrationEnfantBoite.tsx`
+>   (dessin au trait fait main d'un enfant portant sa boîte, créé en
+>   réponse à une demande précédente faute d'outil de génération d'image
+>   réel) a été **supprimé** — la bannière v2 affiche désormais la vraie
+>   photo avec l'effet de fondu au lieu d'une illustration.
+> - **Bug corrigé** : `MotLexique.tsx`/`LexiqueChapitre.tsx` référençaient
+>   encore `text-or`/`decoration-or`, un token disparu avec la refonte
+>   des tokens — Tailwind ne génère alors silencieusement aucune règle
+>   (pas d'erreur de build), le soulignement du lexique perdait sa
+>   couleur. Repéré uniquement via une vraie capture d'écran, pas en
+>   lisant le code. Corrigé en `text-primary`/`decoration-primary` (la
+>   palette v2 n'a pas d'accent dédié « lexique » comme l'ambre en v1).
+>
+> Chaque changement de design a été vérifié par une **vraie capture
+> d'écran Playwright** avant d'être considéré terminé (voir règle
+> ci-dessous) — jamais uniquement par lecture du code/CSS compilé.
 >
 > ⚠️ **Si le serveur de dev devient très lent ou plante (out of
 > memory)** : vérifier `tasklist` pour des processus `node.exe`
@@ -609,3 +644,11 @@ Aucune clé ou secret trouvé committé dans le code ou les migrations.
    feuille "Paragraphes" au fichier Excel (colonnes : oeuvre_slug,
    chapitre_numero, ordre, texte_fr, texte_ar) puis relancer
    `npm run importer` — le script est déjà prêt à la lire.
+8. Décider du sort de `PROJECT_CHARTER.md` et de la capture d'écran non
+   committée à la racine (laissés par la session parallèle — voir
+   avertissement en tête de fichier).
+9. La refonte v2 n'a couvert que la partie œuvre/chapitre (nav,
+   bannière, onglets, cartes) — le reste du site (accueil, tableau de
+   bord, page de rédaction) utilise déjà les nouveaux tokens via les
+   classes sémantiques mais n'a pas été comparé composant par composant
+   à la maquette v2, faute de référence pour ces pages-là.

@@ -1,10 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import BarreProgression from "@/components/BarreProgression";
 import CarteBilingue from "@/components/CarteBilingue";
-import { IconeAuteur } from "@/components/icones";
-import IllustrationEnfantBoite from "@/components/IllustrationEnfantBoite";
+import { IconeAuteur, IconeLivre } from "@/components/icones";
 import type { Chapitre, Oeuvre } from "@/types/base-de-donnees";
 
 interface BanniereOeuvreProps {
@@ -18,9 +16,9 @@ interface BanniereOeuvreProps {
 
 /**
  * Bannière d'une œuvre : carte blanche unique (bordure, ombre, coins
- * très arrondis) posée sur le fond bleu pâle de la page, deux colonnes
- * en desktop — contenu à gauche, panneau de couverture à droite.
- * Reprend la maquette de référence (page-oeuvre.html).
+ * très arrondis), photo de couverture en fondu à droite (si définie),
+ * titre superposé à gauche — reprend la maquette de référence
+ * (page-oeuvre (2).html).
  *
  * "Lire le texte intégral" / "Lecteur bilingue" n'apparaissent QUE si
  * `oeuvre.mode === "texte_integral"` : les œuvres en `accompagnement`
@@ -34,109 +32,113 @@ export default function BanniereOeuvre({
   progression,
 }: BanniereOeuvreProps) {
   return (
-    <section className="my-6 overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
-      <CouverturePanneau oeuvre={oeuvre} />
+    <>
+      <Hero oeuvre={oeuvre} />
 
-      <div className="flex flex-col gap-5 p-7 pb-8 md:p-11 md:pb-9">
-        <div>
-          <h1 className="font-serif text-3xl leading-[1.05] font-semibold tracking-tight text-ink md:text-[52px]">
-            {oeuvre.titre_fr}
-          </h1>
-          {oeuvre.titre_ar && (
-            // `w-fit` : garde ce titre aligné à gauche avec le h1
-            // au-dessus (un bloc RTL pleine largeur alignerait son texte
-            // à droite de TOUTE la largeur, pas de son propre contenu).
-            <p dir="rtl" lang="ar" className="mt-2.5 w-fit font-arabe text-2xl text-primary">
-              {oeuvre.titre_ar}
-            </p>
-          )}
-          {oeuvre.auteur && (
-            <p className="mt-[18px] inline-flex w-fit items-center gap-2 rounded-full bg-primary-tint px-4 py-2 text-[14.5px] font-medium text-primary">
-              <IconeAuteur />
-              {oeuvre.auteur}
-            </p>
-          )}
-        </div>
-
-        {progression && <BarreProgression lus={progression.lus} total={progression.total} />}
-
+      <div className="mt-6">
         <CarteBilingue
           contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
           contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
         />
-
-        {oeuvre.mode === "texte_integral" && premierChapitre && (
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Link
-              href={`/oeuvres/${slug}/${premierChapitre.numero}`}
-              className="rounded-md bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              Lire le texte intégral →
-            </Link>
-            <Link
-              href={`/oeuvres/${slug}/${premierChapitre.numero}`}
-              className="rounded-md border border-primary px-4 py-2 text-center text-sm font-medium text-primary hover:bg-primary-tint"
-            >
-              Lecteur bilingue →
-            </Link>
-          </div>
-        )}
       </div>
-    </section>
+
+      {oeuvre.mode === "texte_integral" && premierChapitre && (
+        <div className="mt-[22px] flex flex-wrap justify-center gap-3.5">
+          <Link
+            href={`/oeuvres/${slug}/${premierChapitre.numero}`}
+            className="flex items-center gap-2 rounded-[10px] bg-primary px-7 py-4 text-base font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink hover:shadow-[0_4px_16px_rgba(29,78,216,0.3)]"
+          >
+            <IconeLivre className="size-[18px]" />
+            Lire le texte intégral →
+          </Link>
+          <Link
+            href={`/oeuvres/${slug}/${premierChapitre.numero}`}
+            className="flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-7 py-4 text-base font-semibold text-primary transition-colors hover:bg-surface-muted"
+          >
+            <IconeLivre className="size-[18px]" />
+            Lecteur bilingue →
+          </Link>
+        </div>
+      )}
+
+      {progression && (
+        <div className="mt-[22px] flex justify-center">
+          <BarreProgression lus={progression.lus} total={progression.total} />
+        </div>
+      )}
+    </>
   );
 }
 
 /**
- * Panneau de couverture : dégradé bleu + illustration au trait d'un
- * enfant portant sa boîte à merveilles (IllustrationEnfantBoite) — pas
- * une photo ni une image générée par IA, un dessin original dans le
- * même langage graphique que les icônes du site. Deux cercles
- * décoratifs en bordure fine reproduisent les pseudo-éléments
- * `::before`/`::after` de la maquette d'origine (non disponibles
- * directement en JSX).
+ * Bandeau titre : sur desktop, une photo de couverture (si définie)
+ * occupe le côté droit et se fond en blanc vers la gauche (masque CSS
+ * + dégradé blanc superposé) pour laisser le titre lisible par-dessus.
+ * Sans couverture, la carte reste simplement blanche avec le titre.
  *
- * Le titre n'est volontairement pas répété ici (il l'est déjà, en
- * grand, dans la colonne de gauche) : l'illustration devient le
- * centre d'attention du panneau plutôt que du texte redondant.
+ * Sur mobile, l'effet de fondu est abandonné (illisible en dessous de
+ * ~640px) : la photo redevient une simple bande pleine largeur
+ * au-dessus du titre, sans masque.
  */
-function CouverturePanneau({ oeuvre }: { oeuvre: Oeuvre }) {
-  if (oeuvre.couverture_url) {
-    // Pleine largeur de la carte (pas de max-width centré) : garde une
-    // vraie forme de bannière rectangulaire au lieu d'une photo isolée
-    // avec des marges blanches de chaque côté.
-    return (
-      <div className="relative aspect-[16/9] w-full overflow-hidden">
-        <Image
-          src={oeuvre.couverture_url}
-          alt={`Couverture de ${oeuvre.titre_fr}`}
-          fill
-          className="object-cover"
-        />
-      </div>
-    );
-  }
+function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
+  const aUnePhoto = Boolean(oeuvre.couverture_url);
 
   return (
-    <div className="relative order-first flex min-h-[260px] flex-col items-center overflow-hidden bg-[linear-gradient(150deg,#1b3a8f,#16307b_55%,#0f1f4f)] px-7 py-8 text-center text-white md:order-none md:min-h-0 md:px-9 md:py-11">
-      <div
-        aria-hidden="true"
-        className="absolute -top-[40%] -right-[30%] size-[340px] rounded-full border border-white/[0.13]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -bottom-[35%] -left-[25%] size-[280px] rounded-full border border-white/10"
-      />
+    <section
+      className={
+        aUnePhoto
+          ? "relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm sm:h-[250px] sm:flex-row sm:items-center"
+          : "relative flex items-center overflow-hidden rounded-lg border border-border bg-surface p-7 shadow-sm sm:h-[250px] sm:p-0"
+      }
+    >
+      {aUnePhoto && (
+        <>
+          {/* Bande photo pleine largeur en mobile, sans masque. */}
+          <div
+            aria-hidden="true"
+            className="h-[160px] w-full bg-cover bg-[center_62%] sm:hidden"
+            style={{ backgroundImage: `url(${oeuvre.couverture_url})` }}
+          />
+          {/* Photo en fondu, desktop uniquement : masquée à gauche,
+              pleine à droite, puis un dégradé blanc par-dessus pour
+              garder le titre lisible côté gauche. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-y-0 top-0 right-0 left-[22%] hidden bg-cover bg-[center_62%] sm:block md:left-[30%]"
+            style={{
+              backgroundImage: `url(${oeuvre.couverture_url})`,
+              maskImage:
+                "linear-gradient(100deg, transparent 0%, rgba(0,0,0,.55) 22%, #000 48%)",
+              WebkitMaskImage:
+                "linear-gradient(100deg, transparent 0%, rgba(0,0,0,.55) 22%, #000 48%)",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 hidden bg-[linear-gradient(95deg,#fff_0%,rgba(255,255,255,.93)_34%,rgba(255,255,255,.18)_62%,transparent_78%)] sm:block"
+          />
+        </>
+      )}
 
-      <p className="relative text-[11px] font-medium tracking-[0.24em] text-[#9db6ec] uppercase">
-        Œuvre au programme
-      </p>
-
-      <div className="relative flex flex-1 items-center justify-center py-4">
-        <IllustrationEnfantBoite className="size-36 text-[#bacdf4] md:size-40" />
+      <div className="relative max-w-[660px] px-7 py-6 sm:px-[30px] sm:py-0 md:px-[46px]">
+        <h1 className="font-serif text-[27px] leading-[1.06] font-bold tracking-tight text-ink sm:text-4xl md:text-[52px]">
+          {oeuvre.titre_fr}
+        </h1>
+        {oeuvre.titre_ar && (
+          // `w-fit` : garde ce titre aligné à gauche avec le h1
+          // au-dessus (un bloc RTL pleine largeur alignerait son texte
+          // à droite de TOUTE la largeur, pas de son propre contenu).
+          <p dir="rtl" lang="ar" className="mt-2.5 w-fit font-arabe text-lg font-medium text-primary-vif sm:text-xl md:text-2xl">
+            {oeuvre.titre_ar}
+          </p>
+        )}
+        {oeuvre.auteur && (
+          <p className="mt-[18px] inline-flex w-fit items-center gap-2.5 rounded-full bg-primary-tint px-[18px] py-2.5 text-[15px] font-semibold text-primary">
+            <IconeAuteur />
+            {oeuvre.auteur}
+          </p>
+        )}
       </div>
-
-      <p className="relative font-serif text-lg font-semibold">{oeuvre.titre_fr}</p>
-      <p className="relative mt-1 text-sm text-[#9db6ec]">{oeuvre.auteur}</p>
-    </div>
+    </section>
   );
 }
