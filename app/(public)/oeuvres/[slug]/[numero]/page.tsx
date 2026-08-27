@@ -10,6 +10,7 @@ import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletsChapitre, { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
+import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
 import { enregistrerActivite } from "@/lib/supabase/activite";
 import {
   recupererChapitreParNumero,
@@ -71,24 +72,30 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [tousLesChapitres, fiche, paragraphes, lexique, personnages, sujets, chapitreLu] =
+  const [tousLesChapitres, fiche, paragraphes, lexique, tousLesPersonnages, sujets, chapitreLu] =
     await Promise.all([
       recupererChapitresOeuvre(oeuvre.id),
       recupererFicheChapitre(chapitre.id),
       recupererParagraphesChapitre(chapitre.id),
       recupererLexiqueChapitre(chapitre.id),
-      // Tous les personnages de l'œuvre, pas seulement ceux qui
-      // apparaissent pour la première fois dans ce chapitre précis —
-      // demandé explicitement par l'utilisateur ("applique les
-      // personnages dans tous les chapitres") : la plupart des
-      // personnages étant introduits au chapitre 1, filtrer par
-      // première apparition laissait cet onglet vide sur presque tous
-      // les autres chapitres.
       recupererPersonnagesOeuvre(oeuvre.id),
       recupererSujetsChapitre(chapitre.id),
       recupererProgressionChapitre(user?.id ?? null, chapitre.id),
     ]);
   const numeroParChapitreId = new Map(tousLesChapitres.map((c) => [c.id, c.numero]));
+
+  // Seulement les personnages qui apparaissent réellement dans ce
+  // chapitre précis — demandé explicitement par l'utilisateur, en
+  // revenant sur le choix précédent d'afficher systématiquement les 27
+  // personnages de l'œuvre sur chaque page chapitre. Repose sur une
+  // liste saisie à la main (voir lib/personnagesParChapitre.ts, pas de
+  // vraie relation en base pour l'instant) ; si l'œuvre n'a pas encore
+  // cette liste (Antigone, Le Dernier Jour d'un Condamné), on retombe
+  // sur la liste complète plutôt que de tout masquer.
+  const nomsDuChapitre = PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero];
+  const personnages = nomsDuChapitre
+    ? tousLesPersonnages.filter((p) => nomsDuChapitre.includes(p.nom))
+    : tousLesPersonnages;
 
   // Journalisation de la consultation (session 4) : ne bloque jamais le
   // rendu de la page en cas d'erreur, et n'écrit rien pour un visiteur

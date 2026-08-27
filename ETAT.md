@@ -2,6 +2,40 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Sur la page chapitre : personnages filtrés au chapitre + 3 sujets par
+> chapitre partout.** Deux demandes explicites de l'utilisateur :
+>
+> 1. La "Fiche du chapitre" et l'onglet Personnages dédié de
+>    `/oeuvres/[slug]/[numero]` n'affichent plus les 27 personnages de
+>    l'œuvre mais seulement ceux réellement présents dans le chapitre
+>    consulté — retour en arrière assumé sur le choix précédent
+>    ("applique les personnages dans tous les chapitres"), qui laissait
+>    trop de monde partout. Repose sur une liste saisie à la main,
+>    `lib/personnagesParChapitre.ts` (`PERSONNAGES_PAR_CHAPITRE_
+>    BOITE_A_MERVEILLES`), et non une vraie relation en base : la table
+>    `personnages` n'a qu'un `chapitre_apparition_id` unique (première
+>    apparition), pas de many-to-many chapitres↔personnages, et ajouter
+>    une vraie colonne/table demanderait une migration Supabase à
+>    appliquer manuellement (toujours en attente pour l'admin, voir plus
+>    bas — pas un chemin fiable pour un besoin "tout de suite"). Cette
+>    liste vient d'une vraie lecture des résumés déjà rédigés cette
+>    session, pas d'une supposition ; à tenir à jour si leur contenu
+>    change. L'onglet Personnages de la page **œuvre**, lui, continue
+>    d'afficher les 27 (c'est le trombinoscope complet du roman).
+> 2. 33 nouveaux sujets ajoutés (3 par chapitre, chapitres 2 à 12 — le
+>    chapitre 1 avait déjà 4 sujets d'origine, non touché), soit 37 au
+>    total. **Comme pour le lexique, l'utilisateur n'a fourni aucun sujet
+>    tout fait** : titres, consignes (~150 mots à produire) et type
+>    (analyse/argumentation) sont entièrement rédigés par Claude, à
+>    partir des thèmes déjà établis pour chaque chapitre — à faire
+>    relire par un enseignant avant usage en classe. Ajouté via le
+>    pipeline Excel habituel (`npm run importer`, 0 erreur,
+>    `essentiel_fr`/`essentiel_ar` vérifiés intacts avant relance).
+>
+> Vérifié par capture d'écran (chapitre 3 : personnages filtrés à 7 au
+> lieu de 27 ; chapitre 9 : 3 sujets réels dans l'aperçu et l'onglet
+> dédié).
+>
 > ⚠️ **Session parallèle de nouveau détectée** (comme au tout début de
 > cette conversation) : en travaillant sur la "Fiche du chapitre"
 > ci-dessous, `git status` a montré des fichiers déjà modifiés/créés que
