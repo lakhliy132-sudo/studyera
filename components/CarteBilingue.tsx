@@ -18,6 +18,17 @@ interface CarteBilingueProps {
    * avant.
    */
   long?: boolean;
+  /**
+   * Empile fr/ar (une carte pleine largeur au-dessus de l'autre) au
+   * lieu du côte-à-côte habituel (`md:grid-cols-2`, chaque carte à
+   * ~50% de largeur) — demandé explicitement par l'utilisateur pour le
+   * résumé "essentiel" d'une œuvre : carte "beaucoup plus large",
+   * moins de lignes, plus confortable à lire. Design, couleurs et
+   * typographie de la carte elle-même inchangés, seule la largeur de
+   * colonne change. `false` par défaut (résumé de chapitre) garde le
+   * côte-à-côte existant.
+   */
+  pleineLargeur?: boolean;
 }
 
 /**
@@ -45,13 +56,18 @@ interface CarteBilingueProps {
  * utilisable ici même si ce composant reste un Server Component — pas
  * besoin de `"use client"` pour un simple repli CSS.
  */
-export default function CarteBilingue({ contenuFr, contenuAr, long = false }: CarteBilingueProps) {
+export default function CarteBilingue({
+  contenuFr,
+  contenuAr,
+  long = false,
+  pleineLargeur = false,
+}: CarteBilingueProps) {
   const idFr = useId();
   const idAr = useId();
   const coins = long ? "rounded-none" : "rounded-lg";
 
   return (
-    <div className="grid grid-cols-1 gap-[22px] md:grid-cols-2">
+    <div className={`grid grid-cols-1 gap-[22px] ${pleineLargeur ? "" : "md:grid-cols-2"}`}>
       <div
         className={`${coins} border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]`}
       >
