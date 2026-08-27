@@ -35,12 +35,18 @@ interface OngletsChapitreProps {
  * OngletsOeuvre (style pilule demandé par l'utilisateur, plutôt que le
  * soulignement de la refonte v2 — voir OngletsOeuvre pour le détail).
  * Server Component, navigation par query param, défilement horizontal
- * en CSS pur sous `md`, sticky sous la nav — 88px de haut. */
+ * en CSS pur sous `md`.
+ *
+ * Plus de `sticky` (auparavant collée sous la nav en scrollant) —
+ * retiré à la demande explicite de l'utilisateur : une fois entré dans
+ * l'onglet Résumé, la barre restait figée en haut de l'écran pendant
+ * toute la lecture du résumé/texte intégral, ce qui n'était pas
+ * souhaité. Défile désormais normalement avec le reste de la page. */
 export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsChapitreProps) {
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="sticky top-[88px] z-10 mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted p-1"
+      className="mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted p-1"
     >
       <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {

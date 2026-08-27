@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Barre d'onglets de la page chapitre n'est plus `sticky`** — demandé
+> explicitement par l'utilisateur, formulation ambiguë clarifiée via une
+> question posée (plusieurs éléments possibles : la barre d'onglets
+> elle-même, les en-têtes "Résumé"/"ملخص" des cartes, ou la ligne des
+> thèmes — confirmé : la barre d'onglets). Elle restait collée en haut
+> de l'écran (`sticky top-[88px]`) pendant tout le défilement dans
+> l'onglet Résumé, ce qui n'était pas voulu ; défile désormais
+> normalement avec le reste de la page (`OngletsChapitre.tsx`). Vérifié
+> par capture d'écran après un défilement profond dans le résumé — la
+> barre a bien disparu du haut de l'écran, seule la nav globale du site
+> reste fixe.
+>
 > **Lexique étoffé : 106 mots au total** (était 51). Demandé explicitement
 > par l'utilisateur ("ajoute plus de lexique dans les chapitres") : les
 > chapitres 2 à 12 n'avaient que 3 mots chacun (contre 18 pour le
