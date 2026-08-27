@@ -8,10 +8,11 @@ import {
   IconeDocument,
   IconeFleche,
   IconeLieu,
+  IconeLivreOuvert,
   IconePersonne,
   IconeRecherche,
 } from "@/components/icones";
-import type { Chapitre, Personnage, Sujet } from "@/types/base-de-donnees";
+import type { Chapitre, EntreeLexique, Personnage, Sujet } from "@/types/base-de-donnees";
 
 interface FicheChapitreApercuProps {
   chapitre: Chapitre;
@@ -21,23 +22,33 @@ interface FicheChapitreApercuProps {
    * (`chapitre_apparition_id === chapitre.id`) sont juste mis en avant
    * visuellement (avatar plein plutôt que contour), pas filtrés à part. */
   personnages: Personnage[];
+  /** Mots de lexique de CE chapitre précis uniquement (contrairement à
+   * `personnages`, pas de vue "toute l'œuvre" ici — chaque mot de
+   * lexique est déjà rattaché à un seul chapitre en base, donc pas le
+   * même problème de filtrage que les personnages récurrents). */
+  lexique: EntreeLexique[];
   sujets: Sujet[];
 }
 
 /**
  * "Fiche du chapitre" : carte englobante avec, en 2/3 + 1/3, la liste
- * des personnages (recherche incluse) puis les lieux et les sujets
- * liés à ce chapitre précis — remplace l'ancien aperçu à trois
- * colonnes égales (BlocApercu). Design repris du fichier de référence
- * fourni par l'utilisateur ("Chapitre 3 — La Boîte à Merveilles").
+ * des personnages (recherche incluse) puis le lexique, les lieux et
+ * les sujets liés à ce chapitre précis — remplace l'ancien aperçu à
+ * trois colonnes égales (BlocApercu). Design repris du fichier de
+ * référence fourni par l'utilisateur ("Chapitre 3 — La Boîte à
+ * Merveilles"), colonne de droite étendue avec un bloc Lexique
+ * (absent du fichier de référence) à la demande explicite de
+ * l'utilisateur.
  *
  * Composant Client uniquement pour la recherche de personnages (état
- * local) ; Lieux et Sujets liés n'ont besoin d'aucune interactivité
+ * local) ; Lexique, Lieux et Sujets liés n'ont besoin d'aucune
+ * interactivité
  * mais vivent dans le même fichier pour rester à côté visuellement.
  */
 export default function FicheChapitreApercu({
   chapitre,
   personnages,
+  lexique,
   sujets,
 }: FicheChapitreApercuProps) {
   return (
@@ -62,6 +73,7 @@ export default function FicheChapitreApercu({
         <BlocPersonnages chapitreId={chapitre.id} personnages={personnages} />
 
         <div className="flex flex-col gap-[22px]">
+          <BlocLexique entrees={lexique} />
           <BlocLieux lieux={chapitre.lieux} />
           <BlocSujets sujets={sujets} />
         </div>
@@ -162,6 +174,38 @@ function BlocPersonnages({
                 </li>
               );
             })}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BlocLexique({ entrees }: { entrees: EntreeLexique[] }) {
+  return (
+    <div className="overflow-hidden rounded-[20px] border border-border bg-background">
+      <EnteteBloc Icone={IconeLivreOuvert} titre="Lexique" compte={entrees.length} />
+      <div className="px-6 pt-4 pb-5">
+        {entrees.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground">Bientôt disponible.</p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {entrees.map((entree) => (
+              <li key={entree.id} className="flex items-center justify-between gap-3 py-2.5">
+                <span className="min-w-0 truncate border-b-2 border-dotted border-primary-vif text-[15.5px] font-semibold text-ink">
+                  {entree.mot}
+                </span>
+                {entree.sens_ar && (
+                  <span
+                    dir="rtl"
+                    lang="ar"
+                    className="shrink-0 font-arabe text-base font-medium text-primary-vif"
+                  >
+                    {entree.sens_ar}
+                  </span>
+                )}
+              </li>
+            ))}
           </ul>
         )}
       </div>

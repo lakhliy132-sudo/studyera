@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Bloc Lexique ajouté à la "Fiche du chapitre"** — demandé explicitement
+> par l'utilisateur (absent du fichier de référence d'origine, qui ne
+> montrait que Personnages/Lieux/Sujets liés). `FicheChapitreApercu.tsx`
+> a maintenant une colonne de droite à trois blocs (Lexique, Lieux,
+> Sujets liés) au lieu de deux. Contrairement à `personnages` (vue
+> "toute l'œuvre" partout sauf la Fiche, filtrée au chapitre), le
+> lexique était déjà nativement chapitre par chapitre en base (chaque
+> mot n'appartient qu'à un seul chapitre) : `recupererLexiqueChapitre`,
+> déjà utilisée par cette page, alimente directement ce nouveau bloc,
+> aucune nouvelle requête ni donnée nécessaire. Vérifié par capture
+> d'écran (chapitre 1 : 18 mots).
+>
 > **6 sujets thématiques ajoutés, fournis cette fois par l'utilisateur**
 > (43 sujets au total, était 37) : "Peut-on être heureux malgré la
 > pauvreté ?", "Le voisinage peut-il remplacer la famille ?", "La

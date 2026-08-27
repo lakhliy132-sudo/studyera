@@ -153,7 +153,12 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
               <FicheChapitre fiche={fiche} lexique={lexique} />
               <TexteChapitre paragraphes={paragraphes} />
 
-              <FicheChapitreApercu chapitre={chapitre} personnages={personnages} sujets={sujets} />
+              <FicheChapitreApercu
+                chapitre={chapitre}
+                personnages={personnages}
+                lexique={lexique}
+                sujets={sujets}
+              />
 
               <BoutonMarquerLu
                 connecte={Boolean(user)}
