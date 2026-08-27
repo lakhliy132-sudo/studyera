@@ -1,6 +1,28 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
+>
+> **6 sujets thématiques ajoutés, fournis cette fois par l'utilisateur**
+> (43 sujets au total, était 37) : "Peut-on être heureux malgré la
+> pauvreté ?", "Le voisinage peut-il remplacer la famille ?", "La
+> solitude est-elle toujours négative ?", "La solidarité entre les
+> voisins est-elle importante dans la société ?", "La superstition", "Les
+> croyances religieuses et populaires". Contrairement aux sujets
+> précédents, **titre et consigne viennent du texte collé par
+> l'utilisateur** (reconstitué à partir d'un tableau titre/consigne collé
+> à plat, sans mise en forme — recomposé par Claude en paires cohérentes,
+> mais le contenu textuel lui-même n'est pas inventé). Pas de `statut`
+> "à relire" à ajouter ici : contrairement aux résumés/lexique/mes
+> propres sujets, celui-ci n'est pas une traduction ni une invention de
+> Claude.
+>
+> Volontairement **pas rattachés à un chapitre précis** (`chapitre_numero`
+> laissé vide dans l'Excel) : ce sont des sujets thématiques sur
+> l'ensemble du roman, pas des événements d'un chapitre particulier — ils
+> apparaissent donc sur l'onglet "Sujets d'analyse" de la page œuvre,
+> pas sur une page chapitre. Ajouté via le pipeline Excel habituel
+> (`npm run importer`, 0 erreur, `essentiel_fr`/`essentiel_ar` vérifiés
+> intacts avant relance) ; vérifié par capture d'écran.
 >
 > **Sujets "argumentation" recentrés sur l'œuvre** — demandé explicitement
 > par l'utilisateur ("fait que les sujets de l'argumentation [soient]
