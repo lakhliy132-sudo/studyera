@@ -2,6 +2,28 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> ⚠️ **Barre d'onglets de la page chapitre complètement retirée** (pas
+> seulement rendue non-`sticky`, voir l'entrée juste en dessous — le
+> premier correctif n'a pas suffi : l'utilisateur voulait la barre
+> invisible partout sur la page chapitre, pas seulement non collée en
+> scrollant). Une deuxième question posée a permis de trancher entre
+> deux lectures possibles ("invisible sur Résumé seulement" vs.
+> "invisible partout, quel que soit l'onglet") : confirmé, invisible
+> partout. `OngletsChapitre` n'est plus rendu du tout sur
+> `/oeuvres/[slug]/[numero]`.
+>
+> **Conséquence assumée, pas cachée** : il n'y a plus aucun moyen dans
+> l'interface d'atteindre les vues dédiées Personnages/Lexique/Lieux/
+> Sujets liés de cette page (`OngletPersonnages`, `LexiqueChapitre`,
+> `LieuxChapitre`, `SujetsChapitre`, toujours montées dans le code,
+> conditionnées à `?onglet=...` dans l'URL — juste plus aucun lien n'y
+> mène). Pas grave dans l'immédiat : la "Fiche du chapitre"
+> (`FicheChapitreApercu`, dans le contenu Résumé, seule vue restante)
+> affiche déjà Personnages/Lexique/Lieux/Sujets liés du chapitre. Ce
+> code devenu inaccessible via l'UI n'a pas été supprimé (l'utilisateur
+> n'a pas demandé leur suppression, seulement celle de la barre) — à
+> nettoyer si un jour on est sûr que ces vues ne servent plus jamais.
+>
 > **Barre d'onglets de la page chapitre n'est plus `sticky`** — demandé
 > explicitement par l'utilisateur, formulation ambiguë clarifiée via une
 > question posée (plusieurs éléments possibles : la barre d'onglets

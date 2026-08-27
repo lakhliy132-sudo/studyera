@@ -7,7 +7,7 @@ import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
 import OngletPersonnages from "@/components/OngletPersonnages";
-import OngletsChapitre, { versCleOngletChapitre } from "@/components/OngletsChapitre";
+import { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
 import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
@@ -31,28 +31,32 @@ interface PagePropsChapitre {
 }
 
 /**
- * /oeuvres/[slug]/[numero] — fil d'Ariane, en-tête, barre d'onglets
- * (Résumé / Personnages / Lexique / Lieux / Sujets liés). Même système
- * visuel que /oeuvres/[slug], même largeur maximale (`max-w-[1240px]`,
- * alignée sur cette page à la demande explicite de l'utilisateur —
- * cette page n'est de toute façon pas couverte par la maquette de
- * référence, qui ne montre que la page œuvre). Un choix précédent de
- * largeur plus étroite (`max-w-3xl`, pour le confort de lecture d'un
- * texte long) rendait les deux cartes résumé fr/ar (CarteBilingue,
- * `md:grid-cols-2`) trop étroites une fois partagées en deux colonnes,
- * avec beaucoup de lignes ; la largeur alignée sur la page œuvre
- * corrige ça sans changer la disposition (toujours côte à côte sur
- * desktop, empilées sur mobile — la grille de CarteBilingue n'a pas
- * bougé, seul le conteneur qui l'entoure est plus large).
+ * /oeuvres/[slug]/[numero] — fil d'Ariane, en-tête, puis directement le
+ * contenu de l'onglet Résumé (fiche de synthèse, texte intégral, la
+ * "Fiche du chapitre"). Même système visuel que /oeuvres/[slug], même
+ * largeur maximale (`max-w-[1240px]`, alignée sur cette page à la
+ * demande explicite de l'utilisateur — cette page n'est de toute façon
+ * pas couverte par la maquette de référence, qui ne montre que la page
+ * œuvre). Un choix précédent de largeur plus étroite (`max-w-3xl`, pour
+ * le confort de lecture d'un texte long) rendait les deux cartes
+ * résumé fr/ar (CarteBilingue, `md:grid-cols-2`) trop étroites une fois
+ * partagées en deux colonnes, avec beaucoup de lignes ; la largeur
+ * alignée sur la page œuvre corrige ça sans changer la disposition
+ * (toujours côte à côte sur desktop, empilées sur mobile — la grille
+ * de CarteBilingue n'a pas bougé, seul le conteneur qui l'entoure est
+ * plus large).
  *
- * L'onglet Résumé reste le plus riche : fiche de synthèse (résumé
- * bilingue avec mots de lexique cliquables), texte intégral si
- * disponible, puis la "Fiche du chapitre" (FicheChapitreApercu) —
- * Personnages/Lieux/Sujets liés en 2/3 + 1/3, design repris du fichier
- * de référence fourni par l'utilisateur ("Chapitre 3 — La Boîte à
- * Merveilles"), qui remplace l'ancien aperçu à trois colonnes égales.
- * Chacune de ces trois sections a aussi son propre onglet pour une vue
- * dédiée.
+ * ⚠️ Plus de barre d'onglets (OngletsChapitre) sur cette page — retirée
+ * à la demande explicite de l'utilisateur, qui la trouvait "toujours
+ * présente" alors qu'elle n'apportait plus grand-chose : la "Fiche du
+ * chapitre" (FicheChapitreApercu, dans le contenu Résumé ci-dessous)
+ * affiche déjà Personnages/Lexique/Lieux/Sujets liés du chapitre. La
+ * logique `ongletActif`/`versCleOngletChapitre` et les vues dédiées
+ * (OngletPersonnages, LexiqueChapitre, LieuxChapitre, SujetsChapitre)
+ * restent en place plus bas — accessibles seulement via `?onglet=...`
+ * dans l'URL, plus aucune UI n'y mène. Assumé tel quel pour l'instant
+ * (l'utilisateur savait qu'il n'y aurait plus de moyen de naviguer
+ * entre ces vues) ; à nettoyer si elles ne servent jamais.
  */
 export default async function PageChapitre({ params, searchParams }: PagePropsChapitre) {
   const { slug, numero: numeroBrut } = await params;
@@ -144,8 +148,6 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
             <p className="mt-1 text-muted-foreground">{chapitre.resume_court}</p>
           )}
         </header>
-
-        <OngletsChapitre slug={slug} numero={numero} ongletActif={ongletActif} />
 
         <div className="flex flex-col gap-8 py-2">
           {ongletActif === "resume" && (
