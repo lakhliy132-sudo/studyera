@@ -2,6 +2,24 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Lexique étendu aux chapitres 2 à 12 : 51 mots au total** (était 18,
+> tous du chapitre 1 seul — l'onglet Lexique de la page œuvre affichait
+> déjà "tout" mais n'avait en réalité que du contenu chapitre 1, faute de
+> mots saisis ailleurs). Demandé explicitement par l'utilisateur ("fais
+> tout lexique du l'œuvre pas que chap1"). ⚠️ Contrairement aux résumés
+> de chapitres, l'utilisateur n'a fourni aucune liste de vocabulaire :
+> **les 33 nouveaux mots (3 par chapitre) sont choisis et rédigés
+> entièrement par Claude**, à partir de termes déjà présents dans les
+> résumés/points clés déjà écrits cette session (ex. "la faillite",
+> "un sanctuaire", "une marieuse", "un haïk"), pas transcrits d'une
+> source externe. `statut` n'existe pas sur la table `lexique` (pas de
+> mécanisme "à relire" comme pour `fiches`/`chapitres`) — à faire
+> vérifier par un enseignant avant usage en classe, au même titre que
+> les traductions arabes des résumés. Ajouté via le pipeline Excel
+> habituel (`npm run importer`, 0 erreur, `essentiel_fr`/`essentiel_ar`
+> vérifiés intacts avant relance) ; vérifié par capture d'écran (mot du
+> chapitre 9 retrouvé par recherche).
+>
 > **Onglet "Lexique" de la page œuvre branché sur de vraies données**
 > (`/oeuvres/[slug]?onglet=lexique` — jusqu'ici "Bientôt disponible").
 > Nouveau composant `OngletLexique.tsx` (**Client Component** — état
