@@ -67,6 +67,7 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
             fiche.resume_fr ? decouperAvecLexique(fiche.resume_fr, parMot, dejaMontres) : null
           }
           contenuAr={fiche.resume_ar}
+          long
         />
       )}
 

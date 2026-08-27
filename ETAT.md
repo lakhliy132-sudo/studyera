@@ -2,6 +2,25 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> ⚠️ **Piège réel de `npm run importer` découvert (et déclenché par erreur)
+> cette session : un `upsert` écrase avec `null` toute colonne dont la
+> cellule Excel est vide, même si la ligne existe déjà en base avec une
+> vraie valeur.** En relançant l'import pour ajouter les chapitres 2/3
+> (feuille "Chapitres"), la feuille "Oeuvres" a aussi été ré-upsertée en
+> passant — et ses colonnes `essentiel_fr`/`essentiel_ar` étaient restées
+> VIDES dans le fichier Excel (ce texte avait été écrit directement en
+> base par Claude lors d'une session précédente, jamais reporté dans
+> l'Excel). Résultat : le résumé "essentiel" de *La Boîte à Merveilles*,
+> pourtant affiché et vérifié par capture d'écran plus tôt dans cette
+> même session, a été silencieusement remis à `null` — repéré
+> immédiatement (recherche du texte connu sur la page live) et corrigé en
+> reportant ce texte dans l'Excel puis en relançant l'import. **Leçon** :
+> toute donnée écrite directement en base (hors pipeline Excel) doit être
+> reportée dans le fichier Excel dans la foulée, sinon le prochain
+> `npm run importer` — même motivé par un tout autre besoin — peut
+> l'effacer sans avertissement (`0 erreur` dans le résumé de l'import : ce
+> n'est pas un cas signalé comme un problème par le script).
+>
 > **Chapitres 2 et 3 de *La Boîte à Merveilles* ajoutés** (l'œuvre n'avait
 > que le chapitre 1 jusqu'ici). Source : l'utilisateur a fourni, dans la
 > conversation, le déroulé événement par événement de chaque chapitre (9
