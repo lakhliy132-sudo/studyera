@@ -6,6 +6,7 @@ import FicheChapitre from "@/components/FicheChapitre";
 import { IconeDocument, IconeLieu, IconePersonne } from "@/components/icones";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
+import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletsChapitre, { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import PersonnagesChapitre from "@/components/PersonnagesChapitre";
 import SujetsChapitre from "@/components/SujetsChapitre";
@@ -18,7 +19,7 @@ import {
   recupererLexiqueChapitre,
   recupererOeuvreParSlug,
   recupererParagraphesChapitre,
-  recupererPersonnagesChapitre,
+  recupererPersonnagesOeuvre,
   recupererSujetsChapitre,
 } from "@/lib/supabase/contenu";
 import { recupererProgressionChapitre } from "@/lib/supabase/progression";
@@ -74,10 +75,18 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
       recupererFicheChapitre(chapitre.id),
       recupererParagraphesChapitre(chapitre.id),
       recupererLexiqueChapitre(chapitre.id),
-      recupererPersonnagesChapitre(chapitre.id),
+      // Tous les personnages de l'œuvre, pas seulement ceux qui
+      // apparaissent pour la première fois dans ce chapitre précis —
+      // demandé explicitement par l'utilisateur ("applique les
+      // personnages dans tous les chapitres") : la plupart des
+      // personnages étant introduits au chapitre 1, filtrer par
+      // première apparition laissait cet onglet vide sur presque tous
+      // les autres chapitres.
+      recupererPersonnagesOeuvre(oeuvre.id),
       recupererSujetsChapitre(chapitre.id),
       recupererProgressionChapitre(user?.id ?? null, chapitre.id),
     ]);
+  const numeroParChapitreId = new Map(tousLesChapitres.map((c) => [c.id, c.numero]));
 
   // Journalisation de la consultation (session 4) : ne bloque jamais le
   // rendu de la page en cas d'erreur, et n'écrit rien pour un visiteur
@@ -155,7 +164,9 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
             </>
           )}
 
-          {ongletActif === "personnages" && <PersonnagesChapitre personnages={personnages} />}
+          {ongletActif === "personnages" && (
+            <OngletPersonnages personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
+          )}
           {ongletActif === "lexique" && <LexiqueChapitre entrees={lexique} />}
           {ongletActif === "lieux" && <LieuxChapitre lieux={chapitre.lieux} />}
           {ongletActif === "sujets" && <SujetsChapitre sujets={sujets} />}

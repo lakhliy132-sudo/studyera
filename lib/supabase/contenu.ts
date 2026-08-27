@@ -172,30 +172,14 @@ export async function recupererLexiqueChapitre(
   return (data as EntreeLexique[]) ?? [];
 }
 
-/** Personnages qui apparaissent pour la première fois dans un chapitre
- * précis (onglet Personnages de /oeuvres/[slug]/[numero], session
- * design). Ne renvoie PAS tous les personnages de l'œuvre : seulement
- * ceux dont `chapitre_apparition_id` pointe vers ce chapitre. */
-export async function recupererPersonnagesChapitre(
-  chapitreId: string,
-): Promise<Personnage[]> {
-  const supabase = await creerClientServeur();
-
-  const { data, error } = await supabase
-    .from("personnages")
-    .select("*")
-    .eq("chapitre_apparition_id", chapitreId)
-    .order("nom");
-
-  if (error) throw error;
-  return (data as Personnage[]) ?? [];
-}
-
 /** Tous les personnages d'une œuvre, quel que soit leur chapitre
- * d'apparition (onglet Personnages de /oeuvres/[slug] — fiche
- * complète des personnages du roman, pas seulement ceux d'un
- * chapitre). Triés par nom : pas de distinction principal/secondaire
- * en base pour l'instant (aucune colonne dédiée), voir ETAT.md. */
+ * d'apparition — utilisée à la fois par l'onglet Personnages de
+ * /oeuvres/[slug] (fiche complète du roman) et par celui de
+ * /oeuvres/[slug]/[numero] (même liste complète sur chaque chapitre,
+ * demandé explicitement par l'utilisateur plutôt qu'un filtrage par
+ * première apparition qui laissait la plupart des chapitres vides).
+ * Triés par nom : pas de distinction principal/secondaire en base pour
+ * l'instant (aucune colonne dédiée), voir ETAT.md. */
 export async function recupererPersonnagesOeuvre(oeuvreId: string): Promise<Personnage[]> {
   const supabase = await creerClientServeur();
 
