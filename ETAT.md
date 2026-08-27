@@ -2,16 +2,26 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
-> **Onglet "Personnages" de la page œuvre branché sur de vraies données**
-> (`/oeuvres/[slug]?onglet=personnages` — jusqu'ici "Bientôt disponible").
-> Nouveau composant `OngletPersonnages.tsx` + fonction
-> `recupererPersonnagesOeuvre` (`lib/supabase/contenu.ts`) : tous les
-> personnages de l'œuvre (pas seulement ceux d'un chapitre, contrairement
-> à `PersonnagesChapitre`), en cartes "médaillon" (initiales, nom en
-> Playfair, nom arabe, pastille de rôle dorée, description, chapitre de
-> première apparition) — design repris d'un fichier de référence HTML
-> fourni par l'utilisateur ("Rubriques — Le Dernier Jour d'un Condamné",
-> non committé). Ce fichier couvre aussi Lexique/Lieux/Sujets liés dans le
+> **Onglet "Personnages" branché sur de vraies données, partout**
+> (page œuvre ET chaque page chapitre — jusqu'ici "Bientôt disponible" ou
+> vide sur la quasi-totalité des chapitres). Nouveau composant
+> `OngletPersonnages.tsx` + fonction `recupererPersonnagesOeuvre`
+> (`lib/supabase/contenu.ts`) : tous les personnages de l'œuvre, en
+> cartes "médaillon" (initiales, nom en Playfair, nom arabe, pastille de
+> rôle dorée, description, chapitre de première apparition) — design
+> repris d'un fichier de référence HTML fourni par l'utilisateur
+> ("Rubriques — Le Dernier Jour d'un Condamné", non committé). D'abord
+> posé sur `/oeuvres/[slug]?onglet=personnages` seul, puis étendu à
+> `/oeuvres/[slug]/[numero]?onglet=personnages` **et** à l'aperçu compact
+> sous le résumé d'un chapitre, à la demande explicite de l'utilisateur
+> ("applique les personnages dans tous les chapitres") : ces deux
+> derniers montraient auparavant seulement les personnages apparaissant
+> pour la PREMIÈRE fois dans le chapitre consulté (`recupererPersonnages
+> Chapitre`, désormais supprimée, plus aucun appelant) — comme la plupart
+> des personnages sont introduits au chapitre 1, ça laissait l'onglet
+> vide sur presque tous les autres chapitres. Les trois emplacements
+> affichent maintenant la liste complète et identique des personnages.
+> Ce fichier de référence couvre aussi Lexique/Lieux/Sujets liés dans le
 > même esprit visuel — **seul Personnages a été fait pour l'instant**, le
 > reste est un suivi possible si demandé. L'accent doré (`--or`) de cette
 > maquette est appliqué en couleurs arbitraires locales au composant, pas
