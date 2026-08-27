@@ -172,6 +172,29 @@ export async function recupererLexiqueChapitre(
   return (data as EntreeLexique[]) ?? [];
 }
 
+/** Tous les mots de lexique de l'œuvre, tous chapitres confondus, triés
+ * alphabétiquement (onglet Lexique de /oeuvres/[slug]). `lexique` n'a
+ * pas de colonne `oeuvre_id` directe (seulement `chapitre_id`) : on
+ * passe donc par la liste des chapitres de l'œuvre, déjà récupérée par
+ * la page appelante. Un tableau vide de `chapitreIds` renvoie
+ * directement `[]` sans requête — évite un `.in("chapitre_id", [])`
+ * qui, selon la version de PostgREST, peut se comporter différemment
+ * d'un filtre "aucune ligne". */
+export async function recupererLexiqueOeuvre(chapitreIds: string[]): Promise<EntreeLexique[]> {
+  if (chapitreIds.length === 0) return [];
+
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("lexique")
+    .select("*")
+    .in("chapitre_id", chapitreIds)
+    .order("mot");
+
+  if (error) throw error;
+  return (data as EntreeLexique[]) ?? [];
+}
+
 /** Tous les personnages d'une œuvre, quel que soit leur chapitre
  * d'apparition — utilisée à la fois par l'onglet Personnages de
  * /oeuvres/[slug] (fiche complète du roman) et par celui de

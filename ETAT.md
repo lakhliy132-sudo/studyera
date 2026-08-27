@@ -2,6 +2,35 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Onglet "Lexique" de la page œuvre branché sur de vraies données**
+> (`/oeuvres/[slug]?onglet=lexique` — jusqu'ici "Bientôt disponible").
+> Nouveau composant `OngletLexique.tsx` (**Client Component** — état
+> local pour la recherche et le mode révision, pas de round-trip
+> serveur) + fonction `recupererLexiqueOeuvre` (`lib/supabase/contenu.ts`,
+> passe par la liste des chapitres de l'œuvre car `lexique` n'a pas de
+> colonne `oeuvre_id` directe). Mêmes carte/interactions que le fichier
+> de référence "Rubriques — Le Dernier Jour d'un Condamné" déjà utilisé
+> pour Personnages : mot souligné en pointillé doré à gauche, traduction
+> arabe sur fond crème à droite avec badge "CH. N", recherche par mot ou
+> définition, "Mode révision" qui floute les traductions (révélées au
+> survol ou par clic, pour s'entraîner à deviner le sens avant de
+> vérifier). Deux nouvelles icônes ajoutées à `icones.tsx` :
+> `IconeRecherche` (loupe), `IconeOeil` (bascule mode révision).
+>
+> ⚠️ **Bug trouvé et corrigé pendant la vérification, pas signalé par
+> l'utilisateur** : la recherche ne gérait pas les accents (taper
+> "boite" ne trouvait pas "boîte") — comparaison naïve `toLowerCase()`
+> sans normalisation Unicode. Corrigé avec un helper `normaliser()`
+> (`.normalize("NFD")` + suppression des marques diacritiques
+> combinantes U+0300–U+036F) appliqué à la fois à la requête et aux
+> champs mot/définition. Repéré en testant la recherche avant de
+> considérer l'onglet terminé, pas par lecture du code.
+>
+> L'onglet Lexique de la page **chapitre** (contrairement à Personnages,
+> déjà unifié partout) reste chapitre-scopé (`LexiqueChapitre.tsx`,
+> `recupererLexiqueChapitre`) — pas demandé au niveau chapitre cette
+> fois, seulement au niveau œuvre.
+>
 > **Casting complet : 27 personnages** (était 13). Ajout des 14
 > personnages secondaires mentionnés au fil des chapitres 2 à 12 mais
 > absents de la feuille "Personnages" jusqu'ici — demandé explicitement

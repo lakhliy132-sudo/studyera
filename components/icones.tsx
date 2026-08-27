@@ -137,3 +137,23 @@ export function IconeMaison({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Loupe — champ de recherche (onglet Lexique). */
+export function IconeRecherche({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </svg>
+  );
+}
+
+/** Œil — bascule "Mode révision" de l'onglet Lexique. */
+export function IconeOeil({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
