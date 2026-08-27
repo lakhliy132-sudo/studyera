@@ -39,7 +39,6 @@ export default function BanniereOeuvre({
         <CarteBilingue
           contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
           contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
-          pleineLargeur
         />
       </div>
 

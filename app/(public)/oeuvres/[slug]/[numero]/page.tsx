@@ -32,10 +32,17 @@ interface PagePropsChapitre {
 /**
  * /oeuvres/[slug]/[numero] — fil d'Ariane, en-tête, barre d'onglets
  * (Résumé / Personnages / Lexique / Lieux / Sujets liés). Même système
- * visuel que /oeuvres/[slug] (tokens, polices, cartes), largeur de
- * lecture plus étroite (max-w-3xl) : cette page n'est pas couverte par
- * la maquette de référence (qui ne montre que la page œuvre), le choix
- * de largeur est délibéré pour le confort de lecture d'un texte long.
+ * visuel que /oeuvres/[slug], même largeur maximale (`max-w-[1240px]`,
+ * alignée sur cette page à la demande explicite de l'utilisateur —
+ * cette page n'est de toute façon pas couverte par la maquette de
+ * référence, qui ne montre que la page œuvre). Un choix précédent de
+ * largeur plus étroite (`max-w-3xl`, pour le confort de lecture d'un
+ * texte long) rendait les deux cartes résumé fr/ar (CarteBilingue,
+ * `md:grid-cols-2`) trop étroites une fois partagées en deux colonnes,
+ * avec beaucoup de lignes ; la largeur alignée sur la page œuvre
+ * corrige ça sans changer la disposition (toujours côte à côte sur
+ * desktop, empilées sur mobile — la grille de CarteBilingue n'a pas
+ * bougé, seul le conteneur qui l'entoure est plus large).
  *
  * L'onglet Résumé reste le plus riche : fiche de synthèse (résumé
  * bilingue avec mots de lexique cliquables), texte intégral si
@@ -90,7 +97,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto w-full max-w-3xl px-6 pt-6 text-sm text-muted-foreground">
+      <div className="mx-auto w-full max-w-[1240px] px-6 pt-6 text-sm text-muted-foreground">
         <Link href={`/oeuvres/${slug}`} className="hover:text-ink">
           ← {oeuvre.titre_fr}
         </Link>
@@ -100,7 +107,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </span>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-6 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
         <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-7 shadow-sm">
           <p className="inline-flex w-fit items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
             Chapitre {chapitre.numero}
