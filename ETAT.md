@@ -2,6 +2,21 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Réagencement de la "Fiche du chapitre" (bug réel repéré par
+> l'utilisateur, pas juste une préférence)** : en 2/3 (Personnages) +
+> 1/3 (Lexique/Lieux/Sujets liés empilés), l'ajout du bloc Lexique la
+> veille rendait la colonne de droite bien plus haute que Personnages,
+> laissant un grand espace blanc vide sous cette dernière — visible sur
+> le chapitre 1 (12 personnages sur 6 lignes en 2 colonnes vs. 18 mots
+> de lexique + lieux + sujets empilés). Corrigé en réagençant plutôt
+> qu'en camouflant : Personnages passe en pleine largeur sur sa propre
+> rangée (grille à 2/3/4 colonnes selon l'écran, donc moins de lignes),
+> Lexique/Lieux/Sujets liés passent en trois colonnes côte à côte en
+> dessous au lieu d'empilées dans une colonne étroite. Vérifié par
+> capture d'écran pleine page sur un chapitre à beaucoup de personnages
+> (ch. 1, 12) et un chapitre à peu de personnages (ch. 3, 7) : plus
+> d'espace vide dans les deux cas.
+>
 > **Bloc Lexique ajouté à la "Fiche du chapitre"** — demandé explicitement
 > par l'utilisateur (absent du fichier de référence d'origine, qui ne
 > montrait que Personnages/Lieux/Sujets liés). `FicheChapitreApercu.tsx`

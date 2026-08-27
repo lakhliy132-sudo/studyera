@@ -31,19 +31,25 @@ interface FicheChapitreApercuProps {
 }
 
 /**
- * "Fiche du chapitre" : carte englobante avec, en 2/3 + 1/3, la liste
- * des personnages (recherche incluse) puis le lexique, les lieux et
- * les sujets liés à ce chapitre précis — remplace l'ancien aperçu à
- * trois colonnes égales (BlocApercu). Design repris du fichier de
- * référence fourni par l'utilisateur ("Chapitre 3 — La Boîte à
- * Merveilles"), colonne de droite étendue avec un bloc Lexique
- * (absent du fichier de référence) à la demande explicite de
- * l'utilisateur.
+ * "Fiche du chapitre" : carte englobante avec les personnages (pleine
+ * largeur, recherche incluse) puis, en dessous, le lexique, les lieux
+ * et les sujets liés à ce chapitre précis en trois colonnes — remplace
+ * l'ancien aperçu à trois colonnes égales (BlocApercu). Design repris
+ * du fichier de référence fourni par l'utilisateur ("Chapitre 3 — La
+ * Boîte à Merveilles", qui plaçait Personnages en 2/3 et le reste en
+ * 1/3), réagencé en deux rangées (Personnages, puis Lexique/Lieux/
+ * Sujets liés côte à côte) après un vrai problème repéré par
+ * l'utilisateur : avec le bloc Lexique en plus dans la colonne de
+ * droite, celle-ci devenait bien plus haute que Personnages, laissant
+ * un grand espace blanc vide sous ce dernier. Mettre Personnages sur
+ * sa propre rangée pleine largeur (grille à 2/3/4 colonnes selon la
+ * largeur d'écran, plus de personnages par ligne) élimine ce
+ * déséquilibre au lieu de juste le camoufler.
  *
  * Composant Client uniquement pour la recherche de personnages (état
  * local) ; Lexique, Lieux et Sujets liés n'ont besoin d'aucune
- * interactivité
- * mais vivent dans le même fichier pour rester à côté visuellement.
+ * interactivité mais vivent dans le même fichier pour rester à côté
+ * visuellement.
  */
 export default function FicheChapitreApercu({
   chapitre,
@@ -69,10 +75,10 @@ export default function FicheChapitreApercu({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-[22px] lg:grid-cols-[1.85fr_1fr]">
+      <div className="flex flex-col gap-[22px]">
         <BlocPersonnages chapitreId={chapitre.id} personnages={personnages} />
 
-        <div className="flex flex-col gap-[22px]">
+        <div className="grid grid-cols-1 items-start gap-[22px] md:grid-cols-3">
           <BlocLexique entrees={lexique} />
           <BlocLieux lieux={chapitre.lieux} />
           <BlocSujets sujets={sujets} />
@@ -125,7 +131,7 @@ function BlocPersonnages({
     <div className="overflow-hidden rounded-[20px] border border-border bg-background">
       <EnteteBloc Icone={IconePersonne} titre="Personnages" compte={filtres.length} />
       <div className="px-[26px] pt-5 pb-6">
-        <div className="relative mb-4">
+        <div className="relative mb-4 max-w-[360px]">
           <IconeRecherche className="pointer-events-none absolute top-1/2 left-3.5 size-[18px] -translate-y-1/2 text-subtle-foreground" />
           <input
             type="search"
@@ -142,7 +148,7 @@ function BlocPersonnages({
             Aucun personnage ne correspond.
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtres.map((personnage) => {
               const introduitIci = personnage.chapitre_apparition_id === chapitreId;
 
