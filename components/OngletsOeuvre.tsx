@@ -28,12 +28,11 @@ interface OngletsOeuvreProps {
 
 /**
  * Barre d'onglets de la page d'une œuvre — bandeau `bg-surface-muted`
- * centré, onglet actif en pastille bleue pleine et arrondie (pas un
- * soulignement) : demandé explicitement par l'utilisateur pour
- * revenir au style pilule d'avant la refonte v2, en gardant sinon le
- * contenu/les libellés actuels des onglets et le même mécanisme de
- * défilement. Même traitement visuel que les pilules de
- * `SelecteurOeuvres` (rayon, ombre) pour rester cohérent.
+ * centré, onglet actif en pastille bleue pleine et arrondie (rayon
+ * `10px`, ombre bleutée — pas un soulignement) : demandé explicitement
+ * par l'utilisateur pour revenir au style pilule d'avant la refonte
+ * v2, en gardant sinon le contenu/les libellés actuels des onglets et
+ * le même mécanisme de défilement.
  *
  * Composant Serveur volontairement : chaque onglet est un lien
  * classique qui change le query param `onglet` dans l'URL, pas de

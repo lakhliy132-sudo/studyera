@@ -33,6 +33,20 @@
 > d'écran mobile + une mesure DOM (`scrollWidth > clientWidth`), pas
 > seulement en relisant le code.
 >
+> **Retouches demandées ensuite par l'utilisateur** (mêmes tokens/
+> mécanismes v2, pas une nouvelle refonte) : (1) les onglets
+> `OngletsOeuvre`/`OngletsChapitre` sont repassés du style souligné
+> (v2) à une pastille bleue pleine et arrondie (style d'avant la
+> refonte v2) ; (2) la photo de couverture de *La Boîte à Merveilles*
+> recadrée plus haut (`bg-[center_62%]` → `bg-[center_74%]`) pour que
+> l'enfant soit plus visible dans le cadre, au lieu du grand aplat de
+> ciel au-dessus de lui ; (3) le sélecteur des 3 œuvres
+> (`SelecteurOeuvres`, la barre de pilules Antigone/Boîte à
+> Merveilles/Dernier Jour) a été **retiré** de `/oeuvres/[slug]` — plus
+> affiché une fois qu'on est sur la page d'une œuvre précise — et le
+> composant, devenu orphelin (plus aucun appelant), a été supprimé.
+> Pour changer d'œuvre il faut désormais repasser par `/oeuvres`.
+>
 > ⚠️ **Fichiers non committés laissés par une session parallèle/antérieure,
 > toujours en attente d'une décision de l'utilisateur** : `PROJECT_CHARTER.md`
 > (un audit du projet, non lu en détail par Claude — jamais committé, jamais

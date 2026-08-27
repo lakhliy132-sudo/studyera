@@ -3,13 +3,7 @@ import { notFound } from "next/navigation";
 import BanniereOeuvre from "@/components/BanniereOeuvre";
 import OngletResume from "@/components/OngletResume";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
-import SelecteurOeuvres from "@/components/SelecteurOeuvres";
-import { FILIERE_ACTUELLE } from "@/lib/filiere";
-import {
-  recupererChapitresOeuvre,
-  recupererOeuvreParSlug,
-  recupererOeuvresParFiliere,
-} from "@/lib/supabase/contenu";
+import { recupererChapitresOeuvre, recupererOeuvreParSlug } from "@/lib/supabase/contenu";
 import { recupererProgressionOeuvre } from "@/lib/supabase/progression";
 import { creerClientServeur } from "@/lib/supabase/server";
 
@@ -19,11 +13,15 @@ interface PagePropsOeuvre {
 }
 
 /**
- * /oeuvres/[slug] — sélecteur d'œuvre, bannière (résumé bilingue
- * toujours visible, quel que soit l'onglet actif), barre d'onglets,
- * contenu de l'onglet actif. Reprend la maquette de référence
- * (page-oeuvre.html) : fond de page bleu pâle, bannière et onglets en
- * cartes blanches posées dessus, contenu centré à 1180px maximum.
+ * /oeuvres/[slug] — bannière (résumé bilingue toujours visible, quel
+ * que soit l'onglet actif), barre d'onglets, contenu de l'onglet
+ * actif. Reprend la maquette de référence (page-oeuvre.html) : fond de
+ * page bleu pâle, bannière et onglets en cartes blanches posées
+ * dessus, contenu centré à 1180px maximum.
+ *
+ * Pas de sélecteur des 3 œuvres ici (retiré à la demande explicite de
+ * l'utilisateur une fois sur la page d'une œuvre précise) — pour
+ * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
  * Seul l'onglet Résumé a un vrai contenu pour l'instant : les autres
  * affichent un message temporaire.
@@ -41,10 +39,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [oeuvresFiliere, chapitres] = await Promise.all([
-    recupererOeuvresParFiliere(FILIERE_ACTUELLE),
-    recupererChapitresOeuvre(oeuvre.id),
-  ]);
+  const chapitres = await recupererChapitresOeuvre(oeuvre.id);
   const chapitresLusIds = await recupererProgressionOeuvre(
     user?.id ?? null,
     chapitres.map((c) => c.id),
@@ -54,9 +49,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
 
   return (
     <main className="flex flex-col">
-      <SelecteurOeuvres oeuvres={oeuvresFiliere} slugActif={slug} />
-
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pt-6 pb-16">
         <BanniereOeuvre
           slug={slug}
           oeuvre={oeuvre}
