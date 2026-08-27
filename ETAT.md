@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-27.
 >
+> **Onglet "Personnages" de la page œuvre branché sur de vraies données**
+> (`/oeuvres/[slug]?onglet=personnages` — jusqu'ici "Bientôt disponible").
+> Nouveau composant `OngletPersonnages.tsx` + fonction
+> `recupererPersonnagesOeuvre` (`lib/supabase/contenu.ts`) : tous les
+> personnages de l'œuvre (pas seulement ceux d'un chapitre, contrairement
+> à `PersonnagesChapitre`), en cartes "médaillon" (initiales, nom en
+> Playfair, nom arabe, pastille de rôle dorée, description, chapitre de
+> première apparition) — design repris d'un fichier de référence HTML
+> fourni par l'utilisateur ("Rubriques — Le Dernier Jour d'un Condamné",
+> non committé). Ce fichier couvre aussi Lexique/Lieux/Sujets liés dans le
+> même esprit visuel — **seul Personnages a été fait pour l'instant**, le
+> reste est un suivi possible si demandé. L'accent doré (`--or`) de cette
+> maquette est appliqué en couleurs arbitraires locales au composant, pas
+> en token global : la palette v2 du reste du site n'en a pas (retiré
+> lors de la refonte v2), seul cet onglet en a besoin.
+>
+> Contenu des 10 personnages déjà en base enrichi (descriptions plus
+> complètes, fournies par l'utilisateur dans la conversation) + un
+> nouveau personnage ajouté, Lalla Aïcha (apparue au chapitre 4, absente
+> de la feuille "Personnages" jusqu'ici). ⚠️ Deux petits écarts
+> d'orthographe entre le texte de l'utilisateur et les noms déjà
+> enregistrés, volontairement PAS renommés pour ne pas dupliquer la ligne
+> à l'import (upsert sur `oeuvre_id, nom`) : "Maâlem Abdeslem" (utilisateur,
+> et aussi la graphie utilisée dans tous les résumés de chapitres 2-12)
+> vs "Maalem Abdeslam" (nom déjà en base, conservé) ; "La Chouafa (Lalla
+> Kanza)" (utilisateur) vs "La Chouafa (tante Kenza)" (déjà en base,
+> conservé). À uniformiser un jour si ça gêne.
+>
 > ⚠️ **Piège réel de `npm run importer` découvert (et déclenché par erreur)
 > cette session : un `upsert` écrase avec `null` toute colonne dont la
 > cellule Excel est vide, même si la ligne existe déjà en base avec une

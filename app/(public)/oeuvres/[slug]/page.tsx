@@ -1,9 +1,14 @@
 import { notFound } from "next/navigation";
 
 import BanniereOeuvre from "@/components/BanniereOeuvre";
+import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletResume from "@/components/OngletResume";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
-import { recupererChapitresOeuvre, recupererOeuvreParSlug } from "@/lib/supabase/contenu";
+import {
+  recupererChapitresOeuvre,
+  recupererOeuvreParSlug,
+  recupererPersonnagesOeuvre,
+} from "@/lib/supabase/contenu";
 import { recupererProgressionOeuvre } from "@/lib/supabase/progression";
 import { creerClientServeur } from "@/lib/supabase/server";
 
@@ -23,8 +28,8 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Seul l'onglet Résumé a un vrai contenu pour l'instant : les autres
- * affichent un message temporaire.
+ * Onglets Résumé et Personnages ont un vrai contenu ; Lexique/Thèmes et
+ * enjeux/Sujets d'analyse affichent encore un message temporaire.
  */
 export default async function PageOeuvre({ params, searchParams }: PagePropsOeuvre) {
   const { slug } = await params;
@@ -47,6 +52,11 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
 
   const premierChapitre = chapitres[0] ?? null;
 
+  // Chargé seulement pour l'onglet actif : aucune raison d'interroger
+  // `personnages` quand un visiteur consulte l'onglet Chapitres.
+  const personnages = ongletActif === "personnages" ? await recupererPersonnagesOeuvre(oeuvre.id) : [];
+  const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
+
   return (
     <main className="flex flex-col">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pt-6 pb-16">
@@ -63,9 +73,13 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
         <OngletsOeuvre slug={slug} ongletActif={ongletActif} />
 
         <div className="py-2">
-          {ongletActif === "resume" ? (
+          {ongletActif === "resume" && (
             <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
-          ) : (
+          )}
+          {ongletActif === "personnages" && (
+            <OngletPersonnages personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
+          )}
+          {ongletActif !== "resume" && ongletActif !== "personnages" && (
             <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
               Bientôt disponible.
             </p>

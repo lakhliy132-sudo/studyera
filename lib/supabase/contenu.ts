@@ -191,6 +191,24 @@ export async function recupererPersonnagesChapitre(
   return (data as Personnage[]) ?? [];
 }
 
+/** Tous les personnages d'une œuvre, quel que soit leur chapitre
+ * d'apparition (onglet Personnages de /oeuvres/[slug] — fiche
+ * complète des personnages du roman, pas seulement ceux d'un
+ * chapitre). Triés par nom : pas de distinction principal/secondaire
+ * en base pour l'instant (aucune colonne dédiée), voir ETAT.md. */
+export async function recupererPersonnagesOeuvre(oeuvreId: string): Promise<Personnage[]> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("personnages")
+    .select("*")
+    .eq("oeuvre_id", oeuvreId)
+    .order("nom");
+
+  if (error) throw error;
+  return (data as Personnage[]) ?? [];
+}
+
 /** Sujets d'exercice rattachés à un chapitre précis (onglet "Sujets
  * liés" de /oeuvres/[slug]/[numero], session design). */
 export async function recupererSujetsChapitre(chapitreId: string): Promise<Sujet[]> {
