@@ -1,7 +1,9 @@
 import { IconePersonne } from "@/components/icones";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Personnage } from "@/types/base-de-donnees";
 
 interface OngletPersonnagesProps {
+  slug: string;
   personnages: Personnage[];
   /** numéro de chapitre par id de chapitre — pour afficher "Chapitre N"
    * en pied de carte à partir de `chapitre_apparition_id`, sans requête
@@ -66,7 +68,7 @@ export function initiales(nom: string): string {
  * v2 du reste du site n'a pas d'accent doré (retiré lors de la refonte),
  * seule cette maquette-ci en demande un.
  */
-export default function OngletPersonnages({ personnages, numeroParChapitreId }: OngletPersonnagesProps) {
+export default function OngletPersonnages({ slug, personnages, numeroParChapitreId }: OngletPersonnagesProps) {
   const principaux = personnages.filter((p) => p.role && ROLES_PRINCIPAUX.has(p.role));
   const secondaires = personnages.filter((p) => !p.role || !ROLES_PRINCIPAUX.has(p.role));
 
@@ -79,7 +81,7 @@ export default function OngletPersonnages({ personnages, numeroParChapitreId }: 
         </h2>
       </div>
       <p className="mb-[30px] text-center text-base text-muted-foreground">
-        Qui traverse le récit — le trombinoscope complet du roman.
+        Qui traverse le récit — le trombinoscope complet de l&apos;œuvre.
       </p>
 
       {personnages.length === 0 ? (
@@ -91,7 +93,7 @@ export default function OngletPersonnages({ personnages, numeroParChapitreId }: 
               <p className="text-sm font-bold tracking-wide text-primary uppercase">
                 Personnages principaux
               </p>
-              <GrillePersonnages personnages={principaux} numeroParChapitreId={numeroParChapitreId} />
+              <GrillePersonnages slug={slug} personnages={principaux} numeroParChapitreId={numeroParChapitreId} />
             </div>
           )}
           {secondaires.length > 0 && (
@@ -99,7 +101,7 @@ export default function OngletPersonnages({ personnages, numeroParChapitreId }: 
               <p className="text-sm font-bold tracking-wide text-primary uppercase">
                 Personnages secondaires
               </p>
-              <GrillePersonnages personnages={secondaires} numeroParChapitreId={numeroParChapitreId} />
+              <GrillePersonnages slug={slug} personnages={secondaires} numeroParChapitreId={numeroParChapitreId} />
             </div>
           )}
         </div>
@@ -109,12 +111,17 @@ export default function OngletPersonnages({ personnages, numeroParChapitreId }: 
 }
 
 function GrillePersonnages({
+  slug,
   personnages,
   numeroParChapitreId,
 }: {
+  slug: string;
   personnages: Personnage[];
   numeroParChapitreId: Map<string, number>;
 }) {
+  // "Apparition : Scène N" pour Antigone plutôt que "Chapitre N" —
+  // voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
       {personnages.map((personnage) => {
@@ -155,7 +162,7 @@ function GrillePersonnages({
             )}
             {numero !== undefined && (
               <p className="mt-[18px] border-t border-dashed border-border-strong pt-[15px] text-xs text-subtle-foreground">
-                Apparition : Chapitre {numero}
+                Apparition : {unite.singulier} {numero}
               </p>
             )}
           </li>

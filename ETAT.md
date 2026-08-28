@@ -2,6 +2,52 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Antigone restructurée en 23 "scènes"** — demandé explicitement par
+> l'utilisateur ("dans antigone change le nom de chapitre par scene et
+> dans la case des scene comment par mythe d oedipe apres prologue
+> apres de 1 scene jusque 21 scene").
+>
+> - **Libellé "Chapitre" → "Scène" pour Antigone uniquement**, partout
+>   sur le site : nouveau `lib/uniteChapitre.ts`
+>   (`libelleUniteChapitre(slug)`, mappage codé en dur par slug — même
+>   contournement que `ROLES_PRINCIPAUX`, pas de colonne dédiée en
+>   base). Appliqué dans `OngletsOeuvre.tsx` (tab), `OngletResume.tsx`
+>   (titre/sous-titre), `SommaireChapitres.tsx` (cartes),
+>   `CarteOeuvre.tsx` (carte /oeuvres), `OngletPersonnages.tsx`
+>   ("Apparition : Scène N"), `FicheChapitreApercu.tsx` ("Fiche de la
+>   scène", accord de genre géré via `duUnite`), et la page
+>   `/oeuvres/[slug]/[numero]` (fil d'Ariane, pastille d'en-tête,
+>   navigation précédent/suivant). Le Quiz et `BarreProgression`/
+>   `BlocProgression` (tableau de bord) n'ont pas été traités — pas de
+>   contenu Quiz pour Antigone actuellement, moindre priorité pour le
+>   tableau de bord ; à faire si besoin confirmé.
+> - **23 "scènes" créées** pour Antigone (`data/contenu-plateforme-bac.xlsx`,
+>   feuille Chapitres) : "Le mythe d'Œdipe" (contexte mythologique,
+>   contenu bref et factuel rédigé par Claude), "Prologue" (récupère le
+>   résumé de la pièce écrit au tour précédent), puis "Scène 1" à
+>   "Scène 21" (coquilles vides, statut "brouillon" — aucun contenu
+>   scène par scène fourni par l'utilisateur pour l'instant). Le
+>   lexique (15 mots) a suivi le résumé vers "Prologue" plutôt que de
+>   rester sur "Le mythe d'Œdipe", qui n'est pas un extrait du texte de
+>   la pièce.
+> - ⚠️ **Bug de doublon repéré et corrigé en cours de route** : les
+>   cartes/en-têtes affichaient à la fois "{unité} {numero}" ET
+>   `titre_fr`, ce qui donnait des doublons incohérents dès que
+>   `titre_fr` contient lui-même l'ordinal (ex. carte "Scène 3" avec
+>   pour sous-titre "Scène 1", le numéro d'ordre en base 1-23 ne
+>   correspondant plus au numéro de la scène elle-même à cause des deux
+>   sections préliminaires). Corrigé par un nouveau champ
+>   `numeroDejaDansTitre` sur `LibelleUniteChapitre` : quand vrai (
+>   Antigone), les cartes/pastilles/liens précédent-suivant n'affichent
+>   plus que `titre_fr`, sans préfixe ordinal redondant. Repéré et
+>   vérifié par capture d'écran avant/après.
+>
+> Vérifié : `tsc`/`eslint` propres sur tous les fichiers touchés, import
+> sans erreur (35 chapitres au total, essentiel_fr/ar des 3 œuvres
+> inchangés), captures Playwright de la liste des 23 scènes, de la page
+> "Prologue" et d'une "Scène 3" ; La Boîte à Merveilles revérifiée
+> inchangée (libellés "Chapitre" intacts).
+>
 > **Fiche de lecture, personnages et lexique d'Antigone ajoutés** —
 > demandé explicitement par l'utilisateur ("fais moi fiche de lecture
 > et personnage lexique d antigone").

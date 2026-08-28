@@ -1,5 +1,6 @@
 import { IconeLivre } from "@/components/icones";
 import SommaireChapitres from "@/components/SommaireChapitres";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
 interface OngletResumeProps {
@@ -26,16 +27,19 @@ interface OngletResumeProps {
  * de l'application.
  */
 export default function OngletResume({ slug, chapitres, chapitresLusIds }: OngletResumeProps) {
+  // "Scènes" pour Antigone plutôt que "Chapitres" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
+
   return (
     <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeLivre className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
-          Les chapitres de l&apos;œuvre
+          Les {unite.pluriel.toLowerCase()} de l&apos;œuvre
         </h2>
       </div>
       <p className="mb-[30px] text-center text-base text-muted-foreground">
-        Découvre chaque chapitre et accède facilement à son contenu.
+        Découvre chaque {unite.singulier.toLowerCase()} et accède facilement à son contenu.
       </p>
 
       <SommaireChapitres slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import CouvertureOeuvre from "@/components/CouvertureOeuvre";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Oeuvre } from "@/types/base-de-donnees";
 
 interface CarteOeuvreProps {
@@ -10,6 +11,9 @@ interface CarteOeuvreProps {
 
 /** Carte cliquable d'une œuvre, utilisée dans la grille de /oeuvres. */
 export default function CarteOeuvre({ oeuvre, nombreChapitres }: CarteOeuvreProps) {
+  // "N scènes" pour Antigone plutôt que "N chapitres" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(oeuvre.slug);
+
   return (
     <Link
       href={`/oeuvres/${oeuvre.slug}`}
@@ -30,7 +34,7 @@ export default function CarteOeuvre({ oeuvre, nombreChapitres }: CarteOeuvreProp
         )}
         {oeuvre.auteur && <p className="text-sm text-muted-foreground">{oeuvre.auteur}</p>}
         <p className="mt-2 text-xs text-muted-foreground">
-          {nombreChapitres} chapitre{nombreChapitres > 1 ? "s" : ""}
+          {nombreChapitres} {(nombreChapitres > 1 ? unite.pluriel : unite.singulier).toLowerCase()}
         </p>
       </div>
     </Link>

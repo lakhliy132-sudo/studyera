@@ -12,6 +12,7 @@ import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
 import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
 import { enregistrerActivite } from "@/lib/supabase/activite";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import {
   recupererChapitreParNumero,
   recupererChapitresOeuvre,
@@ -64,6 +65,8 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
   const numero = Number(numeroBrut);
   if (!Number.isInteger(numero)) notFound();
   const ongletActif = versCleOngletChapitre(onglet);
+  // "Scène" pour Antigone plutôt que "Chapitre" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
 
   const oeuvre = await recupererOeuvreParSlug(slug);
   if (!oeuvre) notFound();
@@ -136,15 +139,21 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </Link>
         <span className="mx-1.5">›</span>
         <span>
-          Chapitre {chapitre.numero} : {chapitre.titre_fr}
+          {unite.numeroDejaDansTitre ? chapitre.titre_fr : `${unite.singulier} ${chapitre.numero} : ${chapitre.titre_fr}`}
         </span>
       </div>
 
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
         <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-7 shadow-sm">
-          <p className="inline-flex w-fit items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
-            Chapitre {chapitre.numero}
-          </p>
+          {/* Pastille "Chapitre N" masquée quand le titre contient déjà
+           * l'ordinal (Antigone : "Scène 1"...) — sinon doublon
+           * incohérent avec le h1 juste en dessous, voir
+           * lib/uniteChapitre.ts. */}
+          {!unite.numeroDejaDansTitre && (
+            <p className="inline-flex w-fit items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
+              {unite.singulier} {chapitre.numero}
+            </p>
+          )}
           <h1 className="mt-2 font-serif text-2xl font-semibold text-ink md:text-4xl">
             {chapitre.titre_fr}
           </h1>
@@ -168,6 +177,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
               <FicheChapitreApercu
                 chapitre={chapitre}
+                libelleUniteDu={unite.duUnite}
                 personnages={personnages}
                 lexique={lexique}
                 sujets={sujets}
@@ -182,14 +192,14 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
           )}
 
           {ongletActif === "personnages" && (
-            <OngletPersonnages personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
+            <OngletPersonnages slug={slug} personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
           )}
           {ongletActif === "lexique" && <LexiqueChapitre entrees={lexique} />}
           {ongletActif === "lieux" && <LieuxChapitre lieux={chapitre.lieux} />}
           {ongletActif === "sujets" && <SujetsChapitre sujets={sujets} />}
 
           <nav
-            aria-label="Chapitres précédent et suivant"
+            aria-label={`${unite.pluriel} précédent et suivant`}
             className="flex items-center justify-between gap-4 border-t border-border pt-6"
           >
             {chapitrePrecedent ? (
@@ -197,7 +207,10 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
                 href={`/oeuvres/${slug}/${chapitrePrecedent.numero}`}
                 className="text-sm font-medium text-foreground hover:text-primary"
               >
-                ← Chapitre {chapitrePrecedent.numero}
+                ←{" "}
+                {unite.numeroDejaDansTitre
+                  ? chapitrePrecedent.titre_fr
+                  : `${unite.singulier} ${chapitrePrecedent.numero}`}
               </Link>
             ) : (
               <span />
@@ -207,7 +220,10 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
                 href={`/oeuvres/${slug}/${chapitreSuivant.numero}`}
                 className="text-sm font-medium text-foreground hover:text-primary"
               >
-                Chapitre {chapitreSuivant.numero} →
+                {unite.numeroDejaDansTitre
+                  ? chapitreSuivant.titre_fr
+                  : `${unite.singulier} ${chapitreSuivant.numero}`}{" "}
+                →
               </Link>
             )}
           </nav>

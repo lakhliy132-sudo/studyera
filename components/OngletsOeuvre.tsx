@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { IconeDocument, IconeInfo, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 
 // Onglet "themes" (Thèmes et enjeux) retiré de cette barre à la
 // demande explicite de l'utilisateur ("nonnn la case de theme en jeux
@@ -70,6 +71,9 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
         {ONGLETS.map(({ cle, libelle, Icone }) => {
           const actif = cle === ongletActif;
           const href = cle === "resume" ? `/oeuvres/${slug}` : `/oeuvres/${slug}?onglet=${cle}`;
+          // Libellé de l'onglet "resume" adapté par œuvre ("Scènes"
+          // pour Antigone) — voir lib/uniteChapitre.ts.
+          const libelleAffiche = cle === "resume" ? libelleUniteChapitre(slug).pluriel : libelle;
 
           return (
             <li key={cle}>
@@ -83,7 +87,7 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
                 }
               >
                 <Icone />
-                {libelle}
+                {libelleAffiche}
               </Link>
             </li>
           );

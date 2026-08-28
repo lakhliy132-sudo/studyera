@@ -16,6 +16,11 @@ import type { Chapitre, EntreeLexique, Personnage, Sujet } from "@/types/base-de
 
 interface FicheChapitreApercuProps {
   chapitre: Chapitre;
+  /** "du chapitre" ou "de la scène" (Antigone) — déjà accordé en genre,
+   * voir `LibelleUniteChapitre.duUnite` dans lib/uniteChapitre.ts,
+   * calculé par la page appelante pour éviter de réimporter la logique
+   * de correspondance slug -> libellé ici. */
+  libelleUniteDu: string;
   /** Tous les personnages de l'œuvre (comme partout ailleurs sur cette
    * page depuis la demande "applique les personnages dans tous les
    * chapitres") — ceux introduits DANS ce chapitre précis
@@ -53,6 +58,7 @@ interface FicheChapitreApercuProps {
  */
 export default function FicheChapitreApercu({
   chapitre,
+  libelleUniteDu,
   personnages,
   lexique,
   sujets,
@@ -68,7 +74,7 @@ export default function FicheChapitreApercu({
           <IconeDocument className="size-[22px]" />
         </span>
         <div>
-          <h2 className="font-serif text-xl font-bold text-ink">Fiche du chapitre</h2>
+          <h2 className="font-serif text-xl font-bold text-ink">Fiche {libelleUniteDu}</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
             Tout ce qu&apos;il faut retenir de {chapitre.titre_fr}, en un coup d&apos;œil.
           </p>

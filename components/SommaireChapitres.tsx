@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { IconeCoche, IconeFleche } from "@/components/icones";
+import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
 interface SommaireChapitresProps {
@@ -32,6 +33,9 @@ export default function SommaireChapitres({
     return <p className="text-center text-muted-foreground">Bientôt disponible.</p>;
   }
 
+  // "Scène N" pour Antigone plutôt que "Chapitre N" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
+
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(212px,1fr))] gap-4">
       {chapitres.map((chapitre) => {
@@ -56,10 +60,12 @@ export default function SommaireChapitres({
                 </span>
                 <p className="font-serif text-lg font-bold text-ink">
                   {lu && <span className="sr-only">Lu. </span>}
-                  Chapitre {chapitre.numero}
+                  {unite.numeroDejaDansTitre ? chapitre.titre_fr : `${unite.singulier} ${chapitre.numero}`}
                 </p>
               </div>
-              <p className="text-[15px] leading-tight text-muted-foreground">{chapitre.titre_fr}</p>
+              {!unite.numeroDejaDansTitre && (
+                <p className="text-[15px] leading-tight text-muted-foreground">{chapitre.titre_fr}</p>
+              )}
               <div className="mt-auto pt-4">
                 <IconeFleche className="size-5 text-primary transition-transform group-hover:translate-x-1" />
               </div>
