@@ -8,6 +8,7 @@
 import { creerClientServeur } from "@/lib/supabase/server";
 import type {
   Chapitre,
+  Cours,
   EntreeLexique,
   Fiche,
   Oeuvre,
@@ -267,4 +268,39 @@ export async function recupererSujetsOeuvre(oeuvreId: string): Promise<Sujet[]> 
 
   if (error) throw error;
   return (data as Sujet[]) ?? [];
+}
+
+/** Cours d'une catégorie (ex. "langue") et d'une filière, triés par
+ * `ordre` — page /langue, qui liste les fiches de cours autonomes (pas
+ * rattachées à une œuvre) de cette catégorie. Même filtrage par
+ * filière que `recupererOeuvresParFiliere` (voir lib/filiere.ts). */
+export async function recupererCoursParCategorie(
+  categorie: string,
+  filiere: string,
+): Promise<Cours[]> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("cours")
+    .select("*")
+    .eq("categorie", categorie)
+    .eq("filiere", filiere)
+    .order("ordre");
+
+  if (error) throw error;
+  return (data as Cours[]) ?? [];
+}
+
+/** Un cours précis, identifié par son slug — page /langue/[slug]. */
+export async function recupererCoursParSlug(slug: string): Promise<Cours | null> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("cours")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as Cours | null;
 }

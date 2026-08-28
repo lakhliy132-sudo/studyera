@@ -2,6 +2,72 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Page `/langue` reconstruite, table `cours` alimentée pour la
+> première fois** — demandé explicitement par l'utilisateur ("regarde
+> sur le fichier madrassti et fais moi comme ca dans la partie de
+> langue", suivi du texte intégral d'une leçon sur l'énonciation avec
+> "Ajoute ce lecon sur la partie langue dans 1er cours l enonciation").
+>
+> ⚠️ **Session parallèle détectée à nouveau** (comme déjà signalé plus
+> tôt dans le projet pour OngletLieux/OngletSujets) : en ouvrant
+> `app/(public)/langue/page.tsx` pour la modifier, son contenu n'était
+> plus le placeholder "Bientôt disponible" laissé par cette session
+> mais une page complète (bandeau, titre, grille de 12 leçons) écrite
+> entre-temps par une autre session, à partir d'une maquette fournie
+> par l'utilisateur (image "Capture d'écran 2026-08-26 162006.png" à la
+> racine du dépôt, non commitée). Deux images "ChatGPT Image..."
+> supplémentaires, également non commitées, montrent la maquette plus
+> en détail (bandeau "FRANÇAIS – 1ÈRE BAC", titre bicolore, grille à 6
+> colonnes avec ruban numéroté et icône par leçon) — probablement ce
+> que visait "le fichier madrassti" de l'utilisateur. Conservé et
+> complété plutôt qu'écrasé, conformément à la consigne du harnais de
+> ne pas annuler le travail d'une autre session sans raison : la liste
+> des 12 leçons (titres + accroches) de cette autre session est
+> reprise telle quelle, avec `slug` et icône ajoutés pour chacune.
+>
+> - **`cours` alimentée pour la première fois** : la table existait en
+>   base depuis une migration antérieure mais aucune page ni le script
+>   d'import ne la lisait/écrivait encore. Ajout d'une feuille "Cours"
+>   à `data/contenu-plateforme-bac.xlsx` (colonnes slug, titre,
+>   categorie, contenu_mdx, filiere, ordre) et d'une section "Cours"
+>   dans `scripts/importer.ts` (upsert sur `slug`). Une seule ligne
+>   importée pour l'instant : "L'énonciation" (categorie "langue",
+>   ordre 1), **contenu fourni intégralement par l'utilisateur** (collé
+>   dans le chat), reformaté en Markdown sans modification de fond —
+>   pas de réserve "à faire relire" ici, contrairement au lexique/
+>   sujets/quiz/fiche de lecture qui sont rédigés par Claude. Vérifié
+>   avant/après l'import : `essentiel_fr`/`essentiel_ar` des 3 œuvres
+>   inchangés (import idempotent, 0 erreur).
+> - **`react-markdown` installé** (nouvelle dépendance) pour rendre
+>   `contenu_mdx` : malgré son nom, cette colonne ne contient que du
+>   Markdown simple pour l'instant (pas de JSX/composants embarqués) —
+>   react-markdown suffit et évite d'exécuter du code arbitraire venu
+>   des données, contrairement à un vrai pipeline MDX
+>   (`next-mdx-remote`). Pas de plugin Tailwind Typography : chaque
+>   élément Markdown est stylé explicitement via la prop `components`
+>   de `ReactMarkdown` (`app/(public)/langue/[slug]/page.tsx`), comme
+>   le reste du site qui n'utilise jamais de classes "prose" génériques.
+> - `lib/supabase/contenu.ts` : `recupererCoursParCategorie(categorie,
+>   filiere)` et `recupererCoursParSlug(slug)`, mêmes conventions que
+>   les fonctions existantes.
+> - `components/icones.tsx` : 10 nouvelles icônes (une par leçon non
+>   déjà couverte par une icône existante — `IconeMasques`/`IconeLien`
+>   réutilisées pour 2 des 12), reprises en version trait de la
+>   maquette pour rester cohérentes avec le reste du site (aucune
+>   icône du site n'est une illustration colorée).
+> - `app/(public)/langue/page.tsx` : bandeau "FRANÇAIS – 1ÈRE BAC" +
+>   titre bicolore + grille de 12 cartes numérotées. Seule la carte
+>   "L'énonciation" est cliquable (vers `/langue/enonciation`) ; les 11
+>   autres, dont le `slug` n'existe pas encore dans `cours`, affichent
+>   un badge "Bientôt disponible" et ne sont pas des liens — même
+>   convention que le reste du site pour le contenu pas encore prêt.
+> - `app/(public)/langue/[slug]/page.tsx` (nouvelle route) : affiche un
+>   cours, `notFound()` si le slug est inconnu — vérifié
+>   (`/langue/champ-lexical` → 404, `/langue/enonciation` → 200).
+>
+> Vérifié : `tsc`/`eslint` propres sur tous les fichiers touchés,
+> captures Playwright de la liste et du cours "L'énonciation".
+>
 > **Biographie de l'auteur transformée en tableau** sur l'onglet Fiche
 > de lecture — demandé explicitement par l'utilisateur ("FAIS MOI LA
 > BIOGRAPHIE DE L AUTEUR SOUS FORME D UN TABLEU ELEGANT"). Le paragraphe

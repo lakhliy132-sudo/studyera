@@ -17,9 +17,9 @@
  * supabase/migrations/) sur laquelle repose un upsert : une ligne déjà
  * présente est mise à jour, jamais dupliquée.
  *
- * Feuilles lues : Oeuvres, Chapitres, Lexique, Personnages, Sujets.
- * La feuille "Légende" est ignorée (c'est une notice d'utilisation du
- * fichier, pas des données).
+ * Feuilles lues : Oeuvres, Chapitres, Lexique, Personnages, Sujets,
+ * Cours. La feuille "Légende" est ignorée (c'est une notice
+ * d'utilisation du fichier, pas des données).
  *
  * Feuille "Paragraphes" (texte intégral des chapitres, colonnes
  * oeuvre_slug, chapitre_numero, ordre, texte_fr, texte_ar) : lue si
@@ -110,6 +110,7 @@ const compteurs = {
   motsLexique: 0,
   personnages: 0,
   sujets: 0,
+  cours: 0,
   paragraphes: 0,
 };
 
@@ -432,7 +433,42 @@ async function main() {
     erreurs.push({ feuille: "Sujets", ligne: 0, message: "Feuille introuvable" });
   }
 
-  // --- 6. Paragraphes (texte intégral) ---
+  // --- 6. Cours (fiches de cours autonomes, pas rattachées à une œuvre) ---
+  const feuilleCours = classeur.getWorksheet("Cours");
+  if (feuilleCours) {
+    const entetes = indexEntetes(feuilleCours);
+    for (let n = 2; n <= feuilleCours.rowCount; n++) {
+      const ligne = feuilleCours.getRow(n);
+      if (ligne.actualCellCount === 0) continue;
+
+      const slug = texte(valeur(ligne, entetes, "slug"));
+      const titre = texte(valeur(ligne, entetes, "titre"));
+      if (!slug || !titre) continue;
+
+      try {
+        const { error } = await supabase.from("cours").upsert(
+          {
+            slug,
+            titre,
+            categorie: texte(valeur(ligne, entetes, "categorie")),
+            contenu_mdx: texte(valeur(ligne, entetes, "contenu_mdx")),
+            filiere: texte(valeur(ligne, entetes, "filiere")),
+            ordre: nombre(valeur(ligne, entetes, "ordre")) ?? 0,
+          },
+          { onConflict: "slug" },
+        );
+
+        if (error) throw error;
+        compteurs.cours++;
+      } catch (err) {
+        signalerErreur("Cours", n, err);
+      }
+    }
+  } else {
+    erreurs.push({ feuille: "Cours", ligne: 0, message: "Feuille introuvable" });
+  }
+
+  // --- 7. Paragraphes (texte intégral) ---
   //
   // Contrairement aux feuilles précédentes, absente du fichier actuel :
   // son absence n'est PAS ajoutée à `erreurs`, voir le commentaire en
@@ -489,6 +525,7 @@ async function main() {
   console.log(`Mots lexique : ${compteurs.motsLexique}`);
   console.log(`Personnages  : ${compteurs.personnages}`);
   console.log(`Sujets       : ${compteurs.sujets}`);
+  console.log(`Cours        : ${compteurs.cours}`);
   console.log(`Paragraphes  : ${compteurs.paragraphes}`);
   console.log(`Erreurs      : ${erreurs.length}`);
 

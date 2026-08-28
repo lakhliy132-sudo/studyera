@@ -196,3 +196,110 @@ export function IconeQuiz({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/**
+ * Icônes des 12 leçons de la page /langue — une par carte, reprises
+ * (en version trait, cohérente avec le reste du site) de la maquette
+ * de référence fournie par l'utilisateur pour cette page.
+ */
+
+/** Bulles de dialogue — leçon "L'énonciation". */
+export function IconeBulles({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M4 5h11v7H9l-3 3v-3H4V5z" />
+      <path d="M13 9h7v6h-3v3l-3-3" />
+    </svg>
+  );
+}
+
+/** Réseau de nœuds — leçon "Le champ lexical". */
+export function IconeReseau({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden="true">
+      <path d="M7.5 7.3L11 16M16.5 7.3L13 16M8 6h8" />
+      <circle cx="6" cy="6" r="2" />
+      <circle cx="18" cy="6" r="2" />
+      <circle cx="12" cy="18" r="2" />
+    </svg>
+  );
+}
+
+/** Guillemets — leçon "Le discours rapporté". */
+export function IconeCitation({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M7 8c-2 0-3 1.6-3 3.5S5 15 7 15M7 8v4c0 1.6-1 2.6-2.2 3.2" />
+      <path d="M17 8c-2 0-3 1.6-3 3.5S15 15 17 15M17 8v4c0 1.6-1 2.6-2.2 3.2" />
+    </svg>
+  );
+}
+
+/** Barres ascendantes — leçon "Les niveaux de langue". */
+export function IconeGraphique({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M3 20h18" />
+      <path d="M6 20v-5M12 20V9M18 20v-9" />
+    </svg>
+  );
+}
+
+/** Plume — leçon "Figures d'analogie". */
+export function IconePlume({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M20 4c-6.5 0-12.5 4-14.5 10.5-1 3.3 0.5 5.5 2.5 5.5 2-6.5 6.5-10.5 13-11.5" />
+      <path d="M6 20l3.5-3.5" />
+    </svg>
+  );
+}
+
+/** Cible — leçon "Figures d'insistance". */
+export function IconeCible({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/** Flèche montante — leçon "Figures d'amplification". */
+export function IconeFlecheHaut({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M7 17L17 7M9 7h8v8" />
+    </svg>
+  );
+}
+
+/** Double flèche horizontale — leçon "Figures de substitution". */
+export function IconeFlecheDouble({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4" />
+    </svg>
+  );
+}
+
+/** Cercle moins — leçon "Figures d'atténuation". */
+export function IconeMoins({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 12h8" />
+    </svg>
+  );
+}
+
+/** Cercle croix — leçon "Figures d'opposition". */
+export function IconeOpposition({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5l5 5M14.5 9.5l-5 5" />
+    </svg>
+  );
+}
