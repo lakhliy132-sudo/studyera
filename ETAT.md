@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Badges "CH. N" corrigés en "SCÈNE N" pour Antigone** — demandé
+> explicitement par l'utilisateur ("dans lexique c ecrit chp pas
+> scene"). Le tour précédent avait renommé le mot "Chapitre" en "Scène"
+> dans les titres/en-têtes, mais pas dans les petits badges de coin
+> (lexique, lieux), restés en "CH. N" codé en dur.
+>
+> - `lib/uniteChapitre.ts` : deux nouvelles fonctions centralisées,
+>   `libelleChapitre` (forme longue, "Chapitre 4" ou "Scène 3"/
+>   "Prologue") et `libelleChapitreCourt` (forme badge, "CH. 4" ou
+>   "SCÈNE 3"/"PROLOGUE" en majuscules) — remplacent la logique
+>   dupliquée à la main dans `/oeuvres/[slug]/[numero]/page.tsx`.
+>   **Important** : pour Antigone, le badge n'affiche jamais "SC.
+>   {numero de rangée en base}" mais le `titre_fr` réel de la scène —
+>   sinon même doublon incohérent que le bug déjà corrigé sur les
+>   cartes de chapitre (le numéro de rangée 1-23 ne correspond pas au
+>   numéro de la scène à cause du Mythe d'Œdipe/Prologue en tête).
+> - `OngletLexique.tsx`, `OngletPersonnages.tsx` et `OngletLieux.tsx`
+>   reçoivent maintenant `slug` + `chapitreParId: Map<string, Chapitre>`
+>   (objet chapitre complet, plus seulement son numéro) pour pouvoir
+>   calculer ce libellé ; `OngletLieux.tsx` n'avait même pas encore
+>   `slug` avant ce tour (pas signalé par l'utilisateur, corrigé au
+>   passage par cohérence — mêmes badges de coin que le lexique).
+>
+> Vérifié : `tsc`/`eslint` propres, capture Playwright confirmant
+> "SCÈNE 3"/"SCÈNE 19"/"SCÈNE 7" sur le lexique d'Antigone et
+> "PROLOGUE" sur ses lieux, La Boîte à Merveilles revérifiée inchangée
+> ("CH. 5"/"CH. 9"/"CH. 3" toujours affichés normalement).
+>
 > **Lexique des 21 scènes d'Antigone complété** — demandé explicitement
 > par l'utilisateur ("dans lexique ajoute toutes les lexiques des
 > scenes"). 84 nouveaux mots ajoutés (4 par scène, "Scène 1" à

@@ -81,7 +81,9 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const lexique =
     ongletActif === "lexique" ? await recupererLexiqueOeuvre(chapitres.map((c) => c.id)) : [];
   const sujets = ongletActif === "sujets" ? await recupererSujetsOeuvre(oeuvre.id) : [];
-  const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
+  // Chapitre par id de chapitre — pour les badges "Chapitre N"/"Scène N"
+  // de OngletPersonnages/OngletLexique (voir lib/uniteChapitre.ts).
+  const chapitreParId = new Map(chapitres.map((c) => [c.id, c]));
 
   // Quiz saisi à la main pour La Boîte à Merveilles uniquement, 5
   // questions par chapitre (voir lib/quizBoiteAMerveilles.ts) : pas de
@@ -127,12 +129,12 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
             <OngletFicheLecture oeuvre={oeuvre} fiche={ficheLecture} />
           )}
           {ongletActif === "personnages" && (
-            <OngletPersonnages slug={slug} personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
+            <OngletPersonnages slug={slug} personnages={personnages} chapitreParId={chapitreParId} />
           )}
           {ongletActif === "lexique" && (
-            <OngletLexique entrees={lexique} numeroParChapitreId={numeroParChapitreId} />
+            <OngletLexique slug={slug} entrees={lexique} chapitreParId={chapitreParId} />
           )}
-          {ongletActif === "lieux" && <OngletLieux chapitres={chapitres} />}
+          {ongletActif === "lieux" && <OngletLieux slug={slug} chapitres={chapitres} />}
           {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
           {ongletActif === "quiz" && (
             <OngletQuiz chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />

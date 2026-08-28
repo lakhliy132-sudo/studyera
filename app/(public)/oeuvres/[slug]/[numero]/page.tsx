@@ -89,7 +89,9 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
       recupererSujetsChapitre(chapitre.id),
       recupererProgressionChapitre(user?.id ?? null, chapitre.id),
     ]);
-  const numeroParChapitreId = new Map(tousLesChapitres.map((c) => [c.id, c.numero]));
+  // Chapitre par id de chapitre — pour le badge "Chapitre N"/"Scène N"
+  // de OngletPersonnages (voir lib/uniteChapitre.ts).
+  const chapitreParId = new Map(tousLesChapitres.map((c) => [c.id, c]));
 
   // Seulement les personnages qui apparaissent réellement dans ce
   // chapitre précis — demandé explicitement par l'utilisateur, en
@@ -192,7 +194,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
           )}
 
           {ongletActif === "personnages" && (
-            <OngletPersonnages slug={slug} personnages={personnages} numeroParChapitreId={numeroParChapitreId} />
+            <OngletPersonnages slug={slug} personnages={personnages} chapitreParId={chapitreParId} />
           )}
           {ongletActif === "lexique" && <LexiqueChapitre entrees={lexique} />}
           {ongletActif === "lieux" && <LieuxChapitre lieux={chapitre.lieux} />}

@@ -3,14 +3,17 @@
 import { useMemo, useState } from "react";
 
 import { IconeLivreOuvert, IconeOeil, IconeRecherche } from "@/components/icones";
-import type { EntreeLexique } from "@/types/base-de-donnees";
+import { libelleChapitreCourt, libelleUniteChapitre } from "@/lib/uniteChapitre";
+import type { Chapitre, EntreeLexique } from "@/types/base-de-donnees";
 
 interface OngletLexiqueProps {
+  slug: string;
   entrees: EntreeLexique[];
-  /** numéro de chapitre par id de chapitre — pour le badge "CH. N" de
-   * chaque carte, sans requête dédiée (voir OngletPersonnages, même
-   * mécanisme). */
-  numeroParChapitreId: Map<string, number>;
+  /** Chapitre par id de chapitre — pour le badge de chaque carte
+   * ("CH. 4" ou, pour Antigone, "SCÈNE 3"/"PROLOGUE" en majuscules,
+   * voir `libelleChapitreCourt` dans lib/uniteChapitre.ts), sans
+   * requête dédiée (même mécanisme que dans OngletPersonnages). */
+  chapitreParId: Map<string, Chapitre>;
 }
 
 /** Minuscules, sans accents : "boite" doit retrouver "boîte" en
@@ -34,7 +37,9 @@ function normaliser(texte: string): string {
  * Design et interactions repris du fichier de référence fourni par
  * l'utilisateur ("Rubriques — Le Dernier Jour d'un Condamné") : carte
  * mot/nature/définition à gauche, traduction arabe sur fond crème à
- * droite avec un badge de chapitre ; recherche par mot ou définition ;
+ * droite avec un badge de chapitre (adapté par œuvre — "CH. N" ou,
+ * pour Antigone, le titre de la scène — voir lib/uniteChapitre.ts) ;
+ * recherche par mot ou définition ;
  * "Mode révision" qui floute les traductions par défaut (révélées au
  * survol, ou définitivement par clic — utile pour s'entraîner à
  * deviner le sens avant de vérifier). Composant Client : recherche et
@@ -44,7 +49,9 @@ function normaliser(texte: string): string {
  * Même accent doré local (pas de token global, voir OngletPersonnages)
  * que le reste des cartes issues de cette maquette de référence.
  */
-export default function OngletLexique({ entrees, numeroParChapitreId }: OngletLexiqueProps) {
+export default function OngletLexique({ slug, entrees, chapitreParId }: OngletLexiqueProps) {
+  // "SCÈNE N" pour Antigone plutôt que "CH. N" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
   const [recherche, setRecherche] = useState("");
   const [modeRevision, setModeRevision] = useState(false);
   const [motsReveles, setMotsReveles] = useState<Set<string>>(new Set());
@@ -116,7 +123,7 @@ export default function OngletLexique({ entrees, numeroParChapitreId }: OngletLe
           ) : (
             <ul className="grid grid-cols-[repeat(auto-fill,minmax(290px,1fr))] gap-4">
               {filtrees.map((entree) => {
-                const numero = numeroParChapitreId.get(entree.chapitre_id);
+                const chapitreDeLEntree = chapitreParId.get(entree.chapitre_id);
                 const revele = motsReveles.has(entree.id);
                 const flouter = modeRevision && !revele;
 
@@ -152,9 +159,9 @@ export default function OngletLexique({ entrees, numeroParChapitreId }: OngletLe
                       }
                       className="relative flex w-[132px] shrink-0 flex-col items-center justify-center gap-1 border-l border-[#E8D5AC] bg-[#FAF7F0] p-3 text-center"
                     >
-                      {numero !== undefined && (
+                      {chapitreDeLEntree !== undefined && (
                         <span className="absolute top-2 right-2.5 text-[10px] font-bold text-subtle-foreground">
-                          CH. {numero}
+                          {libelleChapitreCourt(chapitreDeLEntree, unite)}
                         </span>
                       )}
                       {entree.sens_ar && (

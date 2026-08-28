@@ -17,6 +17,10 @@ const SLUGS_EN_SCENES = new Set(["antigone"]);
 export interface LibelleUniteChapitre {
   singulier: string;
   pluriel: string;
+  /** "CH." — abrégé utilisé sur les petits badges (lexique, lieux...).
+   * Sans effet quand `numeroDejaDansTitre` est vrai : `libelleChapitreCourt`
+   * utilise alors directement `titre_fr`, voir plus bas. */
+  abrege: string;
   /** "du chapitre" / "de la scène" — contraction déjà accordée en
    * genre, pour des phrases du type "Fiche {duUnite}" sans avoir à
    * gérer l'accord "du"/"de la" à chaque appel. */
@@ -28,12 +32,38 @@ export interface LibelleUniteChapitre {
    * badge "Scène 3" à côté du titre "Scène 1", le numéro d'ordre en
    * base ne correspondant plus au numéro de la scène elle-même à
    * cause du Prologue/Mythe d'Œdipe qui précèdent). Voir
-   * `SommaireChapitres.tsx`. */
+   * `SommaireChapitres.tsx`, `libelleChapitre` et `libelleChapitreCourt`
+   * ci-dessous. */
   numeroDejaDansTitre: boolean;
 }
 
 export function libelleUniteChapitre(slug: string): LibelleUniteChapitre {
   return SLUGS_EN_SCENES.has(slug)
-    ? { singulier: "Scène", pluriel: "Scènes", duUnite: "de la scène", numeroDejaDansTitre: true }
-    : { singulier: "Chapitre", pluriel: "Chapitres", duUnite: "du chapitre", numeroDejaDansTitre: false };
+    ? { singulier: "Scène", pluriel: "Scènes", abrege: "SC.", duUnite: "de la scène", numeroDejaDansTitre: true }
+    : { singulier: "Chapitre", pluriel: "Chapitres", abrege: "CH.", duUnite: "du chapitre", numeroDejaDansTitre: false };
+}
+
+interface ChapitreMinimal {
+  numero: number;
+  titre_fr: string;
+}
+
+/** Libellé complet d'un chapitre pour un lien/une navigation ("Chapitre
+ * 4" ou, pour Antigone, directement son titre puisqu'il contient déjà
+ * l'ordinal — "Scène 3", "Prologue"...). Centralise la logique déjà
+ * répétée dans `/oeuvres/[slug]/[numero]/page.tsx` pour éviter les
+ * divergences entre appels. */
+export function libelleChapitre(chapitre: ChapitreMinimal, unite: LibelleUniteChapitre): string {
+  return unite.numeroDejaDansTitre ? chapitre.titre_fr : `${unite.singulier} ${chapitre.numero}`;
+}
+
+/** Version courte pour un petit badge de carte ("CH. 4" ou, pour
+ * Antigone, "SCÈNE 3"/"PROLOGUE" en majuscules à partir du titre —
+ * jamais "SC. {numero}", qui redonnerait le même doublon incohérent
+ * que `numeroDejaDansTitre` documente : le numéro de rangée en base
+ * (1-23) ne correspond pas au numéro de la scène elle-même. Utilisé
+ * par `OngletLexique.tsx`/`OngletLieux.tsx` pour le badge de chaque
+ * mot/lieu. */
+export function libelleChapitreCourt(chapitre: ChapitreMinimal, unite: LibelleUniteChapitre): string {
+  return unite.numeroDejaDansTitre ? chapitre.titre_fr.toUpperCase() : `${unite.abrege} ${chapitre.numero}`;
 }

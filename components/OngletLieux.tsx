@@ -1,7 +1,9 @@
 import { IconeLieu } from "@/components/icones";
+import { libelleChapitreCourt, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
 interface OngletLieuxProps {
+  slug: string;
   chapitres: Chapitre[];
 }
 
@@ -20,13 +22,16 @@ interface OngletLieuxProps {
  * (rubriques (3).html, section "Lieux"), adapté à la donnée disponible
  * (pas de description/arabe : seuls nom + chapitres sont affichés).
  */
-export default function OngletLieux({ chapitres }: OngletLieuxProps) {
-  const lieuxVersChapitres = new Map<string, number[]>();
+export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
+  // "Scène N"/"Prologue" pour Antigone plutôt que "Ch. N" — voir lib/uniteChapitre.ts.
+  const unite = libelleUniteChapitre(slug);
+
+  const lieuxVersChapitres = new Map<string, Chapitre[]>();
   for (const chapitre of chapitres) {
     for (const lieu of chapitre.lieux) {
-      const numeros = lieuxVersChapitres.get(lieu) ?? [];
-      numeros.push(chapitre.numero);
-      lieuxVersChapitres.set(lieu, numeros);
+      const chapitresDuLieu = lieuxVersChapitres.get(lieu) ?? [];
+      chapitresDuLieu.push(chapitre);
+      lieuxVersChapitres.set(lieu, chapitresDuLieu);
     }
   }
   const lieux = [...lieuxVersChapitres.entries()].sort((a, b) =>
@@ -49,7 +54,7 @@ export default function OngletLieux({ chapitres }: OngletLieuxProps) {
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
         <ul className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[18px]">
-          {lieux.map(([lieu, numeros]) => (
+          {lieux.map(([lieu, chapitresDuLieu]) => (
             <li
               key={lieu}
               className="flex gap-5 rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
@@ -60,12 +65,12 @@ export default function OngletLieux({ chapitres }: OngletLieuxProps) {
               <div className="min-w-0">
                 <h3 className="font-serif text-lg font-bold text-ink">{lieu}</h3>
                 <div className="mt-3.5 flex flex-wrap gap-1.5">
-                  {numeros.map((numero) => (
+                  {chapitresDuLieu.map((chapitre) => (
                     <span
-                      key={numero}
+                      key={chapitre.id}
                       className="rounded-full bg-primary-tint px-2.5 py-1 text-xs font-semibold text-primary"
                     >
-                      Ch. {numero}
+                      {libelleChapitreCourt(chapitre, unite)}
                     </span>
                   ))}
                 </div>

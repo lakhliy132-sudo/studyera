@@ -1,14 +1,15 @@
 import { IconePersonne } from "@/components/icones";
-import { libelleUniteChapitre } from "@/lib/uniteChapitre";
-import type { Personnage } from "@/types/base-de-donnees";
+import { libelleChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
+import type { Chapitre, Personnage } from "@/types/base-de-donnees";
 
 interface OngletPersonnagesProps {
   slug: string;
   personnages: Personnage[];
-  /** numéro de chapitre par id de chapitre — pour afficher "Chapitre N"
-   * en pied de carte à partir de `chapitre_apparition_id`, sans requête
-   * dédiée : la page appelante a déjà la liste complète des chapitres. */
-  numeroParChapitreId: Map<string, number>;
+  /** Chapitre par id de chapitre — pour afficher "Chapitre N" (ou,
+   * pour Antigone, le titre de la scène) en pied de carte à partir de
+   * `chapitre_apparition_id`, sans requête dédiée : la page appelante
+   * a déjà la liste complète des chapitres. */
+  chapitreParId: Map<string, Chapitre>;
 }
 
 /**
@@ -68,7 +69,7 @@ export function initiales(nom: string): string {
  * v2 du reste du site n'a pas d'accent doré (retiré lors de la refonte),
  * seule cette maquette-ci en demande un.
  */
-export default function OngletPersonnages({ slug, personnages, numeroParChapitreId }: OngletPersonnagesProps) {
+export default function OngletPersonnages({ slug, personnages, chapitreParId }: OngletPersonnagesProps) {
   const principaux = personnages.filter((p) => p.role && ROLES_PRINCIPAUX.has(p.role));
   const secondaires = personnages.filter((p) => !p.role || !ROLES_PRINCIPAUX.has(p.role));
 
@@ -93,7 +94,7 @@ export default function OngletPersonnages({ slug, personnages, numeroParChapitre
               <p className="text-sm font-bold tracking-wide text-primary uppercase">
                 Personnages principaux
               </p>
-              <GrillePersonnages slug={slug} personnages={principaux} numeroParChapitreId={numeroParChapitreId} />
+              <GrillePersonnages slug={slug} personnages={principaux} chapitreParId={chapitreParId} />
             </div>
           )}
           {secondaires.length > 0 && (
@@ -101,7 +102,7 @@ export default function OngletPersonnages({ slug, personnages, numeroParChapitre
               <p className="text-sm font-bold tracking-wide text-primary uppercase">
                 Personnages secondaires
               </p>
-              <GrillePersonnages slug={slug} personnages={secondaires} numeroParChapitreId={numeroParChapitreId} />
+              <GrillePersonnages slug={slug} personnages={secondaires} chapitreParId={chapitreParId} />
             </div>
           )}
         </div>
@@ -113,11 +114,11 @@ export default function OngletPersonnages({ slug, personnages, numeroParChapitre
 function GrillePersonnages({
   slug,
   personnages,
-  numeroParChapitreId,
+  chapitreParId,
 }: {
   slug: string;
   personnages: Personnage[];
-  numeroParChapitreId: Map<string, number>;
+  chapitreParId: Map<string, Chapitre>;
 }) {
   // "Apparition : Scène N" pour Antigone plutôt que "Chapitre N" —
   // voir lib/uniteChapitre.ts.
@@ -125,8 +126,8 @@ function GrillePersonnages({
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
       {personnages.map((personnage) => {
-        const numero = personnage.chapitre_apparition_id
-          ? numeroParChapitreId.get(personnage.chapitre_apparition_id)
+        const chapitreDApparition = personnage.chapitre_apparition_id
+          ? chapitreParId.get(personnage.chapitre_apparition_id)
           : undefined;
 
         return (
@@ -160,9 +161,9 @@ function GrillePersonnages({
                 {personnage.description_fr}
               </p>
             )}
-            {numero !== undefined && (
+            {chapitreDApparition !== undefined && (
               <p className="mt-[18px] border-t border-dashed border-border-strong pt-[15px] text-xs text-subtle-foreground">
-                Apparition : {unite.singulier} {numero}
+                Apparition : {libelleChapitre(chapitreDApparition, unite)}
               </p>
             )}
           </li>
