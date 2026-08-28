@@ -6,8 +6,8 @@ import BarreNavigation from "@/components/BarreNavigation";
 import { creerClientServeur } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "MADRASTI",
-  description: "MADRASTI",
+  title: "STUDYERA",
+  description: "STUDYERA",
 };
 
 /**

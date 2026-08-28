@@ -7,6 +7,7 @@ const LIENS = [
   { href: "/", libelle: "Accueil" },
   { href: "/oeuvres", libelle: "Œuvres" },
   { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
+  { href: "/langue", libelle: "Langues" },
   { href: "/ressources", libelle: "Ressources" },
   { href: "/a-propos", libelle: "À propos" },
 ] as const;

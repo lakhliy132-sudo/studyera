@@ -2,6 +2,56 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Nom du site changé en "STUDYERA"** (logo du header + `<title>`) —
+> demandé explicitement par l'utilisateur ("change le nom avec
+> STUDYERA"), envoyé juste après avoir demandé le lien "Langues" (voir
+> ci-dessous), en plein milieu du tour. Deux occurrences trouvées et
+> changées : le texte du logo dans `BarreNavigation.tsx` (était
+> "Français 1BAC" — la ligne "Révisez · Comprenez · Progressez"
+> en dessous n'a pas changé, c'est une accroche, pas le nom) et
+> `metadata.title`/`metadata.description` dans `app/layout.tsx` (étaient
+> "MADRASTI"). Le nom interne du dépôt (`package.json` "name": "madrasti",
+> jamais visible par un visiteur) et les mentions dans `ETAT.md`/
+> `PROJECT_CHARTER.md` (journal de bord, pas de l'UI) n'ont pas été
+> touchés — pas ce que "le nom" du site désigne.
+>
+> **Lien "Langues" ajouté à la nav principale**, à côté d'Accueil/
+> Œuvres/Correcteur IA — demandé explicitement par l'utilisateur.
+> Pointe vers `/langue` (route déjà créée par une session antérieure,
+> `app/(public)/langue/page.tsx`, jusqu'ici orpheline — accessible par
+> URL mais reliée nulle part dans la nav ; contenu toujours "Bientôt
+> disponible", son h1 a juste été aligné sur "Langues" au pluriel pour
+> matcher le libellé du lien).
+>
+> ⚠️ **Bug de responsive découvert et corrigé en ajoutant ce 6e lien** :
+> mesuré avec Playwright (balayage de largeurs de viewport), la barre de
+> nav desktop (logo + 6 liens + boutons de connexion) a besoin d'environ
+> 1220px pour tenir sur une ligne sans déborder ; en dessous, faute de
+> `flex-wrap`, le contenu débordait du body et le bouton "S'inscrire"
+> sortait de l'écran — déjà limite avant l'ajout de "Langues" (~1090px
+> nécessaires avec 5 liens), mais le point de bascule desktop/mobile de
+> `BarreNavigation` était réglé sur `md` (768px), donc rien ne prenait le
+> relais entre 768 et ~1220px. Corrigé en reculant ce point de bascule à
+> `xl` (1280px, avec de la marge) : en dessous, c'est maintenant le menu
+> `<details>` (déjà existant) qui prend le relais.
+>
+> En testant ce menu mobile à plus de largeurs qu'avant (auparavant
+> seulement testé sous 768px, désormais visible jusqu'à 1280px), un
+> **second bug préexistant** est apparu : le panneau déroulant du menu
+> utilisait `inset-x-0` sur un parent `<details className="relative">`
+> dont la propre boîte ne fait que la largeur du bouton hamburger — le
+> panneau se retrouvait donc coincé dans une colonne de ~40px de large,
+> son contenu débordant hors de l'écran (vérifié aussi présent à 375px,
+> donc déjà cassé sur mobile avant cette session, juste jamais repéré).
+> Corrigé en retirant `relative` du `<details>` : `<header>` étant déjà
+> `sticky` (donc déjà positionné), c'est lui qui sert maintenant de
+> référence, ce qui donne un panneau pleine largeur comme visiblement
+> prévu par le design (`border-b`, `shadow-sm`, fond plein).
+>
+> Les deux bugs vérifiés par capture d'écran Playwright avant/après, sur
+> tout un balayage de largeurs (375 à 1920px) : plus aucun débordement
+> horizontal, menu déroulant pleine largeur à 375px comme à 1024px.
+>
 > **Onglets "Thèmes et enjeux" et "Quiz" ajoutés sur `/oeuvres/[slug]`**
 > — demandé explicitement par l'utilisateur ("ajoute les themes en jeux
 > et une partie de quiz dans la barre").
