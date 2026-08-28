@@ -1,20 +1,22 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
 > **Lieux et 30 sujets d'analyse ajoutés pour Antigone** — demandé
 > explicitement par l'utilisateur ("fait les lieux et les sujets d
 > analyses 30 sujets").
 >
-> - **Lieux** (7 au total, contre 1 seul avant) : le lieu unique de la
->   pièce elle-même (le palais de Créon à Thèbes, déjà présent sur
->   "Prologue") complété par les lieux évoqués dans le récit
->   mythologique — Thèbes, Corinthe, Delphes, la route de Thèbes,
->   Athènes (tous rattachés à "Le mythe d'Œdipe", cohérent avec son
->   contenu) — et "La grotte" où Antigone est emmurée vivante, rattachée
->   à "Scène 16". Les badges de coin affichent bien "LE MYTHE D'ŒDIPE"/
->   "SCÈNE 16"/"PROLOGUE" en majuscules (voir `libelleChapitreCourt`,
->   déjà en place) plutôt que "CH. N".
+> - **Lieux** : d'abord ajoutés au nombre de 7 — le lieu de la pièce
+>   elle-même (le palais de Créon, sur "Prologue") complété par les
+>   lieux évoqués dans le récit mythologique (Thèbes, Corinthe, Delphes,
+>   la route de Thèbes, Athènes, rattachés à "Le mythe d'Œdipe") et "La
+>   grotte" (Scène 16). **Corrigé aussitôt après** par l'utilisateur
+>   ("le lieux que d antigone pas mythe d oedipe") : les 5 lieux du
+>   mythe retirés, il ne reste que les 2 vrais lieux de la pièce
+>   elle-même — le palais de Créon (Prologue) et la grotte (Scène 16),
+>   cohérent avec l'unité de lieu classique du théâtre. Les badges de
+>   coin affichent "PROLOGUE"/"SCÈNE 16" en majuscules (voir
+>   `libelleChapitreCourt`, déjà en place) plutôt que "CH. N".
 > - **30 sujets d'analyse**, tous rattachés à l'œuvre entière (pas à une
 >   scène précise, faute de texte scène par scène fiable pour les
 >   ancrer plus finement — même réserve que pour le lexique des 21
