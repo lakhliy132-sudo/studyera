@@ -2,6 +2,62 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Les 21 vraies scènes d'Antigone (résumés scène par scène) ajoutées,
+> remplaçant les 21 coquilles vides précédentes** — texte intégralement
+> fourni par l'utilisateur (collé dans le chat, "listen commence les
+> scene des la prologue scene 1 et voici resumé de scene par scene"),
+> pas de contenu inventé par Claude sur le fond de chaque scène.
+>
+> - **Renumérotation complète** : dans le texte fourni par
+>   l'utilisateur, "Scène 1" désigne le Prologue lui-même, et la
+>   numérotation va jusqu'à "Scène 21" (l'Épilogue) — 21 scènes au
+>   total, sans "Prologue" comptée à part. Cela ne correspondait plus à
+>   la structure précédente (1 "Prologue" séparé + 21 "Scène 1" à
+>   "Scène 21", soit 22 scènes). La structure en base a donc été
+>   ré-alignée : l'ancien chapitre "Prologue" (numero=2) est devenu
+>   "Scène 1 : Le Prologue", et chaque ancienne "Scène N" (numero=N+2,
+>   coquille vide) a reçu le vrai contenu de la "Scène N+1" de
+>   l'utilisateur (numero=N+2 → titre "Scène N+1 : ..."). "Le mythe
+>   d'Œdipe" (numero=1, non concerné par cette numérotation) est
+>   inchangé. L'ancien numero=23 (ex-"Scène 21", coquille vide devenue
+>   sans équivalent dans la nouvelle numérotation à 21 cases) faisait
+>   doublon avec la nouvelle "Scène 21 : L'Épilogue" (numero=22) : son
+>   lexique (indifférent, reprendre, banal, un épilogue — 4 mots) a été
+>   réattaché à numero=22 avant suppression de la ligne, aucune perte de
+>   contenu. Suppression confirmée explicitement par l'utilisateur avant
+>   exécution (l'outil bloque les suppressions en base sans validation).
+> - **Titres** conservent désormais le sous-titre descriptif fourni par
+>   l'utilisateur (ex. "Scène 5 : Antigone et Hémon") au lieu d'un
+>   simple "Scène N" — plus informatif sur les cartes de la liste.
+> - **Correction du lieu "La grotte"** : était rattaché à l'ancienne
+>   "Scène 16" (numero=18, choix approximatif faute de vrai contenu à
+>   l'époque). D'après le texte réel, c'est la scène "Antigone part vers
+>   la mort" (nouvelle Scène 19, numero=20) qui évoque la grotte où elle
+>   est emmurée vivante — le lieu a été déplacé en conséquence.
+> - ⚠️ Traductions arabes (`resume_ar`, `titre_ar`) des 21 scènes
+>   entièrement rédigées par Claude à partir du texte français fourni —
+>   à faire relire par un enseignant avant usage en classe. Le texte
+>   français source, lui, est celui de l'utilisateur, non modifié sur le
+>   fond (juste redécoupé en phrases pour `resume_court_fr`).
+> - Non traité dans cette passe (hors périmètre de la demande) : le
+>   lexique des 21 scènes (84 mots) avait été distribué plus tôt dans la
+>   session sur une reconstitution approximative de l'intrigue, pas sur
+>   un vrai texte scène par scène — cette réserve reste valable
+>   maintenant que le vrai contenu existe ; une repasse de cohérence
+>   lexique ↔ scène réelle serait utile mais n'a pas été demandée ici.
+>
+> Ajouté via le pipeline Excel habituel (feuille Chapitres, `npm run
+> importer`, 0 erreur ; essentiel_fr/ar vérifiés avant/après : total
+> résumés passé de 21 nulls à 1 côté FR et de 22 à 2 côté AR, cohérent
+> avec le remplissage des 21 scènes moins celle qui avait déjà un
+> résumé). Suppression de l'ancien numero=23 et réattachement de son
+> lexique faits directement en base (clé `service_role`, hors pipeline
+> Excel qui ne fait que de l'upsert, jamais de suppression). Vérifié
+> visuellement (captures Playwright) : liste des 22 scènes sans doublon,
+> Scène 1 (contenu réel + lexique/personnages/lieu intacts), Scène 19
+> (lieu "La grotte" bien présent), Scène 21 : L'Épilogue (dernière
+> scène, pas de lien "suivant", lexique fusionné à 8 mots).
+>
 > **Lieux et 30 sujets d'analyse ajoutés pour Antigone** — demandé
 > explicitement par l'utilisateur ("fait les lieux et les sujets d
 > analyses 30 sujets").
