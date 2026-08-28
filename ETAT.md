@@ -2,6 +2,33 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **"Le mythe d'Œdipe" : vrai résumé + "Fiche de la scène" retirée** —
+> demandé explicitement par l'utilisateur ("dans le mythe d oedipe
+> enleve la fiche de scene fait que ca comme resumé de mythe d oedipe",
+> suivi du texte intégral du mythe collé dans le chat).
+>
+> - **Résumé** (`resume_fr`/`resume_ar` de ce chapitre, feuille
+>   Chapitres de `data/contenu-plateforme-bac.xlsx`) : **texte fourni
+>   intégralement par l'utilisateur**, juste reformaté en paragraphes
+>   propres (le collage d'origine coupait les phrases au milieu des
+>   lignes) — aucune réserve "à faire relire" sur le contenu lui-même,
+>   contrairement au reste du contenu Antigone rédigé par Claude.
+>   `resume_ar` est en revanche une **traduction de Claude** du texte
+>   français fourni (⚠️ à faire relire, comme toute traduction).
+> - **"Fiche de la scène" retirée**, mais seulement sur ce chapitre
+>   précis : `/oeuvres/[slug]/[numero]/page.tsx` masque désormais
+>   `FicheChapitreApercu` quand `slug === "antigone" && chapitre.numero
+>   === 1`, codé en dur comme le reste des exceptions par item sur
+>   cette page (pas de colonne dédiée en base pour ce genre de
+>   distinction). Les 21 "Scène N" et "Prologue" gardent leur Fiche
+>   normalement — vérifié par capture Playwright sur les deux cas
+>   (absente sur "Le mythe d'Œdipe", présente sur "Scène 1").
+>
+> Vérifié : `tsc`/`eslint` propres, import sans erreur, essentiel_fr/ar
+> des 3 œuvres inchangés, capture Playwright du résumé complet
+> (bilingue, avec "Lire la suite"/"Réduire" fonctionnel) et confirmation
+> par comptage DOM de l'absence/présence de "Fiche de la scène".
+>
 > **Badges "CH. N" corrigés en "SCÈNE N" pour Antigone** — demandé
 > explicitement par l'utilisateur ("dans lexique c ecrit chp pas
 > scene"). Le tour précédent avait renommé le mot "Chapitre" en "Scène"

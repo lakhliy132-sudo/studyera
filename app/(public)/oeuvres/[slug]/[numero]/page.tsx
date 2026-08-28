@@ -177,13 +177,24 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
               <FicheChapitre fiche={fiche} lexique={lexique} />
               <TexteChapitre paragraphes={paragraphes} />
 
-              <FicheChapitreApercu
-                chapitre={chapitre}
-                libelleUniteDu={unite.duUnite}
-                personnages={personnages}
-                lexique={lexique}
-                sujets={sujets}
-              />
+              {/* Pas de "Fiche de la scène" sur "Le mythe d'Œdipe" —
+               * demandé explicitement par l'utilisateur ("dans le
+               * mythe d oedipe enleve la fiche de scene"). Ce n'est
+               * pas une scène de la pièce à proprement parler mais un
+               * rappel de contexte mythologique ; les blocs
+               * Personnages/Lexique/Lieux/Sujets liés n'y ont pas leur
+               * place. Codé en dur (numero===1 de l'antigone) faute de
+               * colonne dédiée en base pour ce genre de distinction,
+               * même contournement que le reste de cette page. */}
+              {!(slug === "antigone" && chapitre.numero === 1) && (
+                <FicheChapitreApercu
+                  chapitre={chapitre}
+                  libelleUniteDu={unite.duUnite}
+                  personnages={personnages}
+                  lexique={lexique}
+                  sujets={sujets}
+                />
+              )}
 
               <BoutonMarquerLu
                 connecte={Boolean(user)}
