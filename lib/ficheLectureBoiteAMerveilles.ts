@@ -38,6 +38,10 @@ export interface FicheLecture {
   identite: FicheIdentite;
   biographieAuteur: string;
   structureDetail: string;
+  /** Plus affiché sur `OngletFicheLecture` (retiré à la demande
+   * explicite de l'utilisateur, "enleve la case du theme et enjeux" —
+   * ce thème a déjà son propre onglet complet, "Thèmes et enjeux").
+   * Gardé ici au cas où ce serait réutilisé ailleurs plus tard. */
   themesPrincipaux: string[];
   styleEcriture: string;
 }

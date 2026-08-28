@@ -2,6 +2,27 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Fiche de lecture ajustée** — demandé explicitement par l'utilisateur
+> ("enleve la case du theme et enjeux et 2/. sur la fiche de lecture
+> enleve le resumé et pour la biographie mettre a coté la photo du l
+> ecrivain ahmed safrioui") :
+> - Bloc "Thèmes principaux" retiré (déjà son propre onglet complet).
+> - Bloc "Résumé de l'œuvre" retiré (déjà sur l'onglet Chapitres).
+> - Bloc "Biographie de l'auteur" : médaillon à côté du texte, comme
+>   demandé. ⚠️ **Pas de vraie photo d'Ahmed Sefrioui** : recherchée via
+>   WebSearch/WebFetch sur Wikipédia (fr/en), Wikidata (propriété image
+>   P18) et Wikimedia Commons — introuvable sous une forme réutilisable,
+>   l'article Wikipédia français est même explicitement marqué "à
+>   illustrer" (donc Wikipédia elle-même n'en a pas). Un médaillon aux
+>   initiales ("AS"), avec le même style doré que les médaillons de
+>   personnages (`initiales()`/accent doré de `OngletPersonnages.tsx`),
+>   tient la place d'un portrait plutôt qu'une image fabriquée ou une
+>   photo non vérifiée trouvée au hasard en ligne. Si une vraie photo
+>   est fournie par l'utilisateur, la mettre dans `public/` (même
+>   logique que `public/couvertures/`) et l'afficher via `next/image` à
+>   la place du médaillon dans `BlocBiographie` (`OngletFicheLecture.tsx`).
+> Vérifié : `tsc`/`eslint` propres, capture Playwright.
+>
 > **Onglet "Fiche de lecture" ajouté sur `/oeuvres/[slug]`** — demandé
 > explicitement par l'utilisateur ("dans la partie de oeuvre boite a
 > merveilles ajoute moi une partie de fiche de lecture"). Nouvelle

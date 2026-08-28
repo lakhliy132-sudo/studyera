@@ -118,7 +118,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
             <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
           )}
           {ongletActif === "fiche" && (
-            <OngletFicheLecture slug={slug} oeuvre={oeuvre} fiche={ficheLecture} />
+            <OngletFicheLecture oeuvre={oeuvre} fiche={ficheLecture} />
           )}
           {ongletActif === "personnages" && (
             <OngletPersonnages personnages={personnages} numeroParChapitreId={numeroParChapitreId} />

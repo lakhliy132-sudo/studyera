@@ -1,11 +1,9 @@
-import Link from "next/link";
-
-import { IconeAuteur, IconeIdee, IconeInfo, IconeLivre, IconeLivreOuvert } from "@/components/icones";
+import { initiales } from "@/components/OngletPersonnages";
+import { IconeAuteur, IconeInfo, IconeLivre, IconeLivreOuvert } from "@/components/icones";
 import type { FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import type { Oeuvre } from "@/types/base-de-donnees";
 
 interface OngletFicheLectureProps {
-  slug: string;
   oeuvre: Oeuvre;
   /** `null` pour une œuvre qui n'a pas encore de fiche de lecture
    * saisie (voir `lib/ficheLectureBoiteAMerveilles.ts`). */
@@ -19,9 +17,13 @@ interface OngletFicheLectureProps {
  * ce que les autres onglets ne couvrent pas déjà en détail (Personnages,
  * Lexique, Lieux, Thèmes et enjeux ont chacun leur propre onglet) :
  * carte d'identité de l'œuvre, biographie de l'auteur, structure et
- * style. Le résumé complet, chapitre par chapitre, reste sur l'onglet
- * Chapitres — seul un rappel bref figure ici, avec un lien plutôt
- * qu'une duplication du texte bilingue en entier.
+ * style.
+ *
+ * Pas de bloc "Résumé" ni "Thèmes principaux" : retirés à la demande
+ * explicite de l'utilisateur ("enleve la case du theme et enjeux" /
+ * "enleve le resumé"), ces deux sujets ayant chacun déjà leur propre
+ * onglet complet (Chapitres pour le résumé bilingue, Thèmes et enjeux
+ * pour le détail chapitre par chapitre).
  *
  * Composant Serveur : aucune interactivité nécessaire, juste de la
  * lecture. Design cohérent avec les autres onglets (carte blanche,
@@ -29,7 +31,7 @@ interface OngletFicheLectureProps {
  * `FicheChapitreApercu` (icône + titre dans un bandeau) pour chaque
  * section — même vocabulaire visuel que le reste du site.
  */
-export default function OngletFicheLecture({ slug, oeuvre, fiche }: OngletFicheLectureProps) {
+export default function OngletFicheLecture({ oeuvre, fiche }: OngletFicheLectureProps) {
   return (
     <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
@@ -46,15 +48,9 @@ export default function OngletFicheLecture({ slug, oeuvre, fiche }: OngletFicheL
         <div className="flex flex-col gap-[22px]">
           <BlocIdentite oeuvre={oeuvre} identite={fiche.identite} />
 
-          {oeuvre.essentiel_fr && (
-            <BlocResume essentiel={oeuvre.essentiel_fr} />
-          )}
-
-          <BlocTexte Icone={IconeAuteur} titre="Biographie de l'auteur" texte={fiche.biographieAuteur} />
+          <BlocBiographie auteur={oeuvre.auteur} texte={fiche.biographieAuteur} />
 
           <BlocTexte Icone={IconeLivre} titre="Structure et composition" texte={fiche.structureDetail} />
-
-          <BlocThemes slug={slug} themes={fiche.themesPrincipaux} />
 
           <BlocTexte Icone={IconeLivreOuvert} titre="Style et écriture" texte={fiche.styleEcriture} />
         </div>
@@ -116,15 +112,37 @@ function BlocIdentite({
   );
 }
 
-function BlocResume({ essentiel }: { essentiel: string }) {
+/**
+ * Biographie de l'auteur, avec un médaillon à côté du texte — demandé
+ * explicitement par l'utilisateur ("pour la biographie mettre a coté
+ * la photo du l ecrivain ahmed safrioui"). Pas de vraie photo d'Ahmed
+ * Sefrioui : recherchée sur Wikipédia (fr/en) et Wikimedia Commons,
+ * introuvable sous une licence réutilisable (l'article Wikipédia
+ * français lui-même est marqué "à illustrer", donc sans photo) — un
+ * médaillon aux initiales, comme celui des personnages de l'œuvre
+ * (`initiales()`/style doré de `OngletPersonnages.tsx`), tient donc
+ * la place d'un portrait plutôt qu'une image fabriquée ou une photo
+ * non vérifiée. Si une vraie photo est fournie plus tard, la remplacer
+ * par une image dans `public/` (même logique que `public/couvertures/`)
+ * via `next/image`.
+ */
+function BlocBiographie({ auteur, texte }: { auteur: string | null; texte: string }) {
+  const nom = auteur ?? "L'auteur";
+
   return (
     <div className="overflow-hidden rounded-[20px] border border-border bg-background">
-      <EnteteBloc Icone={IconeLivre} titre="Résumé de l'œuvre" />
-      <div className="px-6 pt-4 pb-5">
-        <p className="font-lecture text-[15.5px] leading-relaxed text-foreground">{essentiel}</p>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Résumé bilingue complet et détail chapitre par chapitre dans l&apos;onglet Chapitres.
-        </p>
+      <EnteteBloc Icone={IconeAuteur} titre="Biographie de l'auteur" />
+      <div className="flex flex-col items-center gap-6 px-6 pt-5 pb-6 text-center sm:flex-row sm:items-start sm:text-left">
+        <span
+          aria-hidden="true"
+          className="flex size-[120px] shrink-0 items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
+        >
+          {initiales(nom)}
+        </span>
+        <div className="min-w-0">
+          <p className="mb-2 font-serif text-lg font-bold text-ink">{nom}</p>
+          <p className="font-lecture text-[15.5px] leading-relaxed text-foreground">{texte}</p>
+        </div>
       </div>
     </div>
   );
@@ -144,33 +162,6 @@ function BlocTexte({
       <EnteteBloc Icone={Icone} titre={titre} />
       <div className="px-6 pt-4 pb-5">
         <p className="font-lecture text-[15.5px] leading-relaxed text-foreground">{texte}</p>
-      </div>
-    </div>
-  );
-}
-
-function BlocThemes({ slug, themes }: { slug: string; themes: string[] }) {
-  return (
-    <div className="overflow-hidden rounded-[20px] border border-border bg-background">
-      <EnteteBloc Icone={IconeIdee} titre="Thèmes principaux" />
-      <div className="px-6 pt-4 pb-5">
-        <ul className="flex flex-col gap-2">
-          {themes.map((theme) => (
-            <li key={theme} className="flex items-start gap-2.5 text-[15.5px] text-foreground">
-              <span
-                aria-hidden="true"
-                className="mt-2 size-1.5 shrink-0 rounded-full bg-primary"
-              />
-              {theme}
-            </li>
-          ))}
-        </ul>
-        <Link
-          href={`/oeuvres/${slug}?onglet=themes`}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-        >
-          Voir tous les thèmes, chapitre par chapitre →
-        </Link>
       </div>
     </div>
   );
