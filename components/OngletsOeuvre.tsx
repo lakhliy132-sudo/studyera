@@ -12,9 +12,15 @@ import { IconeDocument, IconeInfo, IconeLieu, IconeLivre, IconeLivreOuvert, Icon
 // raisonnement que pour `OngletsChapitre.tsx` retiré de la page
 // chapitre : l'utilisateur n'a pas demandé la suppression du code,
 // seulement celle de l'onglet dans la navigation.
+// Ordre demandé explicitement par l'utilisateur ("remets la fiche de
+// lecture la premier et 2 chapitres") : Fiche de lecture avant
+// Chapitres. "resume" reste toutefois l'onglet par défaut (URL sans
+// `?onglet=`, voir `versCleOnglet`/`href` ci-dessous) — seul l'ordre
+// d'affichage dans la barre change, pas ce qui s'affiche par défaut
+// à l'arrivée sur /oeuvres/[slug].
 const ONGLETS = [
-  { cle: "resume", libelle: "Chapitres", Icone: IconeLivre },
   { cle: "fiche", libelle: "Fiche de lecture", Icone: IconeInfo },
+  { cle: "resume", libelle: "Chapitres", Icone: IconeLivre },
   { cle: "personnages", libelle: "Personnages", Icone: IconePersonne },
   { cle: "lexique", libelle: "Lexique", Icone: IconeLivreOuvert },
   { cle: "lieux", libelle: "Lieux", Icone: IconeLieu },

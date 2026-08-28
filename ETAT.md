@@ -2,6 +2,15 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Ordre des onglets de `/oeuvres/[slug]` changé** — demandé
+> explicitement par l'utilisateur ("remets la fiche de lecture la
+> premier et 2 chapitres") : Fiche de lecture passe en 1re position,
+> Chapitres en 2e (`ONGLETS` dans `OngletsOeuvre.tsx`). L'onglet actif
+> par défaut à l'arrivée sur la page reste Chapitres (`versCleOnglet`
+> retombe toujours sur `"resume"`, seul l'ordre visuel dans la barre a
+> changé, pas ce qui s'affiche par défaut) — vérifié par capture
+> Playwright. `tsc`/`eslint` propres.
+>
 > **Onglet "Thèmes et enjeux" retiré de `/oeuvres/[slug]`** — le tour
 > précédent avait mal compris "enleve la case du theme et enjeux" comme
 > visant un bloc similaire à l'intérieur de la Fiche de lecture ; le
