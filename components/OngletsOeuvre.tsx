@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { IconeDocument, IconeIdee, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne } from "@/components/icones";
+import { IconeDocument, IconeIdee, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
 
 const ONGLETS = [
   { cle: "resume", libelle: "Chapitres", Icone: IconeLivre },
@@ -9,6 +9,7 @@ const ONGLETS = [
   { cle: "lieux", libelle: "Lieux", Icone: IconeLieu },
   { cle: "themes", libelle: "Thèmes et enjeux", Icone: IconeIdee },
   { cle: "sujets", libelle: "Sujets d'analyse", Icone: IconeDocument },
+  { cle: "quiz", libelle: "Quiz", Icone: IconeQuiz },
 ] as const;
 
 export type CleOnglet = (typeof ONGLETS)[number]["cle"];

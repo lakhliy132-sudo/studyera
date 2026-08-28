@@ -4,11 +4,15 @@ import BanniereOeuvre from "@/components/BanniereOeuvre";
 import OngletLexique from "@/components/OngletLexique";
 import OngletLieux from "@/components/OngletLieux";
 import OngletPersonnages from "@/components/OngletPersonnages";
+import OngletQuiz from "@/components/OngletQuiz";
 import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
+import OngletThemes from "@/components/OngletThemes";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
+import { QUIZ_BOITE_A_MERVEILLES } from "@/lib/quizBoiteAMerveilles";
 import {
   recupererChapitresOeuvre,
+  recupererFichesOeuvre,
   recupererLexiqueOeuvre,
   recupererOeuvreParSlug,
   recupererPersonnagesOeuvre,
@@ -37,8 +41,9 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Onglets Résumé, Personnages et Lexique ont un vrai contenu ; Thèmes
- * et enjeux/Sujets d'analyse affichent encore un message temporaire.
+ * Tous les onglets ont un vrai contenu. Le Quiz est réservé à La Boîte
+ * à Merveilles pour l'instant (voir lib/quizBoiteAMerveilles.ts) — les
+ * deux autres œuvres affichent "Bientôt disponible" sur cet onglet.
  */
 export default async function PageOeuvre({ params, searchParams }: PagePropsOeuvre) {
   const { slug } = await params;
@@ -67,7 +72,14 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const lexique =
     ongletActif === "lexique" ? await recupererLexiqueOeuvre(chapitres.map((c) => c.id)) : [];
   const sujets = ongletActif === "sujets" ? await recupererSujetsOeuvre(oeuvre.id) : [];
+  const fiches = ongletActif === "themes" ? await recupererFichesOeuvre(chapitres.map((c) => c.id)) : [];
   const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
+
+  // Quiz saisi à la main pour La Boîte à Merveilles uniquement (voir
+  // lib/quizBoiteAMerveilles.ts) : pas de contenu pour Antigone/Le
+  // Dernier Jour d'un Condamné pour l'instant, message "Bientôt
+  // disponible" affiché dans ce cas via le tableau vide.
+  const questionsQuiz = slug === "boite-a-merveilles" ? QUIZ_BOITE_A_MERVEILLES : [];
 
   return (
     <main className="flex flex-col">
@@ -102,10 +114,9 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           {ongletActif === "lieux" && <OngletLieux chapitres={chapitres} />}
           {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
           {ongletActif === "themes" && (
-            <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
-              Bientôt disponible.
-            </p>
+            <OngletThemes fiches={fiches} numeroParChapitreId={numeroParChapitreId} />
           )}
+          {ongletActif === "quiz" && <OngletQuiz questions={questionsQuiz} />}
         </div>
       </div>
     </main>

@@ -2,6 +2,57 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Onglets "Thèmes et enjeux" et "Quiz" ajoutés sur `/oeuvres/[slug]`**
+> — demandé explicitement par l'utilisateur ("ajoute les themes en jeux
+> et une partie de quiz dans la barre").
+>
+> - **Thèmes et enjeux** (`OngletThemes.tsx`) : plus un placeholder.
+>   Agrège `fiches.themes.principal` + `.secondaires` de tous les
+>   chapitres de l'œuvre (nouvelle fonction `recupererFichesOeuvre` dans
+>   `lib/supabase/contenu.ts`, même limite que `recupererLexiqueOeuvre` —
+>   pas de colonne `oeuvre_id` directe sur `fiches`, on passe par la
+>   liste des chapitres déjà chargée par la page). Dédoublonné par texte
+>   exact, avec badges "Ch. N" listant tous les chapitres où un même
+>   thème apparaît (ex. "La solidarité féminine" → Ch. 2, 3, 8). Design
+>   identique à `OngletLieux`/`OngletPersonnages` (carte icône + titre +
+>   badges), pas de nouveau fichier de référence pour cet onglet — 42
+>   thèmes distincts obtenus à partir des fiches déjà rédigées les
+>   sessions précédentes, rien de nouveau à faire relire ici.
+> - **Quiz** (`OngletQuiz.tsx` + `lib/quizBoiteAMerveilles.ts`) : 12
+>   questions à choix multiples (4 réponses) sur l'intrigue de La Boîte
+>   à Merveilles. ⚠️ **Contenu entièrement rédigé par Claude**, à partir
+>   des résumés/fiches déjà écrits cette session — pas fourni par
+>   l'utilisateur, **à faire relire avant usage en classe** (même
+>   réserve que pour le lexique/les sujets, qui n'ont pas de colonne
+>   `statut` : la mise en garde ne peut vivre que dans ce fichier et le
+>   chat, pas dans une colonne DB). Stocké en dur en TypeScript plutôt
+>   qu'en base — un vrai quiz demanderait une nouvelle table Supabase
+>   (questions/choix/bonne réponse), donc une migration ; **impossible à
+>   appliquer directement dans ce projet** (pas de connexion Postgres,
+>   seulement les clés REST anon/service_role), même contournement que
+>   `lib/personnagesParChapitre.ts`. Le tableau `QUIZ_BOITE_A_MERVEILLES`
+>   n'est utilisé **que pour le slug `boite-a-merveilles`** (vérifié via
+>   `/oeuvres` : les 3 slugs sont `antigone`, `boite-a-merveilles`,
+>   `dernier-jour-condamne`) — Antigone et Le Dernier Jour d'un Condamné
+>   affichent "Bientôt disponible" sur cet onglet, pas de contenu
+>   inventé qui leur serait attribué par erreur.
+>   Composant Client : une réponse par question, définitive une fois
+>   cliquée (bonne réponse en vert `--color-validation`, mauvaise en
+>   rouge `--color-erreur`/`bg-[#FDF0EF]` — mêmes couleurs et même
+>   logique que le correcteur de copie dans `OngletSujets`, jamais
+>   utilisées pour la navigation normale), score en direct, bouton
+>   "Recommencer". État perdu au rechargement de la page (pas persisté,
+>   assumé comme un quiz d'entraînement rapide, pas un test noté).
+> - Nouvel onglet `IconeQuiz` ajouté à `components/icones.tsx`
+>   (point d'interrogation dans un cercle) et entrée `quiz` ajoutée à
+>   `ONGLETS` dans `OngletsOeuvre.tsx` — la barre compte maintenant 7
+>   onglets.
+> - Vérifié : `npx tsc --noEmit` et `npx eslint` propres sur tous les
+>   fichiers touchés, captures d'écran Playwright des deux onglets (dont
+>   l'interaction quiz : sélection d'une mauvaise réponse → surlignage
+>   rouge + coche verte sur la bonne réponse + score mis à jour),
+>   processus chrome.exe nettoyés après coup.
+>
 > **Résumé "essentiel" de la bannière œuvre masqué hors de l'onglet
 > Chapitres** — message de l'utilisateur coupé en cours de frappe
 > ("...sujets d'analyses" sans suite), clarifié via une question posée

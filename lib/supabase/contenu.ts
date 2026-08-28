@@ -135,6 +135,23 @@ export async function recupererFicheChapitre(
   return data as Fiche | null;
 }
 
+/** Toutes les fiches (résumé, thèmes, points clés) des chapitres d'une
+ * œuvre — onglet "Thèmes et enjeux" de /oeuvres/[slug], qui agrège les
+ * thèmes de chaque fiche plutôt que d'avoir sa propre table. Même
+ * limite que `recupererLexiqueOeuvre` : pas de colonne `oeuvre_id`
+ * directe sur `fiches`, on passe par la liste des chapitres déjà
+ * récupérée par la page appelante. */
+export async function recupererFichesOeuvre(chapitreIds: string[]): Promise<Fiche[]> {
+  if (chapitreIds.length === 0) return [];
+
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase.from("fiches").select("*").in("chapitre_id", chapitreIds);
+
+  if (error) throw error;
+  return (data as Fiche[]) ?? [];
+}
+
 /**
  * Texte intégral d'un chapitre, ordonné par paragraphe. Tableau vide
  * tant que cette table n'est pas encore alimentée pour ce chapitre (voir
