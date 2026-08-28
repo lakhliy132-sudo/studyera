@@ -8,6 +8,7 @@ import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
 import OngletPersonnages from "@/components/OngletPersonnages";
 import { versCleOngletChapitre } from "@/components/OngletsChapitre";
+import RecitContexte, { type MotCle } from "@/components/RecitContexte";
 import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
 import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
@@ -30,6 +31,25 @@ interface PagePropsChapitre {
   params: Promise<{ slug: string; numero: string }>;
   searchParams: Promise<{ onglet?: string | string[] }>;
 }
+
+/**
+ * Mots-clés du récit d'"Le mythe d'Œdipe" — demandé explicitement par
+ * l'utilisateur ("avec des mots cles et des explicatif pour le mythe d
+ * oedipe"). Pas de table dédiée pour ce genre de contenu (ni vraiment
+ * du lexique classique — ce sont des noms propres/concepts, pas des
+ * mots de vocabulaire du texte — ni des personnages), donc codé en dur
+ * ici plutôt que dans `lexique`, uniquement pour ce chapitre.
+ */
+const MOTS_CLES_MYTHE_OEDIPE: MotCle[] = [
+  { terme: "Un oracle", explication: "Dans la mythologie grecque, personne ou lieu sacré par lequel les dieux font connaître l'avenir ou leur volonté aux hommes." },
+  { terme: "Une prophétie", explication: "Annonce de ce qui doit arriver, généralement transmise par un oracle." },
+  { terme: "Thèbes", explication: "Cité grecque antique, patrie d'Œdipe puis de ses enfants — le décor de toute l'histoire, jusqu'à la pièce d'Antigone." },
+  { terme: "Corinthe", explication: "Cité grecque où Œdipe grandit, élevé par le roi Polybe sans savoir qu'il n'était pas son véritable père." },
+  { terme: "Le Sphinx", explication: "Créature mythologique (buste de femme, corps de lion ailé) qui posait une énigme aux voyageurs et dévorait ceux qui échouaient à la résoudre." },
+  { terme: "Delphes", explication: "Sanctuaire consacré au dieu Apollon, siège du plus célèbre oracle de la Grèce antique." },
+  { terme: "La peste", explication: "Dans la mythologie grecque, fléau envoyé par les dieux pour punir une cité d'une faute restée cachée — ici, le meurtre impuni de Laïos." },
+  { terme: "Se crever les yeux", explication: "Geste par lequel Œdipe se punit lui-même en découvrant la vérité : une cécité physique qui répond à l'aveuglement moral dont il n'avait pas conscience jusque-là." },
+];
 
 /**
  * /oeuvres/[slug]/[numero] — fil d'Ariane, en-tête, puis directement le
@@ -67,6 +87,13 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
   const ongletActif = versCleOngletChapitre(onglet);
   // "Scène" pour Antigone plutôt que "Chapitre" — voir lib/uniteChapitre.ts.
   const unite = libelleUniteChapitre(slug);
+  // "Le mythe d'Œdipe" n'est ni une scène de la pièce ni un chapitre
+  // ordinaire : ni "Fiche de la scène" (voir plus bas), ni le format
+  // "Résumé" bilingue habituel (voir RecitContexte.tsx) ne lui
+  // conviennent — demandé explicitement par l'utilisateur. Codé en dur
+  // faute de colonne dédiée en base, même contournement que le reste
+  // de cette page.
+  const estMytheOedipe = slug === "antigone" && numero === 1;
 
   const oeuvre = await recupererOeuvreParSlug(slug);
   if (!oeuvre) notFound();
@@ -174,27 +201,29 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         <div className="flex flex-col gap-8 py-2">
           {ongletActif === "resume" && (
             <>
-              <FicheChapitre fiche={fiche} lexique={lexique} />
-              <TexteChapitre paragraphes={paragraphes} />
-
-              {/* Pas de "Fiche de la scène" sur "Le mythe d'Œdipe" —
-               * demandé explicitement par l'utilisateur ("dans le
-               * mythe d oedipe enleve la fiche de scene"). Ce n'est
-               * pas une scène de la pièce à proprement parler mais un
-               * rappel de contexte mythologique ; les blocs
-               * Personnages/Lexique/Lieux/Sujets liés n'y ont pas leur
-               * place. Codé en dur (numero===1 de l'antigone) faute de
-               * colonne dédiée en base pour ce genre de distinction,
-               * même contournement que le reste de cette page. */}
-              {!(slug === "antigone" && chapitre.numero === 1) && (
-                <FicheChapitreApercu
-                  chapitre={chapitre}
-                  libelleUniteDu={unite.duUnite}
-                  personnages={personnages}
-                  lexique={lexique}
-                  sujets={sujets}
-                />
+              {/* "Le mythe d'Œdipe" : ni le format "Résumé" bilingue
+               * habituel (ce n'est pas le résumé d'une scène — demandé
+               * explicitement par l'utilisateur), ni la "Fiche de la
+               * scène" (Personnages/Lexique/Lieux/Sujets liés n'ont
+               * pas leur place sur un rappel de contexte
+               * mythologique). Voir RecitContexte.tsx. */}
+              {estMytheOedipe ? (
+                fiche?.resume_fr && (
+                  <RecitContexte texte={fiche.resume_fr} motsCles={MOTS_CLES_MYTHE_OEDIPE} />
+                )
+              ) : (
+                <>
+                  <FicheChapitre fiche={fiche} lexique={lexique} />
+                  <FicheChapitreApercu
+                    chapitre={chapitre}
+                    libelleUniteDu={unite.duUnite}
+                    personnages={personnages}
+                    lexique={lexique}
+                    sujets={sujets}
+                  />
+                </>
               )}
+              <TexteChapitre paragraphes={paragraphes} />
 
               <BoutonMarquerLu
                 connecte={Boolean(user)}

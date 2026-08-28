@@ -2,32 +2,45 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
-> **"Le mythe d'Œdipe" : vrai résumé + "Fiche de la scène" retirée** —
-> demandé explicitement par l'utilisateur ("dans le mythe d oedipe
-> enleve la fiche de scene fait que ca comme resumé de mythe d oedipe",
-> suivi du texte intégral du mythe collé dans le chat).
+> **"Le mythe d'Œdipe" : nouvelle forme de contenu, ni résumé ni
+> "Fiche de la scène"** — demandé en trois messages successifs par
+> l'utilisateur : (1) "dans le mythe d oedipe enleve la fiche de scene
+> fait que ca comme resumé de mythe d oedipe", suivi du texte intégral
+> du mythe ; (2) correction immédiate — "non le mythe c pas comme un
+> resumé et en plus fais le juste en francais et avec unee autre forme
+> different de resumé parce que c est pas un resumé" ; (3) "avec des
+> mots cles et des explicatif pour le mythe d oedipe". Le premier essai
+> (texte dans `fiches.resume_fr`/`resume_ar`, rendu via `FicheChapitre`/
+> `CarteBilingue` — les deux cartes "Résumé"/"ملخص") a donc été
+> explicitement rejeté et remplacé.
 >
-> - **Résumé** (`resume_fr`/`resume_ar` de ce chapitre, feuille
->   Chapitres de `data/contenu-plateforme-bac.xlsx`) : **texte fourni
->   intégralement par l'utilisateur**, juste reformaté en paragraphes
->   propres (le collage d'origine coupait les phrases au milieu des
->   lignes) — aucune réserve "à faire relire" sur le contenu lui-même,
->   contrairement au reste du contenu Antigone rédigé par Claude.
->   `resume_ar` est en revanche une **traduction de Claude** du texte
->   français fourni (⚠️ à faire relire, comme toute traduction).
-> - **"Fiche de la scène" retirée**, mais seulement sur ce chapitre
->   précis : `/oeuvres/[slug]/[numero]/page.tsx` masque désormais
->   `FicheChapitreApercu` quand `slug === "antigone" && chapitre.numero
->   === 1`, codé en dur comme le reste des exceptions par item sur
->   cette page (pas de colonne dédiée en base pour ce genre de
->   distinction). Les 21 "Scène N" et "Prologue" gardent leur Fiche
->   normalement — vérifié par capture Playwright sur les deux cas
->   (absente sur "Le mythe d'Œdipe", présente sur "Scène 1").
+> - **Nouveau composant `RecitContexte.tsx`** : simples paragraphes de
+>   lecture en français uniquement (pas de carte bilingue, pas de
+>   troncature "Lire la suite"), suivis d'une section "Mots-clés" (8
+>   termes + explication : oracle, prophétie, Thèbes, Corinthe, le
+>   Sphinx, Delphes, la peste, se crever les yeux). Le texte reste
+>   stocké dans `fiches.resume_fr` comme n'importe quel résumé de
+>   chapitre (pas de colonne dédiée pour ce genre de contenu) — seul le
+>   RENDU change, `resume_ar` n'est délibérément plus rempli (`null`)
+>   pour ce chapitre. Les mots-clés sont codés en dur dans la page
+>   (`MOTS_CLES_MYTHE_OEDIPE`), pas dans `lexique` (ce sont des noms
+>   propres/concepts, pas du vocabulaire du texte).
+> - `/oeuvres/[slug]/[numero]/page.tsx` : nouveau garde-fou
+>   `estMytheOedipe` (`slug === "antigone" && numero === 1`) qui bascule
+>   entre `RecitContexte` (ce chapitre) et `FicheChapitre`/
+>   `FicheChapitreApercu` (tous les autres) — codé en dur comme le reste
+>   des exceptions par item sur cette page, faute de colonne dédiée en
+>   base. Les 21 "Scène N" et "Prologue" gardent le format habituel.
+> - Texte français : **fourni intégralement par l'utilisateur**, juste
+>   reformaté en paragraphes propres (le collage d'origine coupait les
+>   phrases au milieu des lignes) — aucune réserve "à faire relire" sur
+>   ce texte-là. Les 8 mots-clés/explications et leurs libellés, en
+>   revanche, sont **rédigés par Claude** — ⚠️ à faire relire.
 >
 > Vérifié : `tsc`/`eslint` propres, import sans erreur, essentiel_fr/ar
-> des 3 œuvres inchangés, capture Playwright du résumé complet
-> (bilingue, avec "Lire la suite"/"Réduire" fonctionnel) et confirmation
-> par comptage DOM de l'absence/présence de "Fiche de la scène".
+> des 3 œuvres inchangés, `resume_ar` confirmé `null` en base après
+> import, capture Playwright confirmant l'absence de "ملخص" (0
+> occurrence) et l'affichage correct des paragraphes + mots-clés.
 >
 > **Badges "CH. N" corrigés en "SCÈNE N" pour Antigone** — demandé
 > explicitement par l'utilisateur ("dans lexique c ecrit chp pas
