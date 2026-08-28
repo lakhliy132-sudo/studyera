@@ -16,12 +16,25 @@ interface OngletPersonnagesProps {
  * cette distinction (ajouter une vraie colonne demanderait une
  * migration Supabase à appliquer manuellement, voir
  * `20260829000000_lecture_admin_profils.sql` déjà en attente) : on
- * s'appuie donc sur les libellés `role` déjà saisis pour les 3
- * personnages centraux (narrateur + parents) plutôt que d'inventer un
- * champ supplémentaire. Fragile si ces libellés changent un jour — à
- * migrer vers une vraie colonne si le besoin se confirme.
+ * s'appuie donc sur les libellés `role` déjà saisis pour les
+ * personnages centraux de chaque œuvre plutôt que d'inventer un champ
+ * supplémentaire. Fragile si ces libellés changent un jour, et déjà
+ * étendue une première fois pour couvrir Antigone en plus de La Boîte
+ * à Merveilles ("fais moi fiche de lecture et personnage lexique
+ * d antigone") — confirme le besoin d'une vraie colonne le jour où la
+ * migration en attente pourra être appliquée.
  */
-const ROLES_PRINCIPAUX = new Set(["Narrateur et personnage principal", "La mère", "Le père"]);
+const ROLES_PRINCIPAUX = new Set([
+  // La Boîte à Merveilles
+  "Narrateur et personnage principal",
+  "La mère",
+  "Le père",
+  // Antigone
+  "Personnage principal, fille d'Œdipe",
+  "Roi de Thèbes, antagoniste",
+  "La sœur d'Antigone",
+  "Le fiancé d'Antigone",
+]);
 
 /**
  * Initiales pour le médaillon d'une carte personnage (2 lettres,

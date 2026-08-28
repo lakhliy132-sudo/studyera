@@ -9,6 +9,7 @@ import OngletQuiz from "@/components/OngletQuiz";
 import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
+import { FICHE_LECTURE_ANTIGONE } from "@/lib/ficheLectureAntigone";
 import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
@@ -41,11 +42,12 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Tous les onglets ont un vrai contenu. Le Quiz et la Fiche de lecture
- * sont réservés à La Boîte à Merveilles pour l'instant (voir
- * lib/quizBoiteAMerveilles.ts et lib/ficheLectureBoiteAMerveilles.ts)
- * — les deux autres œuvres affichent "Bientôt disponible" sur ces
- * onglets.
+ * Tous les onglets ont un vrai contenu. Le Quiz reste réservé à La
+ * Boîte à Merveilles pour l'instant (voir lib/quizBoiteAMerveilles.ts).
+ * La Fiche de lecture couvre maintenant La Boîte à Merveilles et
+ * Antigone (`FICHES_LECTURE_PAR_SLUG` ci-dessous) ; Le Dernier Jour
+ * d'un Condamné affiche encore "Bientôt disponible" sur ces deux
+ * onglets, faute de contenu rédigé.
  *
  * Pas d'onglet "Thèmes et enjeux" ici : retiré à la demande explicite
  * de l'utilisateur. `OngletThemes.tsx` et `recupererFichesOeuvre`
@@ -88,12 +90,14 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> =
     slug === "boite-a-merveilles" ? QUIZ_PAR_CHAPITRE : {};
 
-  // Fiche de lecture saisie à la main pour La Boîte à Merveilles
-  // uniquement (voir lib/ficheLectureBoiteAMerveilles.ts) : même
-  // logique que le quiz, "Bientôt disponible" pour les deux autres
-  // œuvres via `null`.
-  const ficheLecture: FicheLecture | null =
-    slug === "boite-a-merveilles" ? FICHE_LECTURE_BOITE_A_MERVEILLES : null;
+  // Fiches de lecture saisies à la main, une par œuvre déjà rédigée
+  // (voir lib/ficheLecture*.ts) : "Bientôt disponible" pour Le Dernier
+  // Jour d'un Condamné, qui n'en a pas encore, via `null`.
+  const FICHES_LECTURE_PAR_SLUG: Record<string, FicheLecture> = {
+    "boite-a-merveilles": FICHE_LECTURE_BOITE_A_MERVEILLES,
+    antigone: FICHE_LECTURE_ANTIGONE,
+  };
+  const ficheLecture: FicheLecture | null = FICHES_LECTURE_PAR_SLUG[slug] ?? null;
 
   return (
     <main className="flex flex-col">

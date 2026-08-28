@@ -2,6 +2,54 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Fiche de lecture, personnages et lexique d'Antigone ajoutés** —
+> demandé explicitement par l'utilisateur ("fais moi fiche de lecture
+> et personnage lexique d antigone").
+>
+> - **Fiche de lecture** : `lib/ficheLectureAntigone.ts`, même structure
+>   que celle de La Boîte à Merveilles (carte d'identité, biographie de
+>   Jean Anouilh en tableau, structure et composition, style et
+>   écriture). `app/(public)/oeuvres/[slug]/page.tsx` utilise maintenant
+>   une table `FICHES_LECTURE_PAR_SLUG` plutôt qu'un simple test
+>   `slug === "boite-a-merveilles"`, pour accueillir plus facilement une
+>   3e œuvre plus tard. ⚠️ Contenu rédigé par Claude à partir de
+>   connaissances générales sur la pièce et son auteur — à faire relire.
+> - **Personnages** (12 : 4 principaux — Antigone, Créon, Ismène,
+>   Hémon — et 8 secondaires) et **lexique** (15 mots, vocabulaire de
+>   la tragédie plutôt que régionalismes comme pour La Boîte à
+>   Merveilles) ajoutés via le pipeline Excel habituel (feuilles
+>   Personnages/Lexique de `data/contenu-plateforme-bac.xlsx` puis
+>   `npm run importer`, 0 erreur, essentiel_fr/ar des 3 œuvres vérifiés
+>   inchangés avant/après).
+> - **`ROLES_PRINCIPAUX` étendu** (`OngletPersonnages.tsx`) : ce
+>   `Set` codé en dur ne contenait que les libellés de rôle de La Boîte
+>   à Merveilles ; les 4 rôles principaux d'Antigone y sont ajoutés.
+>   Confirme la fragilité déjà documentée de cette solution de
+>   contournement (pas de colonne dédiée en base) — toujours pas migré
+>   faute d'accès à une vraie migration Supabase.
+> - ⚠️ **Chapitre-anchor créé pour Antigone** : `lexique.chapitre_id` est
+>   NOT NULL en base, donc un chapitre au moins était nécessaire pour y
+>   attacher le lexique. La pièce n'étant pas vraiment découpée en
+>   chapitres, un unique chapitre "pseudo" (numero 1, statut
+>   "brouillon") a été créé, avec un résumé honnête qui explique ce
+>   choix plutôt qu'un vrai découpage inventé.
+> - ⚠️ **Bug réel trouvé et corrigé en cours de route** : sur la page
+>   chapitre, `PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero]` est
+>   indexée par simple numéro, pas par œuvre+numéro. Le nouveau
+>   "chapitre 1" d'Antigone récupérait donc par erreur la liste de
+>   personnages du chapitre 1 de *La Boîte à Merveilles* (même numéro,
+>   aucun nom en commun), ce qui vidait complètement le bloc
+>   Personnages de sa Fiche du chapitre (repéré par capture d'écran).
+>   Corrigé en `app/(public)/oeuvres/[slug]/[numero]/page.tsx` par un
+>   garde-fou explicite `slug === "boite-a-merveilles"` avant d'utiliser
+>   cette liste. Boîte à Merveilles chapitre 1 revérifié inchangé (12
+>   personnages) après le correctif.
+>
+> Vérifié : `tsc`/`eslint` propres sur tous les fichiers touchés,
+> captures Playwright de la Fiche de lecture, des Personnages, du
+> Lexique et de la page du chapitre-anchor (avant et après le
+> correctif du bug ci-dessus).
+>
 > **Couverture d'Antigone ajoutée** — demandé explicitement par
 > l'utilisateur ("regarde la photo que j ai mis sur le fichier fais la
 > sur la couverture de l oeuvre antigone"). La photo en question est

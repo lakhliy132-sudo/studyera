@@ -96,7 +96,18 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
   // vraie relation en base pour l'instant) ; si l'œuvre n'a pas encore
   // cette liste (Antigone, Le Dernier Jour d'un Condamné), on retombe
   // sur la liste complète plutôt que de tout masquer.
-  const nomsDuChapitre = PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero];
+  //
+  // ⚠️ Bug corrigé : la liste est indexée par simple numéro de
+  // chapitre (1, 2, 3…), pas par œuvre+numéro. Sans le `slug ===
+  // "boite-a-merveilles"` ci-dessous, le "chapitre 1" ajouté pour
+  // Antigone (voir lib/ficheLectureAntigone.ts) récupérait par erreur
+  // la liste de personnages du chapitre 1 de *La Boîte à Merveilles*
+  // (numéro identique, œuvre différente), ce qui vidait entièrement le
+  // bloc Personnages de la Fiche du chapitre d'Antigone (aucun nom en
+  // commun). Repéré par capture d'écran après l'ajout des personnages
+  // d'Antigone.
+  const nomsDuChapitre =
+    slug === "boite-a-merveilles" ? PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero] : undefined;
   const personnages = nomsDuChapitre
     ? tousLesPersonnages.filter((p) => nomsDuChapitre.includes(p.nom))
     : tousLesPersonnages;
