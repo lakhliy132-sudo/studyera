@@ -2,6 +2,37 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Lexique des 21 scènes d'Antigone complété** — demandé explicitement
+> par l'utilisateur ("dans lexique ajoute toutes les lexiques des
+> scenes"). 84 nouveaux mots ajoutés (4 par scène, "Scène 1" à
+> "Scène 21"), portant le lexique total d'Antigone à 99 mots (15 sur
+> "Prologue" + 84 sur les scènes) et celui du site à 205.
+>
+> ⚠️ **Réserve plus forte que d'habitude à signaler** : contrairement au
+> lexique de La Boîte à Merveilles (ancré sur des résumés de chapitres
+> écrits à partir des points fournis par l'utilisateur) ou même du
+> Prologue d'Antigone (ancré sur le résumé de la pièce déjà rédigé),
+> ces 84 mots n'ont **aucun texte de scène réel auquel se rattacher** :
+> comme déjà noté, la pièce d'Anouilh n'est pas officiellement décodée
+> en 21 scènes numérotées, et les 21 "Scène N" créées au tour précédent
+> sont des coquilles vides sans contenu. Chaque groupe de 4 mots a donc
+> été choisi par Claude à partir d'une reconstitution approximative,
+> scène par scène, du déroulement bien connu de la pièce (retour
+> nocturne d'Antigone, dispute avec Ismène, tête-à-tête avec Créon,
+> dénouement...), pas d'un texte source consulté ligne par ligne. Les
+> mots eux-mêmes sont réels et pertinents pour le registre de la pièce,
+> mais leur répartition entre les 21 scènes est une approximation, pas
+> un fait vérifiable. Encore plus que d'habitude : à faire relire avant
+> usage en classe, et à corriger/réattribuer une fois le texte réel de
+> chaque scène disponible.
+>
+> Ajouté via le pipeline Excel habituel (feuille Lexique, chapitre_numero
+> décalé de 2 comme pour le reste d'Antigone). Vérifié : 0 doublon (ni
+> entre les 84 nouveaux mots, ni avec les 15 déjà présents), import sans
+> erreur (205 mots au total), essentiel_fr/ar des 3 œuvres inchangés,
+> capture Playwright (liste complète triée alphabétiquement + une scène
+> précise montrant exactement ses 4 mots).
+>
 > **Antigone restructurée en 23 "scènes"** — demandé explicitement par
 > l'utilisateur ("dans antigone change le nom de chapitre par scene et
 > dans la case des scene comment par mythe d oedipe apres prologue
