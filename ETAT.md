@@ -2,6 +2,56 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Couverture d'Antigone ajoutée** — demandé explicitement par
+> l'utilisateur ("regarde la photo que j ai mis sur le fichier fais la
+> sur la couverture de l oeuvre antigone"). La photo en question est
+> une image déposée à la racine du dépôt ("ChatGPT Image 28 août 2026,
+> 21_31_28.png", non commitée) : une illustration générée (pas une
+> photo d'une personne réelle) d'une jeune femme en tenue grecque
+> antique vue de dos, assise sur des ruines face à l'Acropole au
+> crépuscule — même composition que la couverture existante de La
+> Boîte à Merveilles (figure de dos face à la ville). Copiée vers
+> `public/couvertures/antigone.png`, `oeuvres.couverture_url` mis à
+> jour pour le slug `antigone` via une nouvelle migration
+> (`20260901000000_couverture_antigone.sql`, même mécanisme que les
+> deux couvertures précédentes) — appliquée en direct via la clé
+> service_role (pas d'accès CLI/Postgres direct dans ce projet).
+> Vérifié par capture Playwright sur la carte de /oeuvres et la
+> bannière de /oeuvres/antigone : la femme et l'Acropole restent bien
+> visibles avec le cadrage déjà en place (`bg-[center_74%]`), sans
+> retouche nécessaire.
+>
+> **Exercices ajoutés au cours "L'énonciation"** (`/langue/enonciation`)
+> — demandé explicitement par l'utilisateur, qui a collé le contenu
+> intégral de 3 exercices ("ajoute partie exercice 1er lecon
+> enonciation"). Section "IV. Exercices" ajoutée à la suite du contenu
+> déjà présent dans `contenu_mdx` (feuille "Cours" de
+> `data/contenu-plateforme-bac.xlsx`, ligne "enonciation"), ré-importée
+> via `npm run importer` (0 erreur, essentiel_fr/ar des 3 œuvres
+> vérifiés inchangés avant/après comme d'habitude). Contenu fourni
+> intégralement par l'utilisateur, reformaté en Markdown (listes
+> numérotées pour l'exercice 3) sans modification de fond — y compris
+> une coquille apparente dans l'énoncé 5 ("L'ouvrit..." sans sujet),
+> conservée telle quelle plutôt que corrigée silencieusement, pour ne
+> pas altérer un contenu fourni par l'utilisateur sans confirmation.
+> `app/(public)/langue/[slug]/page.tsx` distingue maintenant `<ol>`
+> (listes numérotées, `list-decimal`) de `<ul>` (listes à puces,
+> `list-disc`) via la prop `components` de `ReactMarkdown`.
+>
+> ⚠️ **Nouvelle session parallèle détectée sur `/langue/[slug]`**,
+> repérée en relisant le fichier juste après le réimport ci-dessus : il
+> a été considérablement enrichi entre-temps par une autre session
+> (barre d'onglets Cours/Exercices/Quiz via un nouveau composant
+> `OngletsLecon`, composants `Exercices*`/`Quiz*` dédiés par leçon,
+> `remark-gfm`) — pas touché ni commité par cette session-ci (les
+> fichiers concernés, dont `package.json`/`package-lock.json` modifiés
+> par l'ajout de `remark-gfm`, restent non indexés pour laisser l'autre
+> session commiter son propre travail). À surveiller : la section "IV.
+> Exercices" ajoutée ci-dessus dans `contenu_mdx` (affichée dans
+> l'onglet "Cours") pourrait faire doublon avec le nouveau composant
+> `ExercicesEnonciation` (onglet "Exercices" dédié) — pas résolu dans
+> cette session, l'utilisateur n'a pas signalé ce doublon.
+>
 > **Page `/langue` reconstruite, table `cours` alimentée pour la
 > première fois** — demandé explicitement par l'utilisateur ("regarde
 > sur le fichier madrassti et fais moi comme ca dans la partie de
