@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **"Le mythe d'Œdipe" encadré en noir** — demandé explicitement par
+> l'utilisateur ("encadre le mythe d oedipe comme rectangle et ajoute
+> des tres [traits] noir", précisé aussitôt après : "pas forcement
+> rectangle mais arrondis"). `RecitContexte.tsx` : coins arrondis
+> (`rounded-lg`, comme le reste du site) et bordure noire épaisse
+> (`border-2 border-black`, aussi entre le récit et les "Mots-clés"),
+> pour un effet "encadré" de manuel scolaire — seule la couleur de
+> bordure s'écarte volontairement de la palette bleu pâle du reste du
+> site (voir le commentaire dans le composant : exception isolée, pas
+> une nouvelle couleur à généraliser). Vérifié
+> par capture Playwright.
+>
 > **"Le mythe d'Œdipe" : nouvelle forme de contenu, ni résumé ni
 > "Fiche de la scène"** — demandé en trois messages successifs par
 > l'utilisateur : (1) "dans le mythe d oedipe enleve la fiche de scene
