@@ -4,41 +4,61 @@ import { useMemo, useState } from "react";
 
 import { IconeCoche, IconeQuiz } from "@/components/icones";
 import type { QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
+import type { Chapitre } from "@/types/base-de-donnees";
 
 interface OngletQuizProps {
-  questions: QuestionQuiz[];
+  chapitres: Chapitre[];
+  /** Questions du quiz, groupées par numéro de chapitre — vide pour une
+   * œuvre qui n'a pas encore de quiz saisi (voir `lib/quizBoiteAMerveilles.ts`). */
+  questionsParChapitre: Record<number, QuestionQuiz[]>;
 }
 
 /**
- * Contenu de l'onglet "Quiz" de /oeuvres/[slug] — demandé explicitement
- * par l'utilisateur ("ajoute... une partie de quiz dans la barre").
+ * Contenu de l'onglet "Quiz" de /oeuvres/[slug] — organisé chapitre par
+ * chapitre (5 questions chacun), demandé explicitement par
+ * l'utilisateur après une première version à 12 questions générales
+ * sur toute l'œuvre ("tu peux le quiz tu le fais chap par chap faire 5
+ * qst dans chaque chapter").
  *
- * Composant Client : la sélection d'une réponse, le score en direct et
- * le bouton "Recommencer" sont de l'état d'interface pur, jamais
- * persisté (pas de table dédiée en base, voir le commentaire en tête de
- * `lib/quizBoiteAMerveilles.ts`) — perdu si la page est rechargée,
- * assumé comme un quiz d'entraînement rapide plutôt qu'un test noté.
+ * Une pastille par chapitre (même style que la barre d'onglets/les
+ * pastilles de rôle) sélectionne les 5 questions affichées ; un badge
+ * "x/5" apparaît sous une pastille dès qu'on a répondu à au moins une
+ * question de ce chapitre. Composant Client : sélection de chapitre et
+ * réponses sont de l'état d'interface pur, jamais persisté (voir la
+ * réserve dans `lib/quizBoiteAMerveilles.ts` sur l'absence de table
+ * dédiée) — perdu si la page est rechargée.
  *
- * Une réponse par question, définitive une fois cliquée (pas de
- * changement d'avis) : la bonne réponse et l'explication s'affichent
- * immédiatement, avec le vert `--color-validation` si la réponse était
- * juste et le rouge `--color-erreur` si elle était fausse — même
- * logique de couleurs que le correcteur de copie (`OngletSujets`),
- * jamais utilisée ailleurs dans la navigation du site.
+ * Une réponse par question, définitive une fois cliquée : bonne
+ * réponse en vert `--color-validation`, mauvaise en rouge
+ * `--color-erreur`/`bg-[#FDF0EF]` — mêmes couleurs que le correcteur de
+ * copie (`OngletSujets`), jamais utilisées pour la navigation normale.
  */
-export default function OngletQuiz({ questions }: OngletQuizProps) {
+export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQuizProps) {
+  const chapitresAvecQuiz = chapitres.filter((c) => (questionsParChapitre[c.numero]?.length ?? 0) > 0);
+
+  const [chapitreSelectionne, setChapitreSelectionne] = useState<number | null>(
+    chapitresAvecQuiz[0]?.numero ?? null,
+  );
   const [reponses, setReponses] = useState<Record<string, number>>({});
 
-  const nombreRepondues = Object.keys(reponses).length;
-  const score = useMemo(
-    () =>
-      questions.reduce(
-        (total, q) => total + (reponses[q.id] === q.reponseCorrecte ? 1 : 0),
-        0,
-      ),
-    [questions, reponses],
-  );
-  const termine = nombreRepondues === questions.length && questions.length > 0;
+  const questions = chapitreSelectionne !== null ? (questionsParChapitre[chapitreSelectionne] ?? []) : [];
+
+  const scoreParChapitre = useMemo(() => {
+    const scores = new Map<number, { repondues: number; correctes: number; total: number }>();
+    for (const c of chapitresAvecQuiz) {
+      const qs = questionsParChapitre[c.numero] ?? [];
+      let repondues = 0;
+      let correctes = 0;
+      for (const q of qs) {
+        if (q.id in reponses) {
+          repondues += 1;
+          if (reponses[q.id] === q.reponseCorrecte) correctes += 1;
+        }
+      }
+      scores.set(c.numero, { repondues, correctes, total: qs.length });
+    }
+    return scores;
+  }, [chapitresAvecQuiz, questionsParChapitre, reponses]);
 
   function choisir(questionId: string, indexChoix: number) {
     setReponses((precedent) => {
@@ -47,8 +67,16 @@ export default function OngletQuiz({ questions }: OngletQuizProps) {
     });
   }
 
-  function recommencer() {
-    setReponses({});
+  const scoreDuChapitre = chapitreSelectionne !== null ? scoreParChapitre.get(chapitreSelectionne) : undefined;
+  const chapitreActif = chapitresAvecQuiz.find((c) => c.numero === chapitreSelectionne);
+
+  function recommencerChapitre() {
+    if (chapitreSelectionne === null) return;
+    setReponses((precedent) => {
+      const suivant = { ...precedent };
+      for (const q of questionsParChapitre[chapitreSelectionne] ?? []) delete suivant[q.id];
+      return suivant;
+    });
   }
 
   return (
@@ -58,33 +86,52 @@ export default function OngletQuiz({ questions }: OngletQuizProps) {
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">Quiz</h2>
       </div>
       <p className="mb-[30px] text-center text-base text-muted-foreground">
-        Teste ta mémoire de l&apos;œuvre, une question à la fois.
+        Teste ta mémoire de l&apos;œuvre, chapitre par chapitre.
       </p>
 
-      {questions.length === 0 ? (
+      {chapitresAvecQuiz.length === 0 || chapitreSelectionne === null ? (
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
         <>
-          <div className="mx-auto mb-8 flex w-fit items-center gap-4 rounded-full border border-border bg-surface-muted px-6 py-3">
-            <span className="text-sm font-semibold text-foreground">
-              {nombreRepondues} / {questions.length} question{questions.length > 1 ? "s" : ""}
-            </span>
-            <span
-              className={
-                termine
-                  ? "rounded-full bg-validation-tint px-3 py-1 text-sm font-bold text-validation"
-                  : "rounded-full bg-primary-tint px-3 py-1 text-sm font-bold text-primary"
-              }
-            >
-              Score : {score} / {questions.length}
-            </span>
-            {nombreRepondues > 0 && (
+          <ul className="mb-8 flex flex-wrap justify-center gap-2">
+            {chapitresAvecQuiz.map((c) => {
+              const actif = c.numero === chapitreSelectionne;
+              const score = scoreParChapitre.get(c.numero);
+              return (
+                <li key={c.numero}>
+                  <button
+                    type="button"
+                    onClick={() => setChapitreSelectionne(c.numero)}
+                    className={
+                      actif
+                        ? "flex flex-col items-center gap-0.5 rounded-[10px] bg-primary px-4 py-2 text-sm font-bold whitespace-nowrap text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)]"
+                        : "flex flex-col items-center gap-0.5 rounded-[10px] border border-border px-4 py-2 text-sm font-medium whitespace-nowrap text-foreground transition-colors hover:border-primary hover:bg-primary-tint hover:text-primary"
+                    }
+                  >
+                    Ch. {c.numero}
+                    {score && score.repondues > 0 && (
+                      <span className={actif ? "text-xs font-semibold text-white/85" : "text-xs font-semibold text-muted-foreground"}>
+                        {score.correctes} / {score.total}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mb-6 flex items-center justify-center gap-4">
+            <h3 className="font-serif text-xl font-bold text-ink">
+              Chapitre {chapitreSelectionne}
+              {chapitreActif ? ` — ${chapitreActif.titre_fr}` : ""}
+            </h3>
+            {scoreDuChapitre && scoreDuChapitre.repondues > 0 && (
               <button
                 type="button"
-                onClick={recommencer}
+                onClick={recommencerChapitre}
                 className="text-sm font-semibold text-muted-foreground underline decoration-dotted underline-offset-4 transition-colors hover:text-primary"
               >
-                Recommencer
+                Recommencer ce chapitre
               </button>
             )}
           </div>
@@ -158,9 +205,10 @@ export default function OngletQuiz({ questions }: OngletQuizProps) {
             })}
           </ol>
 
-          {termine && (
+          {scoreDuChapitre && scoreDuChapitre.repondues === scoreDuChapitre.total && (
             <p className="mt-8 text-center font-serif text-xl font-bold text-ink">
-              Quiz terminé — {score} / {questions.length} bonnes réponses.
+              Chapitre {chapitreSelectionne} terminé — {scoreDuChapitre.correctes} / {scoreDuChapitre.total} bonnes
+              réponses.
             </p>
           )}
         </>

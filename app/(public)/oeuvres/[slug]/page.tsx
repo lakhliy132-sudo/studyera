@@ -9,7 +9,7 @@ import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
 import OngletThemes from "@/components/OngletThemes";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
-import { QUIZ_BOITE_A_MERVEILLES } from "@/lib/quizBoiteAMerveilles";
+import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
   recupererChapitresOeuvre,
   recupererFichesOeuvre,
@@ -75,11 +75,12 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const fiches = ongletActif === "themes" ? await recupererFichesOeuvre(chapitres.map((c) => c.id)) : [];
   const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
 
-  // Quiz saisi à la main pour La Boîte à Merveilles uniquement (voir
-  // lib/quizBoiteAMerveilles.ts) : pas de contenu pour Antigone/Le
-  // Dernier Jour d'un Condamné pour l'instant, message "Bientôt
-  // disponible" affiché dans ce cas via le tableau vide.
-  const questionsQuiz = slug === "boite-a-merveilles" ? QUIZ_BOITE_A_MERVEILLES : [];
+  // Quiz saisi à la main pour La Boîte à Merveilles uniquement, 5
+  // questions par chapitre (voir lib/quizBoiteAMerveilles.ts) : pas de
+  // contenu pour Antigone/Le Dernier Jour d'un Condamné pour l'instant,
+  // message "Bientôt disponible" affiché dans ce cas via l'objet vide.
+  const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> =
+    slug === "boite-a-merveilles" ? QUIZ_PAR_CHAPITRE : {};
 
   return (
     <main className="flex flex-col">
@@ -116,7 +117,9 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           {ongletActif === "themes" && (
             <OngletThemes fiches={fiches} numeroParChapitreId={numeroParChapitreId} />
           )}
-          {ongletActif === "quiz" && <OngletQuiz questions={questionsQuiz} />}
+          {ongletActif === "quiz" && (
+            <OngletQuiz chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />
+          )}
         </div>
       </div>
     </main>

@@ -18,31 +18,44 @@
 >   badges), pas de nouveau fichier de référence pour cet onglet — 42
 >   thèmes distincts obtenus à partir des fiches déjà rédigées les
 >   sessions précédentes, rien de nouveau à faire relire ici.
-> - **Quiz** (`OngletQuiz.tsx` + `lib/quizBoiteAMerveilles.ts`) : 12
->   questions à choix multiples (4 réponses) sur l'intrigue de La Boîte
->   à Merveilles. ⚠️ **Contenu entièrement rédigé par Claude**, à partir
->   des résumés/fiches déjà écrits cette session — pas fourni par
->   l'utilisateur, **à faire relire avant usage en classe** (même
->   réserve que pour le lexique/les sujets, qui n'ont pas de colonne
->   `statut` : la mise en garde ne peut vivre que dans ce fichier et le
->   chat, pas dans une colonne DB). Stocké en dur en TypeScript plutôt
->   qu'en base — un vrai quiz demanderait une nouvelle table Supabase
->   (questions/choix/bonne réponse), donc une migration ; **impossible à
->   appliquer directement dans ce projet** (pas de connexion Postgres,
->   seulement les clés REST anon/service_role), même contournement que
->   `lib/personnagesParChapitre.ts`. Le tableau `QUIZ_BOITE_A_MERVEILLES`
->   n'est utilisé **que pour le slug `boite-a-merveilles`** (vérifié via
->   `/oeuvres` : les 3 slugs sont `antigone`, `boite-a-merveilles`,
->   `dernier-jour-condamne`) — Antigone et Le Dernier Jour d'un Condamné
->   affichent "Bientôt disponible" sur cet onglet, pas de contenu
->   inventé qui leur serait attribué par erreur.
+> - **Quiz** (`OngletQuiz.tsx` + `lib/quizBoiteAMerveilles.ts`) :
+>   organisé **chapitre par chapitre**, 5 questions à choix multiples (4
+>   réponses) par chapitre (1 à 12, 60 au total) — une première version
+>   à 12 questions générales sur toute l'œuvre a été remplacée à la
+>   demande explicite de l'utilisateur ("tu peux le quiz tu le fais chap
+>   par chap faire 5 qst dans chaque chapter"). Une rangée de pastilles
+>   "Ch. 1"… "Ch. 12" (même style que la barre d'onglets) sélectionne le
+>   chapitre affiché, avec un badge "x/5" sous la pastille dès qu'on a
+>   répondu à au moins une question de ce chapitre-là — l'état de chaque
+>   chapitre (réponses + score) est indépendant des autres. ⚠️ **Contenu
+>   entièrement rédigé par Claude**, à partir des résumés/points clés
+>   déjà en base (table `fiches`, remplis les sessions précédentes à
+>   partir des points fournis par l'utilisateur — chaque question est
+>   donc vérifiable dans le résumé du chapitre correspondant, mais la
+>   formulation question/réponses n'a pas été fournie par l'utilisateur)
+>   — pas fourni par l'utilisateur, **à faire relire avant usage en
+>   classe** (même réserve que pour le lexique/les sujets, qui n'ont pas
+>   de colonne `statut` : la mise en garde ne peut vivre que dans ce
+>   fichier et le chat, pas dans une colonne DB). Stocké en dur en
+>   TypeScript plutôt qu'en base — un vrai quiz demanderait une nouvelle
+>   table Supabase (questions/choix/bonne réponse), donc une migration ;
+>   **impossible à appliquer directement dans ce projet** (pas de
+>   connexion Postgres, seulement les clés REST anon/service_role), même
+>   contournement que `lib/personnagesParChapitre.ts`. L'objet
+>   `QUIZ_PAR_CHAPITRE` n'est utilisé **que pour le slug
+>   `boite-a-merveilles`** (vérifié via `/oeuvres` : les 3 slugs sont
+>   `antigone`, `boite-a-merveilles`, `dernier-jour-condamne`) —
+>   Antigone et Le Dernier Jour d'un Condamné affichent "Bientôt
+>   disponible" sur cet onglet, pas de contenu inventé qui leur serait
+>   attribué par erreur.
 >   Composant Client : une réponse par question, définitive une fois
 >   cliquée (bonne réponse en vert `--color-validation`, mauvaise en
 >   rouge `--color-erreur`/`bg-[#FDF0EF]` — mêmes couleurs et même
 >   logique que le correcteur de copie dans `OngletSujets`, jamais
->   utilisées pour la navigation normale), score en direct, bouton
->   "Recommencer". État perdu au rechargement de la page (pas persisté,
->   assumé comme un quiz d'entraînement rapide, pas un test noté).
+>   utilisées pour la navigation normale), score en direct par chapitre,
+>   bouton "Recommencer ce chapitre". État perdu au rechargement de la
+>   page (pas persisté, assumé comme un quiz d'entraînement rapide, pas
+>   un test noté).
 > - Nouvel onglet `IconeQuiz` ajouté à `components/icones.tsx`
 >   (point d'interrogation dans un cercle) et entrée `quiz` ajoutée à
 >   `ONGLETS` dans `OngletsOeuvre.tsx` — la barre compte maintenant 7
