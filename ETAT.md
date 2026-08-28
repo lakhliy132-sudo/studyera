@@ -19,15 +19,21 @@
 >   thèmes distincts obtenus à partir des fiches déjà rédigées les
 >   sessions précédentes, rien de nouveau à faire relire ici.
 > - **Quiz** (`OngletQuiz.tsx` + `lib/quizBoiteAMerveilles.ts`) :
->   organisé **chapitre par chapitre**, 5 questions à choix multiples (4
->   réponses) par chapitre (1 à 12, 60 au total) — une première version
->   à 12 questions générales sur toute l'œuvre a été remplacée à la
->   demande explicite de l'utilisateur ("tu peux le quiz tu le fais chap
->   par chap faire 5 qst dans chaque chapter"). Une rangée de pastilles
->   "Ch. 1"… "Ch. 12" (même style que la barre d'onglets) sélectionne le
->   chapitre affiché, avec un badge "x/5" sous la pastille dès qu'on a
->   répondu à au moins une question de ce chapitre-là — l'état de chaque
->   chapitre (réponses + score) est indépendant des autres. ⚠️ **Contenu
+>   organisé **chapitre par chapitre**, **15** questions à choix
+>   multiples (4 réponses) par chapitre (1 à 12, **180 au total**) —
+>   deux demandes successives de l'utilisateur : d'abord "tu peux le
+>   quiz tu le fais chap par chap faire 5 qst dans chaque chapter" (5
+>   questions/chapitre), puis "15 qst dans chaque chapter" (passage à
+>   15/chapitre, contenu antérieur conservé et complété plutôt que
+>   remplacé). Une rangée de pastilles "Ch. 1"… "Ch. 12" (même style que
+>   la barre d'onglets) sélectionne le chapitre affiché, avec un badge
+>   "x / 15" sous la pastille dès qu'on a répondu à au moins une
+>   question de ce chapitre-là — l'état de chaque chapitre (réponses +
+>   score) est indépendant des autres ; le composant ne code en dur
+>   aucun total, il s'adapte à la longueur réelle du tableau de
+>   questions. Structure des 180 questions vérifiée par un script
+>   (`tsx`) : 15 par chapitre, identifiants tous uniques, 4 choix
+>   distincts et un index de bonne réponse valide sur chacune. ⚠️ **Contenu
 >   entièrement rédigé par Claude**, à partir des résumés/points clés
 >   déjà en base (table `fiches`, remplis les sessions précédentes à
 >   partir des points fournis par l'utilisateur — chaque question est

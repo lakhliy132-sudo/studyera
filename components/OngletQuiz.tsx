@@ -15,18 +15,21 @@ interface OngletQuizProps {
 
 /**
  * Contenu de l'onglet "Quiz" de /oeuvres/[slug] — organisé chapitre par
- * chapitre (5 questions chacun), demandé explicitement par
- * l'utilisateur après une première version à 12 questions générales
- * sur toute l'œuvre ("tu peux le quiz tu le fais chap par chap faire 5
- * qst dans chaque chapter").
+ * chapitre, demandé explicitement par l'utilisateur en deux temps :
+ * d'abord "tu peux le quiz tu le fais chap par chap faire 5 qst dans
+ * chaque chapter" (5 questions/chapitre), puis "15 qst dans chaque
+ * chapter" (15 questions/chapitre, voir `lib/quizBoiteAMerveilles.ts`).
+ * Le nombre de questions par chapitre n'est pas codé en dur ici — le
+ * badge de score et le rendu s'adaptent à `questionsParChapitre[n].length`,
+ * quel que soit ce nombre.
  *
  * Une pastille par chapitre (même style que la barre d'onglets/les
- * pastilles de rôle) sélectionne les 5 questions affichées ; un badge
- * "x/5" apparaît sous une pastille dès qu'on a répondu à au moins une
- * question de ce chapitre. Composant Client : sélection de chapitre et
- * réponses sont de l'état d'interface pur, jamais persisté (voir la
- * réserve dans `lib/quizBoiteAMerveilles.ts` sur l'absence de table
- * dédiée) — perdu si la page est rechargée.
+ * pastilles de rôle) sélectionne les questions affichées ; un badge
+ * "x / total" apparaît sous une pastille dès qu'on a répondu à au
+ * moins une question de ce chapitre. Composant Client : sélection de
+ * chapitre et réponses sont de l'état d'interface pur, jamais
+ * persisté (voir la réserve dans `lib/quizBoiteAMerveilles.ts` sur
+ * l'absence de table dédiée) — perdu si la page est rechargée.
  *
  * Une réponse par question, définitive une fois cliquée : bonne
  * réponse en vert `--color-validation`, mauvaise en rouge
