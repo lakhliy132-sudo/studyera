@@ -2,6 +2,52 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **"Fiche de la scène" rendue vraiment scène par scène + Quiz ajouté
+> pour les 21 scènes d'Antigone** — demandé explicitement par
+> l'utilisateur ("Fiche de scene modifie la scene par scene ET FAIS
+> LES QUIZS DANS TOUTS LES SCENES").
+>
+> - **Personnages scène par scène** : jusqu'ici, les 12 personnages
+>   d'Antigone s'affichaient systématiquement sur chaque scène (aucune
+>   liste dédiée, contrairement à La Boîte à Merveilles). Ajout de
+>   `PERSONNAGES_PAR_SCENE_ANTIGONE` (`lib/personnagesParChapitre.ts`,
+>   même mécanisme que pour La Boîte à Merveilles) : chaque scène
+>   n'affiche désormais que les personnages réellement présents/parlants
+>   d'après son résumé (ex. "Scène 5 : Antigone et Hémon" → seulement
+>   Antigone et Hémon, au lieu de 12). "Le mythe d'Œdipe" (numero=1)
+>   n'a pas cette liste : aucun des personnages de la table n'y
+>   "apparaît" au sens de ce mécanisme.
+> - **Quiz d'Antigone** : `lib/quizAntigone.ts`, 5 questions par scène
+>   (numero 2 à 22, 105 questions), même format que le quiz de La Boîte
+>   à Merveilles (`QuestionQuiz`) — branché via une nouvelle map
+>   `QUIZ_PAR_SLUG` dans la page œuvre, remplaçant le quiz "réservé à
+>   La Boîte à Merveilles pour l'instant". Chaque question est ancrée
+>   dans le résumé de la scène (fourni par l'utilisateur) et/ou son
+>   lexique déjà en base ; pas de quiz pour "Le mythe d'Œdipe", qui
+>   n'est pas une scène de la pièce.
+> - `OngletQuiz.tsx` rendu unité-aware ("Chapitre"/"Scène" selon
+>   l'œuvre, voir lib/uniteChapitre.ts) : pastilles "Scène 1"…"Scène 21"
+>   (le numéro de scène extrait du titre, jamais reconstruit à partir
+>   de `numero` — même précaution que partout ailleurs sur Antigone),
+>   en-tête de scène affichant directement le titre complet plutôt que
+>   "Chapitre N — titre" pour éviter un doublon avec le numéro déjà
+>   dans le titre.
+> - ⚠️ Contenu des 105 questions entièrement rédigé par Claude — à
+>   faire relire par un enseignant avant usage en classe, même réserve
+>   que le quiz de La Boîte à Merveilles.
+> - **Bogue découvert en cours de route, signalé à l'utilisateur avant
+>   toute correction** : les 15 mots de lexique du Prologue/Scène 1
+>   sont dupliqués en base (une fois sur "Le mythe d'Œdipe" numero=1,
+>   une fois sur "Scène 1 : Le Prologue" numero=2 — 15 lignes en trop,
+>   114 mots au total pour Antigone au lieu de 99). Pas corrigé dans
+>   cette passe, hors périmètre de la demande.
+>
+> Vérifié : `npx tsc --noEmit` sans erreur, quiz de La Boîte à
+> Merveilles inchangé (captures Playwright), Scène 5 d'Antigone
+> n'affiche plus que 2 personnages (Antigone, Hémon), 21 pastilles de
+> scènes présentes dans l'onglet Quiz d'Antigone, contenu vérifié sur
+> Scène 1 et Scène 6.
+>
 > **Les 21 vraies scènes d'Antigone (résumés scène par scène) ajoutées,
 > remplaçant les 21 coquilles vides précédentes** — texte intégralement
 > fourni par l'utilisateur (collé dans le chat, "listen commence les

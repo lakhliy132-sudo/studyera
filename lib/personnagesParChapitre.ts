@@ -121,3 +121,42 @@ export const PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES: Record<number, string[
     "Moulay Larbi",
   ],
 };
+
+/**
+ * Même principe que ci-dessus, pour *Antigone* — demandé explicitement
+ * par l'utilisateur ("Fiche de scene modifie la scene par scene"), une
+ * fois le vrai contenu scène par scène disponible (voir le résumé de
+ * chaque scène en base, fourni par l'utilisateur). Clé = `numero` du
+ * chapitre en base (2 à 22, "Scène 1" à "Scène 21" ; "Le mythe
+ * d'Œdipe", numero=1, n'y figure pas — ce n'est pas une scène de la
+ * pièce, aucun des personnages de la table `personnages`, tous issus
+ * du texte d'Anouilh, n'y "apparaît" au sens de cette liste).
+ *
+ * Ne retient que les personnages effectivement présents/parlants dans
+ * la scène (comme pour La Boîte à Merveilles ci-dessus) : par exemple
+ * Étéocle et Polynice, déjà morts, sont évoqués dans la Scène 14 sans y
+ * apparaître, donc absents de la liste de cette scène.
+ */
+export const PERSONNAGES_PAR_SCENE_ANTIGONE: Record<number, string[]> = {
+  2: ["Antigone", "Ismène", "Créon", "Hémon", "La Nourrice", "Le Chœur", "Le Garde (Jonas)", "Le Prologue"],
+  3: ["Antigone", "La Nourrice"],
+  4: ["Antigone", "Ismène"],
+  5: ["Antigone", "La Nourrice"],
+  6: ["Antigone", "Hémon"],
+  7: ["Antigone"],
+  8: ["Créon", "Le Garde (Jonas)"],
+  9: ["Le Chœur"],
+  10: ["Créon", "Le Garde (Jonas)"],
+  11: ["Antigone", "Le Garde (Jonas)"],
+  12: ["Antigone", "Créon"],
+  13: ["Créon", "Antigone"],
+  14: ["Antigone", "Créon"],
+  15: ["Antigone", "Créon"],
+  16: ["Ismène", "Antigone"],
+  17: ["Hémon", "Créon"],
+  18: ["Antigone", "Le Garde (Jonas)"],
+  19: ["Le Chœur", "Créon"],
+  20: ["Antigone"],
+  21: ["Le Messager", "Hémon", "Créon"],
+  22: ["Créon", "Eurydice"],
+};

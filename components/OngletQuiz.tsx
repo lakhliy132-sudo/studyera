@@ -4,13 +4,27 @@ import { useMemo, useState } from "react";
 
 import { IconeCoche, IconeQuiz } from "@/components/icones";
 import type { QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
+import { libelleUniteChapitre, type LibelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
 interface OngletQuizProps {
+  slug: string;
   chapitres: Chapitre[];
   /** Questions du quiz, groupées par numéro de chapitre — vide pour une
-   * œuvre qui n'a pas encore de quiz saisi (voir `lib/quizBoiteAMerveilles.ts`). */
+   * œuvre qui n'a pas encore de quiz saisi (voir `lib/quizBoiteAMerveilles.ts`
+   * et `lib/quizAntigone.ts`). */
   questionsParChapitre: Record<number, QuestionQuiz[]>;
+}
+
+/** Libellé compact d'une pastille de sélection : "Ch. 3" pour les
+ * œuvres classiques, ou juste le "Scène N" qui ouvre le titre complet
+ * pour Antigone (ex. "Scène 5" extrait de "Scène 5 : Antigone et
+ * Hémon") — jamais le titre entier, trop long pour une pastille, et
+ * jamais reconstruit à partir de `numero` (voir lib/uniteChapitre.ts :
+ * `numero` ne correspond pas au numéro de scène affiché). */
+function libellePastille(chapitre: Chapitre, unite: LibelleUniteChapitre): string {
+  if (!unite.numeroDejaDansTitre) return `${unite.abrege} ${chapitre.numero}`;
+  return chapitre.titre_fr.split(" : ")[0] ?? chapitre.titre_fr;
 }
 
 /**
@@ -31,12 +45,18 @@ interface OngletQuizProps {
  * persisté (voir la réserve dans `lib/quizBoiteAMerveilles.ts` sur
  * l'absence de table dédiée) — perdu si la page est rechargée.
  *
+ * "Chapitre"/"Scène" selon l'œuvre (`slug` — voir lib/uniteChapitre.ts) :
+ * même quiz réutilisé pour Antigone (`lib/quizAntigone.ts`, 5 questions
+ * par scène), demandé explicitement par l'utilisateur ("FAIS LES QUIZS
+ * DANS TOUTS LES SCENES").
+ *
  * Une réponse par question, définitive une fois cliquée : bonne
  * réponse en vert `--color-validation`, mauvaise en rouge
  * `--color-erreur`/`bg-[#FDF0EF]` — mêmes couleurs que le correcteur de
  * copie (`OngletSujets`), jamais utilisées pour la navigation normale.
  */
-export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQuizProps) {
+export default function OngletQuiz({ slug, chapitres, questionsParChapitre }: OngletQuizProps) {
+  const unite = libelleUniteChapitre(slug);
   const chapitresAvecQuiz = chapitres.filter((c) => (questionsParChapitre[c.numero]?.length ?? 0) > 0);
 
   const [chapitreSelectionne, setChapitreSelectionne] = useState<number | null>(
@@ -89,7 +109,7 @@ export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQu
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">Quiz</h2>
       </div>
       <p className="mb-[30px] text-center text-base text-muted-foreground">
-        Teste ta mémoire de l&apos;œuvre, chapitre par chapitre.
+        Teste ta mémoire de l&apos;œuvre, {unite.singulier.toLowerCase()} par {unite.singulier.toLowerCase()}.
       </p>
 
       {chapitresAvecQuiz.length === 0 || chapitreSelectionne === null ? (
@@ -111,7 +131,7 @@ export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQu
                         : "flex flex-col items-center gap-0.5 rounded-[10px] border border-border px-4 py-2 text-sm font-medium whitespace-nowrap text-foreground transition-colors hover:border-primary hover:bg-primary-tint hover:text-primary"
                     }
                   >
-                    Ch. {c.numero}
+                    {libellePastille(c, unite)}
                     {score && score.repondues > 0 && (
                       <span className={actif ? "text-xs font-semibold text-white/85" : "text-xs font-semibold text-muted-foreground"}>
                         {score.correctes} / {score.total}
@@ -125,8 +145,9 @@ export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQu
 
           <div className="mb-6 flex items-center justify-center gap-4">
             <h3 className="font-serif text-xl font-bold text-ink">
-              Chapitre {chapitreSelectionne}
-              {chapitreActif ? ` — ${chapitreActif.titre_fr}` : ""}
+              {unite.numeroDejaDansTitre
+                ? chapitreActif?.titre_fr
+                : `${unite.singulier} ${chapitreSelectionne}${chapitreActif ? ` — ${chapitreActif.titre_fr}` : ""}`}
             </h3>
             {scoreDuChapitre && scoreDuChapitre.repondues > 0 && (
               <button
@@ -210,8 +231,8 @@ export default function OngletQuiz({ chapitres, questionsParChapitre }: OngletQu
 
           {scoreDuChapitre && scoreDuChapitre.repondues === scoreDuChapitre.total && (
             <p className="mt-8 text-center font-serif text-xl font-bold text-ink">
-              Chapitre {chapitreSelectionne} terminé — {scoreDuChapitre.correctes} / {scoreDuChapitre.total} bonnes
-              réponses.
+              {unite.numeroDejaDansTitre ? chapitreActif?.titre_fr : `${unite.singulier} ${chapitreSelectionne}`}{" "}
+              terminé — {scoreDuChapitre.correctes} / {scoreDuChapitre.total} bonnes réponses.
             </p>
           )}
         </>

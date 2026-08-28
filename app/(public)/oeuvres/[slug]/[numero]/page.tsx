@@ -11,7 +11,10 @@ import { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import RecitContexte, { type MotCle } from "@/components/RecitContexte";
 import SujetsChapitre from "@/components/SujetsChapitre";
 import TexteChapitre from "@/components/TexteChapitre";
-import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
+import {
+  PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES,
+  PERSONNAGES_PAR_SCENE_ANTIGONE,
+} from "@/lib/personnagesParChapitre";
 import { enregistrerActivite } from "@/lib/supabase/activite";
 import { libelleUniteChapitre } from "@/lib/uniteChapitre";
 import {
@@ -139,7 +142,11 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
   // commun). Repéré par capture d'écran après l'ajout des personnages
   // d'Antigone.
   const nomsDuChapitre =
-    slug === "boite-a-merveilles" ? PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero] : undefined;
+    slug === "boite-a-merveilles"
+      ? PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES[numero]
+      : slug === "antigone"
+        ? PERSONNAGES_PAR_SCENE_ANTIGONE[numero]
+        : undefined;
   const personnages = nomsDuChapitre
     ? tousLesPersonnages.filter((p) => nomsDuChapitre.includes(p.nom))
     : tousLesPersonnages;

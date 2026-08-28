@@ -11,6 +11,7 @@ import OngletSujets from "@/components/OngletSujets";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import { FICHE_LECTURE_ANTIGONE } from "@/lib/ficheLectureAntigone";
 import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
+import { QUIZ_PAR_SCENE_ANTIGONE } from "@/lib/quizAntigone";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
   recupererChapitresOeuvre,
@@ -42,10 +43,10 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Tous les onglets ont un vrai contenu. Le Quiz reste réservé à La
- * Boîte à Merveilles pour l'instant (voir lib/quizBoiteAMerveilles.ts).
- * La Fiche de lecture couvre maintenant La Boîte à Merveilles et
- * Antigone (`FICHES_LECTURE_PAR_SLUG` ci-dessous) ; Le Dernier Jour
+ * Tous les onglets ont un vrai contenu pour La Boîte à Merveilles et
+ * Antigone (Quiz : `QUIZ_PAR_SLUG` ci-dessous, voir
+ * lib/quizBoiteAMerveilles.ts et lib/quizAntigone.ts ; Fiche de
+ * lecture : `FICHES_LECTURE_PAR_SLUG` ci-dessous). Le Dernier Jour
  * d'un Condamné affiche encore "Bientôt disponible" sur ces deux
  * onglets, faute de contenu rédigé.
  *
@@ -85,12 +86,15 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   // de OngletPersonnages/OngletLexique (voir lib/uniteChapitre.ts).
   const chapitreParId = new Map(chapitres.map((c) => [c.id, c]));
 
-  // Quiz saisi à la main pour La Boîte à Merveilles uniquement, 5
-  // questions par chapitre (voir lib/quizBoiteAMerveilles.ts) : pas de
-  // contenu pour Antigone/Le Dernier Jour d'un Condamné pour l'instant,
-  // message "Bientôt disponible" affiché dans ce cas via l'objet vide.
-  const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> =
-    slug === "boite-a-merveilles" ? QUIZ_PAR_CHAPITRE : {};
+  // Quiz saisi à la main, chapitre/scène par chapitre/scène (voir
+  // lib/quizBoiteAMerveilles.ts et lib/quizAntigone.ts) : "Bientôt
+  // disponible" pour Le Dernier Jour d'un Condamné, qui n'en a pas
+  // encore, via l'objet vide.
+  const QUIZ_PAR_SLUG: Record<string, Record<number, QuestionQuiz[]>> = {
+    "boite-a-merveilles": QUIZ_PAR_CHAPITRE,
+    antigone: QUIZ_PAR_SCENE_ANTIGONE,
+  };
+  const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> = QUIZ_PAR_SLUG[slug] ?? {};
 
   // Fiches de lecture saisies à la main, une par œuvre déjà rédigée
   // (voir lib/ficheLecture*.ts) : "Bientôt disponible" pour Le Dernier
@@ -137,7 +141,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           {ongletActif === "lieux" && <OngletLieux slug={slug} chapitres={chapitres} />}
           {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
           {ongletActif === "quiz" && (
-            <OngletQuiz chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />
+            <OngletQuiz slug={slug} chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />
           )}
         </div>
       </div>
