@@ -34,23 +34,22 @@ interface RecitContexteProps {
  * délibérément plus rempli pour ce chapitre (contenu français
  * uniquement, demandé explicitement).
  *
- * Encadré à bordure noire — demandé explicitement par l'utilisateur
- * ("encadre le mythe d oedipe comme rectangle et ajoute des tres
- * [traits] noir", précisé juste après par "pas forcement rectangle
- * mais arrondis" : coins arrondis comme le reste du site, seule la
- * bordure noire est une exception volontaire), pour un effet "encadré"
- * de manuel scolaire (rubrique de contexte mise à part visuellement)
- * plutôt que les bordures bleu pâle utilisées ailleurs sur le site.
- * `border-black` est isolé à la palette de tokens du reste du site
- * (voir le commentaire de tête d'app/globals.css) : un noir franc
- * demandé explicitement, pas une nouvelle couleur de marque à
- * généraliser ailleurs.
+ * Encadré à bordure bleue épaisse — demandé explicitement par
+ * l'utilisateur : d'abord "encadre le mythe d oedipe comme rectangle
+ * et ajoute des tres [traits] noir", précisé par "pas forcement
+ * rectangle mais arrondis" (coins arrondis comme le reste du site),
+ * puis "remplace dk le noir avec le bleu" (le noir, jugé trop dur,
+ * remplacé par le bleu). `border-primary` plutôt qu'une valeur brute :
+ * contrairement au noir de la version précédente (une vraie exception
+ * à la palette), le bleu redevient un token normal du site — juste
+ * plus épais (`border-2`) que le `border-border` habituel, pour garder
+ * l'effet "encadré" qui distingue ce bloc du reste de la page.
  */
 export default function RecitContexte({ texte, motsCles }: RecitContexteProps) {
   const paragraphes = texte.split(/\n{2,}/);
 
   return (
-    <section className="rounded-lg border-2 border-black bg-surface p-8">
+    <section className="rounded-lg border-2 border-primary bg-surface p-8">
       <div className="flex flex-col gap-4">
         {paragraphes.map((paragraphe, index) => (
           <p key={index} className="font-lecture text-[16px] leading-relaxed text-foreground">
@@ -60,7 +59,7 @@ export default function RecitContexte({ texte, motsCles }: RecitContexteProps) {
       </div>
 
       {motsCles && motsCles.length > 0 && (
-        <div className="mt-7 border-t-2 border-black pt-6">
+        <div className="mt-7 border-t-2 border-primary pt-6">
           <h3 className="mb-4 font-serif text-lg font-bold text-ink">Mots-clés</h3>
           <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
             {motsCles.map((mc) => (
