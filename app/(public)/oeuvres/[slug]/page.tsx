@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import BanniereOeuvre from "@/components/BanniereOeuvre";
+import OngletFicheLecture from "@/components/OngletFicheLecture";
 import OngletLexique from "@/components/OngletLexique";
 import OngletLieux from "@/components/OngletLieux";
 import OngletPersonnages from "@/components/OngletPersonnages";
@@ -9,6 +10,7 @@ import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
 import OngletThemes from "@/components/OngletThemes";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
+import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
   recupererChapitresOeuvre,
@@ -41,9 +43,11 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Tous les onglets ont un vrai contenu. Le Quiz est réservé à La Boîte
- * à Merveilles pour l'instant (voir lib/quizBoiteAMerveilles.ts) — les
- * deux autres œuvres affichent "Bientôt disponible" sur cet onglet.
+ * Tous les onglets ont un vrai contenu. Le Quiz et la Fiche de lecture
+ * sont réservés à La Boîte à Merveilles pour l'instant (voir
+ * lib/quizBoiteAMerveilles.ts et lib/ficheLectureBoiteAMerveilles.ts)
+ * — les deux autres œuvres affichent "Bientôt disponible" sur ces
+ * onglets.
  */
 export default async function PageOeuvre({ params, searchParams }: PagePropsOeuvre) {
   const { slug } = await params;
@@ -82,6 +86,13 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> =
     slug === "boite-a-merveilles" ? QUIZ_PAR_CHAPITRE : {};
 
+  // Fiche de lecture saisie à la main pour La Boîte à Merveilles
+  // uniquement (voir lib/ficheLectureBoiteAMerveilles.ts) : même
+  // logique que le quiz, "Bientôt disponible" pour les deux autres
+  // œuvres via `null`.
+  const ficheLecture: FicheLecture | null =
+    slug === "boite-a-merveilles" ? FICHE_LECTURE_BOITE_A_MERVEILLES : null;
+
   return (
     <main className="flex flex-col">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pt-6 pb-16">
@@ -105,6 +116,9 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
         <div className="py-2">
           {ongletActif === "resume" && (
             <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
+          )}
+          {ongletActif === "fiche" && (
+            <OngletFicheLecture slug={slug} oeuvre={oeuvre} fiche={ficheLecture} />
           )}
           {ongletActif === "personnages" && (
             <OngletPersonnages personnages={personnages} numeroParChapitreId={numeroParChapitreId} />

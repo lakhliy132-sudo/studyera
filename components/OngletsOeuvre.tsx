@@ -1,9 +1,10 @@
 import Link from "next/link";
 
-import { IconeDocument, IconeIdee, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
+import { IconeDocument, IconeIdee, IconeInfo, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
 
 const ONGLETS = [
   { cle: "resume", libelle: "Chapitres", Icone: IconeLivre },
+  { cle: "fiche", libelle: "Fiche de lecture", Icone: IconeInfo },
   { cle: "personnages", libelle: "Personnages", Icone: IconePersonne },
   { cle: "lexique", libelle: "Lexique", Icone: IconeLivreOuvert },
   { cle: "lieux", libelle: "Lieux", Icone: IconeLieu },

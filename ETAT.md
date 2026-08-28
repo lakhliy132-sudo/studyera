@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Onglet "Fiche de lecture" ajouté sur `/oeuvres/[slug]`** — demandé
+> explicitement par l'utilisateur ("dans la partie de oeuvre boite a
+> merveilles ajoute moi une partie de fiche de lecture"). Nouvelle
+> entrée dans la barre d'onglets (`OngletsOeuvre.tsx`, entre Chapitres
+> et Personnages, icône `IconeInfo`), contenu dans `OngletFicheLecture.tsx`
+> + `lib/ficheLectureBoiteAMerveilles.ts` : carte d'identité (auteur,
+> genre, date de publication, éditeur, mouvement, narrateur, cadre
+> spatio-temporel, structure, registre), rappel du résumé (réutilise
+> `oeuvre.essentiel_fr`, pas de duplication du texte bilingue déjà
+> présent sur l'onglet Chapitres), biographie d'Ahmed Sefrioui,
+> structure et composition du roman, thèmes principaux (avec lien vers
+> l'onglet Thèmes et enjeux pour le détail chapitre par chapitre), style
+> et écriture. ⚠️ **Contenu entièrement rédigé par Claude** (repères de
+> publication, biographie, analyse du style...), pas fourni par
+> l'utilisateur — à faire relire par un enseignant avant usage en classe
+> (même réserve que le lexique/les sujets/le quiz). Stocké en dur en
+> TypeScript plutôt qu'en base, même contournement que
+> `lib/quizBoiteAMerveilles.ts`/`lib/personnagesParChapitre.ts` :
+> `oeuvres.biographie_fr`/`biographie_ar` existent bien en base mais ne
+> couvrent qu'une partie de cette fiche (aucune colonne pour le genre,
+> le mouvement, le narrateur, la structure ou le style) — tout regroupé
+> ici plutôt que réparti entre base et fichier TS. Réservé au slug
+> `boite-a-merveilles` (comme le quiz) ; Antigone et Le Dernier Jour
+> d'un Condamné affichent "Bientôt disponible" sur cet onglet.
+> Composant Serveur (aucune interactivité). Vérifié : `tsc`/`eslint`
+> propres, captures Playwright des deux cas (contenu réel et
+> placeholder).
+>
 > **Nom du site changé en "STUDYERA"** (logo du header + `<title>`) —
 > demandé explicitement par l'utilisateur ("change le nom avec
 > STUDYERA"), envoyé juste après avoir demandé le lien "Langues" (voir
