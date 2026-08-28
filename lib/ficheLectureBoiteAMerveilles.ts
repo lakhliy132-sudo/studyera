@@ -34,9 +34,25 @@ export interface FicheIdentite {
   registre: string;
 }
 
+/**
+ * Biographie de l'auteur sous forme de fiche structurée (tableau) —
+ * demandé explicitement par l'utilisateur ("FAIS MOI LA BIOGRAPHIE DE
+ * L AUTEUR SOUS FORME D UN TABLEU ELEGANT"), à la place du paragraphe
+ * continu utilisé jusque-là.
+ */
+export interface BiographieAuteur {
+  nomComplet: string;
+  naissance: string;
+  deces: string;
+  profession: string;
+  mouvement: string;
+  oeuvresPrincipales: string[];
+  distinction: string;
+}
+
 export interface FicheLecture {
   identite: FicheIdentite;
-  biographieAuteur: string;
+  biographieAuteur: BiographieAuteur;
   structureDetail: string;
   /** Plus affiché sur `OngletFicheLecture` (retiré à la demande
    * explicite de l'utilisateur, "enleve la case du theme et enjeux" —
@@ -57,8 +73,19 @@ export const FICHE_LECTURE_BOITE_A_MERVEILLES: FicheLecture = {
     structure: "12 chapitres, sans titres dans l'édition originale, au découpage épisodique",
     registre: "Lyrique et nostalgique",
   },
-  biographieAuteur:
-    "Ahmed Sefrioui naît à Fès en 1915 et meurt à Rabat en 2004. Considéré comme le pionnier de la littérature marocaine d'expression française, il publie La Boîte à Merveilles en 1954, pour lequel il reçoit le Grand Prix littéraire du Maroc. Il est aussi l'auteur du Jardin des sortilèges (1989) et de La Maison de servitude (1973). Journaliste puis conservateur de musée (notamment au musée Al Batha de Fès), Sefrioui puise dans ses souvenirs d'enfance fassie la matière de son œuvre la plus connue, restée depuis un texte de référence dans les programmes scolaires marocains.",
+  biographieAuteur: {
+    nomComplet: "Ahmed Sefrioui",
+    naissance: "1915, à Fès",
+    deces: "2004, à Rabat",
+    profession: "Écrivain, journaliste, conservateur de musée (musée Al Batha de Fès)",
+    mouvement: "Pionnier de la littérature marocaine d'expression française",
+    oeuvresPrincipales: [
+      "La Boîte à Merveilles (1954)",
+      "La Maison de servitude (1973)",
+      "Le Jardin des sortilèges (1989)",
+    ],
+    distinction: "Grand Prix littéraire du Maroc (1954), pour La Boîte à Merveilles",
+  },
   structureDetail:
     "Le roman ne suit pas une intrigue linéaire à proprement parler : il s'organise en une succession de tableaux et de souvenirs d'enfance, souvent rythmés par les événements du quotidien (une dispute, une maladie, une fête religieuse comme l'Achoura, une visite) plutôt que par une action continue. Cette construction épisodique, très proche de la mémoire elle-même, renforce l'impression d'un album de souvenirs feuilleté par le narrateur adulte plutôt que d'une histoire racontée d'un seul tenant.",
   themesPrincipaux: [

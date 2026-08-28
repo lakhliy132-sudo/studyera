@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Biographie de l'auteur transformée en tableau** sur l'onglet Fiche
+> de lecture — demandé explicitement par l'utilisateur ("FAIS MOI LA
+> BIOGRAPHIE DE L AUTEUR SOUS FORME D UN TABLEU ELEGANT"). Le paragraphe
+> continu est remplacé par un vrai élément `<table>` (zébré, un `<tr>`
+> par information) : Nom complet, Naissance, Décès, Profession,
+> Mouvement, Œuvres principales, Distinction — `biographieAuteur`
+> restructurée en objet (`BiographieAuteur`) plutôt qu'une chaîne dans
+> `lib/ficheLectureBoiteAMerveilles.ts`. Le médaillon aux initiales
+> (déjà en place, toujours pas de vraie photo disponible) reste à côté
+> du tableau plutôt que du texte. Vérifié : `tsc`/`eslint` propres,
+> capture Playwright.
+>
 > **Ordre des onglets de `/oeuvres/[slug]` changé** — demandé
 > explicitement par l'utilisateur ("remets la fiche de lecture la
 > premier et 2 chapitres") : Fiche de lecture passe en 1re position,

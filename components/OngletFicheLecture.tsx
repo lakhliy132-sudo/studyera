@@ -1,6 +1,6 @@
 import { initiales } from "@/components/OngletPersonnages";
 import { IconeAuteur, IconeInfo, IconeLivre, IconeLivreOuvert } from "@/components/icones";
-import type { FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
+import type { BiographieAuteur, FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import type { Oeuvre } from "@/types/base-de-donnees";
 
 interface OngletFicheLectureProps {
@@ -48,7 +48,7 @@ export default function OngletFicheLecture({ oeuvre, fiche }: OngletFicheLecture
         <div className="flex flex-col gap-[22px]">
           <BlocIdentite oeuvre={oeuvre} identite={fiche.identite} />
 
-          <BlocBiographie auteur={oeuvre.auteur} texte={fiche.biographieAuteur} />
+          <BlocBiographie auteur={oeuvre.auteur} bio={fiche.biographieAuteur} />
 
           <BlocTexte Icone={IconeLivre} titre="Structure et composition" texte={fiche.structureDetail} />
 
@@ -113,38 +113,83 @@ function BlocIdentite({
 }
 
 /**
- * Biographie de l'auteur, avec un médaillon à côté du texte — demandé
- * explicitement par l'utilisateur ("pour la biographie mettre a coté
- * la photo du l ecrivain ahmed safrioui"). Pas de vraie photo d'Ahmed
- * Sefrioui : recherchée sur Wikipédia (fr/en) et Wikimedia Commons,
- * introuvable sous une licence réutilisable (l'article Wikipédia
- * français lui-même est marqué "à illustrer", donc sans photo) — un
- * médaillon aux initiales, comme celui des personnages de l'œuvre
- * (`initiales()`/style doré de `OngletPersonnages.tsx`), tient donc
- * la place d'un portrait plutôt qu'une image fabriquée ou une photo
- * non vérifiée. Si une vraie photo est fournie plus tard, la remplacer
- * par une image dans `public/` (même logique que `public/couvertures/`)
- * via `next/image`.
+ * Biographie de l'auteur : médaillon + tableau de fiche biographique
+ * (nom, naissance, décès, profession, mouvement, œuvres principales,
+ * distinction) — demandé explicitement par l'utilisateur ("FAIS MOI LA
+ * BIOGRAPHIE DE L AUTEUR SOUS FORME D UN TABLEU ELEGANT"), à la place
+ * du paragraphe continu utilisé jusque-là. Un vrai élément `<table>`
+ * (pas la grille `<dl>` de `BlocIdentite`) pour bien correspondre à
+ * "tableau" et se distinguer visuellement des autres blocs de cette
+ * page.
+ *
+ * Pas de vraie photo d'Ahmed Sefrioui à côté du tableau (déjà demandé
+ * lors d'un tour précédent) : recherchée sur Wikipédia (fr/en) et
+ * Wikimedia Commons, introuvable sous une licence réutilisable
+ * (l'article Wikipédia français lui-même est marqué "à illustrer",
+ * donc sans photo) — un médaillon aux initiales, comme celui des
+ * personnages de l'œuvre (`initiales()`/style doré de
+ * `OngletPersonnages.tsx`), tient donc la place d'un portrait plutôt
+ * qu'une image fabriquée ou une photo non vérifiée. Si une vraie photo
+ * est fournie plus tard, la remplacer par une image dans `public/`
+ * (même logique que `public/couvertures/`) via `next/image`.
  */
-function BlocBiographie({ auteur, texte }: { auteur: string | null; texte: string }) {
-  const nom = auteur ?? "L'auteur";
+function BlocBiographie({ auteur, bio }: { auteur: string | null; bio: BiographieAuteur }) {
+  const nom = auteur ?? bio.nomComplet;
 
   return (
     <div className="overflow-hidden rounded-[20px] border border-border bg-background">
       <EnteteBloc Icone={IconeAuteur} titre="Biographie de l'auteur" />
-      <div className="flex flex-col items-center gap-6 px-6 pt-5 pb-6 text-center sm:flex-row sm:items-start sm:text-left">
-        <span
-          aria-hidden="true"
-          className="flex size-[120px] shrink-0 items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
-        >
-          {initiales(nom)}
-        </span>
-        <div className="min-w-0">
-          <p className="mb-2 font-serif text-lg font-bold text-ink">{nom}</p>
-          <p className="font-lecture text-[15.5px] leading-relaxed text-foreground">{texte}</p>
+      <div className="flex flex-col items-center gap-6 px-6 pt-5 pb-6 sm:flex-row sm:items-start">
+        <div className="flex shrink-0 flex-col items-center gap-2.5">
+          <span
+            aria-hidden="true"
+            className="flex size-[120px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
+          >
+            {initiales(nom)}
+          </span>
+          <p className="font-serif text-base font-bold text-ink">{nom}</p>
+        </div>
+
+        <div className="min-w-0 flex-1 overflow-hidden rounded-[14px] border border-border">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <tbody className="[&>tr:nth-child(even)]:bg-surface-muted">
+                <LigneBio label="Nom complet" valeur={bio.nomComplet} />
+                <LigneBio label="Naissance" valeur={bio.naissance} />
+                <LigneBio label="Décès" valeur={bio.deces} />
+                <LigneBio label="Profession" valeur={bio.profession} />
+                <LigneBio label="Mouvement" valeur={bio.mouvement} />
+                <LigneBio
+                  label="Œuvres principales"
+                  valeur={
+                    <ul className="flex flex-col gap-0.5">
+                      {bio.oeuvresPrincipales.map((oeuvre) => (
+                        <li key={oeuvre}>{oeuvre}</li>
+                      ))}
+                    </ul>
+                  }
+                />
+                <LigneBio label="Distinction" valeur={bio.distinction} />
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function LigneBio({ label, valeur }: { label: string; valeur: React.ReactNode }) {
+  return (
+    <tr className="border-b border-border last:border-0">
+      <th
+        scope="row"
+        className="w-[150px] px-4 py-3 text-left align-top text-[13px] font-semibold tracking-wide text-muted-foreground uppercase"
+      >
+        {label}
+      </th>
+      <td className="px-4 py-3 text-[15px] leading-relaxed text-ink">{valeur}</td>
+    </tr>
   );
 }
 
