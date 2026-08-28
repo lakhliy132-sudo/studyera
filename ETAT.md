@@ -36,11 +36,17 @@
 >   faire relire par un enseignant avant usage en classe, même réserve
 >   que le quiz de La Boîte à Merveilles.
 > - **Bogue découvert en cours de route, signalé à l'utilisateur avant
->   toute correction** : les 15 mots de lexique du Prologue/Scène 1
->   sont dupliqués en base (une fois sur "Le mythe d'Œdipe" numero=1,
->   une fois sur "Scène 1 : Le Prologue" numero=2 — 15 lignes en trop,
->   114 mots au total pour Antigone au lieu de 99). Pas corrigé dans
->   cette passe, hors périmètre de la demande.
+>   correction** : les 15 mots de lexique du Prologue/Scène 1 étaient
+>   dupliqués en base (une fois sur "Le mythe d'Œdipe" numero=1, une
+>   fois sur "Scène 1 : Le Prologue" numero=2 — 114 mots au total pour
+>   Antigone au lieu de 99), sans doute un reliquat d'une session
+>   précédente où ces mots avaient été "déplacés" vers le Prologue sans
+>   que les lignes d'origine soient retirées de la feuille Excel. Après
+>   confirmation explicite de l'utilisateur, les 15 lignes en trop
+>   (rattachées à numero=1) ont été supprimées directement en base (clé
+>   `service_role`) ; total antigone revérifié à 99. "Le mythe d'Œdipe"
+>   n'a donc plus de lexique propre, cohérent avec le fait qu'il n'a pas
+>   de bloc "Fiche de la scène" (voir RecitContexte.tsx).
 >
 > Vérifié : `npx tsc --noEmit` sans erreur, quiz de La Boîte à
 > Merveilles inchangé (captures Playwright), Scène 5 d'Antigone
