@@ -2,6 +2,43 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Lieux et 30 sujets d'analyse ajoutés pour Antigone** — demandé
+> explicitement par l'utilisateur ("fait les lieux et les sujets d
+> analyses 30 sujets").
+>
+> - **Lieux** (7 au total, contre 1 seul avant) : le lieu unique de la
+>   pièce elle-même (le palais de Créon à Thèbes, déjà présent sur
+>   "Prologue") complété par les lieux évoqués dans le récit
+>   mythologique — Thèbes, Corinthe, Delphes, la route de Thèbes,
+>   Athènes (tous rattachés à "Le mythe d'Œdipe", cohérent avec son
+>   contenu) — et "La grotte" où Antigone est emmurée vivante, rattachée
+>   à "Scène 16". Les badges de coin affichent bien "LE MYTHE D'ŒDIPE"/
+>   "SCÈNE 16"/"PROLOGUE" en majuscules (voir `libelleChapitreCourt`,
+>   déjà en place) plutôt que "CH. N".
+> - **30 sujets d'analyse**, tous rattachés à l'œuvre entière (pas à une
+>   scène précise, faute de texte scène par scène fiable pour les
+>   ancrer plus finement — même réserve que pour le lexique des 21
+>   scènes) : env. moitié "analyse" (personnages — Antigone, Créon,
+>   Ismène, Hémon, le Chœur, la Nourrice, Eurydice, les gardes, le
+>   Messager —, scènes clés comme la confrontation Antigone-Créon ou le
+>   dénouement) et moitié "argumentation" (la loi contre la conscience,
+>   la raison d'État, le contexte de l'Occupation de 1944, la
+>   réécriture du mythe...), toutes explicitement ancrées dans des
+>   personnages/scènes réels de la pièce — même exigence que pour les
+>   sujets d'argumentation de La Boîte à Merveilles corrigés plus tôt
+>   dans le projet, pas de questions de société génériques.
+>
+> ⚠️ Contenu entièrement rédigé par Claude (lieux du mythe déduits du
+> texte fourni par l'utilisateur, sujets entièrement composés par
+> Claude à partir de connaissances généralistes sur la pièce) — à faire
+> relire par un enseignant avant usage en classe.
+>
+> Ajouté via le pipeline Excel habituel (colonne `lieux` de la feuille
+> Chapitres, feuille Sujets, puis `npm run importer`, 0 erreur,
+> essentiel_fr/ar des 3 œuvres vérifiés inchangés). Vérifié : 30 sujets
+> confirmés en base par `oeuvre_id` (aucun doublon de titre), capture
+> Playwright des deux onglets.
+>
 > **"Le mythe d'Œdipe" encadré en bleu** — trois demandes successives
 > de l'utilisateur : "encadre le mythe d oedipe comme rectangle et
 > ajoute des tres [traits] noir", puis "pas forcement rectangle mais
