@@ -2,6 +2,26 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-28.
 >
+> **Onglet "Thèmes et enjeux" retiré de `/oeuvres/[slug]`** — le tour
+> précédent avait mal compris "enleve la case du theme et enjeux" comme
+> visant un bloc similaire à l'intérieur de la Fiche de lecture ; le
+> message suivant de l'utilisateur ("nonnn la case de theme en jeux qui
+> il faut enleber") a clarifié qu'il visait bien l'onglet lui-même,
+> dans la barre principale de la page œuvre. Retiré de `ONGLETS` dans
+> `OngletsOeuvre.tsx` (7 onglets restants : Chapitres, Fiche de lecture,
+> Personnages, Lexique, Lieux, Sujets d'analyse, Quiz) et de la page
+> (import, chargement des `fiches`, branche de rendu). Comme
+> `CleOnglet` ne contient plus `"themes"`, `versCleOnglet` retombe
+> maintenant sur "resume" même si `?onglet=themes` est forcé dans
+> l'URL — vérifié par Playwright.
+>
+> `OngletThemes.tsx` et `recupererFichesOeuvre` (lib/supabase/contenu.ts)
+> **pas supprimés**, juste débranchés et commentés comme orphelins :
+> l'utilisateur n'a demandé le retrait que de l'onglet, pas la
+> suppression du code — même précédent que `OngletsChapitre.tsx` retiré
+> de la page chapitre plus tôt dans la session. Vérifié : `tsc`/`eslint`
+> propres.
+>
 > **Fiche de lecture ajustée** — demandé explicitement par l'utilisateur
 > ("enleve la case du theme et enjeux et 2/. sur la fiche de lecture
 > enleve le resumé et pour la biographie mettre a coté la photo du l

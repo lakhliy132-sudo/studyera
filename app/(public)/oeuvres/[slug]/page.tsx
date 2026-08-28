@@ -8,13 +8,11 @@ import OngletPersonnages from "@/components/OngletPersonnages";
 import OngletQuiz from "@/components/OngletQuiz";
 import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
-import OngletThemes from "@/components/OngletThemes";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
   recupererChapitresOeuvre,
-  recupererFichesOeuvre,
   recupererLexiqueOeuvre,
   recupererOeuvreParSlug,
   recupererPersonnagesOeuvre,
@@ -48,6 +46,11 @@ interface PagePropsOeuvre {
  * lib/quizBoiteAMerveilles.ts et lib/ficheLectureBoiteAMerveilles.ts)
  * — les deux autres œuvres affichent "Bientôt disponible" sur ces
  * onglets.
+ *
+ * Pas d'onglet "Thèmes et enjeux" ici : retiré à la demande explicite
+ * de l'utilisateur. `OngletThemes.tsx` et `recupererFichesOeuvre`
+ * (lib/supabase/contenu.ts) restent dans le code, juste plus
+ * référencés depuis cette page.
  */
 export default async function PageOeuvre({ params, searchParams }: PagePropsOeuvre) {
   const { slug } = await params;
@@ -76,7 +79,6 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const lexique =
     ongletActif === "lexique" ? await recupererLexiqueOeuvre(chapitres.map((c) => c.id)) : [];
   const sujets = ongletActif === "sujets" ? await recupererSujetsOeuvre(oeuvre.id) : [];
-  const fiches = ongletActif === "themes" ? await recupererFichesOeuvre(chapitres.map((c) => c.id)) : [];
   const numeroParChapitreId = new Map(chapitres.map((c) => [c.id, c.numero]));
 
   // Quiz saisi à la main pour La Boîte à Merveilles uniquement, 5
@@ -106,8 +108,8 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           progression={user ? { lus: chapitresLusIds.size, total: chapitres.length } : null}
           // Le résumé essentiel fr/ar ne s'affiche que sur l'onglet
           // Chapitres — demandé explicitement par l'utilisateur, qui le
-          // trouvait superflu une fois sur Personnages/Lexique/Lieux/
-          // Thèmes et enjeux/Sujets d'analyse (seule l'image reste).
+          // trouvait superflu une fois sur les autres onglets (seule
+          // l'image reste).
           afficherResume={ongletActif === "resume"}
         />
 
@@ -128,9 +130,6 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
           )}
           {ongletActif === "lieux" && <OngletLieux chapitres={chapitres} />}
           {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
-          {ongletActif === "themes" && (
-            <OngletThemes fiches={fiches} numeroParChapitreId={numeroParChapitreId} />
-          )}
           {ongletActif === "quiz" && (
             <OngletQuiz chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />
           )}

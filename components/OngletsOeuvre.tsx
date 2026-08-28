@@ -1,14 +1,23 @@
 import Link from "next/link";
 
-import { IconeDocument, IconeIdee, IconeInfo, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
+import { IconeDocument, IconeInfo, IconeLieu, IconeLivre, IconeLivreOuvert, IconePersonne, IconeQuiz } from "@/components/icones";
 
+// Onglet "themes" (Thèmes et enjeux) retiré de cette barre à la
+// demande explicite de l'utilisateur ("nonnn la case de theme en jeux
+// qui il faut enleber", après une première tentative qui avait
+// seulement retiré un bloc similaire à l'intérieur de la Fiche de
+// lecture — ce n'était pas ce qui était visé). `OngletThemes.tsx` et
+// `recupererFichesOeuvre` (lib/supabase/contenu.ts) restent dans le
+// code, juste plus référencés ici ni sur la page — mêmes précédent et
+// raisonnement que pour `OngletsChapitre.tsx` retiré de la page
+// chapitre : l'utilisateur n'a pas demandé la suppression du code,
+// seulement celle de l'onglet dans la navigation.
 const ONGLETS = [
   { cle: "resume", libelle: "Chapitres", Icone: IconeLivre },
   { cle: "fiche", libelle: "Fiche de lecture", Icone: IconeInfo },
   { cle: "personnages", libelle: "Personnages", Icone: IconePersonne },
   { cle: "lexique", libelle: "Lexique", Icone: IconeLivreOuvert },
   { cle: "lieux", libelle: "Lieux", Icone: IconeLieu },
-  { cle: "themes", libelle: "Thèmes et enjeux", Icone: IconeIdee },
   { cle: "sujets", libelle: "Sujets d'analyse", Icone: IconeDocument },
   { cle: "quiz", libelle: "Quiz", Icone: IconeQuiz },
 ] as const;

@@ -7,9 +7,17 @@ interface OngletThemesProps {
 }
 
 /**
- * Contenu de l'onglet "Thèmes et enjeux" de /oeuvres/[slug] : tous les
- * thèmes de l'œuvre, agrégés depuis `fiches.themes` (principal +
- * secondaires) de chaque chapitre — pas de table dédiée, comme
+ * ⚠️ Plus utilisé : l'onglet "Thèmes et enjeux" a été retiré de
+ * `OngletsOeuvre.tsx`/`/oeuvres/[slug]/page.tsx` à la demande explicite
+ * de l'utilisateur. Ce composant reste dans le code (pas supprimé,
+ * l'utilisateur n'a pas demandé sa suppression, seulement celle de
+ * l'onglet dans la navigation) au cas où il serait réutilisé plus tard
+ * — voir aussi `recupererFichesOeuvre` dans lib/supabase/contenu.ts,
+ * orpheline pour la même raison.
+ *
+ * Contenu original de l'onglet "Thèmes et enjeux" de /oeuvres/[slug] :
+ * tous les thèmes de l'œuvre, agrégés depuis `fiches.themes` (principal
+ * + secondaires) de chaque chapitre — pas de table dédiée, comme
  * `OngletLieux` agrège `chapitres.lieux`. Un même thème peut apparaître
  * dans plusieurs chapitres (ex. "La solitude") ; dédupliqué par texte
  * exact, avec la liste des chapitres où il apparaît.

@@ -135,12 +135,16 @@ export async function recupererFicheChapitre(
   return data as Fiche | null;
 }
 
-/** Toutes les fiches (résumé, thèmes, points clés) des chapitres d'une
- * œuvre — onglet "Thèmes et enjeux" de /oeuvres/[slug], qui agrège les
- * thèmes de chaque fiche plutôt que d'avoir sa propre table. Même
- * limite que `recupererLexiqueOeuvre` : pas de colonne `oeuvre_id`
- * directe sur `fiches`, on passe par la liste des chapitres déjà
- * récupérée par la page appelante. */
+/** ⚠️ Plus appelée depuis aucune page : servait à l'onglet "Thèmes et
+ * enjeux" de /oeuvres/[slug], retiré à la demande explicite de
+ * l'utilisateur (voir OngletThemes.tsx). Gardée, pas supprimée, au cas
+ * où réutilisée plus tard.
+ *
+ * Toutes les fiches (résumé, thèmes, points clés) des chapitres d'une
+ * œuvre — agrège les thèmes de chaque fiche plutôt que d'avoir sa
+ * propre table. Même limite que `recupererLexiqueOeuvre` : pas de
+ * colonne `oeuvre_id` directe sur `fiches`, on passe par la liste des
+ * chapitres déjà récupérée par la page appelante. */
 export async function recupererFichesOeuvre(chapitreIds: string[]): Promise<Fiche[]> {
   if (chapitreIds.length === 0) return [];
 
