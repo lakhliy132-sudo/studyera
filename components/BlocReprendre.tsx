@@ -2,6 +2,11 @@ import Link from "next/link";
 
 import type { ChapitreRecommande } from "@/lib/supabase/tableauDeBord";
 
+/** ⚠️ Plus utilisé depuis aucune page : /tableau-de-bord a été
+ * reconstruit sur un modèle fourni par l'utilisateur, ce bloc est
+ * remplacé par CarteReprise.tsx (plus riche : titre arabe, auteur,
+ * résumé). Gardé tel quel plutôt que supprimé, même précédent que
+ * OngletThemes.tsx. */
 interface BlocReprendreProps {
   /** Dernier chapitre réellement consulté par l'élève (résolu depuis
    * `activite`), s'il existe. */

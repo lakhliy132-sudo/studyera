@@ -2,6 +2,70 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **/tableau-de-bord entièrement reconstruit** — l'utilisateur a fourni
+> un composant React complet (JSX + CSS-in-JS autonome, ~400 lignes)
+> comme référence visuelle et a demandé "fais moi comme ca mais ajoute
+> des modif bien". Structure et esprit repris (accroche du jour + série
+> de jours consécutifs, carte "page de cahier" pour la reprise de
+> lecture avec citation, carte focus rouge pour la correction, anneau
+> de progression animé, liste du programme avec titres arabes, section
+> communication), mais **adapté** plutôt que copié tel quel :
+>
+> - Le modèle fourni réimplémentait son propre `<header>` complet ;
+>   pas repris, le site a déjà un `BarreNavigation` partagé par toutes
+>   les pages (déjà enrichi d'un lien "Tableau de bord" plus tôt dans la
+>   session) — dupliquer un second header aurait été incohérent.
+> - Palette et typographie : le modèle fourni définissait son propre
+>   système ("papier" crème, police Fraunces, rouge/vert propres)
+>   entièrement séparé du reste du site. Remplacé par les tokens déjà
+>   en place (`--color-ink`/`--color-primary`/`--color-erreur`/
+>   `--color-validation`, très proches des couleurs du modèle fourni)
+>   et la police serif déjà en place (Playfair Display, pas Fraunces en
+>   plus) — cohérence du site entier plutôt qu'une seconde charte
+>   graphique pour une seule page. Seul ajout réel : `--font-mono` (IBM
+>   Plex Mono, même famille que la police arabe déjà utilisée) pour les
+>   petites étiquettes en capitales, ajouté dans app/layout.tsx et
+>   app/globals.css.
+> - **Aucune donnée fictive** : contrairement au modèle fourni (objet
+>   `data` codé en dur), tout vient de Supabase. Nouvelles fonctions
+>   dans `lib/supabase/tableauDeBord.ts` :
+>   - `recupererSerieJours` : vraie série de jours consécutifs
+>     d'activité, calculée depuis `activite.created_at` (fenêtre de 60
+>     jours), pas inventée.
+>   - `recupererRepriseLecture` : version enrichie (titre arabe, auteur,
+>     résumé) de "quoi proposer pour reprendre la lecture", remplace la
+>     combinaison `recupererActivitesRecentes`/`recupererChapitreRecommande`
+>     de l'ancien bloc.
+>   - `OeuvreProgression` étendu avec `titreAr`/`auteur` (déjà
+>     disponibles dans les lignes `oeuvres` déjà chargées, juste pas
+>     transmis avant).
+>   - Le modèle fourni affichait un "extrait" entre guillemets et des
+>     "minutes de lecture" : aucune des deux n'est fiable en base (texte
+>     intégral quasi jamais rempli, table `paragraphes`) — remplacé par
+>     le vrai résumé court du chapitre (`chapitres.resume_court`),
+>     présenté honnêtement comme "En bref", pas comme une citation. La
+>     "dernière correction" du modèle fourni (date qu'on n'a pas) est
+>     remplacée par la vraie note moyenne déjà calculée ailleurs.
+> - Nouveaux composants : `CarteReprise.tsx`, `CarteProductionEcrite.tsx`,
+>   `CarteProgressionAnneau.tsx` (anneau SVG animé), `ListeProgrammeOeuvres.tsx`.
+>   `BlocAnnonces.tsx`/`BlocDernieresActivites.tsx` restylés en place
+>   (même contrat de données). `BlocReprendre.tsx`/`BlocRedaction.tsx`/
+>   `BlocProgression.tsx` superseded, gardés orphelins avec une note —
+>   même précédent que `OngletThemes.tsx`.
+> - "Chapitre"/"Scène" (Antigone) suivent toujours `lib/uniteChapitre.ts`
+>   plutôt que d'être codés en dur comme dans le modèle fourni.
+>
+> **Vérification réelle**, pas seulement `tsc` : compte de test jetable
+> (API admin Supabase) avec un `full_name`, activité + progression
+> injectées directement en base (`service_role`) pour exercer tous les
+> états (reprise réelle, anneau non vide, liste avec progression),
+> cookie de session injecté dans Playwright, capture desktop ET mobile
+> (0px de débordement). Deux petits bugs trouvés et corrigés pendant
+> cette vérification : l'étiquette "Scène" sans numéro sur Antigone
+> (extraction corrigée, même technique que les pastilles du Quiz), et
+> "1 chapitres lus" non accordé au singulier. Compte de test et données
+> injectées supprimés ensuite (vérifié vide après coup).
+>
 > **"Tableau de bord" ajouté à la nav principale pour un utilisateur
 > connecté** — demandé explicitement par l'utilisateur, qui ne
 > trouvait pas assez visible l'unique façon d'y accéder jusqu'ici

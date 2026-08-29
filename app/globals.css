@@ -105,11 +105,14 @@
    *   (titre d'une œuvre, d'un chapitre), posé explicitement.
    * - `--font-lecture` (Lora) : texte de lecture longue (résumés) —
    *   posé explicitement sur ce contenu-là seulement, pas hérité.
-   * - `--font-arabe` (IBM Plex Sans Arabic) : tout texte arabe. */
+   * - `--font-arabe` (IBM Plex Sans Arabic) : tout texte arabe.
+   * - `--font-mono` (IBM Plex Mono) : petites étiquettes en capitales
+   *   (tableau de bord), jamais de texte de lecture. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-lecture: var(--font-lora), Georgia, serif;
   --font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
 
   /* Entrée des cartes de /oeuvres (CarteOeuvre) — léger glissement vers
    * le haut + fondu, demandé explicitement par l'utilisateur ("je veux

@@ -117,9 +117,13 @@ export interface ChapitreRecommande {
 /**
  * Premier chapitre de la première œuvre (par ordre alphabétique, même
  * tri que /oeuvres) ayant au moins un chapitre en base, pour la filière
- * courante. Utilisé par le bloc "Reprendre" quand l'élève n'a encore
- * rien consulté. `null` si aucune œuvre de la filière n'a le moindre
+ * courante. `null` si aucune œuvre de la filière n'a le moindre
  * chapitre importé (rien à recommander pour l'instant).
+ *
+ * ⚠️ Plus appelée directement par /tableau-de-bord (voir
+ * `recupererRepriseLecture` ci-dessous, qui l'utilise en interne comme
+ * repli) — gardée exportée telle quelle, un appelant futur pourrait en
+ * avoir besoin indépendamment.
  */
 export async function recupererChapitreRecommande(): Promise<ChapitreRecommande | null> {
   const oeuvres = await recupererOeuvresParFiliere(FILIERE_ACTUELLE);
@@ -137,9 +141,112 @@ export async function recupererChapitreRecommande(): Promise<ChapitreRecommande 
   };
 }
 
+export interface RepriseLecture {
+  url: string;
+  oeuvreSlug: string;
+  oeuvreTitreFr: string;
+  oeuvreTitreAr: string | null;
+  auteur: string | null;
+  chapitreNumero: number;
+  chapitreTitreFr: string;
+  /** Court résumé du chapitre, utilisé comme aperçu sur la carte
+   * "Reprendre" — pas un extrait littéral du texte intégral (le texte
+   * intégral, table `paragraphes`, n'est pratiquement jamais rempli,
+   * voir scripts/importer.ts) : présenté comme un résumé, pas comme
+   * une citation, pour rester honnête sur ce que c'est vraiment. */
+  resumeCourt: string | null;
+  /** `true` si c'est une suggestion de premier chapitre (l'élève n'a
+   * encore rien consulté), `false` si c'est vraiment une reprise du
+   * dernier chapitre réellement consulté. */
+  estRecommandation: boolean;
+}
+
+/**
+ * Version enrichie de "quoi proposer à l'élève pour reprendre sa
+ * lecture" — construite pour la carte "Reprendre" du tableau de bord
+ * réécrit sur un modèle fourni par l'utilisateur ("fais moi comme ca
+ * mais ajoute des modif bien"), qui a besoin de plus que juste une URL
+ * et un titre (titre arabe, auteur, résumé). Remplace la combinaison
+ * `recupererActivitesRecentes(...)[0]` + `recupererChapitreRecommande()`
+ * utilisée par l'ancien bloc "Reprendre", qui n'avait pas ces
+ * informations.
+ */
+export async function recupererRepriseLecture(userId: string | null): Promise<RepriseLecture | null> {
+  const supabase = await creerClientServeur();
+
+  // 1. Dernier chapitre réellement consulté (le plus récent
+  // `consultation_chapitre` dans `activite`), s'il y en a un.
+  if (userId) {
+    const { data: activites, error: erreurActivites } = await supabase
+      .from("activite")
+      .select("ressource_id")
+      .eq("user_id", userId)
+      .eq("type", "consultation_chapitre")
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (erreurActivites) throw erreurActivites;
+
+    const chapitreId = activites?.[0]?.ressource_id;
+    if (chapitreId) {
+      const { data: chapitre } = await supabase
+        .from("chapitres")
+        .select("id, oeuvre_id, numero, titre_fr, resume_court")
+        .eq("id", chapitreId)
+        .maybeSingle();
+
+      if (chapitre) {
+        const { data: oeuvre } = await supabase
+          .from("oeuvres")
+          .select("slug, titre_fr, titre_ar, auteur")
+          .eq("id", chapitre.oeuvre_id)
+          .maybeSingle();
+
+        if (oeuvre) {
+          return {
+            url: `/oeuvres/${oeuvre.slug}/${chapitre.numero}`,
+            oeuvreSlug: oeuvre.slug,
+            oeuvreTitreFr: oeuvre.titre_fr,
+            oeuvreTitreAr: oeuvre.titre_ar,
+            auteur: oeuvre.auteur,
+            chapitreNumero: chapitre.numero,
+            chapitreTitreFr: chapitre.titre_fr,
+            resumeCourt: chapitre.resume_court,
+            estRecommandation: false,
+          };
+        }
+      }
+    }
+  }
+
+  // 2. Rien consulté (ou visiteur non connecté) : suggère le premier
+  // chapitre de la première œuvre qui en a, même logique que
+  // `recupererChapitreRecommande` mais enrichie.
+  const oeuvres = await recupererOeuvresParFiliere(FILIERE_ACTUELLE);
+  const oeuvre = oeuvres.find((o) => o.nombreChapitres > 0);
+  if (!oeuvre) return null;
+
+  const chapitres = await recupererChapitresOeuvre(oeuvre.id);
+  const premier = chapitres[0];
+  if (!premier) return null;
+
+  return {
+    url: `/oeuvres/${oeuvre.slug}/${premier.numero}`,
+    oeuvreSlug: oeuvre.slug,
+    oeuvreTitreFr: oeuvre.titre_fr,
+    oeuvreTitreAr: oeuvre.titre_ar,
+    auteur: oeuvre.auteur,
+    chapitreNumero: premier.numero,
+    chapitreTitreFr: premier.titre_fr,
+    resumeCourt: premier.resume_court,
+    estRecommandation: true,
+  };
+}
+
 export interface OeuvreProgression {
   slug: string;
   titreFr: string;
+  titreAr: string | null;
+  auteur: string | null;
   chapitresLus: number;
   totalChapitres: number;
 }
@@ -160,6 +267,8 @@ export async function recupererProgressionParOeuvre(
   const parOeuvreVide = oeuvresAvecChapitres.map((o) => ({
     slug: o.slug,
     titreFr: o.titre_fr,
+    titreAr: o.titre_ar,
+    auteur: o.auteur,
     chapitresLus: 0,
     totalChapitres: o.nombreChapitres,
   }));
@@ -204,6 +313,8 @@ export async function recupererProgressionParOeuvre(
   const parOeuvre = oeuvresAvecChapitres.map((o) => ({
     slug: o.slug,
     titreFr: o.titre_fr,
+    titreAr: o.titre_ar,
+    auteur: o.auteur,
     chapitresLus: lusParOeuvre.get(o.id) ?? 0,
     totalChapitres: o.nombreChapitres,
   }));
@@ -233,6 +344,58 @@ export async function recupererStatsCopies(
 
   const moyenne = notes.reduce((somme, note) => somme + note, 0) / notes.length;
   return { copiesCorrigees: notes.length, noteMoyenne: moyenne };
+}
+
+/**
+ * Nombre de jours consécutifs (jusqu'à aujourd'hui inclus, ou hier si
+ * l'élève n'a encore rien fait aujourd'hui) avec au moins une entrée
+ * dans `activite` — la "série" affichée sur le tableau de bord réécrit
+ * sur un modèle fourni par l'utilisateur ("fais moi comme ca mais
+ * ajoute des modif bien"). Calculée à partir de vraies données
+ * (`activite.created_at`), pas inventée : 0 pour un élève qui n'a
+ * jamais rien consulté.
+ *
+ * Une fenêtre de 60 jours suffit largement (au-delà, une série
+ * continue tous les jours pendant deux mois est de toute façon un cas
+ * limite qu'on peut sous-compter sans conséquence pratique) et évite
+ * de charger tout l'historique d'un élève actif depuis longtemps.
+ */
+export async function recupererSerieJours(userId: string | null): Promise<number> {
+  if (!userId) return 0;
+
+  const supabase = await creerClientServeur();
+  const depuis = new Date();
+  depuis.setDate(depuis.getDate() - 60);
+
+  const { data, error } = await supabase
+    .from("activite")
+    .select("created_at")
+    .eq("user_id", userId)
+    .gte("created_at", depuis.toISOString());
+
+  if (error) throw error;
+  if (!data || data.length === 0) return 0;
+
+  const joursAvecActivite = new Set(
+    data.map((ligne) => (ligne.created_at as string).slice(0, 10)),
+  );
+
+  const curseur = new Date();
+  // Si rien aujourd'hui, la série peut quand même être "en cours"
+  // jusqu'à hier (l'élève a jusqu'à la fin de la journée pour la
+  // continuer) — seulement 2 sauts en arrière autorisés avant de
+  // considérer la série interrompue.
+  if (!joursAvecActivite.has(curseur.toISOString().slice(0, 10))) {
+    curseur.setDate(curseur.getDate() - 1);
+  }
+
+  let serie = 0;
+  while (joursAvecActivite.has(curseur.toISOString().slice(0, 10))) {
+    serie += 1;
+    curseur.setDate(curseur.getDate() - 1);
+  }
+
+  return serie;
 }
 
 /** Nombre de corrections encore disponibles aujourd'hui pour l'élève

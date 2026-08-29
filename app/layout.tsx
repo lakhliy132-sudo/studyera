@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -61,6 +61,22 @@ const inter = Inter({
 });
 
 /**
+ * Police à chasse fixe pour les petits libellés "étiquette" en
+ * capitales (ex. "CHAPITRE 01", "PRODUCTION ÉCRITE" sur le tableau de
+ * bord) — ajoutée pour le tableau de bord réécrit sur un modèle fourni
+ * par l'utilisateur ("fais moi comme ca mais ajoute des modif bien").
+ * Même famille IBM Plex que la police arabe déjà en place, cohérent
+ * avec le reste du système typographique plutôt qu'une police
+ * supplémentaire sans rapport. Exposée comme `--font-ibm-plex-mono`,
+ * reprise par le token `font-mono` dans app/globals.css.
+ */
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-ibm-plex-mono",
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -79,7 +95,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable}`}
+      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />

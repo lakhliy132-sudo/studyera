@@ -18,10 +18,12 @@ function formaterDate(dateIso: string) {
  */
 export default function BlocDernieresActivites({ activites }: BlocDernieresActivitesProps) {
   return (
-    <section className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-6">
+    <section className="mt-2 flex flex-col gap-3 rounded-lg border border-border bg-surface p-7">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">Dernières activités</p>
-        <Link href="/activite" className="text-sm text-primary hover:underline">
+        <span className="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+          Dernières activités
+        </span>
+        <Link href="/activite" className="text-sm font-medium text-primary hover:underline">
           Tout voir
         </Link>
       </div>

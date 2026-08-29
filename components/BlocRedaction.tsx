@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+/** ⚠️ Plus utilisé depuis aucune page : remplacé par
+ * CarteProductionEcrite.tsx (voir BlocReprendre.tsx pour la même
+ * remarque). Gardé tel quel plutôt que supprimé. */
 interface BlocRedactionProps {
   quotaRestant: number;
 }
