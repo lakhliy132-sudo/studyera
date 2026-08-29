@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **/production-ecrite : premier contenu réel — méthodologie de la
+> rédaction** — l'utilisateur a choisi "Méthodologie de rédaction"
+> parmi les options proposées, en précisant explicitement vouloir les
+> 3 types de plan ("et ainsi les plan le plan simple plan dialectique
+> analytique"). Page reconstruite pour aller chercher un vrai cours en
+> base (table `cours`, nouvelle catégorie "production-ecrite", même
+> mécanisme que "L'énonciation" sur /langue) au lieu du "Bientôt
+> disponible" statique, rendu via `react-markdown`/`remark-gfm` (déjà
+> présents dans les dépendances) avec un style dédié (`components`),
+> pas de `dangerouslySetInnerHTML` ni de MDX/JSX exécuté.
+>
+> Contenu : comprendre le sujet, les 3 plans (simple ; dialectique
+> thèse/antithèse/synthèse ; analytique causes/conséquences/
+> solutions), introduction (accroche/présentation/annonce du plan),
+> développement, conclusion (bilan/ouverture), tableau des connecteurs
+> logiques. ⚠️ Entièrement rédigé par Claude (méthodologie générale,
+> pas propre à une œuvre) — à faire relire par un enseignant.
+>
+> Ajouté via le pipeline Excel habituel (feuille Cours existante,
+> nouvelle ligne, `npm run importer`, 0 erreur, Cours passé de 1 à 2,
+> essentiel_fr/ar des 3 œuvres vérifié inchangé).
+> Vérifié par capture Playwright : titres, listes, gras, tableau des
+> connecteurs tous bien stylés.
+>
 > **Nouvelle partie "Production écrite"** — demandé explicitement par
 > l'utilisateur ("ajoute partie s appelle production écrite"), clarifié
 > via question : nouveau lien de nav + nouvelle page, contenu à
