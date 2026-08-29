@@ -90,9 +90,21 @@ const COMPOSANTS_MARKDOWN = {
   h2: ({ children }: { children?: React.ReactNode }) => (
     <h2 className="mt-8 mb-3 font-serif text-xl font-bold text-ink first:mt-0">{children}</h2>
   ),
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="mt-5 mb-2 font-serif text-lg font-semibold text-primary">{children}</h3>
+  ),
   p: ({ children }: { children?: React.ReactNode }) => (
     <p className="font-lecture text-[17px] leading-relaxed text-foreground">{children}</p>
   ),
+  /** Encadré "Sujet" / "Le plan choisi" en tête d'un modèle de
+   * rédaction — voir le cours "modeles-corriges" (blockquote markdown,
+   * `> **Sujet :** ...`). */
+  blockquote: ({ children }: { children?: React.ReactNode }) => (
+    <blockquote className="rounded-lg border border-border bg-surface-muted px-5 py-4 font-lecture text-[16px] leading-relaxed text-foreground [&_p]:my-1">
+      {children}
+    </blockquote>
+  ),
+  hr: () => <hr className="my-2 border-t border-border" />,
   ul: ({ children }: { children?: React.ReactNode }) => (
     <ul className="list-disc space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
       {children}

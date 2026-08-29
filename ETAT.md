@@ -2,6 +2,38 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **/production-ecrite : "Modèles de rédactions corrigées" rédigé** —
+> demandé par l'utilisateur, qui m'a laissé l'initiative du contenu
+> ("fait de ta part methode de reactions corrigés"). Nouveau cours en
+> base (`modeles-corriges`, catégorie "production-ecrite") : deux
+> rédactions complètes appliquant chacune un plan de la méthodologie
+> (plan dialectique sur "Les réseaux sociaux rapprochent-ils vraiment
+> les gens ?", plan analytique sur "Le stress avant les examens :
+> causes, conséquences, solutions"), chacune suivie de ses "points
+> forts" commentés. Encadré "Sujet"/"Le plan choisi" en tête de chaque
+> modèle (blockquote markdown, nouveau style `blockquote`/`hr`/`h3`
+> ajouté aux composants markdown partagés de la page détail). Aucune
+> parenthèse dans ce nouveau texte non plus (vérifié par le même
+> garde-fou `/[()]/.test(...)` que pour la méthodologie).
+>
+> ⚠️ Contenu entièrement rédigé par Claude (sujets et rédactions
+> inventés pour l'exercice, pas fournis par l'utilisateur) — à faire
+> relire par un enseignant avant usage en classe.
+>
+> Vérifié par capture Playwright : carte "Modèles de rédactions
+> corrigées" désormais cliquable sur /production-ecrite (3ᵉ carte sur
+> 4), contenu complet affiché sur /production-ecrite/modeles-corriges.
+> ⚠️ Anomalie mineure observée en vérifiant essentiel_fr/ar : le total
+> `resume_ar` des fiches est passé de 12104 à 12105 caractères entre
+> deux contrôles de cette session, sans qu'aucune modification de la
+> feuille Chapitres/Lexique n'ait été faite entre-temps (seule la
+> feuille Cours a été touchée). Antigone revérifiée scène par scène,
+> contenu identique à ce qui avait été rédigé — probablement un
+> artefact bénin (espace) issu des nombreuses réécritures du classeur
+> Excel par ExcelJS au fil de la session, pas une perte de contenu ;
+> signalé par transparence, pas creusé plus loin faute d'impact
+> constaté.
+>
 > **Toutes les parenthèses retirées du texte de la méthodologie de
 > rédaction** — l'utilisateur a redemandé après un premier retrait
 > partiel (une seule occurrence corrigée précédemment) : "enleve )
