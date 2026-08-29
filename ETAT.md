@@ -2,6 +2,22 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **/production-ecrite : les 3 plans sortis dans des cases dédiées** —
+> correction demandée explicitement par l'utilisateur après un premier
+> essai en simples sous-titres H3 empilés dans le flux markdown ("je
+> veux quelle soit bien classé chaque plan dans une case pas comme
+> ça"). Le `contenu_mdx` en base contient désormais un marqueur
+> `<!-- PLANS -->` à l'endroit précis où les 3 plans doivent
+> apparaître ; la page coupe le texte à ce marqueur (deux appels
+> `ReactMarkdown` séparés) et intercale une grille de 3 cases
+> (`GrillePlans`, données `PLANS` codées dans la page — même texte que
+> ce qui était en base avant, pas reformulé) : chaque case a son
+> titre, une phrase "quand l'utiliser", puis ses étapes (I/II/III pour
+> le plan simple ; Thèse/Antithèse/Synthèse pour le dialectique ;
+> Causes/Conséquences/Solutions pour l'analytique). Vérifié par
+> capture Playwright : 3 cases nettement séparées, une par ligne en
+> dessous de 640px, côte à côte au-delà.
+>
 > **/production-ecrite : premier contenu réel — méthodologie de la
 > rédaction** — l'utilisateur a choisi "Méthodologie de rédaction"
 > parmi les options proposées, en précisant explicitement vouloir les

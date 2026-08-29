@@ -9,25 +9,134 @@ import { recupererCoursParSlug } from "@/lib/supabase/contenu";
  * Destination du lien "Production écrite" de la nav — demandé
  * explicitement par l'utilisateur ("ajoute partie s appelle
  * production écrite"). Premier contenu réel : la méthodologie de la
- * rédaction (plan simple, plan dialectique, plan analytique —
- * précisé explicitement par l'utilisateur), choisie comme point de
- * départ parmi plusieurs options proposées ("Sujets de rédaction",
- * "Grille d'auto-évaluation"...) — celles-ci pourront s'ajouter
- * plus tard, sous forme d'autres entrées `cours` de même catégorie.
+ * rédaction, choisie parmi plusieurs options proposées.
  *
  * Contenu stocké en base (table `cours`, catégorie
  * "production-ecrite", même mécanisme que "L'énonciation" sur
  * /langue/enonciation) plutôt qu'en dur ici : cohérent avec le reste
- * du site, où le contenu éditorial passe par le pipeline Excel →
- * Supabase plutôt que d'être codé dans la page. Rendu via
- * `react-markdown` (pas de MDX/JSX exécuté : évite d'exécuter du code
- * arbitraire venu des données), stylé via le prop `components` plutôt
- * qu'un plugin Typography — même choix que /langue/[slug].
+ * du site. Rendu via `react-markdown` (pas de MDX/JSX exécuté), stylé
+ * via le prop `components` plutôt qu'un plugin Typography.
+ *
+ * Les 3 types de plan (simple/dialectique/analytique) sortent
+ * volontairement du flux markdown — demandé explicitement par
+ * l'utilisateur ("je veux quelle soit bien classé chaque plan dans
+ * une case pas comme ça", après un premier essai en simples
+ * sous-titres H3 empilés). Le `contenu_mdx` en base contient un
+ * marqueur `<!-- PLANS -->` à l'endroit précis où les 3 plans
+ * doivent apparaître ; cette page coupe le texte à ce marqueur et
+ * intercale `GrillePlans` (3 cases, contenu de `PLANS` ci-dessous —
+ * même texte que ce qui était en base avant, pas reformulé) entre les
+ * deux moitiés de markdown.
  *
  * ⚠️ Contenu entièrement rédigé par Claude (méthodologie générale de
  * la rédaction argumentative, pas propre à une œuvre précise) — à
  * faire relire par un enseignant avant usage en classe.
  */
+
+const MARQUEUR_PLANS = "<!-- PLANS -->";
+
+interface Plan {
+  titre: string;
+  quand: string;
+  etapes: { libelle: string; detail: string }[];
+}
+
+const PLANS: Plan[] = [
+  {
+    titre: "Le plan simple",
+    quand:
+      "Quand le sujet demande d'expliquer ou de développer une seule idée, sans opposer de points de vue. Le développement s'organise en plusieurs parties qui abordent chacune un aspect différent du même thème.",
+    etapes: [
+      { libelle: "I.", detail: "Premier aspect du sujet" },
+      { libelle: "II.", detail: "Deuxième aspect du sujet" },
+      { libelle: "III.", detail: "Troisième aspect du sujet" },
+    ],
+  },
+  {
+    titre: "Le plan dialectique",
+    quand:
+      "Pour un sujet qui invite à débattre, à peser le pour et le contre (« Êtes-vous d'accord avec... », « Faut-il... »).",
+    etapes: [
+      { libelle: "Thèse", detail: "Les arguments qui vont dans le sens de l'affirmation proposée par le sujet." },
+      { libelle: "Antithèse", detail: "Les arguments qui la contredisent ou la nuancent." },
+      {
+        libelle: "Synthèse",
+        detail:
+          "Un dépassement de l'opposition — une réponse personnelle et nuancée, qui ne se contente pas de juxtaposer les deux points de vue.",
+      },
+    ],
+  },
+  {
+    titre: "Le plan analytique",
+    quand: "Pour un sujet qui invite à analyser un problème. Il suit une progression logique.",
+    etapes: [
+      { libelle: "Causes", detail: "Pourquoi ce problème existe-t-il ?" },
+      { libelle: "Conséquences", detail: "Quels sont ses effets ?" },
+      { libelle: "Solutions", detail: "Comment y remédier ?" },
+    ],
+  },
+];
+
+/** Composants de style partagés par les deux moitiés de markdown,
+ * avant et après `GrillePlans`. */
+const COMPOSANTS_MARKDOWN = {
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="mt-8 mb-3 font-serif text-xl font-bold text-ink first:mt-0">{children}</h2>
+  ),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="font-lecture text-[17px] leading-relaxed text-foreground">{children}</p>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="list-disc space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }: { children?: React.ReactNode }) => (
+    <ol className="list-decimal space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
+      {children}
+    </ol>
+  ),
+  li: ({ children }: { children?: React.ReactNode }) => <li>{children}</li>,
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-ink">{children}</strong>
+  ),
+  table: ({ children }: { children?: React.ReactNode }) => (
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full border-collapse text-left text-[15px]">{children}</table>
+    </div>
+  ),
+  thead: ({ children }: { children?: React.ReactNode }) => <thead className="bg-surface-muted">{children}</thead>,
+  th: ({ children }: { children?: React.ReactNode }) => (
+    <th className="border-b border-border px-4 py-2.5 font-semibold text-ink">{children}</th>
+  ),
+  td: ({ children }: { children?: React.ReactNode }) => (
+    <td className="border-b border-border px-4 py-2.5 text-foreground [&:not(:first-child)]:text-muted-foreground">
+      {children}
+    </td>
+  ),
+};
+
+function GrillePlans() {
+  return (
+    <div className="my-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {PLANS.map((plan) => (
+        <div key={plan.titre} className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 shadow-sm">
+          <h3 className="font-serif text-base font-bold text-primary">{plan.titre}</h3>
+          <p className="font-lecture text-sm leading-relaxed text-muted-foreground">{plan.quand}</p>
+          <dl className="mt-1 flex flex-col gap-2 border-t border-border pt-3">
+            {plan.etapes.map((etape) => (
+              <div key={etape.libelle}>
+                <dt className="font-serif text-sm font-bold text-ink">{etape.libelle}</dt>
+                <dd className="font-lecture text-sm leading-relaxed text-foreground">{etape.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function PageProductionEcrite() {
   const cours = await recupererCoursParSlug("methodologie-redaction");
 
@@ -42,6 +151,10 @@ export default async function PageProductionEcrite() {
     );
   }
 
+  const indexMarqueur = cours.contenu_mdx.indexOf(MARQUEUR_PLANS);
+  const avantPlans = indexMarqueur === -1 ? cours.contenu_mdx : cours.contenu_mdx.slice(0, indexMarqueur);
+  const apresPlans = indexMarqueur === -1 ? "" : cours.contenu_mdx.slice(indexMarqueur + MARQUEUR_PLANS.length);
+
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
       <p className="mb-1.5 inline-flex items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
@@ -50,48 +163,17 @@ export default async function PageProductionEcrite() {
       <h1 className="mb-8 font-serif text-3xl font-bold text-ink">{cours.titre}</h1>
 
       <div className="flex flex-col gap-4">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            h2: ({ children }) => (
-              <h2 className="mt-8 mb-3 font-serif text-xl font-bold text-ink first:mt-0">{children}</h2>
-            ),
-            h3: ({ children }) => (
-              <h3 className="mt-5 mb-2 font-serif text-lg font-semibold text-primary">{children}</h3>
-            ),
-            p: ({ children }) => (
-              <p className="font-lecture text-[17px] leading-relaxed text-foreground">{children}</p>
-            ),
-            ul: ({ children }) => (
-              <ul className="list-disc space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
-                {children}
-              </ul>
-            ),
-            ol: ({ children }) => (
-              <ol className="list-decimal space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
-                {children}
-              </ol>
-            ),
-            li: ({ children }) => <li>{children}</li>,
-            strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
-            table: ({ children }) => (
-              <div className="overflow-x-auto rounded-lg border border-border">
-                <table className="w-full border-collapse text-left text-[15px]">{children}</table>
-              </div>
-            ),
-            thead: ({ children }) => <thead className="bg-surface-muted">{children}</thead>,
-            th: ({ children }) => (
-              <th className="border-b border-border px-4 py-2.5 font-semibold text-ink">{children}</th>
-            ),
-            td: ({ children }) => (
-              <td className="border-b border-border px-4 py-2.5 text-foreground [&:not(:first-child)]:text-muted-foreground">
-                {children}
-              </td>
-            ),
-          }}
-        >
-          {cours.contenu_mdx}
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
+          {avantPlans}
         </ReactMarkdown>
+
+        {indexMarqueur !== -1 && <GrillePlans />}
+
+        {apresPlans && (
+          <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
+            {apresPlans}
+          </ReactMarkdown>
+        )}
       </div>
     </main>
   );
