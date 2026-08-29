@@ -2,6 +2,16 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **"Ressources" et "À propos" retirés de la navigation** — demandé
+> explicitement par l'utilisateur ("Enleve moi la partie de ressources
+> et a propos"). Retiré uniquement du tableau `LIENS` de
+> `LiensNavigation.tsx` (nav desktop et tiroir mobile, qui partagent ce
+> même tableau) ; les pages `/ressources` et `/a-propos` elles-mêmes
+> n'ont pas été supprimées (pas demandé), elles restent juste
+> inaccessibles depuis la navigation. Nav réduite à 4 liens (Accueil,
+> Œuvres, Correcteur IA, Langues) — vérifié par capture Playwright
+> desktop et mobile (menu déplié).
+>
 > **"Lire la suite" sur le résumé essentiel + "Scène" dans la barre de
 > progression** — demandé explicitement par l'utilisateur ("pour le
 > resumé d antigone fait l option de lire la suite et autre chose dans
