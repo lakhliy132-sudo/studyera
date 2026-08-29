@@ -11,10 +11,21 @@ const LIENS = [
   { href: "/production-ecrite", libelle: "Production écrite" },
 ] as const;
 
+/** Ajouté seulement pour un utilisateur connecté — voir
+ * `LiensNavigation` ci-dessous. */
+const LIEN_TABLEAU_DE_BORD = { href: "/tableau-de-bord", libelle: "Tableau de bord" } as const;
+
 interface LiensNavigationProps {
   /** `true` pour le tiroir mobile (liens empilés, pleine largeur) plutôt
    * que la nav horizontale desktop. */
   pleineLargeur?: boolean;
+  /** Ajoute "Tableau de bord" à la liste quand `true` — demandé
+   * explicitement par l'utilisateur, qui ne trouvait pas ce lien
+   * suffisamment visible ("il faut que on le trouve tjrs c pas que
+   * juste quans on se connecte") : avant, la seule façon d'y accéder
+   * était de cliquer sur l'avatar/email en haut à droite, pas assez
+   * évident. Juste après "Accueil". */
+  connecte?: boolean;
 }
 
 /**
@@ -28,12 +39,13 @@ interface LiensNavigationProps {
  * par toutes les pages (contrairement à OngletsOeuvre/OngletsChapitre,
  * qui connaissent leur onglet actif via un prop explicite).
  */
-export default function LiensNavigation({ pleineLargeur = false }: LiensNavigationProps) {
+export default function LiensNavigation({ pleineLargeur = false, connecte = false }: LiensNavigationProps) {
   const chemin = usePathname();
+  const liens = connecte ? [LIENS[0], LIEN_TABLEAU_DE_BORD, ...LIENS.slice(1)] : LIENS;
 
   return (
     <>
-      {LIENS.map((lien) => {
+      {liens.map((lien) => {
         const actif = lien.href === "/" ? chemin === "/" : chemin.startsWith(lien.href);
 
         return (

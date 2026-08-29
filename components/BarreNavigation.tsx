@@ -46,7 +46,7 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
         </Link>
 
         <nav aria-label="Navigation principale" className="hidden items-center gap-2 xl:flex">
-          <LiensNavigation />
+          <LiensNavigation connecte={connecte} />
         </nav>
 
         <div className="ml-auto hidden items-center gap-3 xl:flex">
@@ -68,7 +68,7 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
             <span className="sr-only">Ouvrir le menu</span>
           </summary>
           <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
-            <LiensNavigation pleineLargeur />
+            <LiensNavigation pleineLargeur connecte={connecte} />
             <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
               <EtatConnexion connecte={connecte} email={email} pleineLargeur />
             </div>
@@ -87,11 +87,19 @@ function EtatConnexion({
   if (connecte) {
     return (
       <div className={pleineLargeur ? "flex items-center gap-3 px-3 py-2" : "flex items-center gap-3"}>
-        <Link href="/tableau-de-bord" className="flex items-center gap-3">
+        <Link href="/tableau-de-bord" className="flex items-center gap-3" title={email ?? undefined}>
           <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
-          <span className="text-sm text-muted-foreground">{email}</span>
+          {/* Email visible seulement dans le tiroir mobile (assez de
+           * place en vertical) — sur la nav desktop compacte, l'avatar
+           * seul suffit à indiquer "connecté", le survol (title
+           * ci-dessus) donne l'adresse complète si besoin. Retiré pour
+           * faire de la place à "Tableau de bord" dans la liste de
+           * liens, qui débordait sinon en dessous de ~1600px. */}
+          {pleineLargeur && (
+            <span className="truncate text-sm text-muted-foreground">{email}</span>
+          )}
         </Link>
         <BoutonDeconnexion />
       </div>

@@ -2,6 +2,28 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **"Tableau de bord" ajouté à la nav principale pour un utilisateur
+> connecté** — demandé explicitement par l'utilisateur, qui ne
+> trouvait pas assez visible l'unique façon d'y accéder jusqu'ici
+> (cliquer sur l'avatar/email en haut à droite) : "oui mais le tableau
+> de bord il faut que on le trouve tjrs c pas que juste quans on se
+> connecte". `LiensNavigation.tsx` prend un nouveau prop `connecte` :
+> insère "Tableau de bord" juste après "Accueil" dans la liste de
+> liens (nav desktop et tiroir mobile) quand `true`.
+>
+> Régression trouvée et corrigée en vérifiant avec une vraie session
+> connectée (même technique que plus haut — compte de test jetable,
+> cookie de session injecté) : avec ce 6ᵉ lien, la nav desktop
+> débordait dès 1280px (jusqu'à ~1600px nécessaires avec un email
+> assez long affiché en toutes lettres à côté de l'avatar). Corrigé en
+> masquant l'email dans la barre desktop compacte (l'avatar seul
+> suffit à indiquer "connecté", l'adresse complète reste consultable
+> au survol via `title`, et toujours affichée en entier dans le tiroir
+> mobile, où la largeur n'est pas un problème). Revérifié jusqu'à
+> 1600px : 0px de débordement.
+
+
+>
 > ## ⚠️ ACTION MANUELLE REQUISE — Communication CEO/élèves
 >
 > Les deux migrations ci-dessous doivent être collées et exécutées à la
