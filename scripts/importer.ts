@@ -411,19 +411,50 @@ async function main() {
           ? null
           : (idChapitreParCle.get(`${oeuvreSlug}::${chapitreNumero}`) ?? null);
 
-      try {
-        const { error } = await supabase.from("sujets").upsert(
-          {
-            oeuvre_id: oeuvreId,
-            chapitre_id: chapitreId,
-            titre,
-            consigne: texte(valeur(ligne, entetes, "consigne")),
-            type: texte(valeur(ligne, entetes, "type")),
-          },
-          { onConflict: "oeuvre_id,chapitre_id,titre" },
-        );
+      const donnees = {
+        oeuvre_id: oeuvreId,
+        chapitre_id: chapitreId,
+        titre,
+        consigne: texte(valeur(ligne, entetes, "consigne")),
+        type: texte(valeur(ligne, entetes, "type")),
+      };
 
-        if (error) throw error;
+      try {
+        if (chapitreId === null) {
+          // ⚠️ Contournement d'un bogue découvert en session (voir
+          // ETAT.md) : la contrainte unique `sujets_oeuvre_chapitre_titre_key`
+          // porte sur (oeuvre_id, chapitre_id, titre), mais en SQL deux
+          // NULL ne sont jamais égaux pour une contrainte unique — donc
+          // `upsert(..., onConflict: "oeuvre_id,chapitre_id,titre")` ne
+          // détecte JAMAIS de conflit pour un sujet sans chapitre
+          // précis (rattaché à l'œuvre entière) : chaque réimport en
+          // insérait une copie de plus (30 sujets Antigone dupliqués
+          // x3, 6 sujets Boîte à Merveilles dupliqués x12, nettoyé le
+          // 2026-08-29). Ici, faute de pouvoir corriger la contrainte
+          // en base (pas de migration applicable, voir l'avertissement
+          // en tête de fichier), on cherche la ligne existante à la
+          // main avant d'insérer.
+          const { data: existant, error: erreurRecherche } = await supabase
+            .from("sujets")
+            .select("id")
+            .eq("oeuvre_id", oeuvreId)
+            .is("chapitre_id", null)
+            .eq("titre", titre)
+            .maybeSingle();
+          if (erreurRecherche) throw erreurRecherche;
+
+          const { error } = existant
+            ? await supabase.from("sujets").update(donnees).eq("id", existant.id)
+            : await supabase.from("sujets").insert(donnees);
+          if (error) throw error;
+        } else {
+          // `chapitre_id` non NULL : la contrainte unique fonctionne
+          // normalement, upsert() suffit.
+          const { error } = await supabase
+            .from("sujets")
+            .upsert(donnees, { onConflict: "oeuvre_id,chapitre_id,titre" });
+          if (error) throw error;
+        }
         compteurs.sujets++;
       } catch (err) {
         signalerErreur("Sujets", n, err);

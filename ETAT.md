@@ -2,6 +2,53 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Lieux et sujets liés ajoutés pour les 21 scènes d'Antigone** —
+> demandé explicitement par l'utilisateur ("fait les lieux et le
+> sujetrs lieux de chaque scene"). Deux volets :
+>
+> - **Lieux** : "Le palais de Créon (Thèbes)" ajouté aux 19 scènes qui
+>   n'avaient pas encore de lieu propre — cohérent avec l'unité de lieu
+>   classique de la tragédie (toute la pièce se joue dans l'antichambre
+>   du palais), à l'exception de "Scène 19 : Antigone part vers la
+>   mort" qui garde "La grotte" (déjà en place). "Le mythe d'Œdipe"
+>   n'est pas une scène de la pièce, aucun lieu ajouté.
+> - **Sujets liés** : 13 des 30 sujets d'Antigone (ceux dont la
+>   consigne nomme explicitement une scène/un personnage précis, ex.
+>   "La scène des adieux entre Antigone et Hémon", "Le Prologue de la
+>   pièce") rattachés à leur scène via `chapitre_id` ; les sujets plus
+>   généraux (« Le personnage de Créon », « Le rôle du Chœur », les 11
+>   sujets d'argumentation…) restent volontairement au niveau de
+>   l'œuvre entière, faute de moment précis identifiable.
+>
+> ⚠️ **Bogue plus large découvert et corrigé au passage, signalé à
+> l'utilisateur avant toute suppression** : la contrainte unique de la
+> table `sujets` (`oeuvre_id, chapitre_id, titre`) ne détecte jamais de
+> conflit quand `chapitre_id` est NULL (deux NULL ne sont jamais égaux
+> en SQL) — chaque exécution de `npm run importer` réinsérait donc en
+> double tous les sujets rattachés à l'œuvre entière plutôt qu'à un
+> chapitre. Constaté en base : 199 lignes de sujets au lieu de 73
+> (Antigone x3, Boîte à Merveilles x12 sur ses 6 sujets d'argumentation
+> généraux). Après confirmation explicite de l'utilisateur : 126 lignes
+> en double supprimées (garde la plus ancienne de chaque groupe), et
+> `scripts/importer.ts` corrigé (recherche manuelle de la ligne
+> existante avant insertion quand `chapitre_id` est NULL, au lieu de
+> compter sur `upsert`/`onConflict`) — vérifié stable sur 3 exécutions
+> consécutives de l'importeur (73 sujets à chaque fois, aucune
+> croissance).
+>
+> Un second bogue lié a été détecté et corrigé pendant cette
+> vérification : la ligne fantôme "Scène 21" (ancien numero=23,
+> supprimée en base la session précédente mais jamais retirée de
+> l'Excel) a été recréée par un import — retirée cette fois de l'Excel
+> lui-même (feuilles Chapitres et Lexique) en plus de la base, pour que
+> le problème ne se reproduise plus.
+>
+> Vérifié : `npm run importer` exécuté 3 fois de suite sans croissance
+> des compteurs (34 chapitres, 73 sujets à chaque fois), essentiel_fr/ar
+> inchangé (19740/12104), captures Playwright (onglet Lieux : 2 lieux
+> sans doublon ; Scène 13 : 3 sujets liés affichés ; liste des 22
+> scènes sans doublon).
+>
 > **"Fiche de la scène" rendue vraiment scène par scène + Quiz ajouté
 > pour les 21 scènes d'Antigone** — demandé explicitement par
 > l'utilisateur ("Fiche de scene modifie la scene par scene ET FAIS
