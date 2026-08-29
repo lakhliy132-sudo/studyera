@@ -2,8 +2,43 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { envoyerMessage, marquerMessagesLus } from "@/lib/supabase/communication";
+import { creerClientNavigateur } from "@/lib/supabase/client";
 import type { Message } from "@/types/base-de-donnees";
+
+/** Envoi d'un message — `eleveId` est le fil concerné (soi-même pour
+ * un élève, l'élève choisi pour un admin) ; `auteur_id` est toujours
+ * l'utilisateur connecté (voir la policy RLS INSERT, qui interdit
+ * d'usurper un autre auteur). Directement ici (pas dans
+ * lib/supabase/communication.ts, réservé aux lectures serveur) — voir
+ * le commentaire en tête de ce fichier-là pour pourquoi. */
+async function envoyerMessage(eleveId: string, contenu: string) {
+  const supabase = creerClientNavigateur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non connecté.");
+
+  const { error } = await supabase.from("messages").insert({
+    eleve_id: eleveId,
+    auteur_id: user.id,
+    contenu,
+  });
+  if (error) throw error;
+}
+
+/** Marque comme lus tous les messages d'un fil qui ne sont pas
+ * l'œuvre de l'utilisateur connecté (typiquement : un admin ouvre le
+ * fil d'un élève, marque les messages DE l'élève comme lus). */
+async function marquerMessagesLus(eleveId: string, idUtilisateurConnecte: string) {
+  const supabase = creerClientNavigateur();
+  const { error } = await supabase
+    .from("messages")
+    .update({ lu: true })
+    .eq("eleve_id", eleveId)
+    .eq("lu", false)
+    .neq("auteur_id", idUtilisateurConnecte);
+  if (error) throw error;
+}
 
 function formaterHeure(dateIso: string) {
   return new Date(dateIso).toLocaleString("fr-FR", {

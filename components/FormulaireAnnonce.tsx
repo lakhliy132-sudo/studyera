@@ -3,7 +3,30 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { publierAnnonce } from "@/lib/supabase/communication";
+import { creerClientNavigateur } from "@/lib/supabase/client";
+
+/** Publication d'une annonce — réservé aux admins côté RLS (la policy
+ * rejette silencieusement l'écriture d'un non-admin). Directement ici
+ * (pas dans lib/supabase/communication.ts, réservé aux lectures
+ * serveur) : un Client Component qui importe ne serait-ce qu'une
+ * fonction d'un fichier qui importe aussi `next/headers` (via
+ * `creerClientServeur`) fait planter toute la page — bogue réel
+ * rencontré en vérifiant avec une vraie session, voir le commentaire
+ * en tête de lib/supabase/communication.ts. */
+async function publierAnnonce(titre: string, contenu: string) {
+  const supabase = creerClientNavigateur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non connecté.");
+
+  const { error } = await supabase.from("annonces").insert({
+    titre,
+    contenu,
+    auteur_id: user.id,
+  });
+  if (error) throw error;
+}
 
 /**
  * Formulaire de publication d'une annonce, dans l'espace admin —

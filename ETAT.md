@@ -2,30 +2,15 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
-> ## ⚠️⚠️ ACTION MANUELLE REQUISE AVANT QUE CETTE PARTIE FONCTIONNE ⚠️⚠️
+> ## ⚠️ ACTION MANUELLE REQUISE — Communication CEO/élèves
 >
 > Les deux migrations ci-dessous doivent être collées et exécutées à la
 > main dans le SQL editor du tableau de bord Supabase (Project →
 > SQL Editor → New query) — impossible de les appliquer depuis cet
-> environnement, qui n'a que les clés REST anon/service_role (pas de
-> connexion Postgres directe, donc pas d'exécution de DDL). **Dans cet
-> ordre précis :**
+> environnement (clés REST anon/service_role seulement, pas de
+> connexion Postgres directe, donc pas d'exécution de DDL) :
 > 1. `supabase/migrations/20260901010000_fix_recursion_est_admin.sql`
 > 2. `supabase/migrations/20260901020000_communication_annonces_messages.sql`
->
-> **Bogue critique découvert en session, corrigé par la migration 1** :
-> en préparant la fonctionnalité de communication ci-dessous, j'ai
-> trouvé que TOUT `SELECT` sur `profils` échoue actuellement en base
-> avec l'erreur Postgres 54001 "stack depth limit exceeded" — une
-> récursion infinie causée par la policy "les admins voient tous les
-> profils" (migration 20260829000000), qui appelle `est_admin()`,
-> laquelle interroge `profils` à son tour, retombant sur la même
-> policy, etc. Conséquence concrète vérifiée dans le code : le
-> middleware qui protège `/administration` interprète cet échec comme
-> "pas admin" et redirige — **personne ne peut donc actuellement
-> accéder à l'espace administrateur**, indépendamment de tout ce qui
-> suit. La migration 1 rend `est_admin()` `security definer` (fix
-> standard Supabase pour ce cas précis), ce qui règle le problème.
 >
 > **Communication CEO/élèves (annonces + messagerie privée)** —
 > demandé explicitement par l'utilisateur ("je veux ajouter une case de
@@ -39,14 +24,27 @@
 > RLS écrite pour que : un élève ne lit/écrit que son propre fil ; un
 > admin lit/écrit dans n'importe quel fil.
 >
-> - `lib/supabase/communication.ts` : toutes les fonctions de
->   lecture/écriture. Volontairement non bloquantes côté lecture
->   (`recupererAnnonces`, `recupererMessagesEleve`,
->   `recupererFilsMessagesPourAdmin` attrapent l'erreur et renvoient un
->   tableau vide) — même principe que `enregistrerActivite` : tant que
->   les migrations n'auront pas été appliquées manuellement, le
->   tableau de bord ne doit pas planter pour autant, juste montrer un
->   état vide.
+> - `lib/supabase/communication.ts` : les lectures (Server Components)
+>   uniquement. Volontairement non bloquantes (`recupererAnnonces`,
+>   `recupererMessagesEleve`, `recupererFilsMessagesPourAdmin`
+>   attrapent l'erreur et renvoient un tableau vide) — même principe
+>   que `enregistrerActivite` : tant que les migrations n'auront pas
+>   été appliquées manuellement, le tableau de bord ne doit pas
+>   planter pour autant, juste montrer un état vide.
+> - **Bogue réel trouvé en vérifiant avec une vraie session** : un
+>   premier essai mettait aussi les écritures (`publierAnnonce`,
+>   `envoyerMessage`, `marquerMessagesLus`) dans ce même fichier
+>   `communication.ts`. Comme ce fichier importe `creerClientServeur`
+>   (donc `next/headers`), n'importe quel Composant Client impor­tant
+>   ne serait-ce qu'UNE de ces fonctions faisait planter toute la page
+>   ("You're importing a component that needs next/headers") — la
+>   limite serveur/client de Next.js s'applique au fichier entier, pas
+>   export par export. Corrigé en déplaçant les 3 fonctions d'écriture
+>   directement dans les composants client qui les utilisent
+>   (`FilMessages.tsx`, `FormulaireAnnonce.tsx`), avec
+>   `creerClientNavigateur()` appelé directement — même principe déjà
+>   en place pour `BoutonMarquerLu.tsx`, qui n'a jamais mélangé lecture
+>   serveur et écriture navigateur dans un même fichier partagé.
 > - **Élève** : `BlocAnnonces` (nouveau bloc du tableau de bord,
 >   dernière annonce + lien "Écrire à l'administration"), page
 >   `/messages` (fil privé complet + formulaire d'envoi, via
@@ -61,15 +59,32 @@
 >   recharger la page pour voir une réponse envoyée par l'autre côté
 >   entre-temps. Volontairement simple pour une première version.
 >
-> ⚠️ Vérification incomplète, à faire par l'utilisateur : `npx tsc
-> --noEmit` passe sans erreur, et les redirections du middleware
-> (`/messages`, `/tableau-de-bord`, `/administration` → `/connexion`
-> pour un visiteur non connecté) ont été vérifiées par curl — mais je
-> n'ai **pas** pu vérifier visuellement le rendu réel des pages
-> connectées (tableau de bord avec `BlocAnnonces`, `/messages`,
-> `/administration` avec ses deux nouvelles sections) faute de compte
-> de test (élève ou admin) dans cet environnement. À vérifier après
-> avoir appliqué les deux migrations et s'être connecté.
+> **Vérification réelle effectuée** (pas seulement `tsc`/curl) : créé
+> un compte de test jetable via l'API admin Supabase (clé
+> `service_role`), obtenu une vraie session (mot de passe), injecté le
+> cookie `sb-<ref>-auth-token` dans un navigateur Playwright pour
+> simuler une vraie connexion, puis visité les pages réelles. Résultat :
+> `/tableau-de-bord` (avec `BlocAnnonces`), `/messages` (après le
+> correctif ci-dessus) et `/administration` (promu admin via
+> `service_role`, avec ses deux nouvelles sections) s'affichent
+> correctement, captures à l'appui. Compte de test supprimé ensuite
+> (cascade sur `profils`, confirmé vide après coup).
+>
+> **Correction d'une affirmation trop large faite plus tôt dans cette
+> même session** : j'avais écrit que "TOUT SELECT sur profils échoue" à
+> cause d'une récursion RLS, et que "personne ne peut accéder à
+> /administration". C'est inexact — en creusant avec de vraies requêtes
+> authentifiées, la récursion ne se déclenche que pour un `SELECT` sur
+> `profils` **sans filtre `id`** (scan complet) ou pour une requête
+> **non authentifiée** (`auth.uid()` NULL) ; un `SELECT` filtré par
+> `id` (`eq` ou `in`, y compris avec plusieurs ids), authentifié,
+> fonctionne très bien — exactement ce que fait le reste du code
+> (middleware, `recupererCopiesPourAdmin`, `recupererFilsMessagesPourAdmin`).
+> Un vrai admin connecté a donc bien accès à `/administration`
+> aujourd'hui, avant même d'appliquer la migration 1. Cette migration
+> reste recommandée (comportement plus robuste, plus prévisible), mais
+> n'est plus "bloquante" comme annoncé initialement — correction faite
+> pour ne pas laisser une affirmation inexacte dans cet historique.
 >
 > **Rédactions modèles encadrées, texte en noir plutôt qu'en bleu** —
 > demandé explicitement par l'utilisateur ("fait la redaction arrondis

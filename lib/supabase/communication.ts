@@ -1,8 +1,24 @@
 /**
- * Fonctions de lecture/écriture pour la communication CEO/élèves
- * (annonces publiques + messagerie privée un-à-un) — demandé
- * explicitement par l'utilisateur ("je veux ajouter une case de la
- * comminucation... moi ceo of the site talk avec les eleves").
+ * Fonctions de LECTURE (Server Components) pour la communication
+ * CEO/élèves (annonces publiques + messagerie privée un-à-un) —
+ * demandé explicitement par l'utilisateur ("je veux ajouter une case
+ * de la comminucation... moi ceo of the site talk avec les eleves").
+ *
+ * ⚠️ Uniquement des lectures ici, volontairement : ce fichier importe
+ * `creerClientServeur` (donc `next/headers`, réservé aux Server
+ * Components). Les écritures (publier une annonce, envoyer un
+ * message, marquer comme lu) vivent directement dans les composants
+ * client concernés (`FormulaireAnnonce.tsx`, `FilMessages.tsx`), pas
+ * ici — bogue réel rencontré en vérifiant : un premier essai les
+ * avait mises dans ce même fichier, et un Client Component qui
+ * importe ne serait-ce qu'UNE fonction d'un fichier qui importe
+ * `next/headers` fait planter toute la page ("You're importing a
+ * component that needs next/headers"), même si la fonction
+ * effectivement utilisée n'en a pas besoin — la limite serveur/client
+ * de Next.js s'applique au fichier entier, pas export par export.
+ * Même principe déjà en place pour `creerClientNavigateur`, toujours
+ * appelé directement depuis les composants (voir BoutonMarquerLu.tsx),
+ * jamais réexporté depuis un fichier partagé avec des lectures serveur.
  *
  * ⚠️ Ces tables (`annonces`, `messages`) et le correctif de
  * `est_admin()` dont elles dépendent viennent de deux migrations pas
@@ -14,15 +30,8 @@
  * pourquoi : pas de connexion Postgres directe dans cet
  * environnement, seulement les clés REST anon/service_role, qui ne
  * permettent pas d'exécuter du DDL).
- *
- * Écriture directement depuis le navigateur (mêmes fonctions
- * utilisées par les composants client) : la RLS de ces deux tables
- * garantit qu'un élève ne peut agir que sur son propre fil, donc pas
- * de contexte serveur de confiance nécessaire — même principe que
- * BoutonMarquerLu.tsx.
  */
 
-import { creerClientNavigateur } from "@/lib/supabase/client";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { Annonce, Message } from "@/types/base-de-donnees";
 
@@ -54,25 +63,6 @@ export async function recupererAnnonces(limite?: number): Promise<Annonce[]> {
     console.error("recupererAnnonces:", erreur);
     return [];
   }
-}
-
-/** Publication d'une annonce — réservé aux admins côté RLS (la policy
- * rejette silencieusement l'écriture d'un non-admin, ce n'est donc pas
- * la responsabilité de cette fonction de revérifier le rôle). Appelé
- * depuis un composant client (espace admin), d'où le client navigateur. */
-export async function publierAnnonce(titre: string, contenu: string) {
-  const supabase = creerClientNavigateur();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Non connecté.");
-
-  const { error } = await supabase.from("annonces").insert({
-    titre,
-    contenu,
-    auteur_id: user.id,
-  });
-  if (error) throw error;
 }
 
 // --- Messages ---
@@ -186,37 +176,4 @@ export async function recupererProfilEleve(
   if (error) throw error;
   if (!data) return null;
   return { email: data.email, nomComplet: data.nom_complet };
-}
-
-/** Envoi d'un message — `eleveId` est le fil concerné (soi-même pour
- * un élève, l'élève choisi pour un admin) ; `auteur_id` est toujours
- * l'utilisateur connecté (voir la policy RLS INSERT, qui interdit
- * d'usurper un autre auteur). */
-export async function envoyerMessage(eleveId: string, contenu: string) {
-  const supabase = creerClientNavigateur();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Non connecté.");
-
-  const { error } = await supabase.from("messages").insert({
-    eleve_id: eleveId,
-    auteur_id: user.id,
-    contenu,
-  });
-  if (error) throw error;
-}
-
-/** Marque comme lus tous les messages d'un fil qui ne sont pas
- * l'œuvre de l'utilisateur connecté (typiquement : un admin ouvre le
- * fil d'un élève, marque les messages DE l'élève comme lus). */
-export async function marquerMessagesLus(eleveId: string, idUtilisateurConnecte: string) {
-  const supabase = creerClientNavigateur();
-  const { error } = await supabase
-    .from("messages")
-    .update({ lu: true })
-    .eq("eleve_id", eleveId)
-    .eq("lu", false)
-    .neq("auteur_id", idUtilisateurConnecte);
-  if (error) throw error;
 }
