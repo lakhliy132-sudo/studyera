@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **"Lire la suite" sur le résumé essentiel + "Scène" dans la barre de
+> progression** — demandé explicitement par l'utilisateur ("pour le
+> resumé d antigone fait l option de lire la suite et autre chose dans
+> la barre de ta progression de chapitre 22 remplace la par scene").
+>
+> - `BanniereOeuvre.tsx` : `CarteBilingue` du résumé essentiel appelée
+>   avec `long` (repli à 6 lignes + "Lire la suite"/"Réduire", même
+>   mécanisme déjà utilisé pour le résumé d'un chapitre) — appliqué à
+>   toutes les œuvres, pas seulement Antigone (composant partagé, pas
+>   de raison de le rendre incohérent selon l'œuvre). Vérifié par
+>   capture Playwright replié/déplié sur Antigone (10 lignes) et sur La
+>   Boîte à Merveilles (résumé plus court, se replie aussi puisqu'il
+>   dépasse 6 lignes une fois affiché en 2 colonnes).
+> - `BarreProgression.tsx` ("Ta progression", bannière de
+>   /oeuvres/[slug]) affichait "N chapitre(s) sur total" en dur, y
+>   compris sur Antigone — corrigé en unité-aware via
+>   `libelleUniteChapitre(slug)` (même mécanisme que `CarteOeuvre.tsx`
+>   /`OngletQuiz.tsx`), affiche désormais "scène(s)" pour Antigone. ⚠️
+>   Non vérifié visuellement (la barre ne s'affiche qu'à un utilisateur
+>   connecté avec une progression, pas de compte de test disponible
+>   dans cet environnement) — vérifié uniquement par relecture de code
+>   et `npx tsc --noEmit`, en reprenant exactement le même schéma déjà
+>   vérifié ailleurs.
+>
 > **Résumé "essentiel" d'Antigone renseigné** (bannière de
 > /oeuvres/antigone, jusqu'ici "Bientôt disponible"/"قريبًا") —
 > `oeuvres.essentiel_fr` rempli avec le texte fourni verbatim par

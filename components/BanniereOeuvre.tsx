@@ -45,9 +45,14 @@ export default function BanniereOeuvre({
 
       {afficherResume && (
         <div className="mt-6">
+          {/* `long` : replie le résumé "essentiel" au-delà de 6 lignes
+           * avec un bouton "Lire la suite", comme le résumé d'un
+           * chapitre — demandé explicitement par l'utilisateur pour le
+           * résumé d'Antigone (10 phrases, une par ligne). */}
           <CarteBilingue
             contenuFr={oeuvre.essentiel_fr ?? "Bientôt disponible."}
             contenuAr={oeuvre.essentiel_ar ?? "قريبًا."}
+            long
           />
         </div>
       )}
@@ -73,7 +78,7 @@ export default function BanniereOeuvre({
 
       {progression && (
         <div className="mt-[22px] flex justify-center">
-          <BarreProgression lus={progression.lus} total={progression.total} />
+          <BarreProgression slug={slug} lus={progression.lus} total={progression.total} />
         </div>
       )}
     </>
