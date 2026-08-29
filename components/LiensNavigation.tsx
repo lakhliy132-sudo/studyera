@@ -8,6 +8,7 @@ const LIENS = [
   { href: "/oeuvres", libelle: "Œuvres" },
   { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
   { href: "/langue", libelle: "Langues" },
+  { href: "/production-ecrite", libelle: "Production écrite" },
 ] as const;
 
 interface LiensNavigationProps {
@@ -44,7 +45,7 @@ export default function LiensNavigation({ pleineLargeur = false }: LiensNavigati
               (actif
                 ? "text-primary font-semibold"
                 : "text-foreground hover:text-primary") +
-              ` relative px-3.5 py-2.5 text-base ${pleineLargeur ? "block" : ""}`
+              ` relative px-3.5 py-2.5 text-base whitespace-nowrap ${pleineLargeur ? "block" : ""}`
             }
           >
             {lien.libelle}

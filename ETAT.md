@@ -2,6 +2,26 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Nouvelle partie "Production écrite"** — demandé explicitement par
+> l'utilisateur ("ajoute partie s appelle production écrite"), clarifié
+> via question : nouveau lien de nav + nouvelle page, contenu à
+> remplir plus tard. `app/(public)/production-ecrite/page.tsx` créée
+> (même format d'attente que /ressources : pas de contenu inventé
+> faute de brief, juste une phrase d'intention — "Sujets et méthode
+> pour réussir tes rédactions. Bientôt disponible."), lien ajouté à
+> `LiensNavigation.tsx` après "Langues".
+>
+> Bug de mise en page révélé en vérifiant : "Production écrite" (deux
+> mots) faisait passer les libellés de nav sur 2 lignes dès la bascule
+> desktop (`xl`, 1280px) — pas un débordement horizontal (0px mesuré),
+> mais un retour à la ligne disgracieux à l'intérieur de chaque lien,
+> qui persistait même à 1440px de large (le conteneur de la barre de
+> nav a une largeur maximale fixe, `max-w-[1240px]`, indépendante de la
+> largeur de l'écran). Corrigé avec `whitespace-nowrap` sur les liens
+> de `LiensNavigation.tsx` — vérifié par capture Playwright à 1280,
+> 1360 et 1440px : plus aucun retour à la ligne, toujours 0px de
+> débordement horizontal.
+>
 > **"Ressources" et "À propos" retirés de la navigation** — demandé
 > explicitement par l'utilisateur ("Enleve moi la partie de ressources
 > et a propos"). Retiré uniquement du tableau `LIENS` de
