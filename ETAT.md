@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **/production-ecrite transformée en liste de cartes (comme /langue)
+> + parenthèse fermante isolée retirée** — demandé explicitement par
+> l'utilisateur ("enleve ) ca dans l ecriture et fais moi dans la
+> partie de p ecrite case du la methodologie de la redaction").
+>
+> - `/production-ecrite` affiche désormais une grille de 4 cartes
+>   (même structure que `/langue`, `SUJETS` au lieu de `LEÇONS`) : "La
+>   méthodologie de la rédaction" (réelle, cliquable, seule à avoir du
+>   contenu en base) + 3 cartes "Bientôt disponible" reprenant les
+>   autres pistes déjà évoquées avec l'utilisateur (Sujets de
+>   rédaction, Modèles de rédactions corrigées, Grille
+>   d'auto-évaluation) — aucun contenu inventé pour ces 3-là, juste le
+>   titre/la description déjà discutés.
+> - Le contenu de la méthodologie déménage vers
+>   `/production-ecrite/[slug]` (nouvelle route dynamique, sur le
+>   modèle de `/langue/[slug]`) — logique de coupe au marqueur
+>   `<!-- PLANS -->` et `GrillePlans` inchangées, juste déplacées.
+> - Parenthèse fermante isolée en bout de phrase (« Faut-il... »).)
+>   retirée sur la carte "plan dialectique" — les deux exemples de
+>   sujets sont maintenant introduits par un tiret, sans parenthèses
+>   englobantes.
+>
+> Vérifié par capture Playwright : les 4 cartes sur `/production-ecrite`
+> (1 cliquable + 3 grisées), le contenu complet sur
+> `/production-ecrite/methodologie-redaction` (fil d'Ariane retour,
+> plus de parenthèse isolée), 404 confirmé sur un slug pas encore réel
+> (`/production-ecrite/sujets-redaction`).
+>
 > **/production-ecrite : les 3 plans sortis dans des cases dédiées** —
 > correction demandée explicitement par l'utilisateur après un premier
 > essai en simples sous-titres H3 empilés dans le flux markdown ("je

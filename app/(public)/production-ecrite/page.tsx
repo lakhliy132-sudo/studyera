@@ -1,179 +1,141 @@
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Link from "next/link";
 
-import { recupererCoursParSlug } from "@/lib/supabase/contenu";
+import { IconeCoche, IconeDocument, IconeFleche, IconeIdee, IconeLivreOuvert, IconePlume } from "@/components/icones";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
+import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 
-/**
- * Page publique : /production-ecrite
- *
- * Destination du lien "Production écrite" de la nav — demandé
- * explicitement par l'utilisateur ("ajoute partie s appelle
- * production écrite"). Premier contenu réel : la méthodologie de la
- * rédaction, choisie parmi plusieurs options proposées.
- *
- * Contenu stocké en base (table `cours`, catégorie
- * "production-ecrite", même mécanisme que "L'énonciation" sur
- * /langue/enonciation) plutôt qu'en dur ici : cohérent avec le reste
- * du site. Rendu via `react-markdown` (pas de MDX/JSX exécuté), stylé
- * via le prop `components` plutôt qu'un plugin Typography.
- *
- * Les 3 types de plan (simple/dialectique/analytique) sortent
- * volontairement du flux markdown — demandé explicitement par
- * l'utilisateur ("je veux quelle soit bien classé chaque plan dans
- * une case pas comme ça", après un premier essai en simples
- * sous-titres H3 empilés). Le `contenu_mdx` en base contient un
- * marqueur `<!-- PLANS -->` à l'endroit précis où les 3 plans
- * doivent apparaître ; cette page coupe le texte à ce marqueur et
- * intercale `GrillePlans` (3 cases, contenu de `PLANS` ci-dessous —
- * même texte que ce qui était en base avant, pas reformulé) entre les
- * deux moitiés de markdown.
- *
- * ⚠️ Contenu entièrement rédigé par Claude (méthodologie générale de
- * la rédaction argumentative, pas propre à une œuvre précise) — à
- * faire relire par un enseignant avant usage en classe.
- */
-
-const MARQUEUR_PLANS = "<!-- PLANS -->";
-
-interface Plan {
+interface Sujet {
+  numero: number;
+  slug: string;
   titre: string;
-  quand: string;
-  etapes: { libelle: string; detail: string }[];
+  description: string;
+  Icone: (props: { className?: string }) => React.ReactElement;
 }
 
-const PLANS: Plan[] = [
+/**
+ * Les parties de /production-ecrite — même principe que `LEÇONS` sur
+ * /langue : les 4 pistes déjà évoquées avec l'utilisateur (voir
+ * ETAT.md, la question posée avant de commencer), mais une seule a du
+ * contenu réel pour l'instant ("La méthodologie de la rédaction",
+ * choisie explicitement par l'utilisateur en premier). Les 3 autres
+ * restent des cartes non cliquables tant qu'elles n'ont pas de
+ * contenu importé — mêmes convention et bandeau "Bientôt disponible"
+ * que le reste du site.
+ */
+const SUJETS: Sujet[] = [
   {
-    titre: "Le plan simple",
-    quand:
-      "Quand le sujet demande d'expliquer ou de développer une seule idée, sans opposer de points de vue. Le développement s'organise en plusieurs parties qui abordent chacune un aspect différent du même thème.",
-    etapes: [
-      { libelle: "I.", detail: "Premier aspect du sujet" },
-      { libelle: "II.", detail: "Deuxième aspect du sujet" },
-      { libelle: "III.", detail: "Troisième aspect du sujet" },
-    ],
+    numero: 1,
+    slug: "methodologie-redaction",
+    titre: "La méthodologie de la rédaction",
+    description: "Comprendre le sujet, choisir son plan, construire une introduction et une conclusion.",
+    Icone: IconePlume,
   },
   {
-    titre: "Le plan dialectique",
-    quand:
-      "Pour un sujet qui invite à débattre, à peser le pour et le contre (« Êtes-vous d'accord avec... », « Faut-il... »).",
-    etapes: [
-      { libelle: "Thèse", detail: "Les arguments qui vont dans le sens de l'affirmation proposée par le sujet." },
-      { libelle: "Antithèse", detail: "Les arguments qui la contredisent ou la nuancent." },
-      {
-        libelle: "Synthèse",
-        detail:
-          "Un dépassement de l'opposition — une réponse personnelle et nuancée, qui ne se contente pas de juxtaposer les deux points de vue.",
-      },
-    ],
+    numero: 2,
+    slug: "sujets-redaction",
+    titre: "Sujets de rédaction",
+    description: "Des sujets classés pour s'entraîner, seul ou avec le Correcteur IA.",
+    Icone: IconeIdee,
   },
   {
-    titre: "Le plan analytique",
-    quand: "Pour un sujet qui invite à analyser un problème. Il suit une progression logique.",
-    etapes: [
-      { libelle: "Causes", detail: "Pourquoi ce problème existe-t-il ?" },
-      { libelle: "Conséquences", detail: "Quels sont ses effets ?" },
-      { libelle: "Solutions", detail: "Comment y remédier ?" },
-    ],
+    numero: 3,
+    slug: "modeles-corriges",
+    titre: "Modèles de rédactions corrigées",
+    description: "Des copies bien construites, annotées, pour voir ce qui est attendu.",
+    Icone: IconeDocument,
+  },
+  {
+    numero: 4,
+    slug: "grille-auto-evaluation",
+    titre: "Grille d'auto-évaluation",
+    description: "Les critères de notation d'une rédaction, pour se relire avec les bons repères.",
+    Icone: IconeCoche,
   },
 ];
 
-/** Composants de style partagés par les deux moitiés de markdown,
- * avant et après `GrillePlans`. */
-const COMPOSANTS_MARKDOWN = {
-  h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="mt-8 mb-3 font-serif text-xl font-bold text-ink first:mt-0">{children}</h2>
-  ),
-  p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="font-lecture text-[17px] leading-relaxed text-foreground">{children}</p>
-  ),
-  ul: ({ children }: { children?: React.ReactNode }) => (
-    <ul className="list-disc space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
-      {children}
-    </ul>
-  ),
-  ol: ({ children }: { children?: React.ReactNode }) => (
-    <ol className="list-decimal space-y-1.5 pl-6 font-lecture text-[17px] leading-relaxed text-foreground">
-      {children}
-    </ol>
-  ),
-  li: ({ children }: { children?: React.ReactNode }) => <li>{children}</li>,
-  strong: ({ children }: { children?: React.ReactNode }) => (
-    <strong className="font-semibold text-ink">{children}</strong>
-  ),
-  table: ({ children }: { children?: React.ReactNode }) => (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full border-collapse text-left text-[15px]">{children}</table>
-    </div>
-  ),
-  thead: ({ children }: { children?: React.ReactNode }) => <thead className="bg-surface-muted">{children}</thead>,
-  th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="border-b border-border px-4 py-2.5 font-semibold text-ink">{children}</th>
-  ),
-  td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="border-b border-border px-4 py-2.5 text-foreground [&:not(:first-child)]:text-muted-foreground">
-      {children}
-    </td>
-  ),
-};
-
-function GrillePlans() {
-  return (
-    <div className="my-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {PLANS.map((plan) => (
-        <div key={plan.titre} className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 shadow-sm">
-          <h3 className="font-serif text-base font-bold text-primary">{plan.titre}</h3>
-          <p className="font-lecture text-sm leading-relaxed text-muted-foreground">{plan.quand}</p>
-          <dl className="mt-1 flex flex-col gap-2 border-t border-border pt-3">
-            {plan.etapes.map((etape) => (
-              <div key={etape.libelle}>
-                <dt className="font-serif text-sm font-bold text-ink">{etape.libelle}</dt>
-                <dd className="font-lecture text-sm leading-relaxed text-foreground">{etape.detail}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      ))}
-    </div>
-  );
-}
-
+/**
+ * Page publique : /production-ecrite — liste des parties de la
+ * rubrique, sous forme de cartes (même structure que /langue, voir ce
+ * fichier). Demandé explicitement par l'utilisateur, en revenant sur
+ * le choix précédent qui affichait directement le contenu de la
+ * méthodologie ici : "fais moi dans la partie de p ecrite case du la
+ * methodologie de la redaction" — la méthodologie devient une carte
+ * cliquable vers /production-ecrite/methodologie-redaction plutôt que
+ * le contenu de cette page.
+ */
 export default async function PageProductionEcrite() {
-  const cours = await recupererCoursParSlug("methodologie-redaction");
-
-  if (!cours || !cours.contenu_mdx) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
-        <h1 className="text-xl font-semibold text-foreground">Production écrite</h1>
-        <p className="max-w-md text-muted-foreground">
-          Sujets et méthode pour réussir tes rédactions. Bientôt disponible.
-        </p>
-      </main>
-    );
-  }
-
-  const indexMarqueur = cours.contenu_mdx.indexOf(MARQUEUR_PLANS);
-  const avantPlans = indexMarqueur === -1 ? cours.contenu_mdx : cours.contenu_mdx.slice(0, indexMarqueur);
-  const apresPlans = indexMarqueur === -1 ? "" : cours.contenu_mdx.slice(indexMarqueur + MARQUEUR_PLANS.length);
+  const coursDisponibles = await recupererCoursParCategorie("production-ecrite", FILIERE_ACTUELLE);
+  const slugsDisponibles = new Set(coursDisponibles.map((c) => c.slug));
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <p className="mb-1.5 inline-flex items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
-        Production écrite
-      </p>
-      <h1 className="mb-8 font-serif text-3xl font-bold text-ink">{cours.titre}</h1>
+    <main className="flex flex-col">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+        <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-1.5 text-xs font-bold tracking-wide text-white uppercase">
+            <IconeLivreOuvert className="size-3.5" />
+            Français – 1ère Bac
+          </span>
+          <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
+            Production <span className="text-primary italic">écrite</span>
+          </h1>
+          <p className="mt-3 max-w-xl text-base text-muted-foreground">
+            Méthode, sujets et outils pour réussir tes rédactions à l&apos;examen.
+          </p>
+        </section>
 
-      <div className="flex flex-col gap-4">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
-          {avantPlans}
-        </ReactMarkdown>
+        <div className="flex items-center gap-3 border-b border-border pb-3">
+          <IconeLivreOuvert className="size-5 text-primary" />
+          <h2 className="font-serif text-lg font-bold text-ink">{SUJETS.length} parties pour progresser</h2>
+        </div>
 
-        {indexMarqueur !== -1 && <GrillePlans />}
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[18px]">
+          {SUJETS.map((sujet) => {
+            const disponible = slugsDisponibles.has(sujet.slug);
+            const contenuCarte = (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
+                    <sujet.Icone className="size-6" />
+                  </span>
+                  <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-primary-vif">
+                    {String(sujet.numero).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">{sujet.titre}</h3>
+                <p className="mt-1.5 font-lecture text-[14.5px] leading-relaxed text-muted-foreground">
+                  {sujet.description}
+                </p>
+                {disponible ? (
+                  <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
+                    Lire le cours
+                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                ) : (
+                  <span className="mt-4 inline-flex w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                    Bientôt disponible
+                  </span>
+                )}
+              </>
+            );
 
-        {apresPlans && (
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
-            {apresPlans}
-          </ReactMarkdown>
-        )}
+            return (
+              <li key={sujet.slug}>
+                {disponible ? (
+                  <Link
+                    href={`/production-ecrite/${sujet.slug}`}
+                    className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                  >
+                    {contenuCarte}
+                  </Link>
+                ) : (
+                  <div className="flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] opacity-70">
+                    {contenuCarte}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </main>
   );
