@@ -147,6 +147,29 @@ export interface Progression {
   termine_le: string | null;
 }
 
+// --- Communication (annonces publiques, messagerie privée un-à-un) ---
+
+export interface Annonce {
+  id: string;
+  titre: string;
+  contenu: string;
+  auteur_id: string;
+  created_at: string;
+}
+
+export interface Message {
+  id: string;
+  /** L'élève à qui appartient ce fil — toujours un élève, jamais un
+   * admin, même quand `auteur_id` est un admin (voir la migration
+   * 20260901020000_communication_annonces_messages.sql). */
+  eleve_id: string;
+  /** Qui a écrit CE message précis : l'élève lui-même, ou l'admin qui répond. */
+  auteur_id: string;
+  contenu: string;
+  lu: boolean;
+  created_at: string;
+}
+
 export interface Activite {
   id: string;
   user_id: string;

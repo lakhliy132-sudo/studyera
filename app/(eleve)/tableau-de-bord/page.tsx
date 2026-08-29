@@ -1,7 +1,9 @@
+import BlocAnnonces from "@/components/BlocAnnonces";
 import BlocDernieresActivites from "@/components/BlocDernieresActivites";
 import BlocProgression from "@/components/BlocProgression";
 import BlocRedaction from "@/components/BlocRedaction";
 import BlocReprendre from "@/components/BlocReprendre";
+import { recupererAnnonces } from "@/lib/supabase/communication";
 import { creerClientServeur } from "@/lib/supabase/server";
 import {
   recupererActivitesRecentes,
@@ -10,6 +12,11 @@ import {
   recupererQuotaRestant,
   recupererStatsCopies,
 } from "@/lib/supabase/tableauDeBord";
+
+/** Nombre d'annonces gardées pour le tableau de bord : seulement la
+ * plus récente est affichée par `BlocAnnonces`, 1 suffit donc à
+ * charger. */
+const NOMBRE_ANNONCES_TABLEAU_DE_BORD = 1;
 
 /** Nombre de lignes affichées dans le bloc "Dernières activités" (pas
  * plus, sinon la page devient un journal — voir /activite pour la
@@ -23,10 +30,12 @@ const NOMBRE_ACTIVITES_RECENTES = 4;
  * vers /connexion toute personne non authentifiée avant même que cette
  * page ne s'exécute. On peut donc supposer ici qu'un utilisateur existe.
  *
- * Session 5 : quatre blocs empilés dans un ordre fixe (mobile d'abord,
- * pas de réagencement en grille au-delà d'un certain écran) — l'action
- * la plus probable en premier, les chiffres en dernier. Voir ETAT.md
- * pour le détail de la règle "aucun bloc vide" appliquée à chacun.
+ * Session 5 : blocs empilés dans un ordre fixe (mobile d'abord, pas de
+ * réagencement en grille au-delà d'un certain écran) — l'action la
+ * plus probable en premier, les chiffres en dernier. Voir ETAT.md pour
+ * le détail de la règle "aucun bloc vide" appliquée à chacun.
+ * `BlocAnnonces` (communication CEO/élèves) ajouté en session
+ * ultérieure, entre Rédaction et Progression.
  */
 export default async function PageTableauDeBord() {
   const supabase = await creerClientServeur();
@@ -35,11 +44,12 @@ export default async function PageTableauDeBord() {
   } = await supabase.auth.getUser();
   const userId = user?.id ?? null;
 
-  const [activitesRecentes, quotaRestant, progressionOeuvres, statsCopies] = await Promise.all([
+  const [activitesRecentes, quotaRestant, progressionOeuvres, statsCopies, annonces] = await Promise.all([
     recupererActivitesRecentes(userId, NOMBRE_ACTIVITES_RECENTES),
     recupererQuotaRestant(userId),
     recupererProgressionParOeuvre(userId),
     recupererStatsCopies(userId),
+    recupererAnnonces(NOMBRE_ANNONCES_TABLEAU_DE_BORD),
   ]);
 
   const derniereActivite = activitesRecentes[0] ?? null;
@@ -56,6 +66,7 @@ export default async function PageTableauDeBord() {
 
       <BlocReprendre dernierChapitre={dernierChapitre} recommandation={recommandation} />
       <BlocRedaction quotaRestant={quotaRestant} />
+      <BlocAnnonces annonces={annonces} />
       <BlocProgression
         chapitresLus={progressionOeuvres.totalChapitresLus}
         copiesCorrigees={statsCopies.copiesCorrigees}

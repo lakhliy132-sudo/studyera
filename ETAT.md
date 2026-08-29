@@ -2,6 +2,75 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> ## ⚠️⚠️ ACTION MANUELLE REQUISE AVANT QUE CETTE PARTIE FONCTIONNE ⚠️⚠️
+>
+> Les deux migrations ci-dessous doivent être collées et exécutées à la
+> main dans le SQL editor du tableau de bord Supabase (Project →
+> SQL Editor → New query) — impossible de les appliquer depuis cet
+> environnement, qui n'a que les clés REST anon/service_role (pas de
+> connexion Postgres directe, donc pas d'exécution de DDL). **Dans cet
+> ordre précis :**
+> 1. `supabase/migrations/20260901010000_fix_recursion_est_admin.sql`
+> 2. `supabase/migrations/20260901020000_communication_annonces_messages.sql`
+>
+> **Bogue critique découvert en session, corrigé par la migration 1** :
+> en préparant la fonctionnalité de communication ci-dessous, j'ai
+> trouvé que TOUT `SELECT` sur `profils` échoue actuellement en base
+> avec l'erreur Postgres 54001 "stack depth limit exceeded" — une
+> récursion infinie causée par la policy "les admins voient tous les
+> profils" (migration 20260829000000), qui appelle `est_admin()`,
+> laquelle interroge `profils` à son tour, retombant sur la même
+> policy, etc. Conséquence concrète vérifiée dans le code : le
+> middleware qui protège `/administration` interprète cet échec comme
+> "pas admin" et redirige — **personne ne peut donc actuellement
+> accéder à l'espace administrateur**, indépendamment de tout ce qui
+> suit. La migration 1 rend `est_admin()` `security definer` (fix
+> standard Supabase pour ce cas précis), ce qui règle le problème.
+>
+> **Communication CEO/élèves (annonces + messagerie privée)** —
+> demandé explicitement par l'utilisateur ("je veux ajouter une case de
+> la comminucation par exemple moi ceo of the site talk avec les eleves
+> qui sont dans la plateforme"), précisé via question : annonces
+> publiques ET messagerie privée un-à-un ("les deux"). Nouvelles tables
+> `annonces` (titre/contenu/auteur, lecture par tout utilisateur
+> connecté, écriture réservée aux admins) et `messages` (fil par élève,
+> `eleve_id` identifie toujours le fil, `auteur_id` qui a écrit ce
+> message précis — élève ou n'importe quel admin) dans la migration 2,
+> RLS écrite pour que : un élève ne lit/écrit que son propre fil ; un
+> admin lit/écrit dans n'importe quel fil.
+>
+> - `lib/supabase/communication.ts` : toutes les fonctions de
+>   lecture/écriture. Volontairement non bloquantes côté lecture
+>   (`recupererAnnonces`, `recupererMessagesEleve`,
+>   `recupererFilsMessagesPourAdmin` attrapent l'erreur et renvoient un
+>   tableau vide) — même principe que `enregistrerActivite` : tant que
+>   les migrations n'auront pas été appliquées manuellement, le
+>   tableau de bord ne doit pas planter pour autant, juste montrer un
+>   état vide.
+> - **Élève** : `BlocAnnonces` (nouveau bloc du tableau de bord,
+>   dernière annonce + lien "Écrire à l'administration"), page
+>   `/messages` (fil privé complet + formulaire d'envoi, via
+>   `FilMessages`, ajoutée à `CHEMINS_PROTEGES` dans middleware.ts).
+> - **Admin** : `/administration` complétée de deux sections —
+>   "Annonces" (formulaire de publication `FormulaireAnnonce` + liste)
+>   et "Messages des élèves" (liste des fils, badge du nombre de
+>   messages non lus, lien vers `/administration/messages/[eleveId]`
+>   qui réutilise `FilMessages` pour répondre).
+> - Pas de temps réel (ni websocket ni polling) : envoi/publication
+>   met à jour l'état local ou déclenche `router.refresh()` — il faut
+>   recharger la page pour voir une réponse envoyée par l'autre côté
+>   entre-temps. Volontairement simple pour une première version.
+>
+> ⚠️ Vérification incomplète, à faire par l'utilisateur : `npx tsc
+> --noEmit` passe sans erreur, et les redirections du middleware
+> (`/messages`, `/tableau-de-bord`, `/administration` → `/connexion`
+> pour un visiteur non connecté) ont été vérifiées par curl — mais je
+> n'ai **pas** pu vérifier visuellement le rendu réel des pages
+> connectées (tableau de bord avec `BlocAnnonces`, `/messages`,
+> `/administration` avec ses deux nouvelles sections) faute de compte
+> de test (élève ou admin) dans cet environnement. À vérifier après
+> avoir appliqué les deux migrations et s'être connecté.
+>
 > **Rédactions modèles encadrées, texte en noir plutôt qu'en bleu** —
 > demandé explicitement par l'utilisateur ("fait la redaction arrondis
 > et c mieux de faire l ecriture avec noir pas bleu"). Le gras
