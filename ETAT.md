@@ -2,6 +2,16 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Texte des 2 rédactions modèles passé en gras** — demandé
+> explicitement par l'utilisateur ("dans cette partie de redaction
+> change le mode d ecriture en gras"). Chaque paragraphe de rédaction
+> (pas l'encadré "Sujet"/"Le plan choisi", ni les "Points forts")
+> entouré de `**...**` dans le markdown en base, rendu via le
+> composant `strong` déjà stylé (gras + `text-ink`) — pas de nouveau
+> style de composant, juste le contenu modifié. Vérifié par capture
+> Playwright : les 9 paragraphes de rédaction (4 + 5) bien en gras, le
+> reste de la page inchangé.
+>
 > **/production-ecrite : "Modèles de rédactions corrigées" rédigé** —
 > demandé par l'utilisateur, qui m'a laissé l'initiative du contenu
 > ("fait de ta part methode de reactions corrigés"). Nouveau cours en
