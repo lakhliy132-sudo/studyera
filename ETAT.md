@@ -2,6 +2,32 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Rédactions modèles encadrées, texte en noir plutôt qu'en bleu** —
+> demandé explicitement par l'utilisateur ("fait la redaction arrondis
+> et c mieux de faire l ecriture avec noir pas bleu"). Le gras
+> `**...**` (rendu via le composant `strong` partagé, en
+> `--color-ink` — un bleu profond, pas un vrai noir) ne convenait pas
+> pour distinguer visuellement le texte d'une copie du reste de la
+> page. Remplacé par un système de marqueurs générique :
+> `segmenter()` découpe désormais `contenu_mdx` sur 3 types de
+> marqueurs (`<!-- PLANS -->`, et la paire
+> `<!-- REDACTION -->`/`<!-- /REDACTION -->`, qui peut apparaître 0,
+> 1 ou plusieurs fois) au lieu de la coupe unique précédente réservée
+> à `<!-- PLANS -->`. Chaque bloc `<!-- REDACTION -->` est rendu par
+> `BlocRedaction` : encadré arrondi (`rounded-lg border`), texte en
+> gras et `text-foreground` (noir, pas `text-ink`) — sans toucher au
+> `strong` partagé, donc "Sujet"/"Le plan choisi" restent en bleu,
+> cohérent avec le reste de la page.
+>
+> Bug corrigé en vérifiant : les paragraphes de rédaction, une fois
+> sortis du flux principal (qui a `gap-4` sur son conteneur), n'avaient
+> plus d'espacement entre eux à l'intérieur de `BlocRedaction` — ajouté
+> `flex flex-col gap-4` sur son propre conteneur aussi.
+>
+> Vérifié par capture Playwright : les 2 rédactions bien encadrées et
+> en noir, espacement des paragraphes correct, page méthodologie
+> (`GrillePlans`) non affectée par la généralisation de `segmenter()`.
+>
 > **Texte des 2 rédactions modèles passé en gras** — demandé
 > explicitement par l'utilisateur ("dans cette partie de redaction
 > change le mode d ecriture en gras"). Chaque paragraphe de rédaction

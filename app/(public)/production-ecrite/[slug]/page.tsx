@@ -24,12 +24,15 @@ interface PageProps {
  * Les 3 types de plan (simple/dialectique/analytique) sortent
  * volontairement du flux markdown — demandé explicitement par
  * l'utilisateur ("je veux quelle soit bien classé chaque plan dans
- * une case pas comme ça"). Le `contenu_mdx` en base contient un
- * marqueur `<!-- PLANS -->` à l'endroit précis où les 3 plans
- * doivent apparaître ; cette page coupe le texte à ce marqueur et
- * intercale `GrillePlans` (3 cases, contenu de `PLANS` ci-dessous —
- * même texte que ce qui était en base avant, pas reformulé) entre les
- * deux moitiés de markdown.
+ * une case pas comme ça"). Le corps de chaque rédaction modèle en
+ * sort aussi, pour un traitement visuel dédié (encadré arrondi, texte
+ * en gras et en noir plutôt qu'en bleu — demandé explicitement :
+ * "fait la redaction arrondis et c mieux de faire l ecriture avec
+ * noir pas bleu"). `segmenter()` découpe le `contenu_mdx` en base sur
+ * 3 marqueurs (`<!-- PLANS -->`, `<!-- REDACTION -->`/
+ * `<!-- /REDACTION -->`) et rend chaque morceau avec le composant
+ * adapté ; le texte markdown normal (hors marqueurs) passe par
+ * `ReactMarkdown`/`COMPOSANTS_MARKDOWN` comme avant.
  *
  * ⚠️ Contenu entièrement rédigé par Claude (méthodologie générale de
  * la rédaction argumentative, pas propre à une œuvre précise) — à
@@ -37,6 +40,42 @@ interface PageProps {
  */
 
 const MARQUEUR_PLANS = "<!-- PLANS -->";
+const MARQUEUR_REDACTION_DEBUT = "<!-- REDACTION -->";
+const MARQUEUR_REDACTION_FIN = "<!-- /REDACTION -->";
+
+type Segment =
+  | { type: "markdown"; texte: string }
+  | { type: "plans" }
+  | { type: "redaction"; texte: string };
+
+/** Découpe `contenu_mdx` sur les marqueurs spéciaux, en gardant les
+ * délimiteurs (regex à groupe capturant) pour savoir quel segment
+ * appartient à quelle zone. Générique : marche pour 0, 1 ou plusieurs
+ * blocs `<!-- REDACTION -->`. */
+function segmenter(contenu: string): Segment[] {
+  const morceaux = contenu.split(
+    /(<!-- PLANS -->|<!-- REDACTION -->|<!-- \/REDACTION -->)/,
+  );
+  const segments: Segment[] = [];
+  let dansRedaction = false;
+  let tamponRedaction = "";
+
+  for (const morceau of morceaux) {
+    if (morceau === MARQUEUR_PLANS) {
+      segments.push({ type: "plans" });
+    } else if (morceau === MARQUEUR_REDACTION_DEBUT) {
+      dansRedaction = true;
+      tamponRedaction = "";
+    } else if (morceau === MARQUEUR_REDACTION_FIN) {
+      dansRedaction = false;
+      segments.push({ type: "redaction", texte: tamponRedaction });
+    } else if (morceau) {
+      if (dansRedaction) tamponRedaction += morceau;
+      else segments.push({ type: "markdown", texte: morceau });
+    }
+  }
+  return segments;
+}
 
 interface Plan {
   titre: string;
@@ -84,8 +123,9 @@ const PLANS: Plan[] = [
   },
 ];
 
-/** Composants de style partagés par les deux moitiés de markdown,
- * avant et après `GrillePlans`. */
+/** Composants de style partagés par tous les segments markdown
+ * "normaux" produits par `segmenter()` (hors `GrillePlans`/
+ * `BlocRedaction`, qui ont leur propre habillage). */
 const COMPOSANTS_MARKDOWN = {
   h2: ({ children }: { children?: React.ReactNode }) => (
     <h2 className="mt-8 mb-3 font-serif text-xl font-bold text-ink first:mt-0">{children}</h2>
@@ -135,6 +175,28 @@ const COMPOSANTS_MARKDOWN = {
   ),
 };
 
+/** Paragraphes d'une rédaction modèle : gras et en `text-foreground`
+ * (noir, pas la couleur bleue de `--color-ink` utilisée par `strong`
+ * ailleurs sur la page) — demandé explicitement par l'utilisateur. */
+const COMPOSANTS_REDACTION = {
+  ...COMPOSANTS_MARKDOWN,
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="font-lecture text-[17px] leading-relaxed font-bold text-foreground">{children}</p>
+  ),
+};
+
+/** Encadré arrondi autour du texte d'une rédaction modèle — demandé
+ * explicitement par l'utilisateur ("fait la redaction arrondis"). */
+function BlocRedaction({ texte }: { texte: string }) {
+  return (
+    <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_REDACTION}>
+        {texte}
+      </ReactMarkdown>
+    </div>
+  );
+}
+
 function GrillePlans() {
   return (
     <div className="my-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -161,9 +223,7 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
   const cours = await recupererCoursParSlug(slug);
   if (!cours || cours.categorie !== "production-ecrite" || !cours.contenu_mdx) notFound();
 
-  const indexMarqueur = cours.contenu_mdx.indexOf(MARQUEUR_PLANS);
-  const avantPlans = indexMarqueur === -1 ? cours.contenu_mdx : cours.contenu_mdx.slice(0, indexMarqueur);
-  const apresPlans = indexMarqueur === -1 ? "" : cours.contenu_mdx.slice(indexMarqueur + MARQUEUR_PLANS.length);
+  const segments = segmenter(cours.contenu_mdx);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
@@ -176,17 +236,15 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
       <h1 className="mb-8 font-serif text-3xl font-bold text-ink">{cours.titre}</h1>
 
       <div className="flex flex-col gap-4">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
-          {avantPlans}
-        </ReactMarkdown>
-
-        {indexMarqueur !== -1 && <GrillePlans />}
-
-        {apresPlans && (
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
-            {apresPlans}
-          </ReactMarkdown>
-        )}
+        {segments.map((segment, index) => {
+          if (segment.type === "plans") return <GrillePlans key={index} />;
+          if (segment.type === "redaction") return <BlocRedaction key={index} texte={segment.texte} />;
+          return (
+            <ReactMarkdown key={index} remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
+              {segment.texte}
+            </ReactMarkdown>
+          );
+        })}
       </div>
     </main>
   );
