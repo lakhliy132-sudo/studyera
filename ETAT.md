@@ -2,6 +2,21 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Toutes les parenthèses retirées du texte de la méthodologie de
+> rédaction** — l'utilisateur a redemandé après un premier retrait
+> partiel (une seule occurrence corrigée précédemment) : "enleve )
+> dans les ecritures", plus général que la fois précédente. Repris
+> tout le `contenu_mdx` en base et reformulé chaque tour de phrase qui
+> utilisait des parenthèses, sans rien perdre du sens — virgules,
+> deux-points ou tirets à la place ("sujet d'opinion, du type..." au
+> lieu de "sujet d'opinion (...)" ; "un résumé synthétique, pas une
+> simple répétition, des grandes étapes..." au lieu de "(pas une
+> simple répétition)", etc.). Le script d'édition vérifie lui-même
+> qu'aucune parenthèse ne subsiste avant d'écrire le fichier
+> (`/[()]/.test(...)`) — garde-fou contre un oubli. Vérifié par
+> capture Playwright : plus aucune parenthèse visible sur toute la
+> page.
+>
 > **/production-ecrite transformée en liste de cartes (comme /langue)
 > + parenthèse fermante isolée retirée** — demandé explicitement par
 > l'utilisateur ("enleve ) ca dans l ecriture et fais moi dans la
