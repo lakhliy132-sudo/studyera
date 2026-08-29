@@ -7,17 +7,32 @@ import type { Oeuvre } from "@/types/base-de-donnees";
 interface CarteOeuvreProps {
   oeuvre: Oeuvre;
   nombreChapitres: number;
+  /** Rang de la carte dans la grille (0, 1, 2…) — décale son animation
+   * d'entrée pour que les cartes apparaissent l'une après l'autre au
+   * chargement de /oeuvres, plutôt que toutes en même temps. */
+  indexAnimation?: number;
 }
 
-/** Carte cliquable d'une œuvre, utilisée dans la grille de /oeuvres. */
-export default function CarteOeuvre({ oeuvre, nombreChapitres }: CarteOeuvreProps) {
+/**
+ * Carte cliquable d'une œuvre, utilisée dans la grille de /oeuvres.
+ *
+ * Deux mouvements demandés explicitement par l'utilisateur ("je veux
+ * les 3 cases du roman bougee un peu") : une animation d'entrée
+ * échelonnée au chargement de la page (`animate-entree-carte`, voir
+ * app/globals.css) et un léger soulèvement au survol
+ * (`hover:-translate-y-1`) — `transition` (sans suffixe) couvre déjà
+ * `transform` par défaut dans Tailwind, donc `hover:shadow-md` et
+ * `hover:-translate-y-1` s'animent tous les deux au même rythme.
+ */
+export default function CarteOeuvre({ oeuvre, nombreChapitres, indexAnimation = 0 }: CarteOeuvreProps) {
   // "N scènes" pour Antigone plutôt que "N chapitres" — voir lib/uniteChapitre.ts.
   const unite = libelleUniteChapitre(oeuvre.slug);
 
   return (
     <Link
       href={`/oeuvres/${oeuvre.slug}`}
-      className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition hover:shadow-md"
+      style={{ animationDelay: `${indexAnimation * 100}ms` }}
+      className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition hover:-translate-y-1 hover:shadow-md animate-entree-carte"
     >
       <div className="relative aspect-[3/4] w-full">
         <CouvertureOeuvre url={oeuvre.couverture_url} titre={oeuvre.titre_fr} />

@@ -19,11 +19,12 @@ export default async function PageOeuvres() {
         <p className="text-muted-foreground">Bientôt disponible.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {oeuvres.map((oeuvre) => (
+          {oeuvres.map((oeuvre, index) => (
             <CarteOeuvre
               key={oeuvre.id}
               oeuvre={oeuvre}
               nombreChapitres={oeuvre.nombreChapitres}
+              indexAnimation={index}
             />
           ))}
         </div>

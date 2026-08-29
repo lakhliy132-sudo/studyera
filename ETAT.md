@@ -2,6 +2,31 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
 >
+> **Résumé "essentiel" d'Antigone renseigné** (bannière de
+> /oeuvres/antigone, jusqu'ici "Bientôt disponible"/"قريبًا") —
+> `oeuvres.essentiel_fr` rempli avec le texte fourni verbatim par
+> l'utilisateur ("ajoute ca resumé d antigone"), phrase par phrase,
+> newlines conservés (le composant `CarteBilingue` les respecte via
+> `whitespace-pre-line`, même rendu que le texte fourni). ⚠️
+> `essentiel_ar` : traduction de Claude, phrase à phrase pour rester
+> alignée avec le français — à faire relire par un enseignant. Ajouté
+> via le pipeline Excel habituel (feuille Oeuvres, `npm run importer`,
+> 0 erreur), essentiel_fr/ar de La Boîte à Merveilles vérifié
+> inchangé. Vérifié par capture Playwright.
+>
+> **Cartes de /oeuvres : animation d'entrée + survol** — demandé
+> explicitement par l'utilisateur ("je veux les 3 cases du roman
+> bougee un peu", précisé ensuite : entrée ET survol). Nouveau
+> `@keyframes entree-carte` + token `--animate-entree-carte` dans
+> `app/globals.css` (fondu + léger glissement vers le haut, `backwards`
+> pour rester invisible pendant le délai) ; `CarteOeuvre.tsx` prend un
+> nouveau prop `indexAnimation` qui décale l'animation de chaque carte
+> de 100ms (déclenché en cascade plutôt que toutes en même temps) et
+> ajoute `hover:-translate-y-1` (le `transition` déjà présent couvre
+> `transform` par défaut dans Tailwind, donc s'anime avec la même
+> douceur que `hover:shadow-md`). Vérifié par capture Playwright (état
+> au repos et au survol).
+>
 > **Lieux et sujets liés ajoutés pour les 21 scènes d'Antigone** —
 > demandé explicitement par l'utilisateur ("fait les lieux et le
 > sujetrs lieux de chaque scene"). Deux volets :
