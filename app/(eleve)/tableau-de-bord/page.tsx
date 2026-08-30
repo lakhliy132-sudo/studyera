@@ -49,24 +49,23 @@ function deriverPrenom(nomComplet: string | null, email: string | null): string 
  * vers /connexion toute personne non authentifiée avant même que cette
  * page ne s'exécute. On peut donc supposer ici qu'un utilisateur existe.
  *
- * Réécrite sur un modèle complet fourni par l'utilisateur ("fais moi
- * comme ca mais ajoute des modif bien") : structure et esprit repris
- * (accroche du jour + série, "page de cahier" pour la reprise de
- * lecture, carte focus rouge pour la correction, anneau de
- * progression, liste du programme, communication), mais adaptée au
- * système de design existant du site plutôt qu'un système parallèle :
- * les tokens de couleur déjà en place (--color-ink/--color-primary/
- * --color-erreur/--color-validation) au lieu d'une palette "papier"
- * séparée, la police serif déjà en place (Playfair Display) au lieu
- * d'en ajouter une seconde, uniquement `--font-mono` (IBM Plex Mono)
- * ajouté pour les petites étiquettes en capitales — cohérent avec la
- * police arabe déjà de la même famille. Toutes les données sont
- * réelles (Supabase), rien n'est laissé en donnée fictive : pas
- * d'"extrait" littéral du texte (jamais rempli en base, présenté comme
- * un résumé, voir CarteReprise.tsx), pas de "dernière correction"
- * inventée (remplacée par la note moyenne réelle, voir
- * CarteProductionEcrite.tsx), la "série de jours" est calculée depuis
- * `activite` (voir `recupererSerieJours`), pas codée en dur.
+ * Reconstruite sur un modèle complet fourni par l'utilisateur ("fais
+ * moi comme ca mais ajoute des modif bien"), puis REPRISE FIDÈLEMENT
+ * (palette "papier", police Fraunces, ligne rouge en marge) après un
+ * premier essai jugé trop éloigné du modèle fourni ("tu peux modifier
+ * le design j ai pas aimé comme ca" / "tout") — la première version
+ * adaptait la palette/police aux tokens déjà en place ailleurs sur le
+ * site, celle-ci reprend directement les couleurs/police du modèle
+ * fourni, mais dans un espace de tokens à part (`.tableau-de-bord`,
+ * voir app/globals.css) qui ne change RIEN à l'apparence des autres
+ * pages du site.
+ *
+ * Toutes les données restent réelles (Supabase), rien n'est laissé en
+ * donnée fictive : pas d'"extrait" littéral du texte (jamais rempli en
+ * base, présenté comme un résumé, voir CarteReprise.tsx), pas de
+ * "dernière correction" inventée (remplacée par la note moyenne
+ * réelle), la "série de jours" est calculée depuis `activite` (voir
+ * `recupererSerieJours`), pas codée en dur.
  */
 export default async function PageTableauDeBord() {
   const supabase = await creerClientServeur();
@@ -93,42 +92,57 @@ export default async function PageTableauDeBord() {
   const prenom = deriverPrenom(profil?.nom_complet ?? null, user?.email ?? null);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-4 py-10 sm:px-6">
-      <p className="mb-4 flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
-        <span className="size-1.5 rounded-full bg-validation shadow-[0_0_0_3px_rgba(15,122,87,0.16)]" />
-        {joursCourant()}
-        {serie > 0 && ` · ${serie} jour${serie > 1 ? "s" : ""} de suite`}
-      </p>
-      <h1 className="mb-6 font-serif text-4xl font-semibold tracking-tight text-ink sm:text-[52px]">
-        Bonjour {prenom}.
-        {reprise && (
-          <>
-            <br />
-            <em className="text-primary italic">
-              {reprise.estRecommandation ? "Découvrons" : "Reprenons"} {reprise.oeuvreTitreFr}.
-            </em>
-          </>
-        )}
-      </h1>
-
-      {reprise && <CarteReprise reprise={reprise} />}
-
-      <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-[1.5fr_1fr]">
-        <CarteProductionEcrite
-          quotaRestant={quotaRestant}
-          quotaMax={QUOTA_QUOTIDIEN_MAX}
-          copiesCorrigees={statsCopies.copiesCorrigees}
-          noteMoyenne={statsCopies.noteMoyenne}
+    <div className="tableau-de-bord min-h-screen">
+      <main className="relative mx-auto max-w-[1000px] px-6 pt-[52px] pb-28 sm:px-9">
+        {/* Ligne verticale rouge en fondu, en marge — décoration reprise
+         * telle quelle du modèle fourni ("stu-rule"). */}
+        <span
+          aria-hidden="true"
+          className="absolute top-[34px] bottom-[60px] left-3.5 hidden w-px opacity-40 sm:block"
+          style={{ backgroundImage: "linear-gradient(var(--tdb-red), rgba(200,64,44,0) 92%)" }}
         />
-        <CarteProgressionAnneau
-          chapitresLus={progressionOeuvres.totalChapitresLus}
-          totalChapitres={progressionOeuvres.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0)}
-        />
-      </div>
 
-      <ListeProgrammeOeuvres parOeuvre={progressionOeuvres.parOeuvre} />
-      <BlocAnnonces annonces={annonces} />
-      <BlocDernieresActivites activites={activitesRecentes} />
-    </main>
+        <div className="flex flex-col gap-2 sm:pl-[54px]">
+          <p className="mb-4 flex items-center gap-2 [font-family:var(--tdb-font-mono)] text-[11px] tracking-[0.14em] text-[var(--tdb-mute)] uppercase">
+            <span
+              className="size-1.5 rounded-full"
+              style={{ backgroundColor: "var(--tdb-green)", boxShadow: "0 0 0 3px rgba(29,122,94,0.16)" }}
+            />
+            {joursCourant()}
+            {serie > 0 && ` · ${serie} jour${serie > 1 ? "s" : ""} de suite`}
+          </p>
+          <h1 className="mb-11 [font-family:var(--tdb-font-serif)] text-[clamp(32px,5.2vw,54px)] leading-[1.06] font-semibold tracking-tight text-[var(--tdb-ink)]">
+            Bonjour {prenom}.
+            {reprise && (
+              <>
+                <br />
+                <em className="text-[var(--tdb-blue)] italic">
+                  {reprise.estRecommandation ? "Découvrons" : "Reprenons"} {reprise.oeuvreTitreFr}.
+                </em>
+              </>
+            )}
+          </h1>
+
+          {reprise && <CarteReprise reprise={reprise} />}
+
+          <div className="mt-[18px] grid grid-cols-1 gap-[18px] sm:grid-cols-[1.5fr_1fr]">
+            <CarteProductionEcrite
+              quotaRestant={quotaRestant}
+              quotaMax={QUOTA_QUOTIDIEN_MAX}
+              copiesCorrigees={statsCopies.copiesCorrigees}
+              noteMoyenne={statsCopies.noteMoyenne}
+            />
+            <CarteProgressionAnneau
+              chapitresLus={progressionOeuvres.totalChapitresLus}
+              totalChapitres={progressionOeuvres.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0)}
+            />
+          </div>
+
+          <ListeProgrammeOeuvres parOeuvre={progressionOeuvres.parOeuvre} />
+          <BlocAnnonces annonces={annonces} />
+          <BlocDernieresActivites activites={activitesRecentes} />
+        </div>
+      </main>
+    </div>
   );
 }

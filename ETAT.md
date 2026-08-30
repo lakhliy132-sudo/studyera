@@ -1,6 +1,39 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-29.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-30.
+>
+> **/tableau-de-bord repris fidèlement au modèle fourni** (2ᵉ passe) —
+> le premier essai (voir entrée précédente) adaptait la palette/police
+> du modèle fourni par l'utilisateur aux tokens déjà en place ailleurs
+> sur le site (cohérence globale). L'utilisateur n'a pas aimé
+> ("tu peux modifier le design j ai pas aimé comme ca", puis "tout" en
+> réponse à une question de clarification) : cette fois, ses couleurs
+> et sa police (Fraunces) sont reprises directement, telles quelles.
+>
+> - Nouvel espace de tokens `.tableau-de-bord` (`app/globals.css`,
+>   préfixe `--tdb-`) : fond "papier" crème (`#F6F4EF`), encre, bleu,
+>   rouge, vert — les valeurs exactes du modèle fourni. Scopé à cette
+>   seule page (`<div className="tableau-de-bord min-h-screen">`
+>   enveloppant `<main>`) : ne change RIEN à l'apparence du reste du
+>   site, qui garde ses propres tokens `--color-*`. Utilisé partout via
+>   la syntaxe Tailwind `bg-[var(--tdb-paper)]`/
+>   `[font-family:var(--tdb-font-serif)]`.
+> - Police Fraunces ajoutée (`app/layout.tsx`, `--font-fraunces`),
+>   réservée à cette page — les autres pages gardent Playfair Display.
+> - Ligne verticale rouge en fondu dans la marge gauche (décoration du
+>   modèle fourni, "stu-rule"), reprise telle quelle sur desktop
+>   (masquée en dessous de `sm` : pas assez de place).
+> - Tous les composants du tableau de bord (`CarteReprise`,
+>   `CarteProductionEcrite`, `CarteProgressionAnneau`,
+>   `ListeProgrammeOeuvres`, `BlocAnnonces`, `BlocDernieresActivites`)
+>   réécrits pour utiliser ces nouveaux tokens à la place des tokens
+>   globaux. Les données restent réelles (aucun changement côté
+>   `lib/supabase/tableauDeBord.ts` : seule l'apparence a changé).
+>
+> Vérifié avec un compte de test jetable + vraie session (même
+> technique que la 1ʳᵉ passe) : desktop et mobile, 0px de débordement,
+> aucune erreur JS. Compte de test et données injectées supprimés
+> ensuite.
 >
 > **/tableau-de-bord entièrement reconstruit** — l'utilisateur a fourni
 > un composant React complet (JSX + CSS-in-JS autonome, ~400 lignes)

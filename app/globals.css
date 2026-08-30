@@ -137,3 +137,35 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
+
+/**
+ * Tokens réservés à /tableau-de-bord — demandé explicitement par
+ * l'utilisateur après un premier essai qui adaptait aux tokens
+ * globaux du site plutôt que de reprendre tel quel le modèle qu'il
+ * avait fourni ("tu peux modifier le design j ai pas aimé comme ca" /
+ * "tout"). Cette fois, sa palette "papier" (fond crème, encre, bleu,
+ * rouge, vert) et sa police Fraunces sont reprises directement, mais
+ * dans un espace de variables à part (préfixe `--tdb-`, portée par la
+ * classe `.tableau-de-bord`) plutôt que dans les tokens globaux
+ * (`--color-*`) : ne change strictement rien à l'apparence du reste du
+ * site, qui garde sa propre palette bleutée. Utilisées via la syntaxe
+ * Tailwind `bg-[var(--tdb-paper)]`, etc. — voir les composants sous
+ * components/tableau-de-bord/.
+ */
+.tableau-de-bord {
+  --tdb-ink: #151a24;
+  --tdb-ink-2: #3d4557;
+  --tdb-mute: #7a8296;
+  --tdb-paper: #f6f4ef;
+  --tdb-card: #ffffff;
+  --tdb-line: #e3dfd5;
+  --tdb-blue: #1e3fd8;
+  --tdb-red: #c8402c;
+  --tdb-green: #1d7a5e;
+  --tdb-font-serif: var(--font-fraunces), Georgia, serif;
+  --tdb-font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
+  --tdb-font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
+
+  background-color: var(--tdb-paper);
+  color: var(--tdb-ink);
+}

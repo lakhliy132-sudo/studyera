@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -77,6 +77,24 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 /**
+ * Police serif éditoriale, réservée à /tableau-de-bord — demandé
+ * explicitement par l'utilisateur, qui n'aimait pas le premier rendu
+ * ("tu peux modifier le design j ai pas aimé comme ca" / "tout") après
+ * un premier essai qui adaptait son modèle fourni aux polices déjà en
+ * place (Playfair Display) plutôt que de le reprendre tel quel. Cette
+ * fois, la police du modèle fourni (Fraunces) est reprise directement,
+ * dans un espace de tokens dédié à cette seule page (voir
+ * `.tableau-de-bord` dans app/globals.css) — n'affecte aucune autre
+ * page du site.
+ */
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -95,7 +113,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable}`}
+      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
