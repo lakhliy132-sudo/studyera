@@ -13,25 +13,27 @@ function pad(n: number) {
 }
 
 /**
- * Section "Au programme cette année" — reprise fidèlement du modèle
- * fourni par l'utilisateur (une ligne par œuvre : numéro, titre
- * arabe, auteur, barre d'avancement), palette/police dédiées à cette
- * page (voir CarteReprise.tsx pour le contexte). Remplace la partie
- * "liste par œuvre" de l'ancien `BlocProgression.tsx`.
+ * Section "Au programme cette année" — n'avait jusqu'ici aucune carte
+ * (juste une liste nue sous un en-tête). Encadrée en rectangle arrondi,
+ * fond en dégradé bleu → bleu ciel (`--tdb-degrade-bleu`), texte blanc
+ * — demandé explicitement par l'utilisateur ("PARTIE DE COMMUNICATION
+ * ET AU PROGRAMME DE L ANNée ET DERNIER ACTIVITéS CHANGE LA FORME FAIS
+ * LA RECTANGLE ET ARRONDIS AVEC COULEUR BLEU VERS BLEU CIEL"), même
+ * traitement que `BlocAnnonces.tsx`/`BlocDernieresActivites.tsx`.
  */
 export default function ListeProgrammeOeuvres({ parOeuvre }: ListeProgrammeOeuvresProps) {
   if (parOeuvre.length === 0) return null;
 
   return (
-    <section className="mt-11">
-      <div className="flex items-center justify-between border-b border-[var(--tdb-line)] pb-3">
-        <span className="[font-family:var(--tdb-font-mono)] text-[10.5px] font-medium tracking-[0.15em] text-[var(--tdb-mute)] uppercase">
+    <section
+      className="mt-11 rounded-[14px] p-7 text-white shadow-[0_10px_30px_-14px_rgba(30,63,216,0.45)]"
+      style={{ backgroundImage: "var(--tdb-degrade-bleu)" }}
+    >
+      <div className="flex items-center justify-between border-b border-white/25 pb-3">
+        <span className="[font-family:var(--tdb-font-mono)] text-[10.5px] font-medium tracking-[0.15em] text-white/80 uppercase">
           Au programme cette année
         </span>
-        <Link
-          href="/oeuvres"
-          className="flex items-center gap-1.5 text-sm font-medium text-[var(--tdb-blue)] hover:underline"
-        >
+        <Link href="/oeuvres" className="flex items-center gap-1.5 text-sm font-medium text-white hover:underline">
           Toutes les œuvres
           <IconeFleche className="size-3.5" />
         </Link>
@@ -42,27 +44,24 @@ export default function ListeProgrammeOeuvres({ parOeuvre }: ListeProgrammeOeuvr
           const unite = libelleUniteChapitre(oeuvre.slug);
           const pourcentage =
             oeuvre.totalChapitres > 0 ? Math.round((oeuvre.chapitresLus / oeuvre.totalChapitres) * 100) : 0;
+          const dernier = index === parOeuvre.length - 1;
 
           return (
-            <li key={oeuvre.slug} className="border-b border-[var(--tdb-line)]">
+            <li key={oeuvre.slug} className={dernier ? "" : "border-b border-white/15"}>
               <Link
                 href={`/oeuvres/${oeuvre.slug}`}
-                className="grid grid-cols-[34px_1fr_auto] items-center gap-5 rounded-lg py-[17px] transition-colors hover:bg-black/[0.03] sm:grid-cols-[34px_1fr_auto_110px_52px]"
+                className="grid grid-cols-[34px_1fr_auto] items-center gap-5 rounded-lg py-[17px] transition-colors hover:bg-white/10 sm:grid-cols-[34px_1fr_auto_110px_52px]"
               >
-                <span className="[font-family:var(--tdb-font-mono)] text-xs text-[var(--tdb-mute)]">
-                  {pad(index + 1)}
-                </span>
+                <span className="[font-family:var(--tdb-font-mono)] text-xs text-white/70">{pad(index + 1)}</span>
                 <span>
-                  <span className="block text-base font-semibold tracking-tight text-[var(--tdb-ink)]">
-                    {oeuvre.titreFr}
-                  </span>
-                  <span className="block text-[12.5px] text-[var(--tdb-mute)]">{oeuvre.auteur}</span>
+                  <span className="block text-base font-semibold tracking-tight text-white">{oeuvre.titreFr}</span>
+                  <span className="block text-[12.5px] text-white/70">{oeuvre.auteur}</span>
                 </span>
                 {oeuvre.titreAr && (
                   <span
                     dir="rtl"
                     lang="ar"
-                    className="hidden [font-family:var(--tdb-font-arabe)] text-[15px] text-[var(--tdb-mute)] sm:block"
+                    className="hidden [font-family:var(--tdb-font-arabe)] text-[15px] text-white/70 sm:block"
                   >
                     {oeuvre.titreAr}
                   </span>
@@ -73,14 +72,11 @@ export default function ListeProgrammeOeuvres({ parOeuvre }: ListeProgrammeOeuvr
                   aria-valuemin={0}
                   aria-valuemax={oeuvre.totalChapitres}
                   aria-label={`${oeuvre.titreFr} — ${oeuvre.chapitresLus} sur ${oeuvre.totalChapitres} ${unite.pluriel.toLowerCase()}`}
-                  className="hidden h-[3px] overflow-hidden rounded-full bg-[var(--tdb-line)] sm:block"
+                  className="hidden h-[3px] overflow-hidden rounded-full bg-white/25 sm:block"
                 >
-                  <span
-                    className="block h-full rounded-full"
-                    style={{ width: `${pourcentage}%`, backgroundColor: "var(--tdb-green)" }}
-                  />
+                  <span className="block h-full rounded-full bg-white" style={{ width: `${pourcentage}%` }} />
                 </span>
-                <span className="[font-family:var(--tdb-font-mono)] text-[12.5px] text-[var(--tdb-mute)] sm:text-right">
+                <span className="[font-family:var(--tdb-font-mono)] text-[12.5px] text-white/70 sm:text-right">
                   {oeuvre.chapitresLus}/{oeuvre.totalChapitres}
                 </span>
               </Link>

@@ -2,6 +2,25 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-30.
 >
+> **3 blocs du tableau de bord en rectangle arrondi, dégradé bleu →
+> bleu ciel** — demandé explicitement par l'utilisateur ("PARTIE DE
+> COMMUNICATION ET AU PROGRAMME DE L ANNée ET DERNIER ACTIVITéS CHANGE
+> LA FORME FAIS LA RECTANGLE ET ARRONDIS AVEC COULEUR BLEU VERS BLEU
+> CIEL"). Nouveau token `--tdb-degrade-bleu` (`linear-gradient(135deg,
+> var(--tdb-blue), var(--tdb-ciel))`, `--tdb-ciel: #7dd3fc` ajouté) dans
+> `app/globals.css`, appliqué comme fond des 3 cartes concernées
+> (`BlocAnnonces.tsx`, `ListeProgrammeOeuvres.tsx`,
+> `BlocDernieresActivites.tsx`) — texte passé en blanc/blanc
+> transparent pour rester lisible sur le dégradé. `ListeProgrammeOeuvres`
+> n'avait jusqu'ici aucune carte du tout (juste une liste nue) : c'est
+> la première fois qu'elle est encadrée. Les 3 autres cartes (Reprise,
+> Production écrite, Progression), non citées par l'utilisateur,
+> gardent leur fond blanc/crème habituel — pas de changement non
+> demandé.
+>
+> Vérifié avec un compte de test jetable + vraie session, 0px de
+> débordement. Compte de test supprimé ensuite.
+>
 > **/tableau-de-bord repris fidèlement au modèle fourni** (2ᵉ passe) —
 > le premier essai (voir entrée précédente) adaptait la palette/police
 > du modèle fourni par l'utilisateur aux tokens déjà en place ailleurs

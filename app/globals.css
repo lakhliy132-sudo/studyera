@@ -160,11 +160,19 @@ body {
   --tdb-card: #ffffff;
   --tdb-line: #e3dfd5;
   --tdb-blue: #1e3fd8;
+  --tdb-ciel: #7dd3fc;
   --tdb-red: #c8402c;
   --tdb-green: #1d7a5e;
   --tdb-font-serif: var(--font-fraunces), Georgia, serif;
   --tdb-font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
   --tdb-font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
+
+  /* Dégradé bleu → bleu ciel — demandé explicitement par l'utilisateur
+   * pour les cartes "Communication", "Au programme cette année" et
+   * "Dernières activités" ("FAIS LA RECTANGLE ET ARRONDIS AVEC COULEUR
+   * BLEU VERS BLEU CIEL"). Centralisé ici pour que les 3 cartes
+   * utilisent exactement le même dégradé. */
+  --tdb-degrade-bleu: linear-gradient(135deg, var(--tdb-blue), var(--tdb-ciel));
 
   background-color: var(--tdb-paper);
   color: var(--tdb-ink);
