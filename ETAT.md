@@ -2,6 +2,23 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-30.
 >
+> **Correction du fond bleu plein → fond blanc + liséré bleu sur le
+> côté** — l'utilisateur n'a pas aimé le dégradé plein fond de l'entrée
+> précédente : "Non au fond le blanc mais a coté le bleu". Les 3 cartes
+> (`BlocAnnonces.tsx`, `ListeProgrammeOeuvres.tsx`,
+> `BlocDernieresActivites.tsx`) reviennent à un fond blanc et un texte
+> encre/mute normal, avec le dégradé `--tdb-degrade-bleu` déplacé en
+> liséré de 5px sur le bord gauche (`overflow-hidden` sur la carte pour
+> que ses coins suivent l'arrondi) — même principe que la bordure
+> supérieure rouge de `CarteProductionEcrite.tsx`, juste sur le côté au
+> lieu du haut. La barre de progression par œuvre (dans
+> `ListeProgrammeOeuvres`) revient aussi au vert `--tdb-green`
+> d'origine (elle avait été passée en blanc pour rester visible sur
+> l'ancien fond bleu, plus nécessaire).
+>
+> Vérifié avec un compte de test jetable + vraie session, 0px de
+> débordement. Compte de test supprimé ensuite.
+>
 > **3 blocs du tableau de bord en rectangle arrondi, dégradé bleu →
 > bleu ciel** — demandé explicitement par l'utilisateur ("PARTIE DE
 > COMMUNICATION ET AU PROGRAMME DE L ANNée ET DERNIER ACTIVITéS CHANGE
