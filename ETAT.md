@@ -1,6 +1,51 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-08-30.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-01.
+>
+> **⚠️ Résumés longs (49 chapitres) ajoutés pour "Le Dernier Jour d'un
+> Condamné" — contenu Claude, à faire relire par un enseignant.**
+> Demande explicite de l'utilisateur : "dans les chapitres de le
+> dernier jour d un condamné faits les resumé pas collé au titre comme
+> les chapitres de la boite". Les 49 chapitres existaient déjà en base
+> (`chapitres.titre_fr` + `resume_court`, insérés par un mécanisme
+> antérieur à cette session — 0 ligne correspondante dans l'Excel) mais
+> la table `fiches` était entièrement vide pour cette œuvre : seul le
+> résumé court, collé sous le H1, s'affichait, sans la carte
+> "Résumé"/"ملخص" séparée qu'ont La Boîte à Merveilles et Antigone via
+> `CarteBilingue`.
+>
+> - Rédigé un `resume_fr` (3-5 phrases, ancré dans une vraie
+>   connaissance du roman de Victor Hugo) et sa traduction `resume_ar`
+>   pour chacun des 49 chapitres. Ajoutés à la feuille "Chapitres" de
+>   `data/contenu-plateforme-bac.xlsx` avec `titre_fr`/`resume_court_fr`
+>   recopiés tels quels depuis la base (pour ne pas les écraser par
+>   `null` au prochain import — piège déjà documenté plusieurs fois dans
+>   ce fichier) et `statut: "brouillon"`.
+> - `npm run importer` : `fiches` passe de 34 à 83 lignes (+49, exactement
+>   les nouvelles), `chapitres` (83) et `sujets` (73) inchangés (pas de
+>   doublon), 0 erreur. Deuxième run identique (idempotent). `essentiel_fr/ar`
+>   des 3 œuvres vérifié inchangé avant/après (non concerné par cette
+>   tâche). Vérifié par lecture directe du HTML servi sur
+>   `/oeuvres/dernier-jour-condamne/1` (page publique, pas besoin de
+>   session authentifiée) : le `resume_court` et le nouveau `resume_fr`
+>   apparaissent bien à deux endroits distincts de la page, "Résumé" et
+>   "ملخص" présents chacun deux fois (carte FR + carte AR).
+> - **Erreur factuelle préexistante découverte et corrigée** (ni écrite
+>   par l'utilisateur ni par moi à l'origine) : le chapitre 33, titré
+>   "La fin brutale", affirmait dans son `resume_court` que "le récit se
+>   termine brutalement au moment où l'exécution est sur le point
+>   d'avoir lieu" — or les chapitres 34 à 49 racontent une suite
+>   substantielle (visite de la fille, derniers écrits...), et c'est le
+>   chapitre 49 ("Les derniers instants") qui contient la vraie fin,
+>   avec une formule presque identique. Le nouveau `resume_fr` du
+>   chapitre 33 a été rédigé sans reprendre cette affirmation ; le titre
+>   et le `resume_court_fr` ont aussi été corrigés directement dans
+>   l'Excel (titre → "Le vertige de l'attente") puis réimportés, plutôt
+>   que de laisser une erreur factuelle visible aux élèves une fois
+>   découverte — même logique que la correction de l'affirmation trop
+>   large sur les RLS `profils` plus bas dans ce fichier : ne jamais
+>   laisser une inexactitude documentée/publiée sans la corriger une
+>   fois identifiée.
 >
 > **Correction du fond bleu plein → fond blanc + liséré bleu sur le
 > côté** — l'utilisateur n'a pas aimé le dégradé plein fond de l'entrée
