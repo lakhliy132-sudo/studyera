@@ -98,32 +98,6 @@ export default function BanniereOeuvre({
 function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
   const aUnePhoto = Boolean(oeuvre.couverture_url);
 
-  // Le Dernier Jour d'un Condamné : avec le traitement plein cadre
-  // ci-dessous (bandeau nettement plus large que haut), la photo
-  // fournie par l'utilisateur — cadrage large 3:2, sujet au centre —
-  // se retrouvait presque entièrement recadrée, ne laissant qu'une
-  // fine bande visible. Demandé explicitement par l'utilisateur :
-  // "la photo fais la petite pour toute view y regardent dans la
-  // photo" — une vignette plus petite, en object-contain, pour que la
-  // photo entière reste visible sur tous les écrans, plutôt que le
-  // cadrage plein largeur utilisé par les deux autres œuvres.
-  if (aUnePhoto && oeuvre.slug === "dernier-jour-condamne") {
-    return (
-      <section className="relative flex flex-col-reverse items-center gap-5 overflow-hidden rounded-lg border border-border bg-surface p-6 shadow-sm sm:flex-row sm:justify-between sm:gap-8 sm:p-8">
-        <TitreOeuvre oeuvre={oeuvre} />
-        <div className="flex h-[130px] w-[195px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#0f1524] sm:h-[150px] sm:w-[225px]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- image
-              locale simple, object-contain : pas besoin de next/image ici. */}
-          <img
-            src={oeuvre.couverture_url ?? undefined}
-            alt={oeuvre.titre_fr ? `Illustration : ${oeuvre.titre_fr}` : "Illustration de l'œuvre"}
-            className="h-full w-full object-contain"
-          />
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
       className={
@@ -161,33 +135,25 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
         </>
       )}
 
-      <TitreOeuvre oeuvre={oeuvre} />
+      <div className="relative max-w-[660px] px-7 py-6 sm:px-[30px] sm:py-0 md:px-[46px]">
+        <h1 className="font-serif text-[27px] leading-[1.06] font-bold tracking-tight text-ink sm:text-4xl md:text-[52px]">
+          {oeuvre.titre_fr}
+        </h1>
+        {oeuvre.titre_ar && (
+          // `w-fit` : garde ce titre aligné à gauche avec le h1
+          // au-dessus (un bloc RTL pleine largeur alignerait son texte
+          // à droite de TOUTE la largeur, pas de son propre contenu).
+          <p dir="rtl" lang="ar" className="mt-2.5 w-fit font-arabe text-lg font-medium text-primary-vif sm:text-xl md:text-2xl">
+            {oeuvre.titre_ar}
+          </p>
+        )}
+        {oeuvre.auteur && (
+          <p className="mt-[18px] inline-flex w-fit items-center gap-2.5 rounded-full bg-primary-tint px-[18px] py-2.5 text-[15px] font-semibold text-primary">
+            <IconeAuteur />
+            {oeuvre.auteur}
+          </p>
+        )}
+      </div>
     </section>
-  );
-}
-
-/** Titre + titre arabe + badge auteur, partagés par les deux mises en
- * forme du Hero ci-dessus (cadrage plein largeur et vignette réduite). */
-function TitreOeuvre({ oeuvre }: { oeuvre: Oeuvre }) {
-  return (
-    <div className="relative max-w-[660px] px-7 py-6 sm:px-[30px] sm:py-0 md:px-[46px]">
-      <h1 className="font-serif text-[27px] leading-[1.06] font-bold tracking-tight text-ink sm:text-4xl md:text-[52px]">
-        {oeuvre.titre_fr}
-      </h1>
-      {oeuvre.titre_ar && (
-        // `w-fit` : garde ce titre aligné à gauche avec le h1
-        // au-dessus (un bloc RTL pleine largeur alignerait son texte
-        // à droite de TOUTE la largeur, pas de son propre contenu).
-        <p dir="rtl" lang="ar" className="mt-2.5 w-fit font-arabe text-lg font-medium text-primary-vif sm:text-xl md:text-2xl">
-          {oeuvre.titre_ar}
-        </p>
-      )}
-      {oeuvre.auteur && (
-        <p className="mt-[18px] inline-flex w-fit items-center gap-2.5 rounded-full bg-primary-tint px-[18px] py-2.5 text-[15px] font-semibold text-primary">
-          <IconeAuteur />
-          {oeuvre.auteur}
-        </p>
-      )}
-    </div>
   );
 }

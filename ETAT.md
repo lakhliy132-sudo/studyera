@@ -20,6 +20,16 @@
 > captures d'écran Playwright (desktop 1280px et mobile 390px) : photo
 > entière visible dans les deux cas, les 2 autres œuvres inchangées.
 >
+> **Annulé juste après** — l'utilisateur n'a pas aimé cette vignette
+> distincte : "nonn je veux ptite comme les autrress" (il voulait le
+> même traitement plein cadre que les 2 autres œuvres, pas une mise en
+> forme à part). `BanniereOeuvre.tsx` restauré à l'identique de son état
+> juste avant l'entrée ci-dessus (`git checkout` du commit précédent) :
+> les 3 œuvres utilisent de nouveau exactement le même `Hero()`. Avec ce
+> cadrage plein cadre standard, le rendu de la nouvelle couverture est
+> en fait correct (vérifié par capture d'écran) — la scène (fenêtre,
+> silhouette, mur) reste bien lisible malgré le recadrage large.
+>
 > **⚠️ Résumés longs (49 chapitres) ajoutés pour "Le Dernier Jour d'un
 > Condamné" — contenu Claude, à faire relire par un enseignant.**
 > Demande explicite de l'utilisateur : "dans les chapitres de le
