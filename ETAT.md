@@ -2,6 +2,24 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-01.
 >
+> **Photo de couverture du Dernier Jour d'un Condamné réduite en
+> vignette (`BanniereOeuvre.tsx`)** — la bannière de `/oeuvres/[slug]`
+> recadre normalement la photo en plein cadre (`bg-cover`, bandeau
+> ~250px de haut sur toute la largeur de la carte) : avec le cadrage
+> large (3:2) de la nouvelle couverture, ce traitement ne laissait
+> qu'une fine bande de l'image visible. Demande explicite de
+> l'utilisateur : "la photo fais la petite pour toute view y regardent
+> dans la photo". Ajouté une variante dédiée dans `Hero()`, appliquée
+> uniquement quand `oeuvre.slug === "dernier-jour-condamne"` (les 2
+> autres œuvres gardent le cadrage plein cadre habituel, non concernées
+> par la demande) : petite vignette `object-contain` (image entière
+> visible, non recadrée), sur fond bleu nuit, ~195×130px mobile,
+> ~225×150px desktop. Bloc titre (`h1`/titre arabe/badge auteur)
+> extrait en sous-composant `TitreOeuvre` pour être partagé entre les
+> deux mises en forme sans dupliquer le JSX. Vérifié avec de vraies
+> captures d'écran Playwright (desktop 1280px et mobile 390px) : photo
+> entière visible dans les deux cas, les 2 autres œuvres inchangées.
+>
 > **⚠️ Résumés longs (49 chapitres) ajoutés pour "Le Dernier Jour d'un
 > Condamné" — contenu Claude, à faire relire par un enseignant.**
 > Demande explicite de l'utilisateur : "dans les chapitres de le
