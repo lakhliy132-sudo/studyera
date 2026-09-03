@@ -24,12 +24,16 @@ interface OngletLieuxProps {
  * (rubriques (3).html, section "Lieux"), adapté à la donnée disponible
  * (pas de description/arabe : seuls nom + chapitres sont affichés).
  *
- * Pastilles "CH. N" transformées en vrais liens vers le chapitre, avec
- * un style plus travaillé (bordure, flèche, effet au survol) — demandé
- * explicitement par l'utilisateur ("dans la partie de lieux ou ecrit
- * chp fais la stylée"), qui trouvait la pastille plate d'origine trop
- * simple. Mêmes couleurs (`primary`/`primary-tint`) que le badge de
- * `CarteOeuvre`, juste avec bordure + micro-interaction en plus.
+ * Pastilles "CH. N" transformées en vrais liens vers le chapitre, en
+ * petits jetons dégradés — demandé explicitement par l'utilisateur, en
+ * deux temps : "dans la partie de lieux ou ecrit chp fais la stylée"
+ * (une première version avec juste bordure + flèche a été jugée pas
+ * assez "esthétique" : "non je veux qlq chose d estethique"). Dégradé
+ * `primary` → `primary-vif` et ombre bleutée, repris à l'identique du
+ * bouton "Lire le texte intégral" de cette même page
+ * (`shadow-[0_2px_10px_rgba(29,78,216,0.22)]`) plutôt qu'inventés, pour
+ * que le jeton ait un vrai rendu "premium" cohérent avec le reste du
+ * site plutôt qu'un simple badge à bordure.
  */
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
   // "Scène N"/"Prologue" pour Antigone plutôt que "Ch. N" — voir lib/uniteChapitre.ts.
@@ -73,15 +77,16 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
               </span>
               <div className="min-w-0">
                 <h3 className="font-serif text-lg font-bold text-ink">{lieu}</h3>
-                <div className="mt-3.5 flex flex-wrap gap-1.5">
+                <div className="mt-3.5 flex flex-wrap gap-2">
                   {chapitresDuLieu.map((chapitre) => (
                     <Link
                       key={chapitre.id}
                       href={`/oeuvres/${slug}/${chapitre.numero}`}
-                      className="group/pastille flex items-center gap-1 rounded-full border border-primary/15 bg-primary-tint px-2.5 py-1 text-xs font-semibold text-primary transition-all hover:-translate-y-px hover:border-primary hover:bg-primary hover:text-white hover:shadow-[0_4px_12px_rgba(29,78,216,0.25)]"
+                      className="group/pastille flex items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-bold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(29,78,216,0.32)]"
+                      style={{ backgroundImage: "linear-gradient(135deg, var(--color-primary), var(--color-primary-vif))" }}
                     >
                       {libelleChapitreCourt(chapitre, unite)}
-                      <IconeFleche className="size-2.5 transition-transform group-hover/pastille:translate-x-0.5" />
+                      <IconeFleche className="size-2.5 opacity-70 transition-transform group-hover/pastille:translate-x-0.5 group-hover/pastille:opacity-100" />
                     </Link>
                   ))}
                 </div>
