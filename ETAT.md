@@ -2,6 +2,31 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
 >
+> **⚠️ Résumé de l'œuvre + fiches de chapitre (thèmes, points clés)
+> complétés pour "Le Dernier Jour d'un Condamné" — contenu Claude, à
+> faire relire par un enseignant.** Demande explicite : "c bien
+> maintenant fais le resumé de l oeuvre et ainsi que fais les fiche de
+> chapitre dernier jour d un condamné".
+>
+> - `oeuvres.essentiel_fr`/`essentiel_ar` (le résumé affiché dans la
+>   bannière de `/oeuvres/dernier-jour-condamne`, jusqu'ici vide) :
+>   rédigé au même format que Antigone/La Boîte à Merveilles — 10
+>   phrases, une par ligne, panorama complet de l'intrigue.
+> - `fiches.points_cles_fr/ar` + `fiches.themes` (principal +
+>   secondaires) pour les 49 chapitres, jusqu'ici tous vides (seul
+>   `resume_fr/ar` avait été rempli la fois précédente) : 3 points clés
+>   numérotés par chapitre (même convention que La Boîte à Merveilles :
+>   numérotation "1."/"١." intégrée au texte) + 1 thème principal + 2
+>   thèmes secondaires, cohérents avec le contenu réel de chaque
+>   chapitre (peur de la mort, attente, paternité, dénonciation de la
+>   peine de mort, etc., variés d'un chapitre à l'autre plutôt que
+>   répétés).
+> - `npm run importer` : 0 erreur, mêmes totaux qu'avant (83
+>   chapitres/fiches, 73 sujets — aucun doublon). Vérifié par capture
+>   d'écran réelle sur `/oeuvres/dernier-jour-condamne` (résumé
+>   essentiel fr/ar dans la bannière) et `/oeuvres/dernier-jour-condamne/1`
+>   (thèmes en pastilles + points clés en liste, sous la carte Résumé).
+>
 > **En-tête d'un chapitre : nom seul, sans le résumé court glué en
 > dessous (`app/(public)/oeuvres/[slug]/[numero]/page.tsx`)** — demandé
 > explicitement par l'utilisateur : "dans les chapitres laisse juste le
