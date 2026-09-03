@@ -1,6 +1,15 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
+>
+> **Re-correction : pastilles de l'onglet Lieux trop en longueur** — la
+> version dégradée précédente (flèche + padding large) jugée "trop
+> longue" : "non pas comme je veux pas quelle soit comme ca long".
+> Flèche retirée, padding réduit, `rounded-full` avec largeur minimale
+> pour rester proche d'un cercle sur les libellés courts ("CH. 1") —
+> dégradé et ombre conservés. Vérifié par capture d'écran réelle : les
+> pastilles forment maintenant une grille de petites capsules
+> compactes, plus la forme allongée d'avant.
 >
 > **Pastilles "CH. N" de l'onglet Lieux stylées + rendues cliquables**
 > (`OngletLieux.tsx`) — demandé explicitement par l'utilisateur ("dans

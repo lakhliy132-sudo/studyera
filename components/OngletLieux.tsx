@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { IconeFleche, IconeLieu } from "@/components/icones";
+import { IconeLieu } from "@/components/icones";
 import { libelleChapitreCourt, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
@@ -26,14 +26,16 @@ interface OngletLieuxProps {
  *
  * Pastilles "CH. N" transformées en vrais liens vers le chapitre, en
  * petits jetons dégradés — demandé explicitement par l'utilisateur, en
- * deux temps : "dans la partie de lieux ou ecrit chp fais la stylée"
- * (une première version avec juste bordure + flèche a été jugée pas
- * assez "esthétique" : "non je veux qlq chose d estethique"). Dégradé
- * `primary` → `primary-vif` et ombre bleutée, repris à l'identique du
- * bouton "Lire le texte intégral" de cette même page
- * (`shadow-[0_2px_10px_rgba(29,78,216,0.22)]`) plutôt qu'inventés, pour
- * que le jeton ait un vrai rendu "premium" cohérent avec le reste du
- * site plutôt qu'un simple badge à bordure.
+ * trois temps : "dans la partie de lieux ou ecrit chp fais la stylée"
+ * (une première version avec juste bordure + flèche jugée pas assez
+ * "esthétique" : "non je veux qlq chose d estethique") puis "non pas
+ * comme je veux pas quelle soit comme ca long" (la version dégradée
+ * suivante, avec flèche et padding large, jugée trop en longueur).
+ * Version actuelle : jeton compact `rounded-full`, sans flèche, padding
+ * réduit et largeur minimale pour rester proche d'un cercle sur les
+ * libellés courts ("CH. 1") — dégradé `primary` → `primary-vif` et
+ * ombre bleutée conservés (repris du bouton "Lire le texte intégral"
+ * de cette même page).
  */
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
   // "Scène N"/"Prologue" pour Antigone plutôt que "Ch. N" — voir lib/uniteChapitre.ts.
@@ -82,11 +84,10 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
                     <Link
                       key={chapitre.id}
                       href={`/oeuvres/${slug}/${chapitre.numero}`}
-                      className="group/pastille flex items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-bold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(29,78,216,0.32)]"
+                      className="flex min-w-[30px] items-center justify-center rounded-full px-2 py-1 text-center text-[11px] font-bold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(29,78,216,0.32)]"
                       style={{ backgroundImage: "linear-gradient(135deg, var(--color-primary), var(--color-primary-vif))" }}
                     >
                       {libelleChapitreCourt(chapitre, unite)}
-                      <IconeFleche className="size-2.5 opacity-70 transition-transform group-hover/pastille:translate-x-0.5 group-hover/pastille:opacity-100" />
                     </Link>
                   ))}
                 </div>
