@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Couleur des pastilles de l'onglet Lieux : dégradé plein → fond
+> translucide** — demandé explicitement par l'utilisateur ("oui la c
+> bien mais change de couleur je veux qlq chose de transparente ou
+> bleu ciel"), une fois satisfait de la forme compacte (entrée
+> précédente). Fond `bg-primary/10` (translucide, laisse deviner la
+> carte blanche derrière) + bordure `primary/20` + texte `primary`,
+> plutôt que le dégradé plein `primary`/`primary-vif` précédent —
+> volontairement resté dans les tokens `--color-*` existants (opacité
+> sur `primary`) plutôt que d'ajouter une nouvelle couleur "bleu ciel"
+> hors du système de tokens du site. Vérifié par capture d'écran
+> réelle.
+>
 > **Re-correction : pastilles de l'onglet Lieux trop en longueur** — la
 > version dégradée précédente (flèche + padding large) jugée "trop
 > longue" : "non pas comme je veux pas quelle soit comme ca long".

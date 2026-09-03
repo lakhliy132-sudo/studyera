@@ -24,18 +24,21 @@ interface OngletLieuxProps {
  * (rubriques (3).html, section "Lieux"), adapté à la donnée disponible
  * (pas de description/arabe : seuls nom + chapitres sont affichés).
  *
- * Pastilles "CH. N" transformées en vrais liens vers le chapitre, en
- * petits jetons dégradés — demandé explicitement par l'utilisateur, en
- * trois temps : "dans la partie de lieux ou ecrit chp fais la stylée"
- * (une première version avec juste bordure + flèche jugée pas assez
- * "esthétique" : "non je veux qlq chose d estethique") puis "non pas
- * comme je veux pas quelle soit comme ca long" (la version dégradée
- * suivante, avec flèche et padding large, jugée trop en longueur).
- * Version actuelle : jeton compact `rounded-full`, sans flèche, padding
- * réduit et largeur minimale pour rester proche d'un cercle sur les
- * libellés courts ("CH. 1") — dégradé `primary` → `primary-vif` et
- * ombre bleutée conservés (repris du bouton "Lire le texte intégral"
- * de cette même page).
+ * Pastilles "CH. N" transformées en vrais liens vers le chapitre —
+ * demandé explicitement par l'utilisateur, affiné en plusieurs passes :
+ * "dans la partie de lieux ou ecrit chp fais la stylée" (une première
+ * version avec juste bordure + flèche jugée pas assez "esthétique" :
+ * "non je veux qlq chose d estethique") ; un dégradé `primary` →
+ * `primary-vif` plein avec flèche, jugé "trop long" ("non pas comme je
+ * veux pas quelle soit comme ca long") — corrigé en jeton compact
+ * `rounded-full`, sans flèche ; puis "change de couleur je veux qlq
+ * chose de transparente ou bleu ciel" : le fond dégradé plein remplacé
+ * par un fond `primary/10` translucide (laisse deviner la carte
+ * blanche en dessous) + bordure `primary/20` + texte `primary` — reste
+ * dans les tokens `--color-*` existants (pas de nouvelle couleur
+ * "bleu ciel" ajoutée hors du système de tokens du site, voir l'en-tête
+ * de app/globals.css) tout en donnant l'effet clair et transparent
+ * demandé.
  */
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
   // "Scène N"/"Prologue" pour Antigone plutôt que "Ch. N" — voir lib/uniteChapitre.ts.
@@ -84,8 +87,7 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
                     <Link
                       key={chapitre.id}
                       href={`/oeuvres/${slug}/${chapitre.numero}`}
-                      className="flex min-w-[30px] items-center justify-center rounded-full px-2 py-1 text-center text-[11px] font-bold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(29,78,216,0.32)]"
-                      style={{ backgroundImage: "linear-gradient(135deg, var(--color-primary), var(--color-primary-vif))" }}
+                      className="flex min-w-[30px] items-center justify-center rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-center text-[11px] font-bold text-primary backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/20"
                     >
                       {libelleChapitreCourt(chapitre, unite)}
                     </Link>
