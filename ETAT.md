@@ -6,13 +6,18 @@
 > (`OngletLieux.tsx`) — demandé explicitement par l'utilisateur ("dans
 > la partie de lieux ou ecrit chp fais la stylée"), qui trouvait la
 > pastille plate d'origine trop simple. Transformées en vrais liens
-> (`next/link`) vers `/oeuvres/{slug}/{numero}` avec bordure, flèche
-> (`IconeFleche`) et effet de survol (fond `primary` plein, texte
-> blanc, léger décalage vers le haut) — même palette que la pastille
-> d'origine, juste plus travaillée. Composant partagé par les 3 œuvres
-> (pas de demande précisant une seule œuvre cette fois) : Antigone et
-> La Boîte à Merveilles en bénéficient aussi. Vérifié par capture
-> d'écran réelle sur `/oeuvres/dernier-jour-condamne?onglet=lieux`.
+> (`next/link`) vers `/oeuvres/{slug}/{numero}`. Composant partagé par
+> les 3 œuvres (pas de demande précisant une seule œuvre cette fois) :
+> Antigone et La Boîte à Merveilles en bénéficient aussi.
+>
+> Première version (bordure + flèche, fond plein seulement au survol)
+> jugée pas assez travaillée : "non je veux qlq chose d estethique".
+> Remplacée par un jeton au dégradé `primary` → `primary-vif` et une
+> ombre bleutée, repris tels quels du bouton "Lire le texte intégral"
+> de cette même page (`shadow-[0_2px_10px_rgba(29,78,216,0.22)]`)
+> plutôt qu'un style inventé de toutes pièces — cohérent avec
+> l'esthétique déjà en place sur le site. Vérifié par capture d'écran
+> réelle sur `/oeuvres/dernier-jour-condamne?onglet=lieux`.
 >
 > **⚠️ Lieux + quiz (147 questions) ajoutés pour "Le Dernier Jour d'un
 > Condamné" — les 7 onglets de l'œuvre ont maintenant tous un vrai
