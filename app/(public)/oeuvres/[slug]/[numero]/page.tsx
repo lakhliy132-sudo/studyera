@@ -200,9 +200,6 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
               {chapitre.titre_ar}
             </p>
           )}
-          {chapitre.resume_court && (
-            <p className="mt-1 text-muted-foreground">{chapitre.resume_court}</p>
-          )}
         </header>
 
         <div className="flex flex-col gap-8 py-2">

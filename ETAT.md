@@ -1,6 +1,20 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-01.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
+>
+> **En-tête d'un chapitre : nom seul, sans le résumé court glué en
+> dessous (`app/(public)/oeuvres/[slug]/[numero]/page.tsx`)** — demandé
+> explicitement par l'utilisateur : "dans les chapitres laisse juste le
+> nom du chapitre enleve la definition". Vérifié par capture d'écran :
+> le `resume_court` (un paragraphe complet) juste sous le h1 faisait
+> doublon avec la carte "Résumé"/"ملخص" plus bas sur la page
+> (`FicheChapitre`, `fiche.resume_fr`/`resume_ar`) — supprimé, l'en-tête
+> ne garde plus que la pastille "Chapitre N", le titre (h1) et le titre
+> arabe. Changement dans le composant partagé par les 3 œuvres (pas de
+> `slug === ...` particulier cette fois, contrairement aux demandes
+> précédentes) : la demande ne nommait aucune œuvre en particulier, et
+> Boîte à Merveilles/Antigone avaient exactement la même redondance.
+> Vérifié par capture d'écran sur les 3 œuvres après coup.
 >
 > **Photo de couverture du Dernier Jour d'un Condamné réduite en
 > vignette (`BanniereOeuvre.tsx`)** — la bannière de `/oeuvres/[slug]`
