@@ -1,4 +1,6 @@
-import { IconeLieu } from "@/components/icones";
+import Link from "next/link";
+
+import { IconeFleche, IconeLieu } from "@/components/icones";
 import { libelleChapitreCourt, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
@@ -21,6 +23,13 @@ interface OngletLieuxProps {
  * Design repris du fichier de référence fourni par l'utilisateur
  * (rubriques (3).html, section "Lieux"), adapté à la donnée disponible
  * (pas de description/arabe : seuls nom + chapitres sont affichés).
+ *
+ * Pastilles "CH. N" transformées en vrais liens vers le chapitre, avec
+ * un style plus travaillé (bordure, flèche, effet au survol) — demandé
+ * explicitement par l'utilisateur ("dans la partie de lieux ou ecrit
+ * chp fais la stylée"), qui trouvait la pastille plate d'origine trop
+ * simple. Mêmes couleurs (`primary`/`primary-tint`) que le badge de
+ * `CarteOeuvre`, juste avec bordure + micro-interaction en plus.
  */
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
   // "Scène N"/"Prologue" pour Antigone plutôt que "Ch. N" — voir lib/uniteChapitre.ts.
@@ -66,12 +75,14 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
                 <h3 className="font-serif text-lg font-bold text-ink">{lieu}</h3>
                 <div className="mt-3.5 flex flex-wrap gap-1.5">
                   {chapitresDuLieu.map((chapitre) => (
-                    <span
+                    <Link
                       key={chapitre.id}
-                      className="rounded-full bg-primary-tint px-2.5 py-1 text-xs font-semibold text-primary"
+                      href={`/oeuvres/${slug}/${chapitre.numero}`}
+                      className="group/pastille flex items-center gap-1 rounded-full border border-primary/15 bg-primary-tint px-2.5 py-1 text-xs font-semibold text-primary transition-all hover:-translate-y-px hover:border-primary hover:bg-primary hover:text-white hover:shadow-[0_4px_12px_rgba(29,78,216,0.25)]"
                     >
                       {libelleChapitreCourt(chapitre, unite)}
-                    </span>
+                      <IconeFleche className="size-2.5 transition-transform group-hover/pastille:translate-x-0.5" />
+                    </Link>
                   ))}
                 </div>
               </div>
