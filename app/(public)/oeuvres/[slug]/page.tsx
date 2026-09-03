@@ -14,6 +14,7 @@ import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/fiche
 import { FICHE_LECTURE_DERNIER_JOUR_CONDAMNE } from "@/lib/ficheLectureDernierJourCondamne";
 import { QUIZ_PAR_SCENE_ANTIGONE } from "@/lib/quizAntigone";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
+import { QUIZ_DERNIER_JOUR_CONDAMNE } from "@/lib/quizDernierJourCondamne";
 import {
   recupererChapitresOeuvre,
   recupererLexiqueOeuvre,
@@ -44,13 +45,11 @@ interface PagePropsOeuvre {
  * l'utilisateur une fois sur la page d'une œuvre précise) — pour
  * changer d'œuvre, retour à /oeuvres via le fil d'Ariane/la nav.
  *
- * Tous les onglets ont un vrai contenu pour La Boîte à Merveilles et
- * Antigone (Quiz : `QUIZ_PAR_SLUG` ci-dessous, voir
- * lib/quizBoiteAMerveilles.ts et lib/quizAntigone.ts ; Fiche de
- * lecture : `FICHES_LECTURE_PAR_SLUG` ci-dessous). Le Dernier Jour
- * d'un Condamné a maintenant sa fiche de lecture
- * (lib/ficheLectureDernierJourCondamne.ts) mais affiche encore
- * "Bientôt disponible" sur l'onglet Quiz, faute de questions rédigées.
+ * Tous les onglets ont désormais un vrai contenu pour les 3 œuvres
+ * (Quiz : `QUIZ_PAR_SLUG` ci-dessous, voir lib/quizBoiteAMerveilles.ts,
+ * lib/quizAntigone.ts et lib/quizDernierJourCondamne.ts ; Fiche de
+ * lecture : `FICHES_LECTURE_PAR_SLUG` ci-dessous, voir
+ * lib/ficheLecture*.ts).
  *
  * Pas d'onglet "Thèmes et enjeux" ici : retiré à la demande explicite
  * de l'utilisateur. `OngletThemes.tsx` et `recupererFichesOeuvre`
@@ -89,12 +88,12 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   const chapitreParId = new Map(chapitres.map((c) => [c.id, c]));
 
   // Quiz saisi à la main, chapitre/scène par chapitre/scène (voir
-  // lib/quizBoiteAMerveilles.ts et lib/quizAntigone.ts) : "Bientôt
-  // disponible" pour Le Dernier Jour d'un Condamné, qui n'en a pas
-  // encore, via l'objet vide.
+  // lib/quizBoiteAMerveilles.ts, lib/quizAntigone.ts et
+  // lib/quizDernierJourCondamne.ts).
   const QUIZ_PAR_SLUG: Record<string, Record<number, QuestionQuiz[]>> = {
     "boite-a-merveilles": QUIZ_PAR_CHAPITRE,
     antigone: QUIZ_PAR_SCENE_ANTIGONE,
+    "dernier-jour-condamne": QUIZ_DERNIER_JOUR_CONDAMNE,
   };
   const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> = QUIZ_PAR_SLUG[slug] ?? {};
 

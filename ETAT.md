@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
 >
+> **⚠️ Lieux + quiz (147 questions) ajoutés pour "Le Dernier Jour d'un
+> Condamné" — les 7 onglets de l'œuvre ont maintenant tous un vrai
+> contenu.** Demande explicite : "fais les lieux et les quiz".
+>
+> - `chapitres.lieux` rempli pour les 49 chapitres, en reprenant le
+>   découpage déjà établi dans `SommaireChapitres.tsx`
+>   (`PARTIES_DERNIER_JOUR`) plutôt que d'en inventer un nouveau :
+>   Bicêtre (1-21), la Conciergerie (22-47), la place de Grève devant
+>   l'Hôtel de Ville (48-49, lieu réel des exécutions capitales à Paris
+>   jusqu'en 1832) — le chapitre 21 (le transfert lui-même) porte les
+>   deux premiers lieux.
+> - `lib/quizDernierJourCondamne.ts` (nouveau fichier) : 3 questions par
+>   chapitre (147 au total) — délibérément moins dense que La Boîte à
+>   Merveilles (15/chapitre) ou Antigone (5/scène), les chapitres de ce
+>   roman étant beaucoup plus courts (une poignée de paragraphes
+>   chacun) ; chaque question ancrée dans le résumé/les points clés déjà
+>   en base. Branché dans `QUIZ_PAR_SLUG`
+>   (`app/(public)/oeuvres/[slug]/page.tsx`), même composant
+>   `OngletQuiz` que les 2 autres œuvres.
+> - `npm run importer` : 0 erreur pour les lieux (colonne sur
+>   `chapitres`, déjà upsertée). Vérifié par capture d'écran réelle sur
+>   l'onglet Lieux (3 cartes, bons numéros de chapitres) et l'onglet
+>   Quiz (49 pastilles, questions du chapitre 1 correctement affichées).
+>
 > **⚠️ Fiche de lecture + lexique (98 mots) ajoutés pour "Le Dernier
 > Jour d'un Condamné" — contenu Claude, à faire relire par un
 > enseignant.** Demande explicite : "fais moi fiche de lecture et
