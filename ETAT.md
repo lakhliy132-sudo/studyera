@@ -2,6 +2,28 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
 >
+> **⚠️ Fiche de lecture + lexique (98 mots) ajoutés pour "Le Dernier
+> Jour d'un Condamné" — contenu Claude, à faire relire par un
+> enseignant.** Demande explicite : "fais moi fiche de lecture et
+> lexique".
+>
+> - `lib/ficheLectureDernierJourCondamne.ts` (nouveau fichier) : même
+>   structure `FicheLecture` et même composant `OngletFicheLecture` que
+>   La Boîte à Merveilles/Antigone — carte d'identité, biographie de
+>   Victor Hugo (tableau), structure et composition, style et écriture.
+>   Branché dans `FICHES_LECTURE_PAR_SLUG`
+>   (`app/(public)/oeuvres/[slug]/page.tsx`) ; seul l'onglet Quiz reste
+>   "Bientôt disponible" pour cette œuvre désormais.
+> - Lexique : ~2 mots par chapitre (98 au total), vocabulaire
+>   judiciaire/carcéral et registre soutenu du texte (échafaud,
+>   pourvoi en cassation, aumônier, geôlier, huissier, réquisitoire...),
+>   avec sens en arabe, nature grammaticale et note explicative — même
+>   format que le lexique déjà en place pour les 2 autres œuvres.
+> - `npm run importer` : 0 erreur, `Mots lexique` 201 → 299 (+98
+>   exactement), stable sur un 2ᵉ run. Vérifié par capture d'écran
+>   réelle sur l'onglet Fiche de lecture, l'onglet Lexique (vue
+>   œuvre entière) et le lexique du chapitre 1.
+>
 > **13 personnages ajoutés pour "Le Dernier Jour d'un Condamné" —
 > contenu FOURNI PAR L'UTILISATEUR (collé dans le chat, fiche de
 > lecture externe), pas rédigé par Claude.** `nom`/`role`/`description_fr`

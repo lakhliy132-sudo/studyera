@@ -11,6 +11,7 @@ import OngletSujets from "@/components/OngletSujets";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import { FICHE_LECTURE_ANTIGONE } from "@/lib/ficheLectureAntigone";
 import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
+import { FICHE_LECTURE_DERNIER_JOUR_CONDAMNE } from "@/lib/ficheLectureDernierJourCondamne";
 import { QUIZ_PAR_SCENE_ANTIGONE } from "@/lib/quizAntigone";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import {
@@ -47,8 +48,9 @@ interface PagePropsOeuvre {
  * Antigone (Quiz : `QUIZ_PAR_SLUG` ci-dessous, voir
  * lib/quizBoiteAMerveilles.ts et lib/quizAntigone.ts ; Fiche de
  * lecture : `FICHES_LECTURE_PAR_SLUG` ci-dessous). Le Dernier Jour
- * d'un Condamné affiche encore "Bientôt disponible" sur ces deux
- * onglets, faute de contenu rédigé.
+ * d'un Condamné a maintenant sa fiche de lecture
+ * (lib/ficheLectureDernierJourCondamne.ts) mais affiche encore
+ * "Bientôt disponible" sur l'onglet Quiz, faute de questions rédigées.
  *
  * Pas d'onglet "Thèmes et enjeux" ici : retiré à la demande explicite
  * de l'utilisateur. `OngletThemes.tsx` et `recupererFichesOeuvre`
@@ -96,12 +98,12 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   };
   const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> = QUIZ_PAR_SLUG[slug] ?? {};
 
-  // Fiches de lecture saisies à la main, une par œuvre déjà rédigée
-  // (voir lib/ficheLecture*.ts) : "Bientôt disponible" pour Le Dernier
-  // Jour d'un Condamné, qui n'en a pas encore, via `null`.
+  // Fiches de lecture saisies à la main, une par œuvre (voir
+  // lib/ficheLecture*.ts).
   const FICHES_LECTURE_PAR_SLUG: Record<string, FicheLecture> = {
     "boite-a-merveilles": FICHE_LECTURE_BOITE_A_MERVEILLES,
     antigone: FICHE_LECTURE_ANTIGONE,
+    "dernier-jour-condamne": FICHE_LECTURE_DERNIER_JOUR_CONDAMNE,
   };
   const ficheLecture: FicheLecture | null = FICHES_LECTURE_PAR_SLUG[slug] ?? null;
 
