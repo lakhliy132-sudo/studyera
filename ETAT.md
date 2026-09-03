@@ -2,6 +2,32 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-03.
 >
+> **13 personnages ajoutés pour "Le Dernier Jour d'un Condamné" —
+> contenu FOURNI PAR L'UTILISATEUR (collé dans le chat, fiche de
+> lecture externe), pas rédigé par Claude.** `nom`/`role`/`description_fr`
+> reprennent son texte quasiment tel quel (reformulé en description
+> continue, le texte source était en puces courtes ; aucun contenu
+> nouveau inventé) : le condamné à mort (narrateur, sans nom), Marie
+> (sa fille), le Friauche, sa femme et sa mère, les représentants de la
+> société, les geôliers, la foule, le prêtre, l'huissier, le bourreau,
+> le sous-architecte, le nouveau gendarme de la Conciergerie,
+> l'Espagnole (Pepa). Seul `nom_ar` (traduction du nom/de l'étiquette)
+> est ajouté par Claude, l'utilisateur n'ayant fourni que du français —
+> à vérifier comme le reste du contenu Claude.
+>
+> Rôle du narrateur volontairement aligné sur le libellé exact déjà
+> utilisé pour celui de La Boîte à Merveilles ("Narrateur et personnage
+> principal", pas une reformulation) : `OngletPersonnages.tsx` classe
+> "personnage principal" par égalité de chaîne sur `role`
+> (`ROLES_PRINCIPAUX`, déjà documenté comme fragile) — un libellé
+> différent l'aurait fait atterrir à tort dans "Personnages secondaires".
+>
+> Importé via `npm run importer` : 0 erreur, Personnages 39 → 52 (+13,
+> exactement les nouveaux), stable sur un 2ᵉ run. Vérifié par capture
+> d'écran réelle sur `/oeuvres/dernier-jour-condamne?onglet=personnages` :
+> le narrateur apparaît bien seul sous "Personnages principaux", les 12
+> autres sous "Personnages secondaires".
+>
 > **⚠️ Résumé de l'œuvre + fiches de chapitre (thèmes, points clés)
 > complétés pour "Le Dernier Jour d'un Condamné" — contenu Claude, à
 > faire relire par un enseignant.** Demande explicite : "c bien
