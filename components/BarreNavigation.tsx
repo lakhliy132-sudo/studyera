@@ -21,7 +21,7 @@ interface BarreNavigationProps {
  * mais empilés verticalement sur le côté gauche, comme un tableau de
  * bord classique) — confirmé via une question de clarification avant
  * d'appliquer, vu l'ampleur du changement (structure de toutes les
- * pages). `app/layout.tsx` décale le contenu de `xl:pl-[240px]` pour
+ * pages). `app/layout.tsx` décale le contenu de `xl:pl-[280px]` pour
  * laisser la place au menu latéral, qui est `fixed` (ne participe pas
  * au flux du document).
  *
@@ -73,19 +73,19 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
       {/* Desktop (xl et plus) : menu latéral fixe à gauche, pleine
        * hauteur. `fixed` : hors du flux, voir le padding compensatoire
        * dans app/layout.tsx. */}
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[240px] flex-col border-r border-border bg-surface xl:flex">
-        <div className="border-b border-border px-5 py-6">
-          <Logo />
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[280px] flex-col border-r border-border bg-surface xl:flex">
+        <div className="border-b border-border px-6 py-7">
+          <Logo grande />
         </div>
 
         <nav
           aria-label="Navigation principale"
-          className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-5"
+          className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-4 py-6"
         >
           <LiensNavigation pleineLargeur connecte={connecte} />
         </nav>
 
-        <div className="flex flex-col gap-2 border-t border-border px-3 py-4">
+        <div className="flex flex-col gap-2 border-t border-border px-4 py-5">
           <EtatConnexion connecte={connecte} email={email} pleineLargeur />
         </div>
       </aside>
@@ -93,17 +93,24 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
   );
 }
 
-function Logo() {
+/** `grande` : utilisé dans le menu latéral desktop, un peu plus
+ * généreux que la taille compacte du bandeau mobile — demandé
+ * explicitement par l'utilisateur ("C BIEN MAIS FAIS LA UN PEU
+ * GRANDE") une fois le menu latéral approuvé. */
+function Logo({ grande = false }: { grande?: boolean }) {
+  const taille = grande ? 46 : 40;
   return (
     <Link href="/" className="flex items-center gap-3">
-      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true" className="shrink-0">
+      <svg width={taille} height={taille} viewBox="0 0 48 48" fill="none" aria-hidden="true" className="shrink-0">
         <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
         <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
         <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
       </svg>
       <span className="min-w-0 leading-tight">
-        <span className="font-serif text-xl font-bold text-ink">STUDYERA</span>
-        <span className="font-lecture block truncate text-[11.5px] text-primary-vif">
+        <span className={`font-serif font-bold text-ink ${grande ? "text-2xl" : "text-xl"}`}>STUDYERA</span>
+        <span
+          className={`font-lecture block text-primary-vif ${grande ? "text-[13px]" : "truncate text-[11.5px]"}`}
+        >
           Révisez · Comprenez · Progressez
         </span>
       </span>

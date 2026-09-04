@@ -2,6 +2,17 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Menu latéral desktop agrandi** (`BarreNavigation.tsx`,
+> `app/layout.tsx`) — demandé explicitement par l'utilisateur une fois
+> le principe du menu latéral approuvé ("C BIEN MAIS FAIS LA UN PEU
+> GRANDE"). Largeur 240px → 280px (`app/layout.tsx` ajuste
+> `xl:pl-[280px]` en conséquence), padding interne un peu plus généreux,
+> logo agrandi (46px, texte du titre plus grand) — corrige au passage
+> le sous-titre "Révisez · Comprenez · Progressez" qui était tronqué
+> ("Pr...") faute de place. Le logo du bandeau mobile (`Logo` sans le
+> nouveau prop `grande`) reste inchangé, à sa taille compacte d'origine.
+> Vérifié par capture d'écran réelle.
+>
 > **Navigation transformée en menu latéral vertical sur desktop**
 > (`BarreNavigation.tsx`, `app/layout.tsx`) — demandé explicitement par
 > l'utilisateur, capture d'écran à l'appui, juste après avoir demandé
