@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **"Tableau de bord" déplacé avant "Accueil" dans la navigation**
+> (`LiensNavigation.tsx`) — demandé explicitement par l'utilisateur,
+> capture d'écran de la nav actuelle à l'appui ("regarde la photo que
+> je viens de mettre dans le fichier... fait le tableau de bord avant
+> acceuil") : il avait été placé juste après "Accueil" lors de son
+> ajout précédent, l'utilisateur le veut maintenant en première
+> position. Un seul tableau de liens (`liens`) alimente à la fois la
+> nav desktop et le tiroir mobile, donc les deux héritent du nouvel
+> ordre sans code séparé. Vérifié avec un compte de test jetable + vraie
+> session : capture d'écran de la nav desktop connectée, compte de test
+> supprimé ensuite.
+>
 > **Nouveau modèle pour la barre de progression d'une œuvre**
 > (`BarreProgression.tsx`) — demandé explicitement par l'utilisateur
 > ("change le modele de la progression de chapitre"). L'ancienne

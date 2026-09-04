@@ -24,7 +24,9 @@ interface LiensNavigationProps {
    * suffisamment visible ("il faut que on le trouve tjrs c pas que
    * juste quans on se connecte") : avant, la seule façon d'y accéder
    * était de cliquer sur l'avatar/email en haut à droite, pas assez
-   * évident. Juste après "Accueil". */
+   * évident. En première position, avant "Accueil" — demandé
+   * explicitement par l'utilisateur ("fait le tableau de bord avant
+   * acceuil"), qui l'avait initialement placé juste après. */
   connecte?: boolean;
 }
 
@@ -41,7 +43,7 @@ interface LiensNavigationProps {
  */
 export default function LiensNavigation({ pleineLargeur = false, connecte = false }: LiensNavigationProps) {
   const chemin = usePathname();
-  const liens = connecte ? [LIENS[0], LIEN_TABLEAU_DE_BORD, ...LIENS.slice(1)] : LIENS;
+  const liens = connecte ? [LIEN_TABLEAU_DE_BORD, ...LIENS] : LIENS;
 
   return (
     <>
