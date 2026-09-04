@@ -16,6 +16,15 @@ interface BarreProgressionProps {
  * "Scène"/"Chapitre" selon l'œuvre (voir lib/uniteChapitre.ts) —
  * demandé explicitement par l'utilisateur, qui voyait encore
  * "chapitre" affiché ici sur Antigone.
+ *
+ * Modèle revu (carte + pourcentage en grand) — demandé explicitement
+ * par l'utilisateur ("change le modele de la progression de
+ * chapitre") : l'ancienne version (une simple ligne de texte fine
+ * au-dessus d'une barre de 1.5px) passait presque inaperçue sur la
+ * page. Reprend le langage visuel déjà utilisé partout ailleurs sur
+ * le site pour un bloc autonome (carte bordée, coins arrondis, ombre
+ * légère), avec le pourcentage comme élément visuel principal et le
+ * décompte "X sur Y" relégué en légende.
  */
 export default function BarreProgression({ slug, lus, total }: BarreProgressionProps) {
   if (total === 0) return null;
@@ -24,22 +33,23 @@ export default function BarreProgression({ slug, lus, total }: BarreProgressionP
   const pourcentage = Math.round((lus / total) * 100);
 
   return (
-    <div className="max-w-[420px]">
-      <div className="mb-1.5 flex items-center justify-between text-[13px] text-muted-foreground">
-        <span>Ta progression</span>
-        <strong className="font-semibold text-foreground">
-          {lus} {(lus > 1 ? unite.pluriel : unite.singulier).toLowerCase()} sur {total}
-        </strong>
+    <div className="w-full max-w-[420px] rounded-[14px] border border-border bg-surface p-5 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-semibold text-ink">Ta progression</span>
+        <span className="font-serif text-2xl font-bold text-primary">{pourcentage}%</span>
       </div>
       <div
         role="progressbar"
         aria-valuenow={lus}
         aria-valuemin={0}
         aria-valuemax={total}
-        className="h-1.5 w-full overflow-hidden rounded-full bg-primary-tint"
+        className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-primary-tint"
       >
         <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${pourcentage}%` }} />
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {lus} {(lus > 1 ? unite.pluriel : unite.singulier).toLowerCase()} sur {total} lus
+      </p>
     </div>
   );
 }

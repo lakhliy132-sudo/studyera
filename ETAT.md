@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Nouveau modèle pour la barre de progression d'une œuvre**
+> (`BarreProgression.tsx`) — demandé explicitement par l'utilisateur
+> ("change le modele de la progression de chapitre"). L'ancienne
+> version (ligne de texte fine + barre de 1.5px, sans carte) passait
+> presque inaperçue ; remplacée par une carte bordée (même langage
+> visuel que le reste du site), pourcentage en grand comme élément
+> principal, barre plus épaisse (2.5px), décompte "X sur Y lus" en
+> légende. Composant partagé par les 3 œuvres (pas de demande précisant
+> une seule œuvre). Vérifié avec un compte de test jetable + vraie
+> session (15/49 chapitres marqués lus sur Le Dernier Jour d'un
+> Condamné) : capture d'écran avant/après, compte de test supprimé
+> ensuite (cascade sur `progression` vérifiée vide).
+>
 > **Bouton "Lecteur bilingue" retiré de la bannière d'une œuvre**
 > (`BanniereOeuvre.tsx`) — demandé explicitement par l'utilisateur
 > ("dans le dernier jour enleve lecteur billingue"). Il pointait en
