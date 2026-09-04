@@ -30,10 +30,12 @@ interface BarreNavigationProps {
  * ("Composant Serveur volontairement"), pas de JS nécessaire pour
  * ouvrir/fermer le menu. `LiensNavigation` (client, `usePathname`) et
  * `BoutonDeconnexion` (client, `supabase.auth.signOut()`) sont les
- * seuls morceaux interactifs. `LiensNavigation`/`EtatConnexion` en
- * `pleineLargeur` (déjà conçus pour le tiroir mobile empilé) servent
- * tels quels dans le menu latéral desktop : même empilement vertical
- * dans les deux cas, pas de variante supplémentaire à maintenir.
+ * seuls morceaux interactifs. `LiensNavigation` (toujours empilée
+ * verticalement, plus de variante horizontale depuis que la nav est
+ * devenue un menu latéral partout) et `EtatConnexion` en
+ * `pleineLargeur` servent tels quels dans le menu latéral desktop et
+ * le tiroir mobile : même empilement vertical dans les deux cas, pas
+ * de variante supplémentaire à maintenir.
  *
  * Bascule desktop/mobile à `xl` (1280px), pas `md` (768px) comme le
  * reste du site — voir la mesure Playwright déjà documentée pour
@@ -61,7 +63,7 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
               <span className="sr-only">Ouvrir le menu</span>
             </summary>
             <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
-              <LiensNavigation pleineLargeur connecte={connecte} />
+              <LiensNavigation connecte={connecte} />
               <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
                 <EtatConnexion connecte={connecte} email={email} pleineLargeur />
               </div>
@@ -82,7 +84,7 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
           aria-label="Navigation principale"
           className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-4 py-6"
         >
-          <LiensNavigation pleineLargeur connecte={connecte} />
+          <LiensNavigation connecte={connecte} />
         </nav>
 
         <div className="flex flex-col gap-2 border-t border-border px-4 py-5">

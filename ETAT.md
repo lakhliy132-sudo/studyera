@@ -2,6 +2,21 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Liens de navigation retravaillés pour plus d'élégance**
+> (`LiensNavigation.tsx`) — demandé explicitement par l'utilisateur une
+> fois le principe/la taille du menu latéral approuvés ("Je veux qu
+> elle soit elegant"). Une icône par lien (Accueil → maison, Œuvres →
+> livre, Correcteur IA → document, Langues → bulles, Production écrite
+> → plume, Tableau de bord → graphique) et surbrillance du lien actif
+> en pastille arrondie pleine (fond `primary-tint`), plutôt que le
+> simple trait souligné hérité de l'ancienne barre horizontale — qui
+> faisait nu dans une liste verticale. Composant désormais toujours en
+> rendu "pleine largeur" empilé (plus de variante horizontale à gérer
+> depuis que la nav est un menu latéral partout) : prop `pleineLargeur`
+> retiré, code mort nettoyé au passage. Profite au menu latéral desktop
+> et au tiroir mobile (même composant partagé). Vérifié par capture
+> d'écran réelle des deux.
+>
 > **Menu latéral desktop agrandi** (`BarreNavigation.tsx`,
 > `app/layout.tsx`) — demandé explicitement par l'utilisateur une fois
 > le principe du menu latéral approuvé ("C BIEN MAIS FAIS LA UN PEU
