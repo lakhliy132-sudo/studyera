@@ -2,6 +2,28 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Navigation transformée en menu latéral vertical sur desktop**
+> (`BarreNavigation.tsx`, `app/layout.tsx`) — demandé explicitement par
+> l'utilisateur, capture d'écran à l'appui, juste après avoir demandé
+> l'inverse ("HORIZETALEMENT A GAUCHE" puis, message suivant,
+> "VERTICALEMENT A GAUCHE"). Confirmé via une question de clarification
+> avec aperçu avant/après avant d'appliquer, vu l'ampleur du changement
+> (structure de toutes les pages du site).
+>
+> - **Desktop (`xl`, 1280px, et plus)** : menu latéral `fixed` à gauche,
+>   240px de large, pleine hauteur — logo en haut, liens empilés
+>   verticalement au milieu (`LiensNavigation` en mode `pleineLargeur`,
+>   déjà conçu pour le tiroir mobile, réutilisé tel quel), connexion en
+>   bas. `app/layout.tsx` ajoute `xl:pl-[240px]` au conteneur du
+>   contenu pour compenser (le menu latéral est `fixed`, hors du flux).
+> - **Mobile/tablette (< `xl`)** : inchangé dans son principe — bandeau
+>   horizontal compact en haut (logo + bouton menu), tiroir déroulant
+>   `<details>` — juste un peu réduit en hauteur (72px au lieu de 88px).
+> - Vérifié avec un compte de test jetable + vraie session : capture
+>   d'écran desktop (visiteur), mobile fermé/ouvert, et desktop connecté
+>   (ordre des liens, pied du menu avec avatar/email/déconnexion).
+>   Compte de test supprimé ensuite.
+>
 > **En-tête de navigation en pleine largeur, plus centré dans un
 > conteneur `max-w-[1240px]`** (`BarreNavigation.tsx`) — demandé
 > explicitement par l'utilisateur, capture d'écran à l'appui : sur un

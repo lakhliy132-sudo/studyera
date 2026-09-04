@@ -10,81 +10,104 @@ interface BarreNavigationProps {
 }
 
 /**
- * Barre de navigation, affichée par app/layout.tsx sur toutes les
- * pages — reprise de la maquette de référence (page-oeuvre (2).html).
+ * Navigation du site, affichée par app/layout.tsx sur toutes les
+ * pages. Deux rendus distincts plutôt qu'une seule barre qui se
+ * réarrange en CSS : un menu latéral vertical fixe à gauche sur
+ * desktop (`xl` et plus), un bandeau horizontal compact en haut avec
+ * menu déroulant sur mobile/tablette — demandé explicitement par
+ * l'utilisateur, capture d'écran à l'appui, en deux temps : d'abord
+ * "HORIZETALEMENT A GAUCHE" (bandeau horizontal collé au bord gauche,
+ * toujours en haut), puis "VERTICALEMENT A GAUCHE" (les mêmes liens,
+ * mais empilés verticalement sur le côté gauche, comme un tableau de
+ * bord classique) — confirmé via une question de clarification avant
+ * d'appliquer, vu l'ampleur du changement (structure de toutes les
+ * pages). `app/layout.tsx` décale le contenu de `xl:pl-[240px]` pour
+ * laisser la place au menu latéral, qui est `fixed` (ne participe pas
+ * au flux du document).
  *
  * Menu mobile en `<details>`/`<summary>` natif plutôt qu'un composant
  * client avec un `useState` : même philosophie que OngletsOeuvre
  * ("Composant Serveur volontairement"), pas de JS nécessaire pour
  * ouvrir/fermer le menu. `LiensNavigation` (client, `usePathname`) et
  * `BoutonDeconnexion` (client, `supabase.auth.signOut()`) sont les
- * seuls morceaux interactifs.
+ * seuls morceaux interactifs. `LiensNavigation`/`EtatConnexion` en
+ * `pleineLargeur` (déjà conçus pour le tiroir mobile empilé) servent
+ * tels quels dans le menu latéral desktop : même empilement vertical
+ * dans les deux cas, pas de variante supplémentaire à maintenir.
  *
  * Bascule desktop/mobile à `xl` (1280px), pas `md` (768px) comme le
- * reste du site : mesuré avec Playwright, les 6 liens de nav (dont
- * "Langues", ajouté à la demande de l'utilisateur) plus le logo et les
- * boutons de connexion ont besoin d'environ 1220px pour tenir sur une
- * seule ligne sans déborder — en dessous, le menu `<details>` prend le
- * relais plutôt que de laisser la page défiler horizontalement.
- *
- * Bandeau plein largeur, pas centré dans un conteneur `max-w-[1240px]`
- * comme le reste du site — demandé explicitement par l'utilisateur,
- * capture d'écran à l'appui ("le logo et les liens... collés au vrai
- * bord gauche de l'écran") : sur un grand écran, le bandeau centré
- * laissait un vide bien visible avant le logo. Le logo/nav restent
- * donc collés au bord gauche réel de la fenêtre, les boutons de
- * connexion (`ml-auto`) au bord droit réel — changement propre à
- * cet en-tête, le reste du site garde son conteneur centré habituel.
+ * reste du site — voir la mesure Playwright déjà documentée pour
+ * l'ancien bandeau horizontal (6 liens + logo + connexion ont besoin
+ * d'environ 1220px).
  */
 export default function BarreNavigation({ connecte, email }: BarreNavigationProps) {
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-surface">
-      <div className="flex h-[88px] w-full items-center gap-11 px-7">
-        <Link href="/" className="flex items-center gap-3.5">
-          <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
-            <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
-            <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
-          </svg>
-          <span className="leading-tight">
-            <span className="font-serif text-[25px] font-bold text-ink">STUDYERA</span>
-            <span className="font-lecture block text-[12.5px] text-primary-vif">
-              Révisez · Comprenez · Progressez
-            </span>
-          </span>
-        </Link>
+    <>
+      {/* Mobile/tablette (< xl) : bandeau horizontal compact en haut. */}
+      <header className="sticky top-0 z-20 border-b border-border bg-surface xl:hidden">
+        <div className="flex h-[72px] w-full items-center justify-between px-5">
+          <Logo />
 
-        <nav aria-label="Navigation principale" className="hidden items-center gap-2 xl:flex">
-          <LiensNavigation connecte={connecte} />
-        </nav>
+          {/* Pas de `relative` sur ce `<details>` : sa propre boîte ne
+           * fait que la largeur du bouton hamburger, donc un `relative`
+           * ici ferait résoudre `inset-x-0` du panneau ci-dessous
+           * contre cette boîte étroite plutôt que contre la largeur de
+           * l'écran. `<header>` est déjà `sticky`, donc déjà
+           * positionné : c'est lui qui sert de référence pour
+           * `inset-x-0`/`top-full` du panneau. */}
+          <details>
+            <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
+              <IconeMenu className="size-6" />
+              <span className="sr-only">Ouvrir le menu</span>
+            </summary>
+            <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
+              <LiensNavigation pleineLargeur connecte={connecte} />
+              <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
+                <EtatConnexion connecte={connecte} email={email} pleineLargeur />
+              </div>
+            </div>
+          </details>
+        </div>
+      </header>
 
-        <div className="ml-auto hidden items-center gap-3 xl:flex">
-          <EtatConnexion connecte={connecte} email={email} />
+      {/* Desktop (xl et plus) : menu latéral fixe à gauche, pleine
+       * hauteur. `fixed` : hors du flux, voir le padding compensatoire
+       * dans app/layout.tsx. */}
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[240px] flex-col border-r border-border bg-surface xl:flex">
+        <div className="border-b border-border px-5 py-6">
+          <Logo />
         </div>
 
-        {/* Pas de `relative` sur ce `<details>` : sa propre boîte ne fait
-         * que la largeur du bouton hamburger, donc un `relative` ici
-         * ferait résoudre `inset-x-0` du panneau ci-dessous contre cette
-         * boîte étroite plutôt que contre la largeur de l'écran (bug
-         * préexistant, repéré par capture d'écran en élargissant la
-         * bascule desktop/mobile ci-dessus à `xl`, qui expose ce menu à
-         * beaucoup plus de largeurs d'écran qu'avant). `<header>` est
-         * déjà `sticky`, donc déjà positionné : c'est lui qui sert de
-         * référence pour `inset-x-0`/`top-full` du panneau. */}
-        <details className="ml-auto xl:hidden">
-          <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
-            <IconeMenu className="size-6" />
-            <span className="sr-only">Ouvrir le menu</span>
-          </summary>
-          <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
-            <LiensNavigation pleineLargeur connecte={connecte} />
-            <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
-              <EtatConnexion connecte={connecte} email={email} pleineLargeur />
-            </div>
-          </div>
-        </details>
-      </div>
-    </header>
+        <nav
+          aria-label="Navigation principale"
+          className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-5"
+        >
+          <LiensNavigation pleineLargeur connecte={connecte} />
+        </nav>
+
+        <div className="flex flex-col gap-2 border-t border-border px-3 py-4">
+          <EtatConnexion connecte={connecte} email={email} pleineLargeur />
+        </div>
+      </aside>
+    </>
+  );
+}
+
+function Logo() {
+  return (
+    <Link href="/" className="flex items-center gap-3">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true" className="shrink-0">
+        <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
+        <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
+        <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
+      </svg>
+      <span className="min-w-0 leading-tight">
+        <span className="font-serif text-xl font-bold text-ink">STUDYERA</span>
+        <span className="font-lecture block truncate text-[11.5px] text-primary-vif">
+          Révisez · Comprenez · Progressez
+        </span>
+      </span>
+    </Link>
   );
 }
 

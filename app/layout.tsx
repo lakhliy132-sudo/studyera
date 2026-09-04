@@ -103,6 +103,13 @@ const fraunces = Fraunces({
  * transmis en props. Rend chaque page dynamique (plus de rendu
  * statique pur), acceptable pour une nav qui doit refléter la vraie
  * session de l'utilisateur.
+ *
+ * `xl:pl-[240px]` : compense le menu latéral de BarreNavigation, fixé
+ * hors du flux du document à cette largeur sur desktop (`xl` et
+ * plus) — demandé explicitement par l'utilisateur ("VERTICALEMENT A
+ * GAUCHE"). Aucun padding en dessous de `xl` : le menu latéral est
+ * alors remplacé par le bandeau horizontal compact, dans le flux
+ * normal du document.
  */
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await creerClientServeur();
@@ -117,7 +124,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
-        {children}
+        <div className="xl:pl-[240px]">{children}</div>
       </body>
     </html>
   );
