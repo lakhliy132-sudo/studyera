@@ -2,18 +2,20 @@ import type { QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 
 /**
  * Questions du quiz du "Dernier Jour d'un Condamné", organisées
- * chapitre par chapitre — demandé explicitement par l'utilisateur
- * ("fais les lieux et les quiz"). 3 questions par chapitre (numero 1 à
- * 49), 147 au total : moins dense que La Boîte à Merveilles (15/chapitre,
- * 12 chapitres) ou Antigone (5/scène, 22 scènes), volontairement, car
- * chaque chapitre de ce roman est une réflexion brève d'une poignée de
- * paragraphes — 3 questions couvrent l'essentiel sans répétition ni
- * remplissage artificiel.
+ * chapitre par chapitre — demandé explicitement par l'utilisateur, en
+ * deux temps : "fais les lieux et les quiz" (3 questions/chapitre au
+ * départ, volontairement moins dense que les 2 autres œuvres vu la
+ * brièveté des chapitres), puis "5quiz dans chapitre" — aligné sur la
+ * densité d'Antigone (5 questions/scène). 5 questions par chapitre
+ * (numero 1 à 49), 245 au total : les 3 premières portent sur les
+ * faits du chapitre (résumé/points clés), la 4ᵉ sur son thème
+ * principal (choix parmi le vrai thème, ses 2 thèmes secondaires et le
+ * thème d'un autre chapitre), la 5ᵉ sur un mot de son lexique.
  *
  * ⚠️ Contenu entièrement rédigé par Claude, à partir des résumés,
- * points clés et thèmes déjà en base (table `fiches`, rédigés lors
- * d'une session précédente à partir d'une vraie connaissance du roman
- * de Victor Hugo) — chaque question est vérifiable dans le résumé du
+ * points clés, thèmes et lexique déjà en base (rédigés lors d'une
+ * session précédente à partir d'une vraie connaissance du roman de
+ * Victor Hugo) — chaque question est vérifiable dans le contenu du
  * chapitre correspondant, mais la formulation des questions/réponses
  * elle-même n'a pas été fournie par l'utilisateur : à faire relire par
  * un enseignant avant usage en classe, même réserve que les autres
@@ -42,7 +44,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 2,
       explication: "Victor Hugo ne révèle ni le nom ni le crime du condamné, pour en faire un cas universel.",
     },
-  ], // La condamnation à mort
+    {
+      id: "djc-c1-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'écriture à la première personne", "L'anonymat du condamné", "La dénonciation de la peine de mort", "La prise de conscience de la condamnation"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « La prise de conscience de la condamnation ».",
+    },
+    {
+      id: "djc-c1-q5",
+      question: "Que signifie le mot « irrévocable », employé dans ce chapitre ?",
+      choix: ["Discours en faveur d'une cause, ici contre la peine de mort.", "Que l'on ne peut plus annuler ni modifier. Le mot que se répète le condamné dès le premier chapitre.", "Recours porté devant la Cour de cassation pour faire annuler une décision de justice.", "Peine que l'on éprouve d'avoir fait, ou non, quelque chose."],
+      reponseCorrecte: 1,
+      explication: "« irrévocable » : Que l'on ne peut plus annuler ni modifier. Le mot que se répète le condamné dès le premier chapitre.",
+    },
+  ],
   2: [
     {
       id: "djc-c2-q1",
@@ -65,7 +81,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il comprend que la société a décidé, froidement, de lui retirer la vie.",
     },
-  ], // Le souvenir du procès
+    {
+      id: "djc-c2-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'universalisation du personnage", "L'idée fixe de la mort", "Le refus de raconter le crime", "La société et le jugement"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « Le refus de raconter le crime ».",
+    },
+    {
+      id: "djc-c2-q5",
+      question: "Que signifie le mot « un procès », employé dans ce chapitre ?",
+      choix: ["Instance judiciaire au cours de laquelle un tribunal juge un accusé.", "D'une sensibilité extrême, ici aux moindres bruits.", "Craindre vivement quelque chose.", "Déplacement d'une personne d'un lieu à un autre, ici d'une prison à l'autre."],
+      reponseCorrecte: 0,
+      explication: "« un procès » : Instance judiciaire au cours de laquelle un tribunal juge un accusé.",
+    },
+  ],
   3: [
     {
       id: "djc-c3-q1",
@@ -88,7 +118,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette vision qu'il ne peut chasser de son esprit lui inspire une terreur presque incontrôlable.",
     },
-  ], // L'image de l'échafaud
+    {
+      id: "djc-c3-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'espoir et le désespoir mêlés", "La terreur de l'exécution imaginée", "Le spectacle de la mort", "L'obsession"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « La terreur de l'exécution imaginée ».",
+    },
+    {
+      id: "djc-c3-q5",
+      question: "Que signifie le mot « un échafaud », employé dans ce chapitre ?",
+      choix: ["Voiture à deux roues tirée par un animal ; ici, celle qui conduit le condamné à l'échafaud.", "Absence de pouvoir, de moyen d'agir.", "Relatif à la prison.", "Estrade sur laquelle se déroule une exécution capitale."],
+      reponseCorrecte: 3,
+      explication: "« un échafaud » : Estrade sur laquelle se déroule une exécution capitale.",
+    },
+  ],
   4: [
     {
       id: "djc-c4-q1",
@@ -111,7 +155,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il mesure, dans cet espace réduit, toute la distance qui le sépare désormais de sa vie d'avant.",
     },
-  ], // La solitude de la cellule
+    {
+      id: "djc-c4-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'enfermement et l'isolement", "Le temps qui s'écoule", "La perte de la vie d'avant", "L'attente insupportable"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'enfermement et l'isolement ».",
+    },
+    {
+      id: "djc-c4-q5",
+      question: "Que signifie le mot « une cellule », employé dans ce chapitre ?",
+      choix: ["Action de s'échapper d'un lieu de détention.", "Prêtre chargé de l'assistance religieuse dans un établissement (prison, hôpital, armée).", "Petite pièce fermée où est enfermé un prisonnier.", "Dont la valeur est si grande qu'on ne peut l'évaluer."],
+      reponseCorrecte: 2,
+      explication: "« une cellule » : Petite pièce fermée où est enfermé un prisonnier.",
+    },
+  ],
   5: [
     {
       id: "djc-c5-q1",
@@ -134,7 +192,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Certains rient, chantent ou se disputent, habitués depuis longtemps à la prison.",
     },
-  ], // Les autres prisonniers
+    {
+      id: "djc-c5-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'espoir des autres détenus", "La différence du condamné à mort", "Le spectacle public de la mort", "La solitude morale au milieu des hommes"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « La solitude morale au milieu des hommes ».",
+    },
+    {
+      id: "djc-c5-q5",
+      question: "Que signifie le mot « un judas », employé dans ce chapitre ?",
+      choix: ["Qui semble ne devoir jamais finir.", "Petite ouverture dans une porte permettant de voir sans être vu.", "Faire subir quelque chose de pénible à quelqu'un.", "Souffrance physique ou morale extrême infligée à quelqu'un."],
+      reponseCorrecte: 1,
+      explication: "« un judas » : Petite ouverture dans une porte permettant de voir sans être vu.",
+    },
+  ],
   6: [
     {
       id: "djc-c6-q1",
@@ -157,7 +229,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "C'est ici que se dessine, pour la première fois clairement, la thèse abolitionniste de Victor Hugo.",
     },
-  ], // La critique de la justice
+    {
+      id: "djc-c6-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La souffrance du condamné", "La nostalgie de la liberté perdue", "La dénonciation de la peine de mort", "Le droit de tuer au nom de la loi"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « La dénonciation de la peine de mort ».",
+    },
+    {
+      id: "djc-c6-q5",
+      question: "Que signifie le mot « abolitionniste », employé dans ce chapitre ?",
+      choix: ["Qui prône l'abolition d'une loi ou d'une pratique, ici la peine de mort.", "Sentiment qui pousse les hommes à s'entraider.", "Absence d'intérêt ou d'émotion face à quelque chose.", "Qui suscite une émotion violente, empreint de fatalité funeste."],
+      reponseCorrecte: 0,
+      explication: "« abolitionniste » : Qui prône l'abolition d'une loi ou d'une pratique, ici la peine de mort.",
+    },
+  ],
   7: [
     {
       id: "djc-c7-q1",
@@ -180,7 +266,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "La condamnation à mort n'est pas seulement la mort elle-même, mais une longue torture psychologique avant.",
     },
-  ], // L'obsession de la mort
+    {
+      id: "djc-c7-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La douleur infligée aux proches", "L'idée fixe de la mort", "La torture psychologique", "Le sommeil hanté"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'idée fixe de la mort ».",
+    },
+    {
+      id: "djc-c7-q5",
+      question: "Que signifie le mot « une obsession », employé dans ce chapitre ?",
+      choix: ["Peine que l'on éprouve d'avoir fait, ou non, quelque chose.", "Discours en faveur d'une cause, ici contre la peine de mort.", "Disposition prise en vue de quelque chose, ici l'exécution.", "Idée qui occupe l'esprit de façon envahissante et répétée."],
+      reponseCorrecte: 3,
+      explication: "« une obsession » : Idée qui occupe l'esprit de façon envahissante et répétée.",
+    },
+  ],
   8: [
     {
       id: "djc-c8-q1",
@@ -203,7 +303,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Espoir et désespoir se mêlent alors constamment dans son esprit.",
     },
-  ], // L'espoir du recours
+    {
+      id: "djc-c8-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'espoir et le désespoir mêlés", "Le pourvoi en cassation", "L'incertitude judiciaire", "L'isolement absolu du condamné"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'espoir et le désespoir mêlés ».",
+    },
+    {
+      id: "djc-c8-q5",
+      question: "Que signifie le mot « un pourvoi en cassation », employé dans ce chapitre ?",
+      choix: ["Déplacement d'une personne d'un lieu à un autre, ici d'une prison à l'autre.", "Mesure qui dispense un condamné d'exécuter tout ou partie de sa peine.", "Recours porté devant la Cour de cassation pour faire annuler une décision de justice.", "Craindre vivement quelque chose."],
+      reponseCorrecte: 2,
+      explication: "« un pourvoi en cassation » : Recours porté devant la Cour de cassation pour faire annuler une décision de justice.",
+    },
+  ],
   9: [
     {
       id: "djc-c9-q1",
@@ -226,7 +340,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Le temps lui semble s'écouler avec une lenteur insupportable.",
     },
-  ], // L'attente des bruits
+    {
+      id: "djc-c9-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'hypervigilance", "Le temps qui semble s'arrêter", "La prise de conscience de la valeur du temps", "L'attente insupportable"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'attente insupportable ».",
+    },
+    {
+      id: "djc-c9-q5",
+      question: "Que signifie le mot « hypersensible », employé dans ce chapitre ?",
+      choix: ["Sentiment de honte provoqué par un traitement dégradant.", "D'une sensibilité extrême, ici aux moindres bruits.", "Absence de pouvoir, de moyen d'agir.", "Relatif à la prison."],
+      reponseCorrecte: 1,
+      explication: "« hypersensible » : D'une sensibilité extrême, ici aux moindres bruits.",
+    },
+  ],
   10: [
     {
       id: "djc-c10-q1",
@@ -249,7 +377,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Victor Hugo dénonce la cruauté et l'inconscience d'une société qui a fait de l'exécution un spectacle.",
     },
-  ], // Le jour de l'exécution
+    {
+      id: "djc-c10-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La dénonciation de la cruauté sociale", "L'amour paternel", "Le spectacle public de la mort", "La foule et la curiosité"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « Le spectacle public de la mort ».",
+    },
+    {
+      id: "djc-c10-q5",
+      question: "Que signifie le mot « une charrette », employé dans ce chapitre ?",
+      choix: ["Voiture à deux roues tirée par un animal ; ici, celle qui conduit le condamné à l'échafaud.", "Action de s'échapper d'un lieu de détention.", "Prêtre chargé de l'assistance religieuse dans un établissement (prison, hôpital, armée).", "Grande agitation bruyante d'une foule."],
+      reponseCorrecte: 0,
+      explication: "« une charrette » : Voiture à deux roues tirée par un animal ; ici, celle qui conduit le condamné à l'échafaud.",
+    },
+  ],
   11: [
     {
       id: "djc-c11-q1",
@@ -272,7 +414,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "La liberté qu'il possédait sans y penser lui apparaît rétrospectivement comme un bien immense.",
     },
-  ], // Les souvenirs du passé
+    {
+      id: "djc-c11-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'angoisse croissante", "La nostalgie de la liberté perdue", "Le regret", "La valeur du souvenir"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « La nostalgie de la liberté perdue ».",
+    },
+    {
+      id: "djc-c11-q5",
+      question: "Que signifie le mot « inestimable », employé dans ce chapitre ?",
+      choix: ["Souffrance physique ou morale extrême infligée à quelqu'un.", "Qui semble ne devoir jamais finir.", "Parole ou geste par lequel on se sépare de quelqu'un, souvent pour toujours.", "Dont la valeur est si grande qu'on ne peut l'évaluer."],
+      reponseCorrecte: 3,
+      explication: "« inestimable » : Dont la valeur est si grande qu'on ne peut l'évaluer.",
+    },
+  ],
   12: [
     {
       id: "djc-c12-q1",
@@ -295,7 +451,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il mesure aussi la douleur qu'il va infliger à sa famille par sa disparition.",
     },
-  ], // Les proches laissés derrière
+    {
+      id: "djc-c12-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La douleur infligée aux proches", "La famille", "L'élargissement de la souffrance", "L'imagination comme refuge"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « La douleur infligée aux proches ».",
+    },
+    {
+      id: "djc-c12-q5",
+      question: "Que signifie le mot « infliger », employé dans ce chapitre ?",
+      choix: ["Qui suscite une émotion violente, empreint de fatalité funeste.", "Action de s'interposer dans le cours d'un événement.", "Faire subir quelque chose de pénible à quelqu'un.", "Absence d'intérêt ou d'émotion face à quelque chose."],
+      reponseCorrecte: 2,
+      explication: "« infliger » : Faire subir quelque chose de pénible à quelqu'un.",
+    },
+  ],
   13: [
     {
       id: "djc-c13-q1",
@@ -318,7 +488,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 0,
       explication: "Il est le seul à connaître, à quelques semaines près, la date exacte de sa propre mort.",
     },
-  ], // La solitude parmi les hommes
+    {
+      id: "djc-c13-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La vie carcérale", "Le secret du jour fixé", "Le temps comme torture", "L'isolement absolu du condamné"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'isolement absolu du condamné ».",
+    },
+    {
+      id: "djc-c13-q5",
+      question: "Que signifie le mot « la solidarité », employé dans ce chapitre ?",
+      choix: ["Que l'on ne peut éviter.", "Sentiment qui pousse les hommes à s'entraider.", "Discours en faveur d'une cause, ici contre la peine de mort.", "Disposition prise en vue de quelque chose, ici l'exécution."],
+      reponseCorrecte: 1,
+      explication: "« la solidarité » : Sentiment qui pousse les hommes à s'entraider.",
+    },
+  ],
   14: [
     {
       id: "djc-c14-q1",
@@ -341,7 +525,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 0,
       explication: "Sa mort prochaine lui fait mesurer, trop tard, la valeur de chaque instant de l'existence.",
     },
-  ], // La valeur de la vie
+    {
+      id: "djc-c14-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'adresse au lecteur", "L'indifférence de la foule", "La prise de conscience de la valeur du temps", "Le regret des projets inachevés"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « La prise de conscience de la valeur du temps ».",
+    },
+    {
+      id: "djc-c14-q5",
+      question: "Que signifie le mot « un regret », employé dans ce chapitre ?",
+      choix: ["Peine que l'on éprouve d'avoir fait, ou non, quelque chose.", "Déplacement d'une personne d'un lieu à un autre, ici d'une prison à l'autre.", "Mesure qui dispense un condamné d'exécuter tout ou partie de sa peine.", "Sensation de perte d'équilibre ; au figuré, trouble devant une situation extrême."],
+      reponseCorrecte: 0,
+      explication: "« un regret » : Peine que l'on éprouve d'avoir fait, ou non, quelque chose.",
+    },
+  ],
   15: [
     {
       id: "djc-c15-q1",
@@ -364,7 +562,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Victor Hugo rappelle que le condamné n'est pas réductible à son crime : c'est aussi un père.",
     },
-  ], // La pensée de sa fille
+    {
+      id: "djc-c15-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le plaidoyer contre la peine de mort", "L'amour paternel", "La dimension humaine du condamné", "La peur de l'oubli"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'amour paternel ».",
+    },
+    {
+      id: "djc-c15-q5",
+      question: "Que signifie le mot « redouter », employé dans ce chapitre ?",
+      choix: ["Relatif à la prison.", "Sentiment de honte provoqué par un traitement dégradant.", "Qui a une grande valeur.", "Craindre vivement quelque chose."],
+      reponseCorrecte: 3,
+      explication: "« redouter » : Craindre vivement quelque chose.",
+    },
+  ],
   16: [
     {
       id: "djc-c16-q1",
@@ -387,7 +599,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il se heurte à son absolue impuissance face à une décision de justice déjà scellée.",
     },
-  ], // L'approche de l'exécution
+    {
+      id: "djc-c16-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'angoisse croissante", "Les signes annonciateurs", "L'impuissance face à la justice", "Le rapprochement concret de la mort"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'angoisse croissante ».",
+    },
+    {
+      id: "djc-c16-q5",
+      question: "Que signifie le mot « l'impuissance », employé dans ce chapitre ?",
+      choix: ["Grande agitation bruyante d'une foule.", "Qui suscite une émotion intense, souvent teintée de tristesse.", "Absence de pouvoir, de moyen d'agir.", "Prêtre chargé de l'assistance religieuse dans un établissement (prison, hôpital, armée)."],
+      reponseCorrecte: 2,
+      explication: "« l'impuissance » : Absence de pouvoir, de moyen d'agir.",
+    },
+  ],
   17: [
     {
       id: "djc-c17-q1",
@@ -410,7 +636,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il sait, au fond, que ces issues sont presque impossibles.",
     },
-  ], // L'espoir d'échapper
+    {
+      id: "djc-c17-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'évasion rêvée", "Le combat intérieur", "L'isolement dans un nouveau lieu", "L'imagination comme refuge"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'imagination comme refuge ».",
+    },
+    {
+      id: "djc-c17-q5",
+      question: "Que signifie le mot « une évasion », employé dans ce chapitre ?",
+      choix: ["Qui concerne les questions fondamentales de l'existence, au-delà du monde sensible.", "Action de s'échapper d'un lieu de détention.", "Qui semble ne devoir jamais finir.", "Parole ou geste par lequel on se sépare de quelqu'un, souvent pour toujours."],
+      reponseCorrecte: 1,
+      explication: "« une évasion » : Action de s'échapper d'un lieu de détention.",
+    },
+  ],
   18: [
     {
       id: "djc-c18-q1",
@@ -433,7 +673,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "La vie, désormais comptée, a gagné une valeur immense à ses yeux.",
     },
-  ], // La torture du temps
+    {
+      id: "djc-c18-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'attention obsessionnelle", "La difficulté du réconfort spirituel", "Le temps comme torture", "La valeur nouvelle de chaque instant"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « Le temps comme torture ».",
+    },
+    {
+      id: "djc-c18-q5",
+      question: "Que signifie le mot « une torture », employé dans ce chapitre ?",
+      choix: ["Souffrance physique ou morale extrême infligée à quelqu'un.", "Qui suscite une émotion violente, empreint de fatalité funeste.", "Action de s'interposer dans le cours d'un événement.", "Caractère de ce qui est contraire à la justice."],
+      reponseCorrecte: 0,
+      explication: "« une torture » : Souffrance physique ou morale extrême infligée à quelqu'un.",
+    },
+  ],
   19: [
     {
       id: "djc-c19-q1",
@@ -456,7 +710,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Victor Hugo cherche à provoquer chez son lecteur le malaise et la réflexion.",
     },
-  ], // La foule curieuse
+    {
+      id: "djc-c19-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'attente réduite à l'essentiel", "L'indifférence de la foule", "Le divertissement collectif", "L'adresse au lecteur"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'indifférence de la foule ».",
+    },
+    {
+      id: "djc-c19-q5",
+      question: "Que signifie le mot « l'indifférence », employé dans ce chapitre ?",
+      choix: ["Disposition prise en vue de quelque chose, ici l'exécution.", "Que l'on ne peut éviter.", "État d'agitation, d'irritabilité.", "Absence d'intérêt ou d'émotion face à quelque chose."],
+      reponseCorrecte: 3,
+      explication: "« l'indifférence » : Absence d'intérêt ou d'émotion face à quelque chose.",
+    },
+  ],
   20: [
     {
       id: "djc-c20-q1",
@@ -479,7 +747,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Son expérience individuelle se transforme en plaidoyer général contre la peine capitale.",
     },
-  ], // L'opposition à la peine de mort
+    {
+      id: "djc-c20-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le plaidoyer contre la peine de mort", "Le refus de répondre à une mort par une autre", "La portée universelle du récit", "L'amour paternel exacerbé"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « Le plaidoyer contre la peine de mort ».",
+    },
+    {
+      id: "djc-c20-q5",
+      question: "Que signifie le mot « un plaidoyer », employé dans ce chapitre ?",
+      choix: ["Sensation de perte d'équilibre ; au figuré, trouble devant une situation extrême.", "Isolement affectif ou psychologique, même en présence d'autrui.", "Discours en faveur d'une cause, ici contre la peine de mort.", "Mesure qui dispense un condamné d'exécuter tout ou partie de sa peine."],
+      reponseCorrecte: 2,
+      explication: "« un plaidoyer » : Discours en faveur d'une cause, ici contre la peine de mort.",
+    },
+  ],
   21: [
     {
       id: "djc-c21-q1",
@@ -502,7 +784,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Son esprit reste tout entier fixé sur l'échéance qui approche.",
     },
-  ], // Le transfert à la Conciergerie
+    {
+      id: "djc-c21-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le trajet à travers Paris", "La nouvelle étape vers l'échafaud", "L'instinct de survie", "Le rapprochement concret de la mort"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « Le rapprochement concret de la mort ».",
+    },
+    {
+      id: "djc-c21-q5",
+      question: "Que signifie le mot « un transfert », employé dans ce chapitre ?",
+      choix: ["Ne considérer quelqu'un que sous un seul aspect, en ignorant le reste.", "Déplacement d'une personne d'un lieu à un autre, ici d'une prison à l'autre.", "Sentiment de honte provoqué par un traitement dégradant.", "Qui a une grande valeur."],
+      reponseCorrecte: 1,
+      explication: "« un transfert » : Déplacement d'une personne d'un lieu à un autre, ici d'une prison à l'autre.",
+    },
+  ],
   22: [
     {
       id: "djc-c22-q1",
@@ -525,7 +821,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 0,
       explication: "Ce lieu, chargé d'histoire judiciaire, lui rappelle qu'il est désormais voué à la mort.",
     },
-  ], // La découverte de la Conciergerie
+    {
+      id: "djc-c22-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Les nouveaux visages", "L'espoir persistant face à la mort", "L'isolement dans un nouveau lieu", "L'histoire judiciaire du lieu"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « L'isolement dans un nouveau lieu ».",
+    },
+    {
+      id: "djc-c22-q5",
+      question: "Que signifie le mot « carcéral, -ale », employé dans ce chapitre ?",
+      choix: ["Relatif à la prison.", "Grande agitation bruyante d'une foule.", "Qui suscite une émotion intense, souvent teintée de tristesse.", "Qui cause de l'angoisse."],
+      reponseCorrecte: 0,
+      explication: "« carcéral, -ale » : Relatif à la prison.",
+    },
+  ],
   23: [
     {
       id: "djc-c23-q1",
@@ -548,7 +858,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "La peur de la mort reste plus forte que toute consolation.",
     },
-  ], // La visite du prêtre
+    {
+      id: "djc-c23-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La mort transformée en spectacle", "La difficulté du réconfort spirituel", "La religion face à la peur", "L'accompagnement des derniers jours"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « La difficulté du réconfort spirituel ».",
+    },
+    {
+      id: "djc-c23-q5",
+      question: "Que signifie le mot « un aumônier », employé dans ce chapitre ?",
+      choix: ["Parole ou geste par lequel on se sépare de quelqu'un, souvent pour toujours.", "Qui concerne les questions fondamentales de l'existence, au-delà du monde sensible.", "Caractère de ce qui a une fin, notion philosophique liée à la mort.", "Prêtre chargé de l'assistance religieuse dans un établissement (prison, hôpital, armée)."],
+      reponseCorrecte: 3,
+      explication: "« un aumônier » : Prêtre chargé de l'assistance religieuse dans un établissement (prison, hôpital, armée).",
+    },
+  ],
   24: [
     {
       id: "djc-c24-q1",
@@ -571,7 +895,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette réduction de ses désirs à l'essentiel dit toute la valeur qu'a pris chaque fraction de temps.",
     },
-  ], // L'attente interminable
+    {
+      id: "djc-c24-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'attente réduite à l'essentiel", "Le désir de durer encore un peu", "Le mélange de souvenirs et de peur", "La perte de tout espoir"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'attente réduite à l'essentiel ».",
+    },
+    {
+      id: "djc-c24-q5",
+      question: "Que signifie le mot « interminable », employé dans ce chapitre ?",
+      choix: ["Caractère de ce qui est contraire à la justice.", "Fait de se retrouver après une séparation.", "Qui semble ne devoir jamais finir.", "Action de s'interposer dans le cours d'un événement."],
+      reponseCorrecte: 2,
+      explication: "« interminable » : Qui semble ne devoir jamais finir.",
+    },
+  ],
   25: [
     {
       id: "djc-c25-q1",
@@ -594,7 +932,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cet amour paternel rend la condamnation encore plus tragique en révélant son coût humain.",
     },
-  ], // Le souvenir de sa fille
+    {
+      id: "djc-c25-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le tragique de la condamnation", "L'avenir sans le père", "Les adieux impossibles", "L'amour paternel exacerbé"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'amour paternel exacerbé ».",
+    },
+    {
+      id: "djc-c25-q5",
+      question: "Que signifie le mot « tragique », employé dans ce chapitre ?",
+      choix: ["Qui cause une douleur morale très vive.", "Qui suscite une émotion violente, empreint de fatalité funeste.", "Que l'on ne peut éviter.", "État d'agitation, d'irritabilité."],
+      reponseCorrecte: 1,
+      explication: "« tragique » : Qui suscite une émotion violente, empreint de fatalité funeste.",
+    },
+  ],
   26: [
     {
       id: "djc-c26-q1",
@@ -617,7 +969,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cela révèle l'instinct de survie qui subsiste jusqu'au bout chez tout être humain.",
     },
-  ], // Les préparatifs
+    {
+      id: "djc-c26-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La terreur croissante", "L'instinct de vie jusqu'au bout", "L'instinct de survie", "Les signes concrets de l'exécution"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « L'instinct de survie ».",
+    },
+    {
+      id: "djc-c26-q5",
+      question: "Que signifie le mot « un préparatif », employé dans ce chapitre ?",
+      choix: ["Disposition prise en vue de quelque chose, ici l'exécution.", "Sensation de perte d'équilibre ; au figuré, trouble devant une situation extrême.", "Isolement affectif ou psychologique, même en présence d'autrui.", "Qui a une simplicité et une confiance propres à l'enfance."],
+      reponseCorrecte: 0,
+      explication: "« un préparatif » : Disposition prise en vue de quelque chose, ici l'exécution.",
+    },
+  ],
   27: [
     {
       id: "djc-c27-q1",
@@ -640,7 +1006,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Le désespoir et l'espoir alternent sans cesse jusque dans les tout derniers instants.",
     },
-  ], // L'espoir de la grâce
+    {
+      id: "djc-c27-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'inévitabilité de la mort", "L'espoir persistant face à la mort", "La fragilité de l'espoir", "L'alternance espoir/désespoir"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'espoir persistant face à la mort ».",
+    },
+    {
+      id: "djc-c27-q5",
+      question: "Que signifie le mot « une grâce », employé dans ce chapitre ?",
+      choix: ["Qui a une grande valeur.", "Ne considérer quelqu'un que sous un seul aspect, en ignorant le reste.", "État de manque total d'espoir.", "Mesure qui dispense un condamné d'exécuter tout ou partie de sa peine."],
+      reponseCorrecte: 3,
+      explication: "« une grâce » : Mesure qui dispense un condamné d'exécuter tout ou partie de sa peine.",
+    },
+  ],
   28: [
     {
       id: "djc-c28-q1",
@@ -663,7 +1043,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il en ressent une humiliation profonde, mêlée à une peur intense et physique.",
     },
-  ], // Conduit vers l'échafaud
+    {
+      id: "djc-c28-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La mort transformée en spectacle", "L'humiliation publique", "La peur intense", "La torture psychologique prolongée"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « La mort transformée en spectacle ».",
+    },
+    {
+      id: "djc-c28-q5",
+      question: "Que signifie le mot « une humiliation », employé dans ce chapitre ?",
+      choix: ["Qui cause de l'angoisse.", "Récit de ce que l'on a vécu ou vu, rapporté pour en informer autrui.", "Sentiment de honte provoqué par un traitement dégradant.", "Qui suscite une émotion intense, souvent teintée de tristesse."],
+      reponseCorrecte: 2,
+      explication: "« une humiliation » : Sentiment de honte provoqué par un traitement dégradant.",
+    },
+  ],
   29: [
     {
       id: "djc-c29-q1",
@@ -686,7 +1080,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Sa pensée, dans cet instant de tension extrême, se tourne vers sa famille et sa fille.",
     },
-  ], // Près de l'échafaud
+    {
+      id: "djc-c29-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le tumulte de la foule", "La pensée pour la famille", "La liberté comme bien précieux", "La perte de tout espoir"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « La perte de tout espoir ».",
+    },
+    {
+      id: "djc-c29-q5",
+      question: "Que signifie le mot « un tumulte », employé dans ce chapitre ?",
+      choix: ["Attendre avec confiance la réalisation de quelque chose.", "Grande agitation bruyante d'une foule.", "Qui concerne les questions fondamentales de l'existence, au-delà du monde sensible.", "Caractère de ce qui a une fin, notion philosophique liée à la mort."],
+      reponseCorrecte: 1,
+      explication: "« un tumulte » : Grande agitation bruyante d'une foule.",
+    },
+  ],
   30: [
     {
       id: "djc-c30-q1",
@@ -709,7 +1117,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette scène cherche ouvertement à toucher la sensibilité du lecteur.",
     },
-  ], // L'adieu à sa fille
+    {
+      id: "djc-c30-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'émotion du lecteur", "Le contraste entre l'avenir rêvé et la réalité", "Les adieux impossibles", "L'amour paternel poussé à l'extrême"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « Les adieux impossibles ».",
+    },
+    {
+      id: "djc-c30-q5",
+      question: "Que signifie le mot « un adieu », employé dans ce chapitre ?",
+      choix: ["Parole ou geste par lequel on se sépare de quelqu'un, souvent pour toujours.", "Caractère de ce qui est contraire à la justice.", "Fait de se retrouver après une séparation.", "Cesser brusquement, être arrêté avant la fin."],
+      reponseCorrecte: 0,
+      explication: "« un adieu » : Parole ou geste par lequel on se sépare de quelqu'un, souvent pour toujours.",
+    },
+  ],
   31: [
     {
       id: "djc-c31-q1",
@@ -732,7 +1154,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il ne pense plus ni à son crime ni à son procès.",
     },
-  ], // Les dernières secondes
+    {
+      id: "djc-c31-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'angoisse métaphysique de la mort", "L'instinct de vie jusqu'au bout", "La terreur extrême", "L'espoir d'une intervention"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'instinct de vie jusqu'au bout ».",
+    },
+    {
+      id: "djc-c31-q5",
+      question: "Que signifie le mot « une intervention », employé dans ce chapitre ?",
+      choix: ["État d'agitation, d'irritabilité.", "Qui cause une douleur morale très vive.", "Que l'on ne peut plus annuler ni modifier. Le mot que se répète le condamné dès le premier chapitre.", "Action de s'interposer dans le cours d'un événement."],
+      reponseCorrecte: 3,
+      explication: "« une intervention » : Action de s'interposer dans le cours d'un événement.",
+    },
+  ],
   32: [
     {
       id: "djc-c32-q1",
@@ -755,7 +1191,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "La foule reste présente autour de lui, entre indifférence et fascination.",
     },
-  ], // Le moment inévitable
+    {
+      id: "djc-c32-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'inévitabilité de la mort", "L'acuité des derniers instants", "La présence indifférente de la foule", "L'impuissance face à la justice"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'inévitabilité de la mort ».",
+    },
+    {
+      id: "djc-c32-q5",
+      question: "Que signifie le mot « inévitable », employé dans ce chapitre ?",
+      choix: ["Qui a une simplicité et une confiance propres à l'enfance.", "Instance judiciaire au cours de laquelle un tribunal juge un accusé.", "Que l'on ne peut éviter.", "Isolement affectif ou psychologique, même en présence d'autrui."],
+      reponseCorrecte: 2,
+      explication: "« inévitable » : Que l'on ne peut éviter.",
+    },
+  ],
   33: [
     {
       id: "djc-c33-q1",
@@ -778,7 +1228,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette angoisse illustre la lente torture psychologique que Victor Hugo entend dénoncer.",
     },
-  ], // Le vertige de l'attente
+    {
+      id: "djc-c33-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le vertige devant la brutalité à venir", "L'absence d'échappatoire", "La nervosité croissante", "La torture psychologique prolongée"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « La torture psychologique prolongée ».",
+    },
+    {
+      id: "djc-c33-q5",
+      question: "Que signifie le mot « un vertige », employé dans ce chapitre ?",
+      choix: ["Estrade sur laquelle se déroule une exécution capitale.", "Sensation de perte d'équilibre ; au figuré, trouble devant une situation extrême.", "Ne considérer quelqu'un que sous un seul aspect, en ignorant le reste.", "État de manque total d'espoir."],
+      reponseCorrecte: 1,
+      explication: "« un vertige » : Sensation de perte d'équilibre ; au figuré, trouble devant une situation extrême.",
+    },
+  ],
   34: [
     {
       id: "djc-c34-q1",
@@ -801,7 +1265,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Quelques heures de liberté lui paraissent plus désirables que tout autre bien matériel.",
     },
-  ], // La valeur de la liberté
+    {
+      id: "djc-c34-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La comparaison avec les biens matériels", "L'impossibilité des adieux", "La liberté comme bien précieux", "Le regret de l'avoir sous-estimée"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « La liberté comme bien précieux ».",
+    },
+    {
+      id: "djc-c34-q5",
+      question: "Que signifie le mot « précieux, -euse », employé dans ce chapitre ?",
+      choix: ["Qui a une grande valeur.", "Qui cause de l'angoisse.", "Récit de ce que l'on a vécu ou vu, rapporté pour en informer autrui.", "Petite pièce fermée où est enfermé un prisonnier."],
+      reponseCorrecte: 0,
+      explication: "« précieux, -euse » : Qui a une grande valeur.",
+    },
+  ],
   35: [
     {
       id: "djc-c35-q1",
@@ -824,7 +1302,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il sait qu'aucun de ces avenirs possibles ne se réalisera jamais.",
     },
-  ], // L'avenir perdu
+    {
+      id: "djc-c35-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La dénonciation de l'indifférence sociale", "Le contraste entre l'avenir rêvé et la réalité", "La vie simple qui n'aura jamais lieu", "Le pathétique de l'attente"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « Le contraste entre l'avenir rêvé et la réalité ».",
+    },
+    {
+      id: "djc-c35-q5",
+      question: "Que signifie le mot « pathétique », employé dans ce chapitre ?",
+      choix: ["Caractère de ce qui a une fin, notion philosophique liée à la mort.", "Attendre avec confiance la réalisation de quelque chose.", "Petite ouverture dans une porte permettant de voir sans être vu.", "Qui suscite une émotion intense, souvent teintée de tristesse."],
+      reponseCorrecte: 3,
+      explication: "« pathétique » : Qui suscite une émotion intense, souvent teintée de tristesse.",
+    },
+  ],
   36: [
     {
       id: "djc-c36-q1",
@@ -847,7 +1339,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Ne rien savoir de ce qui suivra son dernier souffle ajoute une dimension vertigineuse à sa terreur.",
     },
-  ], // L'inconnu de la mort
+    {
+      id: "djc-c36-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'angoisse métaphysique de la mort", "L'incertitude de l'au-delà", "La peur redoublée", "L'angoisse pour l'avenir de l'enfant"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'angoisse métaphysique de la mort ».",
+    },
+    {
+      id: "djc-c36-q5",
+      question: "Que signifie le mot « métaphysique », employé dans ce chapitre ?",
+      choix: ["Cesser brusquement, être arrêté avant la fin.", "Qui prône l'abolition d'une loi ou d'une pratique, ici la peine de mort.", "Qui concerne les questions fondamentales de l'existence, au-delà du monde sensible.", "Fait de se retrouver après une séparation."],
+      reponseCorrecte: 2,
+      explication: "« métaphysique » : Qui concerne les questions fondamentales de l'existence, au-delà du monde sensible.",
+    },
+  ],
   37: [
     {
       id: "djc-c37-q1",
@@ -870,7 +1376,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "D'autres hommes, dit-il, ont décidé, à sa place, du jour de sa mort.",
     },
-  ], // L'injustice du procès
+    {
+      id: "djc-c37-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le sentiment d'injustice", "Les acteurs du procès", "La conscience aiguë de la finitude", "L'impuissance face à la justice"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'impuissance face à la justice ».",
+    },
+    {
+      id: "djc-c37-q5",
+      question: "Que signifie le mot « l'injustice », employé dans ce chapitre ?",
+      choix: ["Idée qui occupe l'esprit de façon envahissante et répétée.", "Caractère de ce qui est contraire à la justice.", "Qui cause une douleur morale très vive.", "Que l'on ne peut plus annuler ni modifier. Le mot que se répète le condamné dès le premier chapitre."],
+      reponseCorrecte: 1,
+      explication: "« l'injustice » : Caractère de ce qui est contraire à la justice.",
+    },
+  ],
   38: [
     {
       id: "djc-c38-q1",
@@ -893,7 +1413,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Son esprit tourne en boucle autour de cette seule échéance qui approche.",
     },
-  ], // L'attente nerveuse
+    {
+      id: "djc-c38-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'esprit fixé sur l'échéance", "L'innocence de l'enfance face à la tragédie", "La nervosité croissante", "L'interprétation anxieuse des bruits"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « La nervosité croissante ».",
+    },
+    {
+      id: "djc-c38-q5",
+      question: "Que signifie le mot « la nervosité », employé dans ce chapitre ?",
+      choix: ["État d'agitation, d'irritabilité.", "Qui a une simplicité et une confiance propres à l'enfance.", "Instance judiciaire au cours de laquelle un tribunal juge un accusé.", "Recours porté devant la Cour de cassation pour faire annuler une décision de justice."],
+      reponseCorrecte: 0,
+      explication: "« la nervosité » : État d'agitation, d'irritabilité.",
+    },
+  ],
   39: [
     {
       id: "djc-c39-q1",
@@ -916,7 +1450,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il regrette de ne pouvoir leur faire ses adieux en personne.",
     },
-  ], // L'adieu à la famille
+    {
+      id: "djc-c39-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'impossibilité de vrais adieux", "L'impossibilité des adieux", "La douleur des proches imaginée", "La solitude morale"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'impossibilité des adieux ».",
+    },
+    {
+      id: "djc-c39-q5",
+      question: "Que signifie le mot « une solitude morale », employé dans ce chapitre ?",
+      choix: ["État de manque total d'espoir.", "Estrade sur laquelle se déroule une exécution capitale.", "D'une sensibilité extrême, ici aux moindres bruits.", "Isolement affectif ou psychologique, même en présence d'autrui."],
+      reponseCorrecte: 3,
+      explication: "« une solitude morale » : Isolement affectif ou psychologique, même en présence d'autrui.",
+    },
+  ],
   40: [
     {
       id: "djc-c40-q1",
@@ -939,7 +1487,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette réflexion prolonge et généralise le plaidoyer abolitionniste du roman.",
     },
-  ], // La critique de la société
+    {
+      id: "djc-c40-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La dénonciation de l'indifférence sociale", "L'humanité du condamné", "Le plaidoyer généralisé", "L'innocence enfantine face à la mort"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « La dénonciation de l'indifférence sociale ».",
+    },
+    {
+      id: "djc-c40-q5",
+      question: "Que signifie le mot « réduire (quelqu'un) à », employé dans ce chapitre ?",
+      choix: ["Petite pièce fermée où est enfermé un prisonnier.", "Voiture à deux roues tirée par un animal ; ici, celle qui conduit le condamné à l'échafaud.", "Ne considérer quelqu'un que sous un seul aspect, en ignorant le reste.", "Récit de ce que l'on a vécu ou vu, rapporté pour en informer autrui."],
+      reponseCorrecte: 2,
+      explication: "« réduire (quelqu'un) à » : Ne considérer quelqu'un que sous un seul aspect, en ignorant le reste.",
+    },
+  ],
   41: [
     {
       id: "djc-c41-q1",
@@ -962,7 +1524,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette douleur devient presque plus vive que la peur de sa propre mort.",
     },
-  ], // La douleur paternelle
+    {
+      id: "djc-c41-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La crainte de l'incompréhension", "La douleur plus vive que la peur de mourir", "Le désespoir ravivé par l'amour", "L'angoisse pour l'avenir de l'enfant"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'angoisse pour l'avenir de l'enfant ».",
+    },
+    {
+      id: "djc-c41-q5",
+      question: "Que signifie le mot « angoissant, -e », employé dans ce chapitre ?",
+      choix: ["Dont la valeur est si grande qu'on ne peut l'évaluer.", "Qui cause de l'angoisse.", "Attendre avec confiance la réalisation de quelque chose.", "Petite ouverture dans une porte permettant de voir sans être vu."],
+      reponseCorrecte: 1,
+      explication: "« angoissant, -e » : Qui cause de l'angoisse.",
+    },
+  ],
   42: [
     {
       id: "djc-c42-q1",
@@ -985,7 +1561,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Cette conscience aiguë de la finitude transforme les objets les plus ordinaires en présences chargées de sens.",
     },
-  ], // La dernière journée
+    {
+      id: "djc-c42-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le temps qui s'épuise", "L'écriture comme dernier acte", "La conscience aiguë de la finitude", "L'attention portée aux détails"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « La conscience aiguë de la finitude ».",
+    },
+    {
+      id: "djc-c42-q5",
+      question: "Que signifie le mot « la finitude », employé dans ce chapitre ?",
+      choix: ["Caractère de ce qui a une fin, notion philosophique liée à la mort.", "Cesser brusquement, être arrêté avant la fin.", "Qui prône l'abolition d'une loi ou d'une pratique, ici la peine de mort.", "Faire subir quelque chose de pénible à quelqu'un."],
+      reponseCorrecte: 0,
+      explication: "« la finitude » : Caractère de ce qui a une fin, notion philosophique liée à la mort.",
+    },
+  ],
   43: [
     {
       id: "djc-c43-q1",
@@ -1008,7 +1598,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "L'enfant, encore trop jeune, ne comprend pas véritablement la gravité de la situation.",
     },
-  ], // La visite de sa fille
+    {
+      id: "djc-c43-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La terreur à l'approche de la fin", "L'innocence de l'enfance face à la tragédie", "L'émotion des retrouvailles", "Le temps que l'on voudrait arrêter"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'innocence de l'enfance face à la tragédie ».",
+    },
+    {
+      id: "djc-c43-q5",
+      question: "Que signifie le mot « des retrouvailles », employé dans ce chapitre ?",
+      choix: ["Que l'on ne peut plus annuler ni modifier. Le mot que se répète le condamné dès le premier chapitre.", "Idée qui occupe l'esprit de façon envahissante et répétée.", "Sentiment qui pousse les hommes à s'entraider.", "Fait de se retrouver après une séparation."],
+      reponseCorrecte: 3,
+      explication: "« des retrouvailles » : Fait de se retrouver après une séparation.",
+    },
+  ],
   44: [
     {
       id: "djc-c44-q1",
@@ -1031,7 +1635,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "L'écart entre l'innocence de l'enfant et la gravité de ce qui se joue rend la scène déchirante.",
     },
-  ], // L'émotion des adieux
+    {
+      id: "djc-c44-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["L'impossibilité de vrais adieux", "Le fossé entre innocence et gravité", "Les mots qui manquent", "Le plaidoyer final contre la peine de mort"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « L'impossibilité de vrais adieux ».",
+    },
+    {
+      id: "djc-c44-q5",
+      question: "Que signifie le mot « déchirant, -e », employé dans ce chapitre ?",
+      choix: ["Recours porté devant la Cour de cassation pour faire annuler une décision de justice.", "Peine que l'on éprouve d'avoir fait, ou non, quelque chose.", "Qui cause une douleur morale très vive.", "Instance judiciaire au cours de laquelle un tribunal juge un accusé."],
+      reponseCorrecte: 2,
+      explication: "« déchirant, -e » : Qui cause une douleur morale très vive.",
+    },
+  ],
   45: [
     {
       id: "djc-c45-q1",
@@ -1054,7 +1672,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il souffre terriblement de constater qu'elle ignore que c'est sans doute leur dernière rencontre.",
     },
-  ], // L'innocence de l'enfant
+    {
+      id: "djc-c45-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Les paroles naïves de l'enfant", "Le déchirement du père", "La prise de conscience de la condamnation", "L'innocence enfantine face à la mort"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « L'innocence enfantine face à la mort ».",
+    },
+    {
+      id: "djc-c45-q5",
+      question: "Que signifie le mot « naïf, naïve », employé dans ce chapitre ?",
+      choix: ["Craindre vivement quelque chose.", "Qui a une simplicité et une confiance propres à l'enfance.", "Estrade sur laquelle se déroule une exécution capitale.", "D'une sensibilité extrême, ici aux moindres bruits."],
+      reponseCorrecte: 1,
+      explication: "« naïf, naïve » : Qui a une simplicité et une confiance propres à l'enfance.",
+    },
+  ],
   46: [
     {
       id: "djc-c46-q1",
@@ -1077,7 +1709,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il regrette amèrement de ne pouvoir accompagner sa fille dans le reste de sa vie.",
     },
-  ], // Le désespoir après la visite
+    {
+      id: "djc-c46-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["Le regret de ne pas accompagner sa fille", "Le refus de raconter le crime", "Le désespoir ravivé par l'amour", "La séparation définitive qui approche"],
+      reponseCorrecte: 2,
+      explication: "Le thème principal de ce chapitre est : « Le désespoir ravivé par l'amour ».",
+    },
+    {
+      id: "djc-c46-q5",
+      question: "Que signifie le mot « le désespoir », employé dans ce chapitre ?",
+      choix: ["État de manque total d'espoir.", "Petite pièce fermée où est enfermé un prisonnier.", "Voiture à deux roues tirée par un animal ; ici, celle qui conduit le condamné à l'échafaud.", "Absence de pouvoir, de moyen d'agir."],
+      reponseCorrecte: 0,
+      explication: "« le désespoir » : État de manque total d'espoir.",
+    },
+  ],
   47: [
     {
       id: "djc-c47-q1",
@@ -1100,7 +1746,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Son journal devient explicitement un message adressé à la société tout entière.",
     },
-  ], // Le dernier témoignage
+    {
+      id: "djc-c47-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La terreur de l'exécution imaginée", "L'écriture comme dernier acte", "Le témoignage adressé à la société", "La transmission de la souffrance vécue"],
+      reponseCorrecte: 1,
+      explication: "Le thème principal de ce chapitre est : « L'écriture comme dernier acte ».",
+    },
+    {
+      id: "djc-c47-q5",
+      question: "Que signifie le mot « un témoignage », employé dans ce chapitre ?",
+      choix: ["Petite ouverture dans une porte permettant de voir sans être vu.", "Dont la valeur est si grande qu'on ne peut l'évaluer.", "Action de s'échapper d'un lieu de détention.", "Récit de ce que l'on a vécu ou vu, rapporté pour en informer autrui."],
+      reponseCorrecte: 3,
+      explication: "« un témoignage » : Récit de ce que l'on a vécu ou vu, rapporté pour en informer autrui.",
+    },
+  ],
   48: [
     {
       id: "djc-c48-q1",
@@ -1123,7 +1783,21 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Il voudrait encore quelques minutes, ou la possibilité de revoir sa fille une dernière fois.",
     },
-  ], // L'approche de l'exécution
+    {
+      id: "djc-c48-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La terreur à l'approche de la fin", "Le désir de temps supplémentaire", "Le dernier espoir de revoir sa fille", "L'enfermement et l'isolement"],
+      reponseCorrecte: 0,
+      explication: "Le thème principal de ce chapitre est : « La terreur à l'approche de la fin ».",
+    },
+    {
+      id: "djc-c48-q5",
+      question: "Que signifie le mot « espérer », employé dans ce chapitre ?",
+      choix: ["Faire subir quelque chose de pénible à quelqu'un.", "Souffrance physique ou morale extrême infligée à quelqu'un.", "Attendre avec confiance la réalisation de quelque chose.", "Qui prône l'abolition d'une loi ou d'une pratique, ici la peine de mort."],
+      reponseCorrecte: 2,
+      explication: "« espérer » : Attendre avec confiance la réalisation de quelque chose.",
+    },
+  ],
   49: [
     {
       id: "djc-c49-q1",
@@ -1146,5 +1820,19 @@ export const QUIZ_DERNIER_JOUR_CONDAMNE: Record<number, QuestionQuiz[]> = {
       reponseCorrecte: 1,
       explication: "Le récit s'interrompt brutalement, sans jamais représenter directement l'exécution.",
     },
-  ], // Les derniers instants
+    {
+      id: "djc-c49-q4",
+      question: "Quel est le thème principal de ce chapitre ?",
+      choix: ["La fin suspendue du récit", "La dernière pensée pour sa fille", "La solitude morale au milieu des hommes", "Le plaidoyer final contre la peine de mort"],
+      reponseCorrecte: 3,
+      explication: "Le thème principal de ce chapitre est : « Le plaidoyer final contre la peine de mort ».",
+    },
+    {
+      id: "djc-c49-q5",
+      question: "Que signifie le mot « s'interrompre », employé dans ce chapitre ?",
+      choix: ["Absence d'intérêt ou d'émotion face à quelque chose.", "Cesser brusquement, être arrêté avant la fin.", "Idée qui occupe l'esprit de façon envahissante et répétée.", "Sentiment qui pousse les hommes à s'entraider."],
+      reponseCorrecte: 1,
+      explication: "« s'interrompre » : Cesser brusquement, être arrêté avant la fin.",
+    },
+  ],
 };

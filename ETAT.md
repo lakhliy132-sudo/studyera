@@ -2,6 +2,32 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **⚠️ Sujets d'analyse (17) + quiz étendu à 5 questions/chapitre (245
+> au total) pour "Le Dernier Jour d'un Condamné" — contenu Claude, à
+> faire relire par un enseignant.** Demande explicite : "fais moi les
+> sujets liées de dernier jour et 5quiz dans chapitre".
+>
+> - 17 sujets d'analyse/argumentation, rattachés à l'œuvre entière (pas
+>   de chapitre précis — comme la majorité des sujets déjà en place pour
+>   Antigone) : le choix de l'anonymat, la forme du journal intime, la
+>   fin brutale du roman, la peine de mort aujourd'hui, l'humanité
+>   derrière le criminel... Importés via `npm run importer` : 0 erreur,
+>   `Sujets` 73 → 90 (+17 exactement), stable sur un 2ᵉ run (la
+>   contrainte NULL sur `chapitre_id` déjà corrigée cette session tient
+>   bon).
+> - Quiz : passé de 3 à 5 questions par chapitre (`lib/quizDernierJourCondamne.ts`,
+>   245 questions au total), pour s'aligner sur la densité d'Antigone
+>   (5/scène) comme demandé. Les 2 nouvelles questions par chapitre
+>   portent sur le thème principal (choix parmi le vrai thème, ses 2
+>   thèmes secondaires et le thème d'un autre chapitre) et sur un mot du
+>   lexique de ce chapitre — réutilisent les données déjà rédigées
+>   (thèmes, lexique) plutôt que d'inventer un nouvel angle à chaque
+>   fois. Généré par script à partir des données sources, puis vérifié
+>   automatiquement (structure : 5 questions/chapitre, 4 choix, pas de
+>   doublon ; sémantique : la bonne réponse de chaque question de thème/
+>   vocabulaire correspond bien aux données de `fiches`/lexique) avant
+>   vérification visuelle par capture d'écran réelle.
+>
 > **Couleur des pastilles de l'onglet Lieux : dégradé plein → fond
 > translucide** — demandé explicitement par l'utilisateur ("oui la c
 > bien mais change de couleur je veux qlq chose de transparente ou
