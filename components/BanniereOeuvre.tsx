@@ -27,10 +27,17 @@ interface BanniereOeuvreProps {
  * titre superposé à gauche — reprend la maquette de référence
  * (page-oeuvre (2).html).
  *
- * "Lire le texte intégral" / "Lecteur bilingue" n'apparaissent QUE si
- * `oeuvre.mode === "texte_integral"` : les œuvres en `accompagnement`
- * (la majorité du catalogue actuel) n'ont pas de texte intégral à
- * lire, ces boutons n'auraient donc aucune destination valable.
+ * "Lire le texte intégral" n'apparaît QUE si `oeuvre.mode ===
+ * "texte_integral"` : les œuvres en `accompagnement` (la majorité du
+ * catalogue actuel) n'ont pas de texte intégral à lire, ce bouton
+ * n'aurait donc aucune destination valable.
+ *
+ * Le bouton "Lecteur bilingue" (qui pointait en réalité vers la même
+ * page que "Lire le texte intégral" — aucun mode de lecture distinct
+ * n'existe) a été retiré à la demande explicite de l'utilisateur
+ * ("dans le dernier jour enleve lecteur billingue") : seule œuvre en
+ * `texte_integral` aujourd'hui, Le Dernier Jour d'un Condamné était la
+ * seule concernée en pratique.
  */
 export default function BanniereOeuvre({
   slug,
@@ -65,13 +72,6 @@ export default function BanniereOeuvre({
           >
             <IconeLivre className="size-[18px]" />
             Lire le texte intégral →
-          </Link>
-          <Link
-            href={`/oeuvres/${slug}/${premierChapitre.numero}`}
-            className="flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-7 py-4 text-base font-semibold text-primary transition-colors hover:bg-surface-muted"
-          >
-            <IconeLivre className="size-[18px]" />
-            Lecteur bilingue →
           </Link>
         </div>
       )}

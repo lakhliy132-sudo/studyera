@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Bouton "Lecteur bilingue" retiré de la bannière d'une œuvre**
+> (`BanniereOeuvre.tsx`) — demandé explicitement par l'utilisateur
+> ("dans le dernier jour enleve lecteur billingue"). Il pointait en
+> réalité vers exactement la même page que "Lire le texte intégral"
+> (aucun mode de lecture bilingue distinct n'existe) — un doublon sans
+> vraie fonction propre. Seule "Le Dernier Jour d'un Condamné" a
+> aujourd'hui `mode: "texte_integral"` (les 2 autres œuvres sont en
+> `accompagnement`, ce bloc ne s'affiche pas pour elles), donc le
+> retirer ici a concerné en pratique uniquement cette œuvre, sans
+> condition sur le slug. Vérifié par lecture du HTML servi sur
+> `/oeuvres/dernier-jour-condamne`.
+>
 > **⚠️ 8 nouveaux sujets d'argumentation pour DJC — contenu Claude, à
 > faire relire par un enseignant.** Demande explicite : "ajoute autre
 > sujet d argumentation". S'ajoutent aux 7 déjà en place (entrée
