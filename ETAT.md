@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **En-tête de navigation en pleine largeur, plus centré dans un
+> conteneur `max-w-[1240px]`** (`BarreNavigation.tsx`) — demandé
+> explicitement par l'utilisateur, capture d'écran à l'appui : sur un
+> grand écran, le bandeau centré laissait un vide visible avant le
+> logo ("t a pas vue la photo je veux le tableu de bord et l accueil et
+> l oeuvre etc... HORIZETALEMENT A GAUCHE"). Confirmé via une question
+> de clarification avec aperçu avant/après avant d'appliquer, vu qu'il
+> s'agit de l'en-tête global (toutes les pages). Retiré `mx-auto
+> max-w-[1240px]`, gardé `px-7` : logo/nav collés au bord gauche réel
+> de la fenêtre, boutons de connexion (`ml-auto`) collés au bord droit
+> réel — changement propre à cet en-tête, le reste du site garde son
+> conteneur centré habituel. Vérifié par capture d'écran réelle à
+> 1920px de large.
+>
 > **"Tableau de bord" déplacé avant "Accueil" dans la navigation**
 > (`LiensNavigation.tsx`) — demandé explicitement par l'utilisateur,
 > capture d'écran de la nav actuelle à l'appui ("regarde la photo que

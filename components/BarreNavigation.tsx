@@ -26,11 +26,20 @@ interface BarreNavigationProps {
  * boutons de connexion ont besoin d'environ 1220px pour tenir sur une
  * seule ligne sans déborder — en dessous, le menu `<details>` prend le
  * relais plutôt que de laisser la page défiler horizontalement.
+ *
+ * Bandeau plein largeur, pas centré dans un conteneur `max-w-[1240px]`
+ * comme le reste du site — demandé explicitement par l'utilisateur,
+ * capture d'écran à l'appui ("le logo et les liens... collés au vrai
+ * bord gauche de l'écran") : sur un grand écran, le bandeau centré
+ * laissait un vide bien visible avant le logo. Le logo/nav restent
+ * donc collés au bord gauche réel de la fenêtre, les boutons de
+ * connexion (`ml-auto`) au bord droit réel — changement propre à
+ * cet en-tête, le reste du site garde son conteneur centré habituel.
  */
 export default function BarreNavigation({ connecte, email }: BarreNavigationProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface">
-      <div className="mx-auto flex h-[88px] w-full max-w-[1240px] items-center gap-11 px-7">
+      <div className="flex h-[88px] w-full items-center gap-11 px-7">
         <Link href="/" className="flex items-center gap-3.5">
           <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
             <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
