@@ -2,6 +2,17 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **Retire les sujets de type "analyse" pour DJC, ne garde que
+> l'argumentation** — demande explicite : "fais moi juste les sujets d
+> augmentation" (coquille pour "argumentation"). Sur les 17 sujets
+> ajoutés à l'entrée précédente, les 10 de type "analyse" (questions de
+> lecture classiques) ont été retirés — de l'Excel (pour qu'un futur
+> import ne les recrée pas) ET directement en base (`DELETE ... WHERE
+> type = 'analyse'`, 10 lignes). Il reste 7 sujets, tous de type
+> "argumentation" (dissertations/essais). Vérifié : `npm run importer`
+> stable (0 erreur, `Sujets` 90 → 80, pas de résurrection), et par
+> lecture du HTML servi sur `/oeuvres/dernier-jour-condamne?onglet=sujets`.
+>
 > **⚠️ Sujets d'analyse (17) + quiz étendu à 5 questions/chapitre (245
 > au total) pour "Le Dernier Jour d'un Condamné" — contenu Claude, à
 > faire relire par un enseignant.** Demande explicite : "fais moi les
