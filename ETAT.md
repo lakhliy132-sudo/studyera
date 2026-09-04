@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
 >
+> **⚠️ 8 nouveaux sujets d'argumentation pour DJC — contenu Claude, à
+> faire relire par un enseignant.** Demande explicite : "ajoute autre
+> sujet d argumentation". S'ajoutent aux 7 déjà en place (entrée
+> précédente), thèmes distincts pour ne pas répéter les existants :
+> l'erreur judiciaire, la vengeance et la justice, se mettre à la place
+> de l'autre, la paternité face à l'adversité, le temps qui reste, la
+> liberté qu'on ne mesure qu'une fois perdue, émouvoir pour convaincre,
+> juger sans connaître. 15 sujets au total pour cette œuvre, tous de
+> type "argumentation" (aucun "analyse" ré-ajouté par erreur). Vérifié
+> via `npm run importer` (0 erreur, `Sujets` 80 → 88, stable sur un 2ᵉ
+> run) et par lecture du HTML servi sur la page.
+>
 > **Retire les sujets de type "analyse" pour DJC, ne garde que
 > l'argumentation** — demande explicite : "fais moi juste les sujets d
 > augmentation" (coquille pour "argumentation"). Sur les 17 sujets
