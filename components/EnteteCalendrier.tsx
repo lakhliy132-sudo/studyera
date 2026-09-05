@@ -22,7 +22,7 @@ export default function EnteteCalendrier() {
         }}
       />
 
-      <div className="relative flex w-full flex-col gap-4 px-6 py-12 sm:px-9">
+      <div className="relative flex w-full max-w-5xl flex-col gap-4 px-6 py-12 sm:px-9">
         <span className="flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-surface/80 px-3.5 py-1.5 text-xs font-semibold text-primary">
           <IconeCalendrier className="size-3.5" />
           Mon calendrier
@@ -36,20 +36,24 @@ export default function EnteteCalendrier() {
         <p className="max-w-md text-base text-muted-foreground">
           Ne manque plus aucune échéance et organise ton temps efficacement.
         </p>
+      </div>
 
-        <div className="pointer-events-none absolute top-8 right-9 hidden max-w-[220px] rotate-[-4deg] text-right lg:block">
-          <p className="font-manuscrit text-2xl leading-snug text-primary-vif">
-            Un petit effort chaque jour fait une grande différence.
-          </p>
-          <svg viewBox="0 0 90 18" className="ml-auto mt-1 h-4 w-20 text-primary-vif/60" fill="none" aria-hidden="true">
-            <path
-              d="M2 10c8-9 16-9 22 0s16 9 22 0 16-9 22 0 16 9 20 2"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
+      {/* Sœur du conteneur `max-w-4xl` ci-dessus, pas son enfant : ancrée
+       * au coin droit de la bannière pleine largeur (l'ancêtre `relative`
+       * le plus proche est le conteneur externe), pas au bord droit du
+       * contenu maintenant borné à `max-w-4xl`. */}
+      <div className="pointer-events-none absolute top-8 right-9 hidden max-w-[220px] rotate-[-4deg] text-right lg:block">
+        <p className="font-manuscrit text-2xl leading-snug text-primary-vif">
+          Un petit effort chaque jour fait une grande différence.
+        </p>
+        <svg viewBox="0 0 90 18" className="ml-auto mt-1 h-4 w-20 text-primary-vif/60" fill="none" aria-hidden="true">
+          <path
+            d="M2 10c8-9 16-9 22 0s16 9 22 0 16-9 22 0 16 9 20 2"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
       </div>
     </div>
   );

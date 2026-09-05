@@ -20,9 +20,15 @@ import { IconeCoche } from "@/components/icones";
  * demandé explicitement par l'utilisateur ("Je veux que les sections
  * « Mois » et « Examens » soient placées au début de la ligne,
  * complètement à gauche, et non au centre de la page... aucun
- * centrage horizontal"). `mx-auto max-w-5xl` retiré (remplacé par
- * `w-full`) sur ce conteneur : les cartes s'étendent maintenant sur
- * toute la largeur disponible plutôt que d'être bornées et centrées.
+ * centrage horizontal"). `mx-auto` retiré (`w-full` seul) sur ce
+ * conteneur : plus de centrage. `max-w-5xl` remis juste après (sans
+ * `mx-auto`, donc toujours collé à gauche) — un essai sans aucune
+ * limite de largeur avait rendu les cartes bien trop grandes sur les
+ * grands écrans ("la forme du mois et examens est trop grande") ;
+ * un 2ᵉ essai (`max-w-4xl`) rétrécissait trop la carte "Mois", au
+ * point de tasser sa grille interne (colonne "Événements à venir" à
+ * largeur fixe, voir CalendrierMois.tsx) — `max-w-5xl` retrouve
+ * l'équilibre déjà validé lors de la reprise de la maquette.
  * Même changement sur EnteteCalendrier.tsx pour que le texte de la
  * bannière reste aligné au même bord gauche que les cartes en dessous.
  */
@@ -31,7 +37,7 @@ export default function PageCalendrier() {
     <main className="flex flex-col">
       <EnteteCalendrier />
 
-      <div className="flex w-full flex-col gap-10 px-6 py-12 sm:px-9">
+      <div className="flex w-full max-w-5xl flex-col gap-10 px-6 py-12 sm:px-9">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
           <CalendrierMois />
           <CarteExamenRegional />

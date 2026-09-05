@@ -2,6 +2,21 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Cartes "Mois"/"Examens" : taille recalibrée après le retrait du
+> centrage** — l'entrée précédente avait retiré toute limite de
+> largeur (`w-full` seul) pour coller les cartes au bord gauche ; sur
+> grand écran, ça les étirait bien trop ("la forme du mois et examens
+> est trop grande"). Un essai à `max-w-4xl` corrigeait ça mais
+> rétrécissait trop la carte "Mois" pour sa grille interne (colonne
+> "Événements à venir" à largeur fixe, voir CalendrierMois.tsx) : le
+> `lg:` interne (basé sur la largeur de l'écran, pas celle de la
+> carte) continuait à activer la disposition 2 colonnes alors que la
+> carte elle-même n'avait plus la place, tassant les jours de la
+> semaine les uns sur les autres. `max-w-5xl` retrouve l'équilibre
+> déjà validé lors de la reprise de la maquette (voir 2 entrées plus
+> haut) — collé à gauche (pas de `mx-auto`) mais plus assez large pour
+> déborder. Vérifié par capture d'écran à 1280px et 1920px.
+>
 > **Cartes "Mois"/"Examens" collées au bord gauche, plus centrées** —
 > demandé explicitement par l'utilisateur ("Je veux que les sections
 > « Mois » et « Examens » soient placées au début de la ligne,
