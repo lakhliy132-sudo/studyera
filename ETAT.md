@@ -2,6 +2,15 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Bannière /calendrier raccourcie en hauteur** — demandé
+> explicitement par l'utilisateur ("la partie de gere tes examens...
+> elle est trop long") : `EnteteCalendrier.tsx` prenait trop de place
+> verticale avant le contenu utile. Padding vertical réduit
+> (`py-12` → `py-7`), titre réduit (`34-40px` → `24-28px`), espacements
+> resserrés (`gap-4` → `gap-2.5`), sous-titre en `text-sm`, note
+> manuscrite légèrement réduite pour rester proportionnée. Vérifié par
+> capture d'écran desktop (1440px) et mobile (420px).
+>
 > **Cartes "Mois"/"Examens" : taille recalibrée après le retrait du
 > centrage** — l'entrée précédente avait retiré toute limite de
 > largeur (`w-full` seul) pour coller les cartes au bord gauche ; sur
