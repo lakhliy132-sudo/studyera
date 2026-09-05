@@ -15,13 +15,23 @@ import { IconeCoche } from "@/components/icones";
  * (CalendrierMois.tsx), carte "Examens" (CarteExamenRegional.tsx),
  * signature en pied de page — mise en page propre à cette page, pas
  * le gabarit centré/pastille utilisé par /matieres, /francais, etc.
+ *
+ * Cartes "Mois"/"Examens" collées au bord gauche, pas centrées —
+ * demandé explicitement par l'utilisateur ("Je veux que les sections
+ * « Mois » et « Examens » soient placées au début de la ligne,
+ * complètement à gauche, et non au centre de la page... aucun
+ * centrage horizontal"). `mx-auto max-w-5xl` retiré (remplacé par
+ * `w-full`) sur ce conteneur : les cartes s'étendent maintenant sur
+ * toute la largeur disponible plutôt que d'être bornées et centrées.
+ * Même changement sur EnteteCalendrier.tsx pour que le texte de la
+ * bannière reste aligné au même bord gauche que les cartes en dessous.
  */
 export default function PageCalendrier() {
   return (
     <main className="flex flex-col">
       <EnteteCalendrier />
 
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 py-12 sm:px-9">
+      <div className="flex w-full flex-col gap-10 px-6 py-12 sm:px-9">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
           <CalendrierMois />
           <CarteExamenRegional />

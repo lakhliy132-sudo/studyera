@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Cartes "Mois"/"Examens" collées au bord gauche, plus centrées** —
+> demandé explicitement par l'utilisateur ("Je veux que les sections
+> « Mois » et « Examens » soient placées au début de la ligne,
+> complètement à gauche... aucun centrage horizontal"). Retiré
+> `mx-auto max-w-5xl` du conteneur de ces 2 cartes dans
+> `app/(public)/calendrier/page.tsx` (remplacé par `w-full`) : elles
+> s'étendent maintenant sur toute la largeur disponible au lieu d'être
+> bornées et centrées au milieu de la page. Même changement sur
+> `components/EnteteCalendrier.tsx` pour garder le texte de la
+> bannière aligné au même bord gauche que les cartes en dessous.
+> Vérifié par capture d'écran à 1440px et 1920px.
+>
 > **Page /calendrier reprise sur une maquette complète fournie par
 > l'utilisateur** ("regarde la photo que je mis dans le fichier fais
 > la comme ca" — image déposée à la racine du dépôt, voir la

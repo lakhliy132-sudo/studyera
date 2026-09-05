@@ -22,7 +22,7 @@ export default function EnteteCalendrier() {
         }}
       />
 
-      <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-12 sm:px-9">
+      <div className="relative flex w-full flex-col gap-4 px-6 py-12 sm:px-9">
         <span className="flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-surface/80 px-3.5 py-1.5 text-xs font-semibold text-primary">
           <IconeCalendrier className="size-3.5" />
           Mon calendrier
