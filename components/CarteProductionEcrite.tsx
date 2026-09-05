@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { IconePlume } from "@/components/icones";
+
 interface CarteProductionEcriteProps {
   quotaRestant: number;
   quotaMax: number;
@@ -8,15 +10,14 @@ interface CarteProductionEcriteProps {
 }
 
 /**
- * Carte "focus" (bordure supérieure rouge) — reprise fidèlement du
- * modèle fourni par l'utilisateur, palette/police dédiées à cette page
- * (voir CarteReprise.tsx pour le contexte de ce choix). Remplace
- * `BlocRedaction.tsx`.
+ * Carte "Production écrite" du tableau de bord — refonte complète
+ * demandée explicitement par l'utilisateur ("change moi le tableau de
+ * bord completement fais le de ta part").
  *
- * Le modèle affichait "Dernière correction : {date}" — donnée qu'on
- * n'a pas (`copies` ne garde pas de date "dernière consultée"
- * distincte) : remplacé par la note moyenne réelle, déjà calculée
- * ailleurs (`recupererStatsCopies`), plus honnête qu'inventer une date.
+ * Reprend les tokens globaux du site plutôt que l'ancien système
+ * `--tdb-*` (voir CarteReprise.tsx). Affiche la note moyenne réelle
+ * plutôt qu'une "dernière correction" (donnée non disponible en
+ * base) — comportement conservé de l'ancienne version.
  */
 export default function CarteProductionEcrite({
   quotaRestant,
@@ -25,49 +26,45 @@ export default function CarteProductionEcrite({
   noteMoyenne,
 }: CarteProductionEcriteProps) {
   return (
-    <section className="flex flex-col rounded-[14px] border border-[var(--tdb-line)] border-t-[3px] border-t-[var(--tdb-red)] bg-[var(--tdb-card)] p-7">
+    <div className="flex h-full flex-col rounded-[24px] border border-border bg-surface p-7 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <span className="[font-family:var(--tdb-font-mono)] text-[10.5px] font-medium tracking-[0.15em] text-[var(--tdb-red)] uppercase">
-          Production écrite
-        </span>
-        <span
-          className="inline-flex items-center gap-1.5"
-          title={`${quotaRestant} corrections restantes aujourd'hui`}
-        >
-          {Array.from({ length: quotaMax }).map((_, i) => (
-            <i
-              key={i}
-              aria-hidden="true"
-              className="block size-[7px] rounded-full"
-              style={{ backgroundColor: i < quotaRestant ? "var(--tdb-red)" : "var(--tdb-line)" }}
-            />
-          ))}
-          <em className="ml-1 text-[11.5px] font-normal text-[var(--tdb-mute)] not-italic">
-            {quotaRestant} restante{quotaRestant > 1 ? "s" : ""}
-          </em>
+        <div className="flex items-center gap-3">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
+            <IconePlume className="size-5" />
+          </span>
+          <p className="font-serif text-xl font-bold text-ink">Production écrite</p>
+        </div>
+      </div>
+
+      <p className="max-w-[42ch] text-sm text-muted-foreground">
+        Photographie ton expression écrite : note sur 10, fautes surlignées, remarque par critère.
+      </p>
+
+      <div className="mt-4 flex items-center gap-1.5" title={`${quotaRestant} corrections restantes aujourd'hui`}>
+        {Array.from({ length: quotaMax }).map((_, i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className={`block size-2 rounded-full ${i < quotaRestant ? "bg-primary" : "bg-surface-muted"}`}
+          />
+        ))}
+        <span className="ml-1.5 text-xs text-muted-foreground">
+          {quotaRestant} correction{quotaRestant > 1 ? "s" : ""} restante{quotaRestant > 1 ? "s" : ""} aujourd&apos;hui
         </span>
       </div>
 
-      <h3 className="mb-2.5 [font-family:var(--tdb-font-serif)] text-[25px] font-semibold tracking-tight text-[var(--tdb-ink)]">
-        Fais corriger ta copie
-      </h3>
-      <p className="max-w-[46ch] text-[14.5px] leading-[1.62] text-[var(--tdb-ink-2)]">
-        Photographie ton expression écrite. Tu récupères la note sur 10, les
-        fautes surlignées et une remarque par critère d&apos;évaluation.
-      </p>
-
       <Link
         href="/redaction/nouvelle"
-        className="mt-[22px] self-start rounded-full border-[1.4px] border-[var(--tdb-ink)] px-6 py-3 text-[14.5px] font-medium text-[var(--tdb-ink)] transition-colors hover:bg-[var(--tdb-ink)] hover:text-[var(--tdb-paper)]"
+        className="mt-5 inline-flex w-fit items-center gap-2 rounded-[10px] bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink"
       >
         Envoyer une copie
       </Link>
 
-      <p className="mt-3.5 text-[12.5px] text-[var(--tdb-mute)]">
+      <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
         {copiesCorrigees > 0
           ? `${copiesCorrigees} copie${copiesCorrigees > 1 ? "s" : ""} corrigée${copiesCorrigees > 1 ? "s" : ""} — note moyenne ${noteMoyenne?.toFixed(1)}/10`
           : "Aucune copie envoyée pour l'instant."}
       </p>
-    </section>
+    </div>
   );
 }

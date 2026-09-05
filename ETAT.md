@@ -2,6 +2,50 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Tableau de bord refondu complètement** — demandé explicitement par
+> l'utilisateur ("change moi le tableau de bord completement fais le
+> de ta part"), confirmé malgré des modifications non enregistrées
+> d'une autre session sur cette même page (`app/(eleve)/tableau-de-bord/page.tsx`
+> modifié + nouveau composant `AnneauProgression.tsx`, présents depuis
+> le tout début de cette session) — l'utilisateur a explicitement
+> autorisé à écraser ce travail en cours avant que je ne procède.
+>
+> Remplace l'ancien design "papier" (police Fraunces, palette dédiée
+> `.tableau-de-bord`/`--tdb-*` dans `app/globals.css`, reprise fidèle
+> d'un modèle fourni par l'utilisateur lors d'une session précédente)
+> par le langage visuel déjà en place sur le reste du site (cartes
+> `rounded-[24px]`/`shadow-sm`, badges `bg-primary-tint`, police serif
+> Playfair) — choix fait librement ("fais le de ta part"), pas d'après
+> un nouveau modèle fourni.
+>
+> - `app/(eleve)/tableau-de-bord/page.tsx` : réécrite (en-tête avec
+>   série de jours, carte "Reprends ta lecture", grille Production
+>   écrite/Progression, programme des œuvres, activités/communication).
+> - `components/CarteReprise.tsx`, `CarteProductionEcrite.tsx`,
+>   `CarteProgressionAnneau.tsx`, `ListeProgrammeOeuvres.tsx`,
+>   `BlocAnnonces.tsx`, `BlocDernieresActivites.tsx` : réécrits avec
+>   les tokens globaux du site plutôt que `--tdb-*` — mêmes données et
+>   comportements (rien d'inventé), juste un habillage différent.
+> - `app/globals.css` : bloc `.tableau-de-bord`/`--tdb-*` (et le
+>   `@keyframes tableau-entree` associé, déjà orphelin) retirés,
+>   n'étant plus référencés par aucun composant.
+> - `app/layout.tsx` : police Fraunces retirée (n'étant plus utilisée
+>   nulle part après la refonte).
+> - `components/AnneauProgression.tsx` (fichier de l'autre session)
+>   supprimé, non intégré à la nouvelle version.
+>
+> **Unifie au passage le tableau de bord avec le mode nuit** : la
+> palette `--tdb-*` séparée était un gap documenté à plusieurs reprises
+> (ne s'adaptait pas au mode sombre) — en repartant des tokens globaux
+> `--color-*`, le tableau de bord bascule désormais correctement en
+> mode nuit comme le reste du site.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) : progression réelle par œuvre, bandeau "Reprends ta
+> lecture" avec le dernier chapitre réellement consulté, activités
+> récentes, quota de corrections — en mode clair, mode sombre et
+> mobile. Aussi npx tsc --noEmit.
+>
 > **Palette du mode nuit revue** — demandé explicitement par
 > l'utilisateur ("dans le mode de nuit j ai pas aimé les couleurs tu
 > peux le modifier"). La première version était très bleu-marine

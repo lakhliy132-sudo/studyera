@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { IconeFleche } from "@/components/icones";
+import { IconeFleche, IconeLivre } from "@/components/icones";
 import { libelleChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { RepriseLecture } from "@/lib/supabase/tableauDeBord";
 
@@ -9,23 +9,21 @@ interface CarteRepriseProps {
 }
 
 /**
- * Carte "Reprendre" du tableau de bord — reprise fidèlement du modèle
- * fourni par l'utilisateur (fausse page de cahier : lignes horizontales
- * en fondu, citation en marge bleue), avec la palette/police dédiées à
- * cette page (`.tableau-de-bord`, voir app/globals.css) plutôt que les
- * tokens globaux du site — demandé explicitement après un premier essai
- * jugé trop éloigné ("tu peux modifier le design j ai pas aimé comme
- * ca" / "tout"). Remplace `BlocReprendre.tsx`.
+ * Carte "Reprendre" du tableau de bord — refonte complète demandée
+ * explicitement par l'utilisateur ("change moi le tableau de bord
+ * completement fais le de ta part"), confirmée malgré des
+ * modifications non enregistrées d'une autre session sur cette page
+ * (l'utilisateur a explicitement autorisé à les écraser).
  *
- * Le texte sous le titre est un RÉSUMÉ (`chapitre.resume_court`), pas
- * une citation littérale du texte intégral — le modèle fourni
- * affichait un "extrait" entre guillemets, mais le texte intégral des
- * œuvres n'est pratiquement jamais rempli en base (table
- * `paragraphes`, voir scripts/importer.ts) : présenté honnêtement
- * comme "En bref", pas comme une citation.
+ * Reprend les tokens globaux du site (`--color-*`) plutôt que l'ancien
+ * système `--tdb-*` propre à cette page : unifie le tableau de bord
+ * avec le reste du site (même style de carte que /calendrier,
+ * /matieres...) et corrige au passage un gap déjà documenté (la
+ * palette `--tdb-*` ne s'adaptait pas au mode nuit).
  *
- * "Chapitre"/"Scène" et la numérotation suivent `lib/uniteChapitre.ts`
- * (Antigone numérote différemment) plutôt que d'être codés en dur.
+ * Le texte sous le titre reste un RÉSUMÉ (`chapitre.resume_court`),
+ * pas une citation littérale du texte intégral (rarement rempli en
+ * base) — comportement conservé de l'ancienne version.
  */
 export default function CarteReprise({ reprise }: CarteRepriseProps) {
   const unite = libelleUniteChapitre(reprise.oeuvreSlug);
@@ -33,69 +31,49 @@ export default function CarteReprise({ reprise }: CarteRepriseProps) {
     { numero: reprise.chapitreNumero, titre_fr: reprise.chapitreTitreFr },
     unite,
   );
-  const etiquetteCourte = unite.numeroDejaDansTitre
-    ? (reprise.chapitreTitreFr.split(" : ")[0] ?? reprise.chapitreTitreFr)
-    : libelleChap;
 
   return (
-    <section className="relative overflow-hidden rounded-[14px] border border-[var(--tdb-line)] bg-[var(--tdb-card)] shadow-[0_1px_2px_rgba(21,26,36,0.04),0_18px_40px_-28px_rgba(21,26,36,0.42)]">
-      {/* Lignes de cahier en fondu, purement décoratives — reprend le
-       * dégradé du modèle fourni tel quel. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: "repeating-linear-gradient(to bottom, transparent 0 33px, var(--tdb-line) 33px 34px)",
-          opacity: 0.5,
-          maskImage: "linear-gradient(to bottom, transparent 46%, #000 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent 46%, #000 100%)",
-        }}
-      />
-
-      <div className="relative flex flex-col gap-5 p-8 sm:p-10">
-        <span className="[font-family:var(--tdb-font-mono)] text-[10.5px] font-medium tracking-[0.15em] text-[var(--tdb-mute)] uppercase">
-          {etiquetteCourte}
+    <section className="overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm">
+      <div className="flex items-center gap-3 bg-gradient-to-r from-primary to-ink px-7 py-4">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-white">
+          <IconeLivre className="size-5" />
         </span>
+        <p className="text-sm font-semibold text-white">
+          {reprise.estRecommandation ? "À découvrir" : "Reprends ta lecture"}
+        </p>
+      </div>
 
-        <div>
-          <div className="flex flex-wrap items-baseline gap-4">
-            <h2 className="[font-family:var(--tdb-font-serif)] text-[clamp(30px,4.4vw,44px)] leading-none font-semibold tracking-tight text-[var(--tdb-ink)]">
-              {reprise.oeuvreTitreFr}
-            </h2>
-            {reprise.oeuvreTitreAr && (
-              <span dir="rtl" lang="ar" className="[font-family:var(--tdb-font-arabe)] text-[19px] text-[var(--tdb-mute)]">
-                {reprise.oeuvreTitreAr}
-              </span>
-            )}
-          </div>
-          <p className="mt-1.5 text-[14.5px] text-[var(--tdb-ink-2)]">
-            {reprise.auteur ? `${reprise.auteur} — ` : ""}
-            {unite.numeroDejaDansTitre ? reprise.chapitreTitreFr : libelleChap}
-          </p>
+      <div className="p-7 sm:p-8">
+        <div className="flex flex-wrap items-baseline gap-3">
+          <h2 className="font-serif text-3xl font-bold tracking-tight text-ink">{reprise.oeuvreTitreFr}</h2>
+          {reprise.oeuvreTitreAr && (
+            <span dir="rtl" lang="ar" className="font-arabe text-lg text-primary-vif">
+              {reprise.oeuvreTitreAr}
+            </span>
+          )}
         </div>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          {reprise.auteur ? `${reprise.auteur} — ` : ""}
+          {unite.numeroDejaDansTitre ? reprise.chapitreTitreFr : libelleChap}
+        </p>
 
         {reprise.resumeCourt && (
-          <div>
-            <p className="mb-1.5 [font-family:var(--tdb-font-mono)] text-[10px] font-medium tracking-[0.15em] text-[var(--tdb-mute)] uppercase">
-              En bref
-            </p>
-            <blockquote className="max-w-[58ch] border-l-2 border-[var(--tdb-red)] py-0.5 pl-5 [font-family:var(--tdb-font-serif)] text-[17.5px] leading-[1.6] text-[var(--tdb-ink-2)]">
-              {reprise.resumeCourt}
-            </blockquote>
-          </div>
+          <p className="mt-4 max-w-2xl border-l-2 border-primary/40 py-0.5 pl-4 font-lecture text-[15px] leading-relaxed text-foreground">
+            {reprise.resumeCourt}
+          </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-3 pt-1">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           <Link
             href={reprise.url}
-            className="inline-flex items-center gap-3 rounded-full bg-[var(--tdb-ink)] px-6 py-3.5 text-[15px] font-medium text-[var(--tdb-paper)] transition-all hover:-translate-y-px hover:bg-[var(--tdb-blue)]"
+            className="inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink"
           >
             {reprise.estRecommandation ? "Commencer la lecture" : "Continuer la lecture"}
             <IconeFleche className="size-4" />
           </Link>
           <Link
             href={`/oeuvres/${reprise.oeuvreSlug}`}
-            className="rounded-full px-5 py-3.5 text-[14.5px] text-[var(--tdb-ink-2)] transition-colors hover:bg-black/[0.04] hover:text-[var(--tdb-ink)]"
+            className="rounded-[10px] px-5 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-ink"
           >
             Voir la fiche de l&apos;œuvre
           </Link>

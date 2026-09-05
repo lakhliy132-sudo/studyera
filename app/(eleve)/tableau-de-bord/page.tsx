@@ -16,25 +16,17 @@ import {
   recupererStatsCopies,
 } from "@/lib/supabase/tableauDeBord";
 
-/** Nombre d'annonces gardées pour le tableau de bord : seulement la
- * plus récente est affichée par `BlocAnnonces`, 1 suffit donc à
- * charger. */
-const NOMBRE_ANNONCES_TABLEAU_DE_BORD = 1;
-
-/** Nombre de lignes affichées dans le bloc "Dernières activités" (pas
- * plus, sinon la page devient un journal — voir /activite pour la
- * liste complète). */
-const NOMBRE_ACTIVITES_RECENTES = 4;
+const NOMBRE_ANNONCES = 1;
+const NOMBRE_ACTIVITES_RECENTES = 5;
 
 function joursCourant() {
   return new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 }
 
-/** Premier prénom déduit de `nom_complet` (premier mot), avec repli sur
- * la partie locale de l'email si `nom_complet` est vide — arrive pour
- * un compte Google dont les métadonnées n'ont pas encore été
- * propagées vers `profils`, voir la policy de la migration
- * 20260825120000_creation_profils.sql. Jamais de "Bonjour undefined". */
+/** Premier prénom déduit de `nom_complet`, avec repli sur la partie
+ * locale de l'email si `nom_complet` est vide — arrive pour un compte
+ * Google dont les métadonnées n'ont pas encore été propagées vers
+ * `profils`. Jamais de "Bonjour undefined". */
 function deriverPrenom(nomComplet: string | null, email: string | null): string {
   const premierMot = nomComplet?.trim().split(/\s+/)[0];
   if (premierMot) return premierMot;
@@ -45,27 +37,33 @@ function deriverPrenom(nomComplet: string | null, email: string | null): string 
 /**
  * Page protégée : /tableau-de-bord
  *
- * L'accès est garanti par le middleware (middleware.ts), qui redirige
- * vers /connexion toute personne non authentifiée avant même que cette
- * page ne s'exécute. On peut donc supposer ici qu'un utilisateur existe.
+ * L'accès est garanti par le middleware (middleware.ts).
  *
- * Reconstruite sur un modèle complet fourni par l'utilisateur ("fais
- * moi comme ca mais ajoute des modif bien"), puis REPRISE FIDÈLEMENT
- * (palette "papier", police Fraunces, ligne rouge en marge) après un
- * premier essai jugé trop éloigné du modèle fourni ("tu peux modifier
- * le design j ai pas aimé comme ca" / "tout") — la première version
- * adaptait la palette/police aux tokens déjà en place ailleurs sur le
- * site, celle-ci reprend directement les couleurs/police du modèle
- * fourni, mais dans un espace de tokens à part (`.tableau-de-bord`,
- * voir app/globals.css) qui ne change RIEN à l'apparence des autres
- * pages du site.
+ * Refonte complète demandée explicitement par l'utilisateur ("change
+ * moi le tableau de bord completement fais le de ta part"), confirmée
+ * malgré des modifications non enregistrées d'une autre session sur
+ * cette même page (autorisation explicite obtenue avant d'écraser ce
+ * travail en cours).
+ *
+ * Remplace l'ancien design "papier" (police Fraunces, palette dédiée
+ * `.tableau-de-bord`/`--tdb-*` dans app/globals.css, reprise fidèle
+ * d'un modèle fourni par l'utilisateur lors d'une session précédente)
+ * par le langage visuel déjà en place sur le reste du site depuis les
+ * refontes récentes (/calendrier, /matieres, /francais...) : cartes
+ * `rounded-[24px]` / `shadow-sm` / badges `bg-primary-tint`, police
+ * serif Playfair déjà utilisée partout ailleurs. Choix fait librement
+ * ("fais le de ta part") plutôt que d'après un nouveau modèle fourni.
+ *
+ * Unifie au passage le tableau de bord avec le reste du site : la
+ * palette `--tdb-*` séparée était un gap documenté à plusieurs
+ * reprises (ne s'adaptait pas au mode nuit) — en repartant des tokens
+ * globaux (`--color-*`), le tableau de bord bascule désormais
+ * correctement en mode sombre comme toutes les autres pages.
  *
  * Toutes les données restent réelles (Supabase), rien n'est laissé en
- * donnée fictive : pas d'"extrait" littéral du texte (jamais rempli en
- * base, présenté comme un résumé, voir CarteReprise.tsx), pas de
- * "dernière correction" inventée (remplacée par la note moyenne
- * réelle), la "série de jours" est calculée depuis `activite` (voir
- * `recupererSerieJours`), pas codée en dur.
+ * donnée fictive : la "série de jours" est calculée depuis `activite`
+ * (`recupererSerieJours`), la note moyenne est réelle plutôt qu'une
+ * "dernière correction" inventée.
  */
 export default async function PageTableauDeBord() {
   const supabase = await creerClientServeur();
@@ -84,65 +82,49 @@ export default async function PageTableauDeBord() {
       recupererQuotaRestant(userId),
       recupererProgressionParOeuvre(userId),
       recupererStatsCopies(userId),
-      recupererAnnonces(NOMBRE_ANNONCES_TABLEAU_DE_BORD),
+      recupererAnnonces(NOMBRE_ANNONCES),
       recupererRepriseLecture(userId),
       recupererSerieJours(userId),
     ]);
 
   const prenom = deriverPrenom(profil?.nom_complet ?? null, user?.email ?? null);
+  const totalChapitres = progressionOeuvres.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0);
 
   return (
-    <div className="tableau-de-bord min-h-screen">
-      <main className="relative mx-auto max-w-[1000px] px-6 pt-[52px] pb-28 sm:px-9">
-        {/* Ligne verticale rouge en fondu, en marge — décoration reprise
-         * telle quelle du modèle fourni ("stu-rule"). */}
-        <span
-          aria-hidden="true"
-          className="absolute top-[34px] bottom-[60px] left-3.5 hidden w-px opacity-40 sm:block"
-          style={{ backgroundImage: "linear-gradient(var(--tdb-red), rgba(200,64,44,0) 92%)" }}
-        />
-
-        <div className="flex flex-col gap-2 sm:pl-[54px]">
-          <p className="mb-4 flex items-center gap-2 [font-family:var(--tdb-font-mono)] text-[11px] tracking-[0.14em] text-[var(--tdb-mute)] uppercase">
-            <span
-              className="size-1.5 rounded-full"
-              style={{ backgroundColor: "var(--tdb-green)", boxShadow: "0 0 0 3px rgba(29,122,94,0.16)" }}
-            />
-            {joursCourant()}
-            {serie > 0 && ` · ${serie} jour${serie > 1 ? "s" : ""} de suite`}
-          </p>
-          <h1 className="mb-11 [font-family:var(--tdb-font-serif)] text-[clamp(32px,5.2vw,54px)] leading-[1.06] font-semibold tracking-tight text-[var(--tdb-ink)]">
-            Bonjour {prenom}.
-            {reprise && (
-              <>
-                <br />
-                <em className="text-[var(--tdb-blue)] italic">
-                  {reprise.estRecommandation ? "Découvrons" : "Reprenons"} {reprise.oeuvreTitreFr}.
-                </em>
-              </>
-            )}
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 sm:px-9">
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground capitalize">{joursCourant()}</p>
+          <h1 className="mt-1 font-serif text-4xl font-bold tracking-tight text-ink">
+            Bonjour <span className="text-primary">{prenom}</span> 👋
           </h1>
-
-          {reprise && <CarteReprise reprise={reprise} />}
-
-          <div className="mt-[18px] grid grid-cols-1 gap-[18px] sm:grid-cols-[1.5fr_1fr]">
-            <CarteProductionEcrite
-              quotaRestant={quotaRestant}
-              quotaMax={QUOTA_QUOTIDIEN_MAX}
-              copiesCorrigees={statsCopies.copiesCorrigees}
-              noteMoyenne={statsCopies.noteMoyenne}
-            />
-            <CarteProgressionAnneau
-              chapitresLus={progressionOeuvres.totalChapitresLus}
-              totalChapitres={progressionOeuvres.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0)}
-            />
-          </div>
-
-          <ListeProgrammeOeuvres parOeuvre={progressionOeuvres.parOeuvre} />
-          <BlocAnnonces annonces={annonces} />
-          <BlocDernieresActivites activites={activitesRecentes} />
         </div>
-      </main>
-    </div>
+        {serie > 0 && (
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary-tint px-4 py-2 text-sm font-semibold text-primary">
+            <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+            {serie} jour{serie > 1 ? "s" : ""} de suite
+          </span>
+        )}
+      </header>
+
+      {reprise && <CarteReprise reprise={reprise} />}
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <CarteProductionEcrite
+          quotaRestant={quotaRestant}
+          quotaMax={QUOTA_QUOTIDIEN_MAX}
+          copiesCorrigees={statsCopies.copiesCorrigees}
+          noteMoyenne={statsCopies.noteMoyenne}
+        />
+        <CarteProgressionAnneau chapitresLus={progressionOeuvres.totalChapitresLus} totalChapitres={totalChapitres} />
+      </div>
+
+      <ListeProgrammeOeuvres parOeuvre={progressionOeuvres.parOeuvre} />
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <BlocDernieresActivites activites={activitesRecentes} />
+        <BlocAnnonces annonces={annonces} />
+      </div>
+    </main>
   );
 }

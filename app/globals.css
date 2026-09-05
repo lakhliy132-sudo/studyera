@@ -222,47 +222,13 @@ body {
 }
 
 /**
- * Tokens réservés à /tableau-de-bord — demandé explicitement par
- * l'utilisateur après un premier essai qui adaptait aux tokens
- * globaux du site plutôt que de reprendre tel quel le modèle qu'il
- * avait fourni ("tu peux modifier le design j ai pas aimé comme ca" /
- * "tout"). Cette fois, sa palette "papier" (fond crème, encre, bleu,
- * rouge, vert) et sa police Fraunces sont reprises directement, mais
- * dans un espace de variables à part (préfixe `--tdb-`, portée par la
- * classe `.tableau-de-bord`) plutôt que dans les tokens globaux
- * (`--color-*`) : ne change strictement rien à l'apparence du reste du
- * site, qui garde sa propre palette bleutée. Utilisées via la syntaxe
- * Tailwind `bg-[var(--tdb-paper)]`, etc. — voir les composants sous
- * components/tableau-de-bord/.
+ * ⚠️ Le système `.tableau-de-bord` / `--tdb-*` (palette "papier" à
+ * part, police Fraunces) qui vivait ici a été retiré — demandé
+ * explicitement par l'utilisateur ("change moi le tableau de bord
+ * completement fais le de ta part") : /tableau-de-bord utilise
+ * désormais les tokens globaux `--color-*` ci-dessus, comme le reste
+ * du site (voir app/(eleve)/tableau-de-bord/page.tsx et les
+ * composants qu'elle utilise). Plus aucun composant ne référence ces
+ * variables, supprimées avec la page qui les utilisait plutôt que
+ * laissées mortes dans ce fichier.
  */
-.tableau-de-bord {
-  --tdb-ink: #151a24;
-  --tdb-ink-2: #3d4557;
-  --tdb-mute: #7a8296;
-  --tdb-paper: #f6f4ef;
-  --tdb-card: #ffffff;
-  --tdb-line: #e3dfd5;
-  --tdb-blue: #1e3fd8;
-  --tdb-ciel: #7dd3fc;
-  --tdb-red: #c8402c;
-  --tdb-green: #1d7a5e;
-  --tdb-font-serif: var(--font-fraunces), Georgia, serif;
-  --tdb-font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
-  --tdb-font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
-
-  /* Dégradé bleu → bleu ciel — demandé explicitement par l'utilisateur
-   * pour les cartes "Communication", "Au programme cette année" et
-   * "Dernières activités" ("FAIS LA RECTANGLE ET ARRONDIS AVEC COULEUR
-   * BLEU VERS BLEU CIEL"). Centralisé ici pour que les 3 cartes
-   * utilisent exactement le même dégradé. */
-  --tdb-degrade-bleu: linear-gradient(135deg, var(--tdb-blue), var(--tdb-ciel));
-
-  background-color: var(--tdb-paper);
-  color: var(--tdb-ink);
-}
-
-/* Animation d'entrée du tableau de bord (fondu + translation douce). */
-@keyframes tableau-entree {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
-}
