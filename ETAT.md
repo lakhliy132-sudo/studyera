@@ -2,6 +2,49 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Nouvelles matières : Éducation islamique, Arabe, Histoire-Géographie**
+> — demandé explicitement par l'utilisateur ("je veux ajouter autre
+> matiere" → "education islamique arabe et histoire geographie").
+>
+> Architecture générique plutôt qu'un dossier de pages par matière
+> (contrairement à /langue et /production-ecrite, qui datent d'avant
+> ce chantier) : `app/(public)/[matiere]/page.tsx` (liste des cours)
+> et `app/(public)/[matiere]/[slug]/page.tsx` (contenu d'un cours),
+> paramétrées par `lib/matieres.ts` — ajouter une 4ᵉ matière plus tard
+> ne demandera qu'une entrée dans ce fichier, aucun nouveau fichier de
+> route. Même principe déjà en place que /langue et /production-ecrite
+> côté données : une catégorie de la table `cours` par matière (voir
+> `lib/supabase/contenu.ts`, `recupererCoursParCategorie`), aucune
+> migration Supabase nécessaire.
+>
+> Un seul nouveau lien de nav, "Matières" (`components/LiensNavigation.tsx`),
+> menant à `/matieres` (nouvelle page hub, une carte par matière) — pas
+> un lien par matière : la nav horizontale avait déjà tout juste la
+> place pour ses 6 liens existants (voir le commentaire sur le
+> breakpoint `xl` dans `BarreNavigation.tsx`), en ajouter 3 de plus
+> l'aurait fait déborder ou aurait demandé de revoir toute la nav.
+> Vérifié par capture d'écran à 1366px (confortable) et 1280px (le
+> breakpoint `xl` exact : plus tassé mais toujours sans scroll
+> horizontal).
+>
+> Aucun plan de cours n'a été inventé pour ces 3 matières : contrairement
+> aux 12 "leçons" de /langue (reprises d'une maquette fournie par
+> l'utilisateur), les nouvelles pages de matière n'affichent que ce qui
+> existe réellement dans `cours` — un message "Bientôt disponible" tant
+> que rien n'a été importé, en particulier pour l'éducation islamique où
+> il serait inapproprié d'improviser du contenu religieux sans validation
+> d'un enseignant. Reste à faire, à la charge de l'utilisateur ou d'un
+> enseignant : fournir le plan de cours (titres, contenu) de chaque
+> matière, à importer via `data/contenu-plateforme-bac.xlsx` (feuille
+> "Cours", même mécanisme que la leçon "L'énonciation" de /langue).
+>
+> Petit refactor associé : le rendu Markdown d'un cours (`ReactMarkdown`
+> + mapping de styles), jusque-là écrit en dur dans
+> `app/(public)/langue/[slug]/page.tsx`, extrait dans
+> `components/ContenuMarkdown.tsx` pour être réutilisé par les pages de
+> cours des nouvelles matières sans dupliquer ce bloc — comportement et
+> rendu visuel inchangés pour /langue (code repris à l'identique).
+>
 > **Mode nuit (clair/sombre)** — demandé explicitement par l'utilisateur
 > ("FAIS MOI LE MODE DE NUIT UNE CLOCHE A ACTIVER", clarifié ensuite :
 > pas de cloche/notifications, uniquement le mode nuit, placé "a cote

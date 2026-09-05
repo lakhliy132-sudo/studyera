@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { MATIERES } from "@/lib/matieres";
+
 const LIENS = [
   { href: "/", libelle: "Accueil" },
   { href: "/oeuvres", libelle: "Œuvres" },
+  { href: "/matieres", libelle: "Matières" },
   { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
   { href: "/langue", libelle: "Langues" },
   { href: "/production-ecrite", libelle: "Production écrite" },
@@ -55,7 +58,20 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
   return (
     <>
       {liens.map((lien) => {
-        const actif = lien.href === "/" ? chemin === "/" : chemin.startsWith(lien.href);
+        // "Matières" doit aussi rester en surbrillance sur
+        // /education-islamique, /arabe, /histoire-geo... : ces pages
+        // vivent hors de /matieres (route générique /[matiere], voir
+        // lib/matieres.ts), donc un simple `startsWith("/matieres")`
+        // ne suffit pas.
+        const surUneMatiere = MATIERES.some(
+          (matiere) => chemin === `/${matiere.slug}` || chemin.startsWith(`/${matiere.slug}/`),
+        );
+        const actif =
+          lien.href === "/"
+            ? chemin === "/"
+            : lien.href === "/matieres"
+              ? chemin.startsWith(lien.href) || surUneMatiere
+              : chemin.startsWith(lien.href);
 
         return (
           <Link
