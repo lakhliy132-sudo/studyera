@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
+import { Caveat, Fraunces, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -95,6 +95,20 @@ const fraunces = Fraunces({
 });
 
 /**
+ * Police manuscrite (Caveat), pour la note décorative "Un petit effort
+ * chaque jour fait une grande différence." de la bannière /calendrier
+ * — reprise d'une maquette fournie par l'utilisateur ("regarde la
+ * photo que je mis dans le fichier fais la comme ca"). Réservée à cet
+ * unique usage décoratif (token `font-manuscrit`, voir app/globals.css) :
+ * jamais pour un texte fonctionnel/lisible en continu.
+ */
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-caveat",
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -128,7 +142,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
+      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable} ${caveat.variable}`}
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />

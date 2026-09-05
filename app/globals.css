@@ -113,6 +113,9 @@
   --font-lecture: var(--font-lora), Georgia, serif;
   --font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
+  /* Manuscrite (Caveat) : réservée à la note décorative de la bannière
+   * /calendrier (EnteteCalendrier.tsx) — jamais un texte fonctionnel. */
+  --font-manuscrit: var(--font-caveat), cursive;
 
   /* Entrée des cartes de /oeuvres (CarteOeuvre) — léger glissement vers
    * le haut + fondu, demandé explicitement par l'utilisateur ("je veux

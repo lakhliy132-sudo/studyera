@@ -2,6 +2,48 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Page /calendrier reprise sur une maquette complète fournie par
+> l'utilisateur** ("regarde la photo que je mis dans le fichier fais
+> la comme ca" — image déposée à la racine du dépôt, voir la
+> technique déjà établie de chercher une image collée à la racine du
+> projet). Nouvelle mise en page, propre à cette page (pas le gabarit
+> centré/pastille des autres pages publiques) :
+>
+> - `components/EnteteCalendrier.tsx` (nouveau) : bannière d'en-tête
+>   avec dégradé léger + fin quadrillage diagonal, pastille "Mon
+>   calendrier", titre 2 lignes (2ᵉ ligne en bleu), sous-titre, note
+>   manuscrite décorative en haut à droite ("Un petit effort chaque
+>   jour fait une grande différence.", masquée sur mobile).
+> - Police manuscrite ajoutée pour cette seule note décorative :
+>   Caveat, chargée dans `app/layout.tsx` (variable `--font-caveat`),
+>   exposée comme token `font-manuscrit` dans `app/globals.css` —
+>   jamais utilisée pour du texte fonctionnel.
+> - `components/CalendrierMois.tsx` : en-tête repensé (icône + "Mois"
+>   + sous-titre à gauche, switch de mois à droite, avant centré seul)
+>   et liste "Événements à venir" ajoutée à côté de la grille (points
+>   colorés, chevron).
+> - `components/CarteExamenRegional.tsx` : devient un panneau
+>   "Examens" avec une carte par session (bordure de couleur à
+>   gauche, pastille "À venir"/"Passé" calculée depuis la date du jour
+>   via `sessionAVenir` — pas écrite en dur, reste juste avec le
+>   temps), source en pied de carte.
+> - `lib/calendrier.ts` : `SessionExamen` gagne un champ `titre`
+>   distinct de `libelle` (la maquette affiche des libellés différents
+>   selon l'endroit) ; ajoute `sessionAVenir`.
+> - Signature "Studyera, ton espace pour progresser." en pied de page.
+>
+> **Écart assumé par rapport à la maquette** : celle-ci illustre 4
+> événements ("Contrôle Français", "Épreuve d'Histoire-Géo"...), mais
+> seuls les 2 réels (session ordinaire et rattrapage de l'examen
+> régional, déjà sourcés — voir l'entrée précédente) sont affichés :
+> aucune date supplémentaire n'a été inventée pour remplir la liste.
+> Pas de bouton "Voir tous les événements" pour la même raison (aucune
+> destination utile avec seulement 2 événements déjà tous affichés).
+>
+> Vérifié par capture d'écran desktop (1600px, fidèle à la maquette) et
+> mobile (420px, empilé proprement, note manuscrite masquée). Aussi
+> npx tsc --noEmit.
+>
 > **Calendrier agrandi (grille + carte examen)** — demandé
 > explicitement par l'utilisateur ("oui mais je veux la taille des
 > mois grand et aussi de examen"). `CalendrierMois.tsx` : titre du

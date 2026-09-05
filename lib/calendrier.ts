@@ -60,6 +60,13 @@ export function genererGrilleMois(date: Date): JourCalendrier[][] {
 export const JOURS_SEMAINE_COURT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 export interface SessionExamen {
+  /** Nom de l'événement, affiché dans la liste "Événements à venir"
+   * (ex. "Examen régional", "Session de rattrapage"). */
+  titre: string;
+  /** Précision affichée dans le panneau "Examens" (ex. "Session
+   * ordinaire") — distinct de `titre` : la maquette de référence
+   * affiche les deux avec des libellés légèrement différents selon
+   * l'endroit. */
   libelle: string;
   debut: Date;
   fin: Date;
@@ -91,9 +98,26 @@ export interface SessionExamen {
  * retrouvée).
  */
 export const EXAMEN_REGIONAL_1BAC: SessionExamen[] = [
-  { libelle: "Session ordinaire", debut: new Date(2027, 4, 28), fin: new Date(2027, 4, 29) },
-  { libelle: "Session de rattrapage", debut: new Date(2027, 5, 28), fin: new Date(2027, 5, 29) },
+  {
+    titre: "Examen régional",
+    libelle: "Session ordinaire",
+    debut: new Date(2027, 4, 28),
+    fin: new Date(2027, 4, 29),
+  },
+  {
+    titre: "Session de rattrapage",
+    libelle: "Session de rattrapage",
+    debut: new Date(2027, 5, 28),
+    fin: new Date(2027, 5, 29),
+  },
 ];
+
+/** `true` si la session est déjà terminée (comparé à aujourd'hui) —
+ * utilisé pour la pastille "À venir"/"Passé", calculée plutôt
+ * qu'écrite en dur (reste correcte au fil du temps). */
+export function sessionAVenir(session: SessionExamen): boolean {
+  return session.fin.getTime() >= new Date().setHours(0, 0, 0, 0);
+}
 
 /** `true` si `date` tombe dans l'une des sessions de l'examen
  * régional — utilisé pour repérer ces jours dans la grille du mois. */
