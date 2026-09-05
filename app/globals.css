@@ -148,6 +148,13 @@ body {
  * déconnecter" — placement demandé explicitement ("a cote de la
  * partie de se deconnecter").
  *
+ * Palette révisée une fois (valeurs ci-dessous) : la toute première
+ * version, très bleu-marine (fond/cartes fortement teintés de bleu),
+ * n'a pas plu à l'utilisateur ("dans le mode de nuit j ai pas aimé
+ * les couleurs") — remplacée par un noir plus neutre (fond/cartes
+ * proches du gris anthracite plutôt que du bleu marine), avec un bleu
+ * d'accent plus vif pour mieux ressortir dessus.
+ *
  * Redéfinit les mêmes tokens `--color-*` que ci-dessus (jamais de
  * couleur brute posée directement sur un composant) : tout ce qui
  * utilise déjà `bg-surface`, `text-foreground`, `border-border`, etc.
@@ -174,44 +181,44 @@ body {
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-background: #0a0f1c;
-    --color-foreground: #e2e8f4;
-    --color-surface: #111a2e;
-    --color-surface-muted: #16223b;
-    --color-border: #24314e;
-    --color-border-strong: #384562;
-    --color-primary: #4a7dfa;
+    --color-background: #0b0d12;
+    --color-foreground: #e7e9ee;
+    --color-surface: #15171e;
+    --color-surface-muted: #1b1e27;
+    --color-border: #272b36;
+    --color-border-strong: #3a3f4d;
+    --color-primary: #5b8def;
     --color-primary-foreground: #ffffff;
-    --color-primary-tint: #1c2a47;
-    --color-primary-vif: #6d97fb;
-    --color-ink: #cfdcfc;
-    --color-muted-foreground: #9aa6bd;
-    --color-subtle-foreground: #6b7690;
-    --color-erreur: #e2685f;
-    --color-erreur-foreground: #ffffff;
-    --color-validation: #3fcf9c;
-    --color-validation-tint: #0f2e26;
+    --color-primary-tint: #16233d;
+    --color-primary-vif: #86aef5;
+    --color-ink: #eef1f7;
+    --color-muted-foreground: #9199a8;
+    --color-subtle-foreground: #656b7a;
+    --color-erreur: #f2716a;
+    --color-erreur-foreground: #1a0d0c;
+    --color-validation: #4fd39a;
+    --color-validation-tint: #0f261e;
   }
 }
 
 :root[data-theme="dark"] {
-  --color-background: #0a0f1c;
-  --color-foreground: #e2e8f4;
-  --color-surface: #111a2e;
-  --color-surface-muted: #16223b;
-  --color-border: #24314e;
-  --color-border-strong: #384562;
-  --color-primary: #4a7dfa;
+  --color-background: #0b0d12;
+  --color-foreground: #e7e9ee;
+  --color-surface: #15171e;
+  --color-surface-muted: #1b1e27;
+  --color-border: #272b36;
+  --color-border-strong: #3a3f4d;
+  --color-primary: #5b8def;
   --color-primary-foreground: #ffffff;
-  --color-primary-tint: #1c2a47;
-  --color-primary-vif: #6d97fb;
-  --color-ink: #cfdcfc;
-  --color-muted-foreground: #9aa6bd;
-  --color-subtle-foreground: #6b7690;
-  --color-erreur: #e2685f;
-  --color-erreur-foreground: #ffffff;
-  --color-validation: #3fcf9c;
-  --color-validation-tint: #0f2e26;
+  --color-primary-tint: #16233d;
+  --color-primary-vif: #86aef5;
+  --color-ink: #eef1f7;
+  --color-muted-foreground: #9199a8;
+  --color-subtle-foreground: #656b7a;
+  --color-erreur: #f2716a;
+  --color-erreur-foreground: #1a0d0c;
+  --color-validation: #4fd39a;
+  --color-validation-tint: #0f261e;
 }
 
 /**

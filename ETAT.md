@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Palette du mode nuit revue** — demandé explicitement par
+> l'utilisateur ("dans le mode de nuit j ai pas aimé les couleurs tu
+> peux le modifier"). La première version était très bleu-marine
+> (fond et cartes fortement teintés de bleu) ; remplacée par un noir
+> plus neutre façon anthracite (`app/globals.css`, les 2 blocs
+> `--color-*` du mode sombre), avec un bleu d'accent plus vif
+> (`--color-primary: #5b8def`) pour mieux ressortir dessus. Même
+> principe que la 1ère version (tokens `--color-*` globaux
+> redéfinis, mêmes limites déjà documentées : `.tableau-de-bord` et
+> `BanniereOeuvre.tsx` restent inchangés).
+>
+> En vérifiant sur plusieurs pages, repéré et corrigé au passage un
+> vrai bug de lisibilité sur l'accueil : la vague de fond
+> (`app/(public)/page.tsx`) utilisait des couleurs fixes (`white`,
+> `#e2e1f5`) qui ne s'adaptaient pas au mode sombre — le titre y
+> devenait presque illisible (texte clair sur fond resté clair).
+> Dégradé reconstruit à partir de `color-mix(in srgb, var(--color-primary)
+> ..., var(--color-background))` : suit maintenant automatiquement le
+> thème actif, sans bloc de couleurs séparé pour le mode sombre.
+>
+> Vérifié par capture d'écran sur l'accueil, /oeuvres, /calendrier et
+> /matieres en mode sombre (contraste correct partout), et l'accueil
+> en mode clair (inchangé). Aussi npx tsc --noEmit.
+>
 > **"Matières concernées" ajoutées au panneau Examens de /calendrier**
 > — demandé explicitement par l'utilisateur, qui a répété la même
 > phrase que pour le compte à rebours ("ajoute autre chose dans la

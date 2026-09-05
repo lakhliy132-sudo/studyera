@@ -24,6 +24,16 @@ import Link from "next/link";
  * animation qui distrairait du contenu. `<style>` en JSX plutôt que
  * app/globals.css (qui a des changements en cours d'une autre session,
  * voir ETAT.md) : garde ce `@keyframes` propre à cette page.
+ *
+ * Dégradé recalculé à partir de `--color-primary`/`--color-background`
+ * (`color-mix`) plutôt que des couleurs fixes (`white`, `#e2e1f5`) —
+ * corrigé après le passage en revue du mode nuit ("dans le mode de
+ * nuit j ai pas aimé les couleurs") : ces valeurs fixes ne
+ * s'adaptaient pas au thème sombre, la vague restait presque blanche
+ * et rendait le titre illisible. Les deux tokens changeant déjà
+ * correctement de valeur en mode nuit (voir app/globals.css), le
+ * dégradé les suit automatiquement sans bloc de couleurs séparé pour
+ * le mode sombre.
  */
 export default function PageAccueil() {
   return (
@@ -43,9 +53,9 @@ export default function PageAccueil() {
         >
           <defs>
             <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
-              <stop offset="55%" stopColor="#e2e1f5" />
-              <stop offset="100%" stopColor="white" />
+              <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, var(--color-background))" />
+              <stop offset="55%" stopColor="color-mix(in srgb, var(--color-primary) 22%, var(--color-background))" />
+              <stop offset="100%" stopColor="var(--color-background)" />
             </linearGradient>
           </defs>
           <path
