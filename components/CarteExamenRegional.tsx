@@ -1,5 +1,29 @@
-import { IconeDocument, IconeFleche, IconeInfo } from "@/components/icones";
+import Link from "next/link";
+
+import { IconeDocument, IconeFleche, IconeInfo, IconeLivre } from "@/components/icones";
 import { EXAMEN_REGIONAL_1BAC, sessionAVenir } from "@/lib/calendrier";
+import { MATIERES } from "@/lib/matieres";
+
+/**
+ * Français + les 3 matières de lib/matieres.ts : les 4 épreuves
+ * communes à toutes les filières de l'examen régional de 1ère bac —
+ * ajouté à la demande explicite de l'utilisateur ("ajoute autre chose
+ * dans la partie de calendrier"). Sourcé par recherche web, pas
+ * inventé (plusieurs sources concordantes : français, arabe,
+ * éducation islamique, histoire-géographie) ; certaines filières
+ * ajoutent aussi les mathématiques à cette liste, hors périmètre du
+ * site donc non mentionnées ici pour ne pas donner une liste
+ * incomplète présentée comme exhaustive.
+ */
+const MATIERES_EXAMEN = [
+  { slug: "francais", nom: "Français", href: "/francais", Icone: IconeLivre },
+  ...MATIERES.map((matiere) => ({
+    slug: matiere.slug,
+    nom: `${matiere.titreAvantAccent}${matiere.titreAccent}`,
+    href: `/${matiere.slug}`,
+    Icone: matiere.Icone,
+  })),
+];
 
 const NOM_MOIS = [
   "janvier", "février", "mars", "avril", "mai", "juin",
@@ -69,6 +93,25 @@ export default function CarteExamenRegional() {
           );
         })}
       </ul>
+
+      <div className="border-t border-border pt-5">
+        <p className="mb-1 text-xs font-semibold text-ink">Matières concernées</p>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Communes à toutes les filières — d&apos;autres s&apos;ajoutent selon la tienne.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {MATIERES_EXAMEN.map((matiere) => (
+            <Link
+              key={matiere.slug}
+              href={matiere.href}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
+            >
+              <matiere.Icone className="size-3.5 text-primary" />
+              {matiere.nom}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       <p className="flex items-start gap-2 border-t border-border pt-5 text-xs text-muted-foreground">
         <IconeInfo className="mt-px size-3.5 shrink-0" />

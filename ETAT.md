@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **"Matières concernées" ajoutées au panneau Examens de /calendrier**
+> — demandé explicitement par l'utilisateur, qui a répété la même
+> phrase que pour le compte à rebours ("ajoute autre chose dans la
+> partie de calendrier") : `CarteExamenRegional.tsx` liste maintenant,
+> sous les 2 sessions, les 4 matières de l'examen régional communes à
+> toutes les filières (Français, Éducation islamique, Arabe,
+> Histoire-Géographie — qui correspondent exactement aux 4 matières du
+> site), sous forme de pastilles cliquables vers chaque page. Sourcé
+> par recherche web, pas inventé (plusieurs sources concordantes) ;
+> une légende précise que certaines filières ajoutent d'autres
+> matières (mathématiques notamment, hors périmètre du site) — pour ne
+> pas présenter une liste partielle comme exhaustive. Vérifié par
+> capture d'écran desktop et mobile.
+>
 > **Refonte de /matieres annulée** — le module "Tes matières" (décompte
 > réel, bandeau de reprise, cartes de progression par matière, voir
 > l'entrée juste en dessous) n'a pas plu à l'utilisateur ("supprimer
