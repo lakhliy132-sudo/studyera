@@ -2,6 +2,48 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Page /matieres refondue sur une maquette HTML complète fournie par
+> l'utilisateur** ("fais ca", maquette collée directement dans le
+> message avec un `<h2 class="sr-only">` décrivant l'intention).
+> Remplace le grand titre centré + grille de cartes "Découvrir" par un
+> module compact "Tes matières" : décompte réel (matières/chapitres),
+> bandeau de reprise de lecture, une carte par matière avec sa
+> progression.
+>
+> - `components/CarteMatiereProgression.tsx` (nouveau) : carte
+>   compacte (bordure de couleur à gauche, fraction, barre de
+>   progression, étiquette courte) ou pastille "Bientôt" si aucun
+>   contenu n'existe encore pour la matière.
+> - `components/BandeauReprise.tsx` (nouveau) : bandeau "Tu t'es
+>   arrêté ici" / "Pour commencer" selon que l'élève a une lecture en
+>   cours ou non (`recupererRepriseLecture`, déjà utilisée par le
+>   tableau de bord) — la maquette n'illustrait que le premier cas, un
+>   visiteur sans historique aurait été induit en erreur.
+> - `app/globals.css` : 4 nouveaux tokens `--color-matiere-*` (une
+>   couleur par matière, reprises de la maquette), seule vraie
+>   nouveauté de palette de ce chantier.
+> - `lib/matieres.ts` : ajoute `nom` (nom simple, ex. "Arabe", pour la
+>   carte compacte), `descriptionCourte` et `couleur` par matière.
+>
+> **Aucune progression inventée** pour les 3 nouvelles matières
+> (éducation islamique, arabe, histoire-géo) : la maquette illustrait
+> des fractions d'exemple (2/9, 0/8, 5/9), mais ces matières n'ont
+> encore aucun contenu importé (`recupererCoursParCategorie` renvoie 0)
+> — leur carte affiche "Bientôt" plutôt qu'un chiffre inventé. Seul le
+> français a une vraie progression (`recupererProgressionParOeuvre`,
+> déjà utilisée par /progres et le tableau de bord).
+>
+> Fonctionne aussi bien pour un visiteur non connecté (progression à 0,
+> bandeau "Pour commencer") que pour un élève connecté — même page,
+> pas de variante séparée, même pattern que le reste du site.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) : décompte réel ("4 matières · 83 chapitres"), bandeau
+> "Pour commencer" pour un visiteur sans historique, bandeau "Tu t'es
+> arrêté ici" + fraction 3/83 après avoir marqué 3 chapitres lus pour
+> le compte de test, cartes des 3 nouvelles matières toujours à
+> "Bientôt". Aussi npx tsc --noEmit.
+>
 > **Bandeau "compte à rebours" ajouté sur /calendrier** — demandé
 > explicitement par l'utilisateur ("ajoute autre chose dans la partie
 > de calendrier"). `components/CompteARebours.tsx` (nouveau) : nombre
