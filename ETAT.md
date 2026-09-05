@@ -2,6 +2,23 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond décoratif "vague" : ajusté sur la vraie capture du site
+> Axiom** (`app/layout.tsx`) — l'utilisateur a fourni une capture
+> d'écran réelle de axiom-platforms.com/how-it-works ("regarde la
+> photo que je viens de mettre au fichier axiom mets la comme ca").
+> L'ellipse floue symétrique de la version précédente était trop ronde
+> et trop colorée comparée à la vraie référence : une vague
+> *asymétrique* (un seul tracé fluide, plus creux vers le centre que
+> sur les bords, remonte plus vite à droite qu'à gauche), teinte
+> beaucoup plus discrète (gris-lavande très pâle, presque neutre).
+> Remplacé le `<div>` flouté par un vrai tracé SVG (`<path>`, une seule
+> courbe de Bézier, `#e2e1f5`) — donne un contrôle précis sur
+> l'asymétrie, impossible à obtenir avec un dégradé radial + `blur`.
+> Toujours purement décoratif (`fixed`, `-z-10`, `pointer-events-none`),
+> ne touche ni la navbar, ni le contenu, ni les cartes, ni les boutons.
+> Ajusté sur 2 itérations avec vérification par capture d'écran réelle
+> à chaque fois avant de converger sur un rendu satisfaisant.
+>
 > **Fond décoratif "vague" façon Axiom, en haut de page** (`app/layout.tsx`)
 > — demandé explicitement et en détail par l'utilisateur ("Je veux
 > vraiment l'effet visuel de la capture Axiom : grand dégradé pastel en

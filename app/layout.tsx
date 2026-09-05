@@ -110,40 +110,29 @@ const fraunces = Fraunces({
  * référence du site Axiom), `BarreNavigation` est de nouveau une
  * simple barre en haut, dans le flux normal du document.
  *
- * Fond décoratif "vague" en haut de page : une grande ellipse floue
- * (dégradé bleu clair → lavande très pâle → blanc), positionnée pour
- * qu'on n'en voie que le bord inférieur arrondi — donne la courbe qui
- * redescend légèrement vers le centre avant de laisser place au blanc,
- * plutôt qu'un simple dégradé linéaire de haut en bas. Demandé
- * explicitement par l'utilisateur ("Je veux vraiment l'effet visuel
- * de la capture Axiom : grand dégradé pastel en haut + forme courbée
- * qui sépare progressivement le fond coloré du fond blanc. Pas un
- * simple dégradé linéaire"), après avoir déjà demandé puis fait
- * retirer un premier essai de fond différent ("enleve l arriere plan
- * que t a fais").
+ * Fond décoratif "vague" en haut de page — deuxième version, ajustée
+ * sur la vraie capture du site Axiom (axiom-platforms.com/how-it-works)
+ * fournie par l'utilisateur ("regarde la photo que je viens de mettre
+ * au fichier axiom mets la comme ca") : la première tentative (une
+ * ellipse floue symétrique, en dôme) était trop ronde et trop colorée
+ * comparée à la vraie référence, qui est une vague *asymétrique* — un
+ * seul tracé fluide, plus creux vers le centre-gauche que sur les
+ * bords — et une teinte beaucoup plus discrète (gris-bleu très pâle,
+ * presque neutre). Remplacé par un vrai tracé SVG (`<path>`, une seule
+ * courbe de Bézier) plutôt qu'une forme CSS floue : donne un contrôle
+ * précis sur l'asymétrie de la vague, impossible à obtenir avec un
+ * dégradé radial + `blur`.
  *
  * `fixed`, `-z-10`, `pointer-events-none` : purement décoratif, hors
  * du flux, ne touche ni la navbar (qui garde son propre fond opaque
  * par-dessus), ni le contenu, ni les cartes, ni les boutons — comme
- * demandé explicitement. Le violet/lavande n'existe dans aucun token
- * `--color-*` du site (uniquement des bleus) : une seule couleur brute
- * ponctuelle (`#ded6fb`, un lavande pâle) est donc utilisée ici, pour
- * cet effet précis seulement, plutôt que d'inventer un token global
- * pour une teinte qui ne sert qu'à ce dégradé.
+ * demandé explicitement lors de la première version. Le violet/lavande
+ * n'existe dans aucun token `--color-*` du site (uniquement des
+ * bleus) : une seule couleur brute ponctuelle (`#e2e1f5`, un
+ * gris-lavande très pâle) est donc utilisée ici, pour cet effet précis
+ * seulement, plutôt que d'inventer un token global pour une teinte qui
+ * ne sert qu'à ce dégradé.
  */
-const FOND_VAGUE: React.CSSProperties = {
-  position: "absolute",
-  left: "50%",
-  top: "-32vh",
-  width: "170vw",
-  height: "58vh",
-  transform: "translateX(-50%)",
-  borderRadius: "50%",
-  filter: "blur(56px)",
-  backgroundImage: [
-    "radial-gradient(ellipse at center, color-mix(in srgb, var(--color-primary) 20%, white) 0%, #ded6fb 45%, white 78%)",
-  ].join(", "),
-};
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await creerClientServeur();
@@ -157,8 +146,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
     >
       <body className="font-sans">
-        <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[60vh] overflow-hidden">
-          <div style={FOND_VAGUE} />
+        <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
+          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[52vh] w-full">
+            <defs>
+              <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
+                <stop offset="55%" stopColor="#e2e1f5" />
+                <stop offset="100%" stopColor="white" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,0 H1440 V60 C1220,150 1040,260 800,300 C560,340 340,300 160,260 C90,244 30,232 0,224 Z"
+              fill="url(#dégradé-vague-accueil)"
+            />
+          </svg>
         </div>
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}
