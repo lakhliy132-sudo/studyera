@@ -126,10 +126,23 @@ function EtatConnexion({
   pleineLargeur = false,
 }: BarreNavigationProps & { pleineLargeur?: boolean }) {
   if (connecte) {
+    // Bloc "compte" retravaillé pour plus d'élégance — demandé
+    // explicitement par l'utilisateur ("fait la partie de email et
+    // deconnter stylé") : avatar en dégradé (même traitement que le
+    // médaillon de la fiche de lecture), regroupés dans une carte
+    // teintée plutôt que posés à plat, bouton de déconnexion en pleine
+    // largeur assorti au reste du menu.
     return (
-      <div className={pleineLargeur ? "flex items-center gap-3 px-3 py-2" : "flex items-center gap-3"}>
-        <Link href="/tableau-de-bord" className="flex items-center gap-3" title={email ?? undefined}>
-          <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
+      <div className={pleineLargeur ? "flex flex-col gap-3 rounded-[14px] bg-surface-muted p-3" : "flex items-center gap-3"}>
+        <Link
+          href="/tableau-de-bord"
+          className="flex items-center gap-3 rounded-[10px] transition-colors hover:text-primary"
+          title={email ?? undefined}
+        >
+          <span
+            className="flex size-10 shrink-0 items-center justify-center rounded-full text-base font-bold text-ink ring-2 ring-white"
+            style={{ backgroundImage: "linear-gradient(150deg, var(--color-primary-tint), #F4F8FF)" }}
+          >
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
           {/* Email visible seulement dans le tiroir mobile (assez de
@@ -139,10 +152,13 @@ function EtatConnexion({
            * faire de la place à "Tableau de bord" dans la liste de
            * liens, qui débordait sinon en dessous de ~1600px. */}
           {pleineLargeur && (
-            <span className="truncate text-sm text-muted-foreground">{email}</span>
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-semibold text-ink">{email}</span>
+              <span className="block text-xs text-muted-foreground">Mon compte</span>
+            </span>
           )}
         </Link>
-        <BoutonDeconnexion />
+        <BoutonDeconnexion pleineLargeur={pleineLargeur} />
       </div>
     );
   }

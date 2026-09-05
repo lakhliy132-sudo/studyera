@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Bloc "compte" (email + déconnexion) du menu retravaillé pour plus
+> d'élégance** (`BarreNavigation.tsx`, `BoutonDeconnexion.tsx`) —
+> demandé explicitement par l'utilisateur ("fait la partie de email et
+> deconnter stylé"). Avatar en dégradé (même traitement que le
+> médaillon de la biographie d'auteur sur `OngletFicheLecture.tsx`,
+> repris pour cohérence) avec anneau blanc ; email + légende "Mon
+> compte" regroupés dans une carte teintée (`bg-surface-muted`) plutôt
+> que posés à plat ; bouton "Se déconnecter" passé en pleine largeur,
+> coins plus arrondis, assorti au reste du menu (`BoutonDeconnexion`
+> gagne un prop `pleineLargeur`). Profite au menu latéral desktop et au
+> tiroir mobile (même composant partagé). Vérifié avec un compte de
+> test jetable + vraie session : capture d'écran des deux, compte
+> supprimé ensuite.
+>
 > **Fond du site inversé : bleu ciel dominant, éclaircies blanches**
 > (`app/layout.tsx`) — la version précédente (fond quasi blanc, faibles
 > taches bleues dans les coins) jugée trop timide : "je veux pas comme
