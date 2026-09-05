@@ -1,5 +1,6 @@
 import CalendrierMois from "@/components/CalendrierMois";
 import CarteExamenRegional from "@/components/CarteExamenRegional";
+import CompteARebours from "@/components/CompteARebours";
 import EnteteCalendrier from "@/components/EnteteCalendrier";
 import { IconeCoche } from "@/components/icones";
 
@@ -31,6 +32,11 @@ import { IconeCoche } from "@/components/icones";
  * l'équilibre déjà validé lors de la reprise de la maquette.
  * Même changement sur EnteteCalendrier.tsx pour que le texte de la
  * bannière reste aligné au même bord gauche que les cartes en dessous.
+ *
+ * Bandeau CompteARebours ajouté au-dessus du reste, à la demande
+ * explicite de l'utilisateur ("ajoute autre chose dans la partie de
+ * calendrier") : jours restants avant la prochaine session de
+ * l'examen régional, calculé (pas inventé) — voir son commentaire.
  */
 export default function PageCalendrier() {
   return (
@@ -38,6 +44,8 @@ export default function PageCalendrier() {
       <EnteteCalendrier />
 
       <div className="flex w-full max-w-5xl flex-col gap-10 px-6 py-12 sm:px-9">
+        <CompteARebours />
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
           <CalendrierMois />
           <CarteExamenRegional />

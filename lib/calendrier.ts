@@ -126,3 +126,24 @@ export function estJourExamenRegional(date: Date): boolean {
     (session) => date >= session.debut && date <= session.fin,
   );
 }
+
+/** La session la plus proche parmi celles à venir (`sessionAVenir`),
+ * ou `null` si toutes sont déjà passées — utilisée par le compte à
+ * rebours (CompteARebours.tsx), demandé explicitement par
+ * l'utilisateur ("ajoute autre chose dans la partie de calendrier"). */
+export function prochaineSession(): SessionExamen | null {
+  const aVenir = EXAMEN_REGIONAL_1BAC.filter(sessionAVenir);
+  if (aVenir.length === 0) return null;
+  return aVenir.reduce((plusProche, session) => (session.debut < plusProche.debut ? session : plusProche));
+}
+
+/** Nombre de jours entiers entre aujourd'hui et `date` (peut être
+ * négatif si `date` est déjà passée) — calculé, jamais écrit en dur,
+ * pour rester juste au fil du temps. */
+export function joursAvant(date: Date): number {
+  const aujourdHui = new Date();
+  aujourdHui.setHours(0, 0, 0, 0);
+  const cible = new Date(date);
+  cible.setHours(0, 0, 0, 0);
+  return Math.round((cible.getTime() - aujourdHui.getTime()) / (1000 * 60 * 60 * 24));
+}

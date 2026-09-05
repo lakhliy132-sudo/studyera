@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Bandeau "compte à rebours" ajouté sur /calendrier** — demandé
+> explicitement par l'utilisateur ("ajoute autre chose dans la partie
+> de calendrier"). `components/CompteARebours.tsx` (nouveau) : nombre
+> de jours restants avant la prochaine session de l'examen régional,
+> affiché au-dessus des cartes "Mois"/"Examens". Nombre calculé depuis
+> la date du jour (`lib/calendrier.ts`, `joursAvant` + `prochaineSession`),
+> jamais écrit en dur — reste juste au fil du temps, se base sur les
+> mêmes dates déjà sourcées (voir l'entrée plus bas sur
+> EXAMEN_REGIONAL_1BAC). Disparaît silencieusement si les deux
+> sessions sont déjà passées (pas de nombre négatif absurde). Vérifié
+> par capture d'écran desktop et mobile ("265 jours avant examen
+> régional (session ordinaire) — 28 mai 2027", correct pour la date du
+> jour).
+>
 > **Retire "Événements à venir" de la carte "Mois"** — demandé
 > explicitement par l'utilisateur ("dans la partie de mois enleve la
 > partie evenements a venir"). `CalendrierMois.tsx` : liste retirée,
