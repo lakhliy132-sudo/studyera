@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
@@ -49,17 +50,21 @@ export default function BarreNavigation({ connecte, email }: BarreNavigationProp
   return (
     <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
       <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
-        <Link href="/" className="flex items-center gap-3.5">
-          <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
-            <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
-            <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
-          </svg>
-          <span className="leading-tight">
-            <span className="font-serif text-[25px] font-bold text-ink">STUDYERA</span>
-            <span className="font-lecture block text-[12.5px] text-primary-vif">
-              Révisez · Comprenez · Progressez
-            </span>
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/logo-studyera.png"
+            alt="Studyera"
+            width={868}
+            height={568}
+            priority
+            className="h-[52px] w-auto"
+          />
+          <span className="font-lecture hidden text-[12.5px] leading-tight text-primary-vif sm:block">
+            Révisez ·
+            <br />
+            Comprenez ·
+            <br />
+            Progressez
           </span>
         </Link>
 

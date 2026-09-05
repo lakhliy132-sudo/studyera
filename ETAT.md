@@ -2,6 +2,24 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Vrai logo Studyera intégré dans la navbar** (`components/BarreNavigation.tsx`,
+> `public/logo-studyera.png`) — demandé explicitement par l'utilisateur
+> ("j ai ajouté le logo sur le fichier madrasti fais le dans le
+> site"), à partir d'un fichier déposé à la racine du projet
+> ("ChatGPT Image 5 sept. 2026..."). L'icône SVG dessinée à la main et
+> le texte "STUDYERA" en Playfair Display, qui n'ont jamais été qu'un
+> repère provisoire, sont remplacés par ce vrai logo (icône + mot-symbole
+> "Studyera"). Fichier source recadré avec `sharp` (déjà une dépendance
+> du projet) : le PNG fourni faisait 1254×1254 avec une grande marge
+> transparente autour du logo (`sharp().trim()`, seuil 30, a détecté le
+> vrai fond transparent — la première tentative avec un fond blanc
+> supposé n'a rien recadré) → 868×568, enregistré dans
+> `public/logo-studyera.png`. Affiché via `next/image`
+> (`width={868} height={568}`, `h-[52px] w-auto`), le slogan
+> "Révisez · Comprenez · Progressez" conservé à côté (repassé sur 3
+> lignes courtes plutôt qu'empilé sous un titre qui n'existe plus).
+> Vérifié par capture d'écran réelle (desktop et mobile).
+>
 > **Retour à une navbar horizontale (fin de l'expérience menu latéral
 > vertical)** (`BarreNavigation.tsx`, `LiensNavigation.tsx`,
 > `BoutonDeconnexion.tsx`, `app/layout.tsx`) — demandé explicitement et
