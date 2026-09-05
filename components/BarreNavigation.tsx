@@ -10,113 +10,87 @@ interface BarreNavigationProps {
 }
 
 /**
- * Navigation du site, affichée par app/layout.tsx sur toutes les
- * pages. Deux rendus distincts plutôt qu'une seule barre qui se
- * réarrange en CSS : un menu latéral vertical fixe à gauche sur
- * desktop (`xl` et plus), un bandeau horizontal compact en haut avec
- * menu déroulant sur mobile/tablette — demandé explicitement par
- * l'utilisateur, capture d'écran à l'appui, en deux temps : d'abord
- * "HORIZETALEMENT A GAUCHE" (bandeau horizontal collé au bord gauche,
- * toujours en haut), puis "VERTICALEMENT A GAUCHE" (les mêmes liens,
- * mais empilés verticalement sur le côté gauche, comme un tableau de
- * bord classique) — confirmé via une question de clarification avant
- * d'appliquer, vu l'ampleur du changement (structure de toutes les
- * pages). `app/layout.tsx` décale le contenu de `xl:pl-[280px]` pour
- * laisser la place au menu latéral, qui est `fixed` (ne participe pas
- * au flux du document).
+ * Barre de navigation, affichée par app/layout.tsx sur toutes les
+ * pages. Revenue à une navbar horizontale en haut, pleine largeur —
+ * demandé explicitement par l'utilisateur, capture d'écran du site
+ * Axiom à l'appui, après être passée par un menu latéral vertical
+ * entretemps ("Je veux modifier la navigation de STUDYERA pour qu'elle
+ * ressemble à la barre de navigation du site Axiom... Supprime
+ * complètement la sidebar verticale à gauche... Ne crée pas une
+ * sidebar. Je veux UNIQUEMENT une navbar horizontale en haut").
+ *
+ * Trois zones dans la même ligne, via une grille `[auto_1fr_auto]`
+ * plutôt qu'un simple `flex` : logo à gauche (largeur naturelle),
+ * liens vraiment centrés dans l'espace restant (`justify-center` dans
+ * la colonne `1fr`, indépendant de la largeur du logo ou du bloc de
+ * connexion), connexion/menu mobile à droite — demandé explicitement
+ * ("Au centre : les liens"), différent du bandeau précédent qui
+ * plaçait les liens juste après le logo, à gauche.
+ *
+ * `border-b` fine + `sticky top-0` : reste fixée en haut au défilement
+ * — demandé explicitement ("Ajoute une fine bordure en bas de la
+ * navbar", "La navbar doit rester fixée en haut").
  *
  * Menu mobile en `<details>`/`<summary>` natif plutôt qu'un composant
  * client avec un `useState` : même philosophie que OngletsOeuvre
  * ("Composant Serveur volontairement"), pas de JS nécessaire pour
  * ouvrir/fermer le menu. `LiensNavigation` (client, `usePathname`) et
  * `BoutonDeconnexion` (client, `supabase.auth.signOut()`) sont les
- * seuls morceaux interactifs. `LiensNavigation` (toujours empilée
- * verticalement, plus de variante horizontale depuis que la nav est
- * devenue un menu latéral partout) et `EtatConnexion` en
- * `pleineLargeur` servent tels quels dans le menu latéral desktop et
- * le tiroir mobile : même empilement vertical dans les deux cas, pas
- * de variante supplémentaire à maintenir.
+ * seuls morceaux interactifs.
  *
  * Bascule desktop/mobile à `xl` (1280px), pas `md` (768px) comme le
- * reste du site — voir la mesure Playwright déjà documentée pour
- * l'ancien bandeau horizontal (6 liens + logo + connexion ont besoin
- * d'environ 1220px).
+ * reste du site : mesuré avec Playwright, les 6 liens de nav (dont
+ * "Langues") plus le logo et les boutons de connexion ont besoin
+ * d'environ 1220px pour tenir sur une seule ligne sans déborder — en
+ * dessous, le menu `<details>` prend le relais plutôt que de laisser
+ * la page défiler horizontalement.
  */
 export default function BarreNavigation({ connecte, email }: BarreNavigationProps) {
   return (
-    <>
-      {/* Mobile/tablette (< xl) : bandeau horizontal compact en haut. */}
-      <header className="sticky top-0 z-20 border-b border-border bg-surface xl:hidden">
-        <div className="flex h-[72px] w-full items-center justify-between px-5">
-          <Logo />
+    <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
+      <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
+        <Link href="/" className="flex items-center gap-3.5">
+          <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
+            <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
+            <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
+          </svg>
+          <span className="leading-tight">
+            <span className="font-serif text-[25px] font-bold text-ink">STUDYERA</span>
+            <span className="font-lecture block text-[12.5px] text-primary-vif">
+              Révisez · Comprenez · Progressez
+            </span>
+          </span>
+        </Link>
 
-          {/* Pas de `relative` sur ce `<details>` : sa propre boîte ne
-           * fait que la largeur du bouton hamburger, donc un `relative`
-           * ici ferait résoudre `inset-x-0` du panneau ci-dessous
-           * contre cette boîte étroite plutôt que contre la largeur de
-           * l'écran. `<header>` est déjà `sticky`, donc déjà
-           * positionné : c'est lui qui sert de référence pour
-           * `inset-x-0`/`top-full` du panneau. */}
-          <details>
-            <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
-              <IconeMenu className="size-6" />
-              <span className="sr-only">Ouvrir le menu</span>
-            </summary>
-            <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
-              <LiensNavigation connecte={connecte} />
-              <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
-                <EtatConnexion connecte={connecte} email={email} pleineLargeur />
-              </div>
-            </div>
-          </details>
-        </div>
-      </header>
-
-      {/* Desktop (xl et plus) : menu latéral fixe à gauche, pleine
-       * hauteur. `fixed` : hors du flux, voir le padding compensatoire
-       * dans app/layout.tsx. */}
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[280px] flex-col border-r border-border bg-surface xl:flex">
-        <div className="border-b border-border px-6 py-7">
-          <Logo grande />
-        </div>
-
-        <nav
-          aria-label="Navigation principale"
-          className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-4 py-6"
-        >
+        <nav aria-label="Navigation principale" className="hidden items-center justify-center gap-2 xl:flex">
           <LiensNavigation connecte={connecte} />
         </nav>
 
-        <div className="flex flex-col gap-2 border-t border-border px-4 py-5">
-          <EtatConnexion connecte={connecte} email={email} pleineLargeur />
+        <div className="hidden items-center justify-end gap-3 xl:flex">
+          <EtatConnexion connecte={connecte} email={email} />
         </div>
-      </aside>
-    </>
-  );
-}
 
-/** `grande` : utilisé dans le menu latéral desktop, un peu plus
- * généreux que la taille compacte du bandeau mobile — demandé
- * explicitement par l'utilisateur ("C BIEN MAIS FAIS LA UN PEU
- * GRANDE") une fois le menu latéral approuvé. */
-function Logo({ grande = false }: { grande?: boolean }) {
-  const taille = grande ? 46 : 40;
-  return (
-    <Link href="/" className="flex items-center gap-3">
-      <svg width={taille} height={taille} viewBox="0 0 48 48" fill="none" aria-hidden="true" className="shrink-0">
-        <path d="M6 11c5-2.4 10-2.4 16 1v27c-6-3.4-11-3.4-16-1V11z" fill="var(--color-primary)" />
-        <path d="M42 11c-5-2.4-10-2.4-16 1v27c6-3.4 11-3.4 16-1V11z" fill="var(--color-ink)" />
-        <path d="M24 12v27" stroke="#fff" strokeWidth="2" />
-      </svg>
-      <span className="min-w-0 leading-tight">
-        <span className={`font-serif font-bold text-ink ${grande ? "text-2xl" : "text-xl"}`}>STUDYERA</span>
-        <span
-          className={`font-lecture block text-primary-vif ${grande ? "text-[13px]" : "truncate text-[11.5px]"}`}
-        >
-          Révisez · Comprenez · Progressez
-        </span>
-      </span>
-    </Link>
+        {/* Pas de `relative` sur ce `<details>` : sa propre boîte ne fait
+         * que la largeur du bouton hamburger, donc un `relative` ici
+         * ferait résoudre `inset-x-0` du panneau ci-dessous contre cette
+         * boîte étroite plutôt que contre la largeur de l'écran.
+         * `<header>` est déjà `sticky`, donc déjà positionné : c'est lui
+         * qui sert de référence pour `inset-x-0`/`top-full` du panneau. */}
+        <details className="justify-self-end xl:hidden">
+          <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
+            <IconeMenu className="size-6" />
+            <span className="sr-only">Ouvrir le menu</span>
+          </summary>
+          <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
+            <LiensNavigation pleineLargeur connecte={connecte} />
+            <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
+              <EtatConnexion connecte={connecte} email={email} pleineLargeur />
+            </div>
+          </div>
+        </details>
+      </div>
+    </header>
   );
 }
 
@@ -126,39 +100,21 @@ function EtatConnexion({
   pleineLargeur = false,
 }: BarreNavigationProps & { pleineLargeur?: boolean }) {
   if (connecte) {
-    // Bloc "compte" retravaillé pour plus d'élégance — demandé
-    // explicitement par l'utilisateur ("fait la partie de email et
-    // deconnter stylé") : avatar en dégradé (même traitement que le
-    // médaillon de la fiche de lecture), regroupés dans une carte
-    // teintée plutôt que posés à plat, bouton de déconnexion en pleine
-    // largeur assorti au reste du menu.
     return (
-      <div className={pleineLargeur ? "flex flex-col gap-3 rounded-[14px] bg-surface-muted p-3" : "flex items-center gap-3"}>
-        <Link
-          href="/tableau-de-bord"
-          className="flex items-center gap-3 rounded-[10px] transition-colors hover:text-primary"
-          title={email ?? undefined}
-        >
-          <span
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-base font-bold text-ink ring-2 ring-white"
-            style={{ backgroundImage: "linear-gradient(150deg, var(--color-primary-tint), #F4F8FF)" }}
-          >
+      <div className={pleineLargeur ? "flex items-center gap-3 px-3 py-2" : "flex items-center gap-3"}>
+        <Link href="/tableau-de-bord" className="flex items-center gap-3" title={email ?? undefined}>
+          <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
           {/* Email visible seulement dans le tiroir mobile (assez de
            * place en vertical) — sur la nav desktop compacte, l'avatar
            * seul suffit à indiquer "connecté", le survol (title
-           * ci-dessus) donne l'adresse complète si besoin. Retiré pour
-           * faire de la place à "Tableau de bord" dans la liste de
-           * liens, qui débordait sinon en dessous de ~1600px. */}
+           * ci-dessus) donne l'adresse complète si besoin. */}
           {pleineLargeur && (
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-ink">{email}</span>
-              <span className="block text-xs text-muted-foreground">Mon compte</span>
-            </span>
+            <span className="truncate text-sm text-muted-foreground">{email}</span>
           )}
         </Link>
-        <BoutonDeconnexion pleineLargeur={pleineLargeur} />
+        <BoutonDeconnexion />
       </div>
     );
   }

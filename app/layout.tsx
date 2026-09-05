@@ -104,12 +104,11 @@ const fraunces = Fraunces({
  * statique pur), acceptable pour une nav qui doit refléter la vraie
  * session de l'utilisateur.
  *
- * `xl:pl-[280px]` : compense le menu latéral de BarreNavigation, fixé
- * hors du flux du document à cette largeur sur desktop (`xl` et
- * plus) — demandé explicitement par l'utilisateur ("VERTICALEMENT A
- * GAUCHE"). Aucun padding en dessous de `xl` : le menu latéral est
- * alors remplacé par le bandeau horizontal compact, dans le flux
- * normal du document.
+ * Plus de menu latéral ni de padding compensatoire ici — après un
+ * aller-retour (menu vertical fixe puis retour à une navbar
+ * horizontale, demandé explicitement par l'utilisateur avec la
+ * référence du site Axiom), `BarreNavigation` est de nouveau une
+ * simple barre en haut, dans le flux normal du document.
  *
  * Pas de fond décoratif sur `<body>` — un dégradé bleu façon peinture
  * y avait été ajouté puis retiré à la demande explicite de
@@ -130,7 +129,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="font-sans">
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
-        <div className="xl:pl-[280px]">{children}</div>
+        {children}
       </body>
     </html>
   );

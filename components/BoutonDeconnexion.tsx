@@ -10,12 +10,14 @@ import { creerClientNavigateur } from "@/lib/supabase/client";
  * connecté" (sinon la nav resterait affichée comme connectée jusqu'au
  * prochain changement de page).
  *
- * `pleineLargeur` : bouton assorti au reste du menu latéral/tiroir
- * mobile (pleine largeur, coins plus arrondis) — demandé explicitement
- * par l'utilisateur ("fait la partie de email et deconnter stylé"),
- * qui trouvait le petit bouton à bordure plate d'origine trop nu.
+ * Style simple (bordure fine, pas de pleine largeur) restauré en
+ * revenant à la navbar horizontale d'origine — demandé explicitement
+ * par l'utilisateur ("le cercle avec l'initiale S + bouton Se
+ * déconnecter", style Axiom minimaliste), après le passage temporaire
+ * par un bouton pleine largeur pensé pour le pied du menu latéral
+ * vertical, aujourd'hui retiré.
  */
-export default function BoutonDeconnexion({ pleineLargeur = false }: { pleineLargeur?: boolean }) {
+export default function BoutonDeconnexion() {
   const router = useRouter();
 
   async function seDeconnecter() {
@@ -29,10 +31,7 @@ export default function BoutonDeconnexion({ pleineLargeur = false }: { pleineLar
     <button
       type="button"
       onClick={seDeconnecter}
-      className={
-        "rounded-[10px] border border-border-strong text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-surface hover:text-primary " +
-        (pleineLargeur ? "w-full px-4 py-2.5" : "px-4 py-2 font-medium")
-      }
+      className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-muted"
     >
       Se déconnecter
     </button>

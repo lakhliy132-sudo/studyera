@@ -2,6 +2,45 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Retour à une navbar horizontale (fin de l'expérience menu latéral
+> vertical)** (`BarreNavigation.tsx`, `LiensNavigation.tsx`,
+> `BoutonDeconnexion.tsx`, `app/layout.tsx`) — demandé explicitement et
+> en détail par l'utilisateur, capture d'écran du site Axiom à
+> l'appui : "Supprime complètement la sidebar verticale à gauche...
+> Mets une navbar horizontale en haut, sur toute la largeur... Ne crée
+> pas une sidebar. Je veux UNIQUEMENT une navbar horizontale en haut."
+> Le menu latéral introduit plus tôt dans la session (et ses passes de
+> style : icônes, pastille active pleine, carte "compte" teintée) est
+> entièrement retiré.
+>
+> - **Structure** : grille `[auto_1fr_auto]` sur toute la largeur
+>   (logo | liens | connexion), plutôt qu'un simple `flex` — les liens
+>   sont ainsi vraiment centrés dans l'espace disponible, indépendamment
+>   de la largeur du logo ou du bloc de connexion, comme demandé
+>   explicitement ("Au centre : les liens").
+> - **Ordre des liens** : Accueil, Tableau de bord, Œuvres, Correcteur
+>   IA, Langues, Production écrite — reprend l'ordre listé
+>   explicitement par l'utilisateur (identique à l'ordre d'origine,
+>   avant le "Tableau de bord en premier" demandé puis annulé
+>   entretemps).
+> - **Surbrillance du lien actif** : texte bleu + trait souligné,
+>   restauré à l'identique de la version d'origine (icônes et pastille
+>   pleine retirées) — demandé explicitement ("comme « Accueil » sur
+>   mon ancienne version").
+> - **Bloc connexion** : avatar + bouton "Se déconnecter" simples,
+>   restaurés à leur forme d'origine (carte teintée/pied de menu
+>   latéral retirés, plus nécessaires).
+> - `border-b` fine + `sticky top-0` conservés (déjà là), pas de
+>   `max-w`/`mx-auto` sur le conteneur (pleine largeur, déjà en place
+>   depuis une demande précédente).
+> - `app/layout.tsx` : plus de padding compensatoire (`xl:pl-[280px]`),
+>   le contenu des pages n'a pas été touché autrement.
+>
+> Vérifié avec un compte de test jetable + vraie session, à plusieurs
+> largeurs (1920px, 1440px, tablette avec tiroir, mobile 390px) :
+> ordre et surbrillance corrects partout, aucune trace du menu latéral.
+> Compte de test supprimé ensuite.
+>
 > **Fond décoratif du site retiré** (`app/layout.tsx`) — demandé
 > explicitement par l'utilisateur ("enleve l arriere plan que t a
 > fais"), qui ne voulait finalement plus du dégradé bleu façon peinture
