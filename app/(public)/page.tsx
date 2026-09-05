@@ -44,6 +44,10 @@ function deriverPrenom(nomComplet: string | null, email: string | null): string 
  *   maquette illustrait 68/54/72/49%, aucun n'est réel).
  * - Compte à rebours : cible la vraie date de l'examen régional déjà
  *   sourcée pour /calendrier, pas une date inventée.
+ *
+ * Pleine largeur (`max-w-5xl` retiré) — demandé explicitement par
+ * l'utilisateur ("je veux que l acceuil occupe toute la page"), même
+ * principe que /calendrier (pas de centrage/plafond de largeur).
  */
 async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: string }) {
   const [progression, reprise] = await Promise.all([
@@ -59,7 +63,7 @@ async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: str
       : null;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 sm:px-9">
+    <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
       <BandeauBienvenueAccueil prenom={prenom} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">

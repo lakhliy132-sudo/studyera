@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { IconeFleche, IconeLivre } from "@/components/icones";
+import { IconeFleche } from "@/components/icones";
 import { MATIERES } from "@/lib/matieres";
 
 interface GrilleMatieresAccueilProps {
@@ -18,6 +19,13 @@ interface GrilleMatieresAccueilProps {
  * importé, leur carte affiche "Bientôt disponible" plutôt qu'un
  * chiffre inventé, comme partout ailleurs sur le site où ces matières
  * apparaissent (/matieres, /calendrier).
+ *
+ * Photo sur la carte "Français" — demandé explicitement par
+ * l'utilisateur ("ajoute les photo dans la case de francais... comme
+ * je t ai envoyé sur l image dans le fichier") : réutilise la photo
+ * bureau/livres déjà recadrée pour le bandeau de bienvenue
+ * (public/accueil-bureau.jpg). Les 3 autres matières gardent leur
+ * icône (aucune photo thématique fournie pour celles-ci).
  */
 export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: GrilleMatieresAccueilProps) {
   const pourcentageFrancais = totalChapitres > 0 ? Math.round((chapitresLus / totalChapitres) * 100) : 0;
@@ -38,9 +46,14 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
           className="rounded-[14px] border border-border p-4 transition-colors hover:border-border-strong hover:bg-surface-muted"
         >
           <div className="flex items-center gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-              <IconeLivre className="size-4" />
-            </span>
+            <Image
+              src="/accueil-bureau.jpg"
+              alt=""
+              aria-hidden="true"
+              width={380}
+              height={175}
+              className="h-9 w-9 shrink-0 rounded-full object-cover"
+            />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-ink">Français</p>
               <p className="truncate text-xs text-muted-foreground">Œuvres · langue · production écrite</p>

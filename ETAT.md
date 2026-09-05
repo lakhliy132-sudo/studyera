@@ -2,6 +2,26 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Accueil connecté : pleine largeur + photos sur les cartes
+> français** — demandé explicitement par l'utilisateur ("je veux que
+> l acceuil occupe toute la page et ainsi que ajoute les photo dans
+> lac case de francais... comme je t ai envoyé sur l image dans le
+> fichier").
+>
+> - `app/(public)/page.tsx` : `max-w-5xl` retiré (même principe que
+>   /calendrier) — le contenu occupe maintenant toute la largeur.
+> - `components/CarteEnCours.tsx` : l'icône est remplacée par une
+>   miniature de la photo bureau/livres (`public/accueil-bureau.jpg`,
+>   déjà utilisée sur le bandeau de bienvenue).
+> - `components/GrilleMatieresAccueil.tsx` : même photo (en rond) sur
+>   la carte "Français" de "Mes matières". Les 3 autres matières
+>   gardent leur icône (aucune photo thématique fournie pour
+>   celles-ci).
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) à 1920px et sur mobile, sans erreur console. Aussi
+> npx tsc --noEmit.
+>
 > **Accueil personnalisé pour un élève connecté** — reprend une
 > maquette complète fournie par l'utilisateur ("j ai ajouté une photo
 > dans le fichier fais la comme ca dans l acuueil") : bandeau de

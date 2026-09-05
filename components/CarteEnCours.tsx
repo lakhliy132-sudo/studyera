@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { IconeFleche, IconeLivre } from "@/components/icones";
+import { IconeFleche } from "@/components/icones";
 import { libelleChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { RepriseLecture } from "@/lib/supabase/tableauDeBord";
 
@@ -15,9 +16,14 @@ interface CarteEnCoursProps {
  * Carte compacte "En cours" de l'accueil (élève connecté) — reprend
  * une maquette fournie par l'utilisateur ("j ai ajouté une photo dans
  * le fichier fais la comme ca dans l acuueil"). Version courte de
- * CarteReprise.tsx (tableau de bord) : une icône plutôt qu'une
- * miniature-photo par œuvre (aucune couverture réelle en base à
- * afficher, pas de photo inventée par œuvre).
+ * CarteReprise.tsx (tableau de bord).
+ *
+ * Miniature photo (plutôt qu'une icône) — demandé explicitement par
+ * l'utilisateur ("ajoute les photo dans la case de francais... comme
+ * je t ai envoyé sur l image dans le fichier") : réutilise la même
+ * photo bureau/livres que le bandeau de bienvenue
+ * (public/accueil-bureau.jpg), aucune couverture par œuvre n'existant
+ * réellement en base.
  */
 export default function CarteEnCours({ reprise, pourcentage }: CarteEnCoursProps) {
   const unite = libelleUniteChapitre(reprise.oeuvreSlug);
@@ -28,9 +34,14 @@ export default function CarteEnCours({ reprise, pourcentage }: CarteEnCoursProps
 
   return (
     <div className="flex flex-col gap-4 rounded-[24px] border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:p-6">
-      <span className="flex size-16 shrink-0 items-center justify-center rounded-[16px] bg-primary-tint text-primary">
-        <IconeLivre className="size-7" />
-      </span>
+      <Image
+        src="/accueil-bureau.jpg"
+        alt=""
+        aria-hidden="true"
+        width={380}
+        height={175}
+        className="h-16 w-20 shrink-0 rounded-[16px] object-cover"
+      />
 
       <div className="min-w-0 flex-1">
         <span className="mb-1 inline-block rounded-full bg-primary-tint px-2.5 py-0.5 text-[11px] font-semibold text-primary">
