@@ -2,6 +2,15 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Retire "Événements à venir" de la carte "Mois"** — demandé
+> explicitement par l'utilisateur ("dans la partie de mois enleve la
+> partie evenements a venir"). `CalendrierMois.tsx` : liste retirée,
+> la grille des jours occupe maintenant toute la largeur de la carte
+> (plus de découpage interne `grid`+colonne d'événements). Les mêmes
+> événements restent consultables dans le panneau "Examens" à côté
+> (`CarteExamenRegional.tsx`, inchangé), qui n'a jamais été concerné
+> par cette demande. Vérifié par capture d'écran.
+>
 > **Bannière /calendrier raccourcie en hauteur** — demandé
 > explicitement par l'utilisateur ("la partie de gere tes examens...
 > elle est trop long") : `EnteteCalendrier.tsx` prenait trop de place
