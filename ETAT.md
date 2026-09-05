@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond du site inversé : bleu ciel dominant, éclaircies blanches**
+> (`app/layout.tsx`) — la version précédente (fond quasi blanc, faibles
+> taches bleues dans les coins) jugée trop timide : "je veux pas comme
+> ca je veux comme peinture bleu ciel inversé". Inversé la logique
+> exactement comme demandé : couleur de fond de base passée à un bleu
+> ciel franc (`color-mix(in srgb, var(--color-primary) 22%, white)`),
+> avec des éclaircies blanches façon nuages qui percent la peinture,
+> plutôt que l'inverse (fond blanc, légères touches de bleu). Toujours
+> uniquement des tokens `--color-*` existants via `color-mix()`, aucune
+> couleur brute ajoutée. Vérifié par capture d'écran réelle (accueil et
+> page Œuvres) : cartes blanches toujours parfaitement lisibles
+> par-dessus.
+>
 > **Fond du site : dégradés bleus doux façon aquarelle** (`app/layout.tsx`,
 > style inline sur `<body>`) — demandé explicitement par l'utilisateur
 > ("j ai fait dans le dossier une photo fais la en arriere plan de

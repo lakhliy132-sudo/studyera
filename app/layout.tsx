@@ -111,30 +111,39 @@ const fraunces = Fraunces({
  * alors remplacé par le bandeau horizontal compact, dans le flux
  * normal du document.
  *
- * Fond du site : dégradés radiaux bleus très doux (aquarelle), en
- * style inline directement sur `<body>` plutôt que dans
- * app/globals.css — demandé explicitement par l'utilisateur ("fais la
- * en arriere plan de site"), à partir d'une image qu'il avait mise
- * dans son dossier Téléchargements, repérée comme un aperçu filigrané
- * "pngtree" (donc pas réutilisable telle quelle, problème de droit
- * d'auteur) : recréé en CSS pur avec `color-mix()` sur les tokens
+ * Fond du site : dégradés radiaux façon peinture, en style inline
+ * directement sur `<body>` plutôt que dans app/globals.css — demandé
+ * explicitement par l'utilisateur ("fais la en arriere plan de
+ * site"), à partir d'une image qu'il avait mise dans son dossier
+ * Téléchargements, repérée comme un aperçu filigrané "pngtree" (donc
+ * pas réutilisable telle quelle, problème de droit d'auteur) : recréé
+ * en CSS pur avec `color-mix()` sur les tokens
  * `--color-primary`/`--color-primary-vif` déjà en place, jamais de
- * nouvelle couleur brute. `background-attachment: fixed` : le motif
- * reste ancré à l'écran plutôt que de défiler avec la page, comme un
- * vrai arrière-plan plutôt qu'une image posée en haut du contenu.
- * `.tableau-de-bord` (app/globals.css) pose sa propre couleur de fond
- * opaque par-dessus, donc cette page garde son propre habillage crème
- * sans rien changer ici.
+ * nouvelle couleur brute.
+ *
+ * Première version : fond quasi blanc avec de faibles taches bleues
+ * dans les coins. Jugée trop timide — "je veux pas comme ca je veux
+ * comme peinture bleu ciel inversé" : inversé ici, fond bleu ciel
+ * franc (base `color-mix` sur `--color-primary`) avec des éclaircies
+ * blanches façon nuages qui percent la peinture, plutôt que l'inverse
+ * (fond blanc, légères touches de bleu).
+ *
+ * `background-attachment: fixed` : le motif reste ancré à l'écran
+ * plutôt que de défiler avec la page, comme un vrai arrière-plan
+ * plutôt qu'une image posée en haut du contenu. `.tableau-de-bord`
+ * (app/globals.css) pose sa propre couleur de fond opaque par-dessus,
+ * donc cette page garde son propre habillage crème sans rien changer
+ * ici.
  */
 const FOND_SITE: React.CSSProperties = {
-  backgroundColor: "var(--color-background)",
+  backgroundColor: "color-mix(in srgb, var(--color-primary) 22%, white)",
   backgroundAttachment: "fixed",
   backgroundImage: [
-    "radial-gradient(ellipse 900px 620px at 6% 4%, color-mix(in srgb, var(--color-primary) 13%, transparent), transparent 60%)",
-    "radial-gradient(ellipse 750px 600px at 96% 10%, color-mix(in srgb, var(--color-primary-vif) 10%, transparent), transparent 55%)",
-    "radial-gradient(ellipse 800px 650px at 2% 96%, color-mix(in srgb, var(--color-primary-vif) 9%, transparent), transparent 55%)",
-    "radial-gradient(ellipse 1000px 750px at 98% 98%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 60%)",
-    "radial-gradient(ellipse 650px 500px at 55% 45%, color-mix(in srgb, var(--color-primary-tint) 70%, transparent), transparent 55%)",
+    "radial-gradient(ellipse 950px 700px at 6% 4%, color-mix(in srgb, white 75%, transparent), transparent 62%)",
+    "radial-gradient(ellipse 800px 650px at 96% 14%, color-mix(in srgb, var(--color-primary-vif) 60%, transparent), transparent 58%)",
+    "radial-gradient(ellipse 900px 750px at 2% 96%, color-mix(in srgb, var(--color-primary-vif) 50%, transparent), transparent 60%)",
+    "radial-gradient(ellipse 1050px 850px at 98% 98%, color-mix(in srgb, white 65%, transparent), transparent 62%)",
+    "radial-gradient(ellipse 750px 600px at 55% 45%, color-mix(in srgb, white 55%, transparent), transparent 55%)",
   ].join(", "),
 };
 
