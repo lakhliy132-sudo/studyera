@@ -2,6 +2,24 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Vague de l'accueil animée** (`app/(public)/page.tsx`) — demandé
+> explicitement par l'utilisateur ("LA VAGUE FAIS LA IL JOUE") : elle
+> était jusque-là figée. Légère animation de "respiration" en boucle
+> (`@keyframes`, translation verticale de 14px + zoom de 1.5%, 10s
+> aller-retour), amplitude et durée volontairement discrètes pour
+> rester cohérente avec l'aspect "premium, moderne et aérien" déjà
+> demandé lors de la création de cette vague — pas une animation qui
+> distrairait du contenu. `<style>` en JSX plutôt que dans
+> app/globals.css (qui a des changements en cours d'une autre session) :
+> garde ce `@keyframes` propre à cette page.
+>
+> Vérifié en confirmant que l'animation est bien appliquée au bon
+> élément (`getComputedStyle(...).animationName`, la page a plusieurs
+> `<svg>` — celles des icônes de la nav en plus de la vague, à ne pas
+> confondre) et que la forme bouge réellement dans le temps (deux
+> captures d'écran à 2,5s d'intervalle montrant des positions
+> différentes).
+>
 > **Fond "vague" déplacé du layout racine vers la page d'accueil
 > uniquement** (`app/layout.tsx` → `app/(public)/page.tsx`) — demandé
 > explicitement par l'utilisateur ("FAIS LA JUSTE SUR L ACCEUIL") :

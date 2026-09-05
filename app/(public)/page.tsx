@@ -14,12 +14,33 @@ import Link from "next/link";
  * mais s'appliquait en réalité à tout le site puisque posé dans le
  * layout racine, partagé par toutes les pages. Historique complet
  * (itérations de taille/forme) dans ETAT.md.
+ *
+ * Légère animation de "respiration" (translation + zoom très doux, va-
+ * et-vient continu) — demandé explicitement par l'utilisateur ("LA
+ * VAGUE FAIS LA IL JOUE") : la vague était jusque-là figée. Amplitude
+ * volontairement faible (14px, 1.5% d'échelle) et durée longue (10s)
+ * pour rester discrète — cohérent avec l'aspect "premium, moderne et
+ * aérien" déjà demandé lors de la création de cette vague, pas une
+ * animation qui distrairait du contenu. `<style>` en JSX plutôt que
+ * app/globals.css (qui a des changements en cours d'une autre session,
+ * voir ETAT.md) : garde ce `@keyframes` propre à cette page.
  */
 export default function PageAccueil() {
   return (
     <>
+      <style>{`
+        @keyframes vague-accueil-respire {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(14px) scale(1.015); }
+        }
+      `}</style>
       <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
-        <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[88vh] w-full">
+        <svg
+          viewBox="0 0 1440 620"
+          preserveAspectRatio="none"
+          className="h-[88vh] w-full"
+          style={{ animation: "vague-accueil-respire 10s ease-in-out infinite" }}
+        >
           <defs>
             <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
