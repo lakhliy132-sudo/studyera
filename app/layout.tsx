@@ -110,7 +110,34 @@ const fraunces = Fraunces({
  * GAUCHE"). Aucun padding en dessous de `xl` : le menu latéral est
  * alors remplacé par le bandeau horizontal compact, dans le flux
  * normal du document.
+ *
+ * Fond du site : dégradés radiaux bleus très doux (aquarelle), en
+ * style inline directement sur `<body>` plutôt que dans
+ * app/globals.css — demandé explicitement par l'utilisateur ("fais la
+ * en arriere plan de site"), à partir d'une image qu'il avait mise
+ * dans son dossier Téléchargements, repérée comme un aperçu filigrané
+ * "pngtree" (donc pas réutilisable telle quelle, problème de droit
+ * d'auteur) : recréé en CSS pur avec `color-mix()` sur les tokens
+ * `--color-primary`/`--color-primary-vif` déjà en place, jamais de
+ * nouvelle couleur brute. `background-attachment: fixed` : le motif
+ * reste ancré à l'écran plutôt que de défiler avec la page, comme un
+ * vrai arrière-plan plutôt qu'une image posée en haut du contenu.
+ * `.tableau-de-bord` (app/globals.css) pose sa propre couleur de fond
+ * opaque par-dessus, donc cette page garde son propre habillage crème
+ * sans rien changer ici.
  */
+const FOND_SITE: React.CSSProperties = {
+  backgroundColor: "var(--color-background)",
+  backgroundAttachment: "fixed",
+  backgroundImage: [
+    "radial-gradient(ellipse 900px 620px at 6% 4%, color-mix(in srgb, var(--color-primary) 13%, transparent), transparent 60%)",
+    "radial-gradient(ellipse 750px 600px at 96% 10%, color-mix(in srgb, var(--color-primary-vif) 10%, transparent), transparent 55%)",
+    "radial-gradient(ellipse 800px 650px at 2% 96%, color-mix(in srgb, var(--color-primary-vif) 9%, transparent), transparent 55%)",
+    "radial-gradient(ellipse 1000px 750px at 98% 98%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 60%)",
+    "radial-gradient(ellipse 650px 500px at 55% 45%, color-mix(in srgb, var(--color-primary-tint) 70%, transparent), transparent 55%)",
+  ].join(", "),
+};
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await creerClientServeur();
   const {
@@ -122,7 +149,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="fr"
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
     >
-      <body className="font-sans">
+      <body className="font-sans" style={FOND_SITE}>
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         <div className="xl:pl-[280px]">{children}</div>
       </body>

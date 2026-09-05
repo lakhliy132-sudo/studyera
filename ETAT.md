@@ -1,6 +1,26 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-04.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
+>
+> **Fond du site : dégradés bleus doux façon aquarelle** (`app/layout.tsx`,
+> style inline sur `<body>`) — demandé explicitement par l'utilisateur
+> ("j ai fait dans le dossier une photo fais la en arriere plan de
+> site"), à partir d'une image mise dans son dossier Téléchargements.
+> ⚠️ Cette image ("pngtree-blue-stain-in-cloud-shape...") portait des
+> filigranes "pngtree" et un ⓒ bien visibles partout : un aperçu
+> gratuit de banque d'images, pas une image sous licence utilisable —
+> signalé à l'utilisateur, qui a confirmé (question de clarification)
+> vouloir que l'effet soit recréé en CSS pur plutôt que d'utiliser le
+> fichier tel quel. Recréé avec des `radial-gradient` + `color-mix()`
+> sur les tokens `--color-primary`/`--color-primary-vif`/`--color-primary-tint`
+> déjà en place (pas de nouvelle couleur brute), `background-attachment:
+> fixed` pour que le motif reste ancré à l'écran. En style inline
+> plutôt que dans `app/globals.css` : ce fichier a des changements en
+> cours d'une autre session (un `@keyframes` ajouté en fin de fichier,
+> non lié) — éviter d'y toucher pour ne pas mélanger les deux
+> changements dans un même commit. `.tableau-de-bord` garde son propre
+> fond crème opaque par-dessus, non affecté. Vérifié par capture
+> d'écran réelle (page d'accueil et page Œuvres).
 >
 > **Liens de navigation retravaillés pour plus d'élégance**
 > (`LiensNavigation.tsx`) — demandé explicitement par l'utilisateur une
