@@ -2,6 +2,14 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond décoratif du site retiré** (`app/layout.tsx`) — demandé
+> explicitement par l'utilisateur ("enleve l arriere plan que t a
+> fais"), qui ne voulait finalement plus du dégradé bleu façon peinture
+> ajouté puis inversé lors des deux entrées précédentes. `<body>` n'a
+> plus de style inline : le fond redevient la simple couleur
+> `--color-background` posée par la règle `body` d'app/globals.css.
+> Vérifié par capture d'écran réelle.
+>
 > **Bloc "compte" (email + déconnexion) du menu retravaillé pour plus
 > d'élégance** (`BarreNavigation.tsx`, `BoutonDeconnexion.tsx`) —
 > demandé explicitement par l'utilisateur ("fait la partie de email et
