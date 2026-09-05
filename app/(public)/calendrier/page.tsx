@@ -1,19 +1,23 @@
 import CalendrierMois from "@/components/CalendrierMois";
+import CarteExamenRegional from "@/components/CarteExamenRegional";
 import { IconeCalendrier } from "@/components/icones";
 
 /**
  * /calendrier — demandé explicitement par l'utilisateur comme nouveau
  * lien de nav ("Ajoute a cote de l acceuil tableau de bord matiere
- * calendrier aussi progres"), puis enrichie du switch de mois et de la
- * date de l'examen régional ("fais le switch des mois et juste a cote
- * fais la date d examen regional au maroc") — voir CalendrierMois.tsx
- * (composant client, état du mois affiché) et lib/calendrier.ts (date
- * de l'examen, sourcée, pas inventée — voir son commentaire).
+ * calendrier aussi progres"), enrichie du switch de mois et de la date
+ * de l'examen régional ("fais le switch des mois et juste a cote fais
+ * la date d examen regional au maroc"), puis réagencée en 2 colonnes
+ * pour que la carte examen soit vraiment à côté de la grille, pas dans
+ * son en-tête ("nonnn je veux que la partie d examen soit a coté") —
+ * voir CalendrierMois.tsx et CarteExamenRegional.tsx. Conteneur élargi
+ * (max-w-2xl → max-w-3xl) pour laisser de la place aux 2 colonnes ;
+ * empilées sur mobile (grid-cols-1).
  */
 export default function PageCalendrier() {
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-9 px-6 pt-9 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
@@ -30,7 +34,10 @@ export default function PageCalendrier() {
           </p>
         </section>
 
-        <CalendrierMois />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1fr_260px]">
+          <CalendrierMois />
+          <CarteExamenRegional />
+        </div>
 
         <p className="rounded-md border border-dashed border-border-strong bg-background p-8 text-center text-muted-foreground">
           D&apos;autres échéances (rappels de révision...) seront ajoutées ici.

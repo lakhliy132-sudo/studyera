@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Calendrier : carte examen régional sortie en colonne à côté** —
+> le premier essai plaçait la date de l'examen régional dans l'en-tête
+> de la grille (un badge à droite du switch de mois) ; corrigé
+> aussitôt à la demande explicite de l'utilisateur ("nonnn je veux que
+> la partie d examen soit a coté"), qui la voulait plus nettement "à
+> côté". Sortie dans sa propre carte (`components/CarteExamenRegional.tsx`),
+> affichée en 2 colonnes avec la grille du calendrier
+> (`grid-cols-[1fr_260px]`, empilées sur mobile) — conteneur de la
+> page élargi (`max-w-2xl` → `max-w-3xl`) pour laisser la place aux
+> deux. `CalendrierMois.tsx` allégé (switch de mois + grille
+> seulement, sans le badge). Vérifié par capture d'écran desktop
+> (1440px, côte à côte) et mobile (420px, empilé proprement).
+>
 > **Calendrier : switch de mois + date de l'examen régional** —
 > demandé explicitement par l'utilisateur ("fais le switch des mois et
 > juste a cote fais la date d examen regional au maroc").
