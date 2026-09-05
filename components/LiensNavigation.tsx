@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { PREFIXES_FRANCAIS } from "@/lib/francais";
 import { MATIERES } from "@/lib/matieres";
 
+/** Œuvres, Correcteur IA, Langues et Production écrite ne sont plus
+ * des liens de nav séparés : regroupés sous /francais (page hub, voir
+ * lib/francais.ts) — demandé explicitement par l'utilisateur ("fais
+ * aussi barre de francais et liste maintenant la barre de oeuvres
+ * langue production ecrite correcteur IA sur la barre du francais"),
+ * même principe que /matieres pour les autres matières. */
 const LIENS = [
   { href: "/", libelle: "Accueil" },
-  { href: "/oeuvres", libelle: "Œuvres" },
+  { href: "/francais", libelle: "Français" },
   { href: "/matieres", libelle: "Matières" },
-  { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
-  { href: "/langue", libelle: "Langues" },
-  { href: "/production-ecrite", libelle: "Production écrite" },
 ] as const;
 
 /** Ajouté seulement pour un utilisateur connecté — voir
@@ -66,12 +70,19 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
         const surUneMatiere = MATIERES.some(
           (matiere) => chemin === `/${matiere.slug}` || chemin.startsWith(`/${matiere.slug}/`),
         );
+        // Idem pour "Français" : /oeuvres, /langue, /production-ecrite
+        // et /redaction/nouvelle vivent hors de /francais.
+        const surFrancais = PREFIXES_FRANCAIS.some(
+          (prefixe) => chemin === prefixe || chemin.startsWith(`${prefixe}/`),
+        );
         const actif =
           lien.href === "/"
             ? chemin === "/"
             : lien.href === "/matieres"
               ? chemin.startsWith(lien.href) || surUneMatiere
-              : chemin.startsWith(lien.href);
+              : lien.href === "/francais"
+                ? chemin.startsWith(lien.href) || surFrancais
+                : chemin.startsWith(lien.href);
 
         return (
           <Link

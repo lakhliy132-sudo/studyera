@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Regroupement des sections françaises sous /francais** — demandé
+> explicitement par l'utilisateur juste après l'ajout des nouvelles
+> matières ("fais aussi barre de francais et liste maintenant la barre
+> de oeuvres langue production ecrite correcteur IA sur la barre du
+> francais"). Les 4 liens Œuvres / Correcteur IA / Langues / Production
+> écrite, jusque-là au premier niveau de la nav horizontale, sont
+> retirés et remplacés par un seul lien "Français" menant à une
+> nouvelle page hub `/francais` (une carte par section) — même
+> principe que `/matieres` pour les autres matières (voir l'entrée
+> ci-dessous). Nouveau fichier `lib/francais.ts` (config des 4
+> sections + `PREFIXES_FRANCAIS`, réutilisé par
+> `components/LiensNavigation.tsx` pour garder "Français" en
+> surbrillance sur /oeuvres, /langue, /production-ecrite et
+> /redaction/nouvelle, pas seulement sur /francais lui-même).
+>
+> Nav horizontale ramenée à 3 liens (Accueil, Français, Matières, +
+> Tableau de bord si connecté) : résout du même coup le tassement
+> observé lors de l'ajout du lien "Matières" juste avant (la nav
+> n'avait déjà plus beaucoup de marge à 6-7 liens).
+>
+> Vérifié par capture d'écran : nav épurée sur l'accueil, page
+> `/francais` avec ses 4 cartes, et surbrillance de "Français"
+> confirmée sur `/oeuvres`.
+>
 > **Nouvelles matières : Éducation islamique, Arabe, Histoire-Géographie**
 > — demandé explicitement par l'utilisateur ("je veux ajouter autre
 > matiere" → "education islamique arabe et histoire geographie").
