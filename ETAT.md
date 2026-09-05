@@ -1,6 +1,55 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
+>
+> **Accueil personnalisé pour un élève connecté** — reprend une
+> maquette complète fournie par l'utilisateur ("j ai ajouté une photo
+> dans le fichier fais la comme ca dans l acuueil") : bandeau de
+> bienvenue (prénom, citation, photo décorative), carte "En cours"
+> (reprise de lecture), "Mes matières", compte à rebours en direct
+> avant l'examen régional. Un visiteur non connecté voit toujours
+> l'accueil marketing existant, inchangé (vague + hero) — seul un
+> élève connecté voit ce nouvel accueil.
+>
+> - `components/BandeauBienvenueAccueil.tsx`, `CarteEnCours.tsx`,
+>   `GrilleMatieresAccueil.tsx`, `CompteARebourExamenLive.tsx`
+>   (nouveaux).
+> - `public/accueil-bureau.jpg` (nouveau) : photo décorative recadrée
+>   depuis l'image même déposée par l'utilisateur pour cette demande
+>   (pas une image de banque tierce).
+> - `app/(public)/page.tsx` : devient asynchrone, bascule selon l'état
+>   de connexion.
+>
+> **Écarts assumés par rapport à la maquette**, pour ne rien inventer :
+> pas de cloche de notifications (explicitement écartée lors d'une
+> session précédente : "non le mode de nuit"), pas de planning
+> "Aujourd'hui" à tâches horodatées (aucune table de rappels
+> personnels en base, les tâches de la maquette sont des exemples de
+> mise en page), pas de barre de recherche fonctionnelle, navbar
+> actuelle conservée telle quelle (déjà longuement ajustée). "Mes
+> matières" : seul le français a un vrai pourcentage — les 3 autres
+> matières affichent "Bientôt disponible" (la maquette illustrait des
+> pourcentages d'exemple, aucun n'est réel). Le compte à rebours cible
+> la vraie date de l'examen régional déjà sourcée pour /calendrier.
+>
+> **Bug d'hydratation React repéré et corrigé** en vérifiant la
+> capture d'écran (badge "1 Issue" du serveur dev, puis confirmé via
+> la console du navigateur) : `CompteARebourExamenLive.tsx` calculait
+> le décompte dès le rendu initial, produisant un nombre de secondes
+> différent entre le serveur (SSR) et le client (hydratation) — état
+> initial mis à `null` partout, calculé seulement dans un `useEffect`
+> (même principe que `BoutonModeNuit.tsx`).
+>
+> **Bug de chevauchement visuel repéré et corrigé** en relisant la
+> capture d'écran : la photo décorative du bandeau de bienvenue était
+> positionnée en `absolute`, par-dessus la citation qui vivait dans le
+> flux normal — les deux se chevauchaient sur grand écran. Photo et
+> citation replacées dans le même flux `flex` (plus de `absolute`).
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) : en mode clair, sombre et mobile, avec de vraies données
+> de progression et d'activité ; accueil non connecté confirmé
+> inchangé. Aussi npx tsc --noEmit et absence d'erreur console.
 >
 > **Tableau de bord refondu complètement** — demandé explicitement par
 > l'utilisateur ("change moi le tableau de bord completement fais le

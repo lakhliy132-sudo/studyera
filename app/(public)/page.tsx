@@ -1,41 +1,105 @@
 import Link from "next/link";
 
+import BandeauBienvenueAccueil from "@/components/BandeauBienvenueAccueil";
+import CarteEnCours from "@/components/CarteEnCours";
+import CompteARebourExamenLive from "@/components/CompteARebourExamenLive";
+import GrilleMatieresAccueil from "@/components/GrilleMatieresAccueil";
+import { IconeEtoile } from "@/components/icones";
+import { creerClientServeur } from "@/lib/supabase/server";
+import { recupererProgressionParOeuvre, recupererRepriseLecture } from "@/lib/supabase/tableauDeBord";
+
+/** Premier prénom déduit de `nom_complet`, avec repli sur la partie
+ * locale de l'email — même logique que /tableau-de-bord (dupliquée
+ * ici : trop petite pour justifier un fichier partagé). */
+function deriverPrenom(nomComplet: string | null, email: string | null): string {
+  const premierMot = nomComplet?.trim().split(/\s+/)[0];
+  if (premierMot) return premierMot;
+  const local = email?.split("@")[0];
+  return local ? local.charAt(0).toUpperCase() + local.slice(1) : "toi";
+}
+
+/**
+ * Accueil d'un élève connecté — reprend une maquette complète fournie
+ * par l'utilisateur ("j ai ajouté une photo dans le fichier fais la
+ * comme ca dans l acuueil") : bandeau de bienvenue, carte "En cours",
+ * "Mes matières", compte à rebours avant l'examen régional.
+ *
+ * Écarts assumés par rapport à la maquette, pour ne rien inventer :
+ * - Pas de cloche de notifications : demandé puis explicitement
+ *   écarté par l'utilisateur lors d'une session précédente ("non le
+ *   mode de nuit" en réponse à la question posée à ce sujet) — la
+ *   maquette en montre une, mais la garder contredirait ce choix déjà
+ *   fait.
+ * - Pas de planning "Aujourd'hui" (tâches horodatées) : aucune table
+ *   de rappels/tâches personnelles n'existe en base, ces tâches de la
+ *   maquette ("Lire le chapitre 2 — 08:00"...) sont des exemples de
+ *   mise en page, pas de vraies données à reproduire.
+ * - Pas de barre de recherche fonctionnelle (aucun moteur de
+ *   recherche du contenu n'existe encore) ni de nouvelle barre de
+ *   navigation : la navbar actuelle (BarreNavigation.tsx) a déjà été
+ *   longuement ajustée à la demande de l'utilisateur, non reprise ici.
+ * - "Mes matières" : seul le français a un vrai pourcentage
+ *   (chapitres lus/total) — les 3 autres matières n'ont encore aucun
+ *   contenu, "Bientôt disponible" plutôt qu'un chiffre inventé (la
+ *   maquette illustrait 68/54/72/49%, aucun n'est réel).
+ * - Compte à rebours : cible la vraie date de l'examen régional déjà
+ *   sourcée pour /calendrier, pas une date inventée.
+ */
+async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: string }) {
+  const [progression, reprise] = await Promise.all([
+    recupererProgressionParOeuvre(userId),
+    recupererRepriseLecture(userId),
+  ]);
+
+  const totalChapitres = progression.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0);
+  const oeuvreReprise = reprise ? progression.parOeuvre.find((o) => o.slug === reprise.oeuvreSlug) : undefined;
+  const pourcentageReprise =
+    oeuvreReprise && oeuvreReprise.totalChapitres > 0
+      ? Math.round((oeuvreReprise.chapitresLus / oeuvreReprise.totalChapitres) * 100)
+      : null;
+
+  return (
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 sm:px-9">
+      <BandeauBienvenueAccueil prenom={prenom} />
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
+        <div className="flex flex-col gap-6">
+          {reprise && <CarteEnCours reprise={reprise} pourcentage={pourcentageReprise} />}
+          <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
+        </div>
+
+        <div className="flex flex-col gap-6">
+          <CompteARebourExamenLive />
+          <div className="flex items-center gap-3 rounded-[24px] bg-gradient-to-br from-primary to-ink p-6 text-white shadow-sm">
+            <IconeEtoile className="size-6 shrink-0" />
+            <p className="text-sm leading-snug">Tu es plus proche de tes rêves que tu ne le penses.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 /**
  * Page d'accueil : /
  *
- * Minimale pour l'instant : /oeuvres est aujourd'hui la seule section
- * du site avec du vrai contenu, l'accueil ne fait qu'y renvoyer.
- *
- * Fond décoratif "vague" (dégradé bleu clair → lavande pâle → blanc,
- * façon Axiom) déplacé ici depuis app/layout.tsx — demandé
- * explicitement par l'utilisateur ("FAIS LA JUSTE SUR L ACCEUIL") :
- * n'apparaissait que sur cette page dans l'esprit de la demande
- * d'origine ("grand dégradé pastel EN HAUT" d'une page d'accueil),
- * mais s'appliquait en réalité à tout le site puisque posé dans le
- * layout racine, partagé par toutes les pages. Historique complet
- * (itérations de taille/forme) dans ETAT.md.
- *
- * Légère animation de "respiration" (translation + zoom très doux, va-
- * et-vient continu) — demandé explicitement par l'utilisateur ("LA
- * VAGUE FAIS LA IL JOUE") : la vague était jusque-là figée. Amplitude
- * volontairement faible (14px, 1.5% d'échelle) et durée longue (10s)
- * pour rester discrète — cohérent avec l'aspect "premium, moderne et
- * aérien" déjà demandé lors de la création de cette vague, pas une
- * animation qui distrairait du contenu. `<style>` en JSX plutôt que
- * app/globals.css (qui a des changements en cours d'une autre session,
- * voir ETAT.md) : garde ce `@keyframes` propre à cette page.
- *
- * Dégradé recalculé à partir de `--color-primary`/`--color-background`
- * (`color-mix`) plutôt que des couleurs fixes (`white`, `#e2e1f5`) —
- * corrigé après le passage en revue du mode nuit ("dans le mode de
- * nuit j ai pas aimé les couleurs") : ces valeurs fixes ne
- * s'adaptaient pas au thème sombre, la vague restait presque blanche
- * et rendait le titre illisible. Les deux tokens changeant déjà
- * correctement de valeur en mode nuit (voir app/globals.css), le
- * dégradé les suit automatiquement sans bloc de couleurs séparé pour
- * le mode sombre.
+ * Pour un visiteur non connecté : contenu marketing minimal inchangé
+ * (vague décorative + hero, voir plus bas). Pour un élève connecté :
+ * accueil personnalisé (AccueilConnecte ci-dessus) — demandé
+ * explicitement par l'utilisateur.
  */
-export default function PageAccueil() {
+export default async function PageAccueil() {
+  const supabase = await creerClientServeur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data: profil } = await supabase.from("profils").select("nom_complet").eq("id", user.id).maybeSingle();
+    const prenom = deriverPrenom(profil?.nom_complet ?? null, user.email ?? null);
+    return <AccueilConnecte prenom={prenom} userId={user.id} />;
+  }
+
   return (
     <>
       <style>{`
