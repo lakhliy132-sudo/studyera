@@ -22,9 +22,12 @@ interface GrilleMatieresAccueilProps {
  *
  * Photo sur la carte "Français" — demandé explicitement par
  * l'utilisateur ("ajoute les photo dans la case de francais... comme
- * je t ai envoyé sur l image dans le fichier") : réutilise la photo
- * bureau/livres déjà recadrée pour le bandeau de bienvenue
- * (public/accueil-bureau.jpg). Les 3 autres matières gardent leur
+ * je t ai envoyé sur l image dans le fichier"). Un premier essai
+ * reprenait la photo bureau/livres du bandeau de bienvenue ; corrigé
+ * ("nonnn comme la photo que j ai mis dans le fichier madrasti") :
+ * la maquette utilise en fait une photo différente pour cette carte
+ * (document "Français" + stylo, voir public/francais-cours.jpg,
+ * recadrée depuis la même image). Les 3 autres matières gardent leur
  * icône (aucune photo thématique fournie pour celles-ci).
  */
 export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: GrilleMatieresAccueilProps) {
@@ -47,12 +50,12 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
         >
           <div className="flex items-center gap-3">
             <Image
-              src="/accueil-bureau.jpg"
+              src="/francais-cours.jpg"
               alt=""
               aria-hidden="true"
-              width={380}
-              height={175}
-              className="h-9 w-9 shrink-0 rounded-full object-cover"
+              width={202}
+              height={145}
+              className="h-9 w-9 shrink-0 rounded-[10px] object-cover"
             />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-ink">Français</p>

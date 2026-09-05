@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Corrige la photo utilisée pour "Français" sur l'accueil connecté**
+> — l'entrée précédente réutilisait la photo bureau/livres du bandeau
+> de bienvenue pour la carte "En cours" et "Mes matières" ; corrigé à
+> la demande explicite de l'utilisateur ("nonnn comme la photo que j
+> ai mis dans le fichier madrasti") : en relisant la maquette, ces 2
+> cartes utilisent en fait une photo différente (un document
+> "Français" avec un stylo) — recadrée depuis la même image
+> (`public/francais-cours.jpg`, nouveau fichier), remplace
+> `accueil-bureau.jpg` dans `CarteEnCours.tsx` et
+> `GrilleMatieresAccueil.tsx` (le bandeau de bienvenue garde sa propre
+> photo bureau/livres, inchangée). Vérifié avec un compte de test
+> jetable (créé puis supprimé, cascade confirmée). Aussi
+> npx tsc --noEmit.
+>
 > **Accueil connecté : pleine largeur + photos sur les cartes
 > français** — demandé explicitement par l'utilisateur ("je veux que
 > l acceuil occupe toute la page et ainsi que ajoute les photo dans

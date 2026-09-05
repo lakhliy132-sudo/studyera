@@ -20,10 +20,13 @@ interface CarteEnCoursProps {
  *
  * Miniature photo (plutôt qu'une icône) — demandé explicitement par
  * l'utilisateur ("ajoute les photo dans la case de francais... comme
- * je t ai envoyé sur l image dans le fichier") : réutilise la même
- * photo bureau/livres que le bandeau de bienvenue
- * (public/accueil-bureau.jpg), aucune couverture par œuvre n'existant
- * réellement en base.
+ * je t ai envoyé sur l image dans le fichier"). Un premier essai
+ * reprenait la photo bureau/livres du bandeau de bienvenue ; corrigé
+ * ("nonnn comme la photo que j ai mis dans le fichier madrasti") :
+ * c'est en fait une photo différente dans la maquette — un document
+ * "Français" avec un stylo, recadré depuis la même image
+ * (public/francais-cours.jpg). Aucune couverture par œuvre n'existant
+ * réellement en base, la même photo sert pour toutes les œuvres.
  */
 export default function CarteEnCours({ reprise, pourcentage }: CarteEnCoursProps) {
   const unite = libelleUniteChapitre(reprise.oeuvreSlug);
@@ -35,11 +38,11 @@ export default function CarteEnCours({ reprise, pourcentage }: CarteEnCoursProps
   return (
     <div className="flex flex-col gap-4 rounded-[24px] border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:p-6">
       <Image
-        src="/accueil-bureau.jpg"
+        src="/francais-cours.jpg"
         alt=""
         aria-hidden="true"
-        width={380}
-        height={175}
+        width={202}
+        height={145}
         className="h-16 w-20 shrink-0 rounded-[16px] object-cover"
       />
 
