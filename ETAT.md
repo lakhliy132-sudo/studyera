@@ -2,6 +2,45 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Mode nuit (clair/sombre)** — demandé explicitement par l'utilisateur
+> ("FAIS MOI LE MODE DE NUIT UNE CLOCHE A ACTIVER", clarifié ensuite :
+> pas de cloche/notifications, uniquement le mode nuit, placé "a cote
+> de la partie de se deconnecter"). Implémenté par :
+> - `app/globals.css` : un jeu de valeurs sombres pour les tokens
+>   `--color-*` existants, appliqué de deux façons — via
+>   `@media (prefers-color-scheme: dark)` (préférence système, tant que
+>   l'utilisateur n'a rien choisi explicitement) et via
+>   `:root[data-theme="dark"]` (bascule manuelle, prioritaire dans les
+>   deux sens grâce à `:not([data-theme="light"])` sur le bloc système).
+> - `components/icones.tsx` : deux icônes ajoutées, `IconeSoleil` et
+>   `IconeLune`, même style que les icônes existantes.
+> - `components/BoutonModeNuit.tsx` (nouveau) : bouton client qui lit
+>   la préférence (`localStorage`, sinon `prefers-color-scheme`), pose
+>   `data-theme` sur `<html>` et mémorise le choix pour les visites
+>   suivantes.
+> - `components/BarreNavigation.tsx` : bouton inséré juste avant
+>   "Se déconnecter" (utilisateur connecté) et juste avant "Se
+>   connecter" (visiteur), comme demandé.
+>
+> Vérifié par captures d'écran réelles (Playwright) : bascule clair→
+> sombre au clic, persistance après rechargement de page (via
+> `localStorage`), page d'accueil en sombre (vague toujours cohérente),
+> et préférence système sombre appliquée par défaut dans un contexte
+> navigateur neuf n'ayant jamais cliqué sur le bouton.
+>
+> Limites connues, non couvertes par ce chantier : la palette dédiée du
+> tableau de bord (`--tdb-*` dans `app/globals.css`, système de tokens
+> séparé) et certaines couleurs de dégradé écrites en dur dans
+> `components/BanniereOeuvre.tsx` ne s'adaptent pas au mode sombre —
+> à traiter dans un futur chantier si besoin.
+>
+> Remarque technique : `app/globals.css` est le seul fichier portant
+> les tokens `--color-*`, donc ce commit inclut aussi un petit
+> changement déjà en cours dans ce fichier au début de cette session,
+> venant d'une autre session en parallèle (`@keyframes
+> tableau-entree`) — impossible à isoler proprement (staging partiel
+> non disponible avec mes outils), signalé ici par transparence.
+>
 > **Vague de l'accueil animée** (`app/(public)/page.tsx`) — demandé
 > explicitement par l'utilisateur ("LA VAGUE FAIS LA IL JOUE") : elle
 > était jusque-là figée. Légère animation de "respiration" en boucle

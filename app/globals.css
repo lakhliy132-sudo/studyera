@@ -139,6 +139,79 @@ body {
 }
 
 /**
+ * Mode nuit — demandé explicitement par l'utilisateur ("FAIS MOI LE
+ * MODE DE NUIT"), activé par une icône dans la barre de navigation
+ * (voir `components/BoutonModeNuit.tsx`), à côté du bouton "Se
+ * déconnecter" — placement demandé explicitement ("a cote de la
+ * partie de se deconnecter").
+ *
+ * Redéfinit les mêmes tokens `--color-*` que ci-dessus (jamais de
+ * couleur brute posée directement sur un composant) : tout ce qui
+ * utilise déjà `bg-surface`, `text-foreground`, `border-border`, etc.
+ * bascule automatiquement, sans toucher aux composants eux-mêmes —
+ * exactement le principe documenté en tête de ce fichier.
+ *
+ * Deux façons d'activer le mode sombre, comme le veut la convention :
+ * - `prefers-color-scheme: dark` (préférence système), tant que
+ *   l'utilisateur n'a jamais choisi explicitement — évite d'imposer un
+ *   thème que personne n'a demandé à un premier visiteur.
+ * - `[data-theme="dark"]` posé sur `<html>` par `BoutonModeNuit.tsx`
+ *   (et mémorisé en `localStorage`) : gagne dans les deux sens dès que
+ *   l'utilisateur a cliqué une fois, même si ça contredit la
+ *   préférence système.
+ *
+ * ⚠️ Ne couvre que les tokens `--color-*` globaux, utilisés par
+ * l'immense majorité des composants. Deux zones connues n'en héritent
+ * pas et resteront inchangées en mode nuit : les tokens `--tdb-*`
+ * scopés à `.tableau-de-bord` (palette "papier" à part, voir plus bas
+ * dans ce fichier) et quelques dégradés/masques codés en dur avec des
+ * couleurs brutes (ex. le fondu blanc de la bannière d'une œuvre,
+ * `components/BanniereOeuvre.tsx`) — signalé à l'utilisateur plutôt
+ * que laissé sans mention.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-background: #0a0f1c;
+    --color-foreground: #e2e8f4;
+    --color-surface: #111a2e;
+    --color-surface-muted: #16223b;
+    --color-border: #24314e;
+    --color-border-strong: #384562;
+    --color-primary: #4a7dfa;
+    --color-primary-foreground: #ffffff;
+    --color-primary-tint: #1c2a47;
+    --color-primary-vif: #6d97fb;
+    --color-ink: #cfdcfc;
+    --color-muted-foreground: #9aa6bd;
+    --color-subtle-foreground: #6b7690;
+    --color-erreur: #e2685f;
+    --color-erreur-foreground: #ffffff;
+    --color-validation: #3fcf9c;
+    --color-validation-tint: #0f2e26;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-background: #0a0f1c;
+  --color-foreground: #e2e8f4;
+  --color-surface: #111a2e;
+  --color-surface-muted: #16223b;
+  --color-border: #24314e;
+  --color-border-strong: #384562;
+  --color-primary: #4a7dfa;
+  --color-primary-foreground: #ffffff;
+  --color-primary-tint: #1c2a47;
+  --color-primary-vif: #6d97fb;
+  --color-ink: #cfdcfc;
+  --color-muted-foreground: #9aa6bd;
+  --color-subtle-foreground: #6b7690;
+  --color-erreur: #e2685f;
+  --color-erreur-foreground: #ffffff;
+  --color-validation: #3fcf9c;
+  --color-validation-tint: #0f2e26;
+}
+
+/**
  * Tokens réservés à /tableau-de-bord — demandé explicitement par
  * l'utilisateur après un premier essai qui adaptait aux tokens
  * globaux du site plutôt que de reprendre tel quel le modèle qu'il
@@ -176,4 +249,10 @@ body {
 
   background-color: var(--tdb-paper);
   color: var(--tdb-ink);
+}
+
+/* Animation d'entrée du tableau de bord (fondu + translation douce). */
+@keyframes tableau-entree {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
 }

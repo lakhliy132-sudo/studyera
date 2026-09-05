@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
+import BoutonModeNuit from "@/components/BoutonModeNuit";
 import { IconeMenu, IconePersonne } from "@/components/icones";
 import LiensNavigation from "@/components/LiensNavigation";
 
@@ -119,6 +120,9 @@ function EtatConnexion({
             <span className="truncate text-sm text-muted-foreground">{email}</span>
           )}
         </Link>
+        {/* Mode nuit à côté de "Se déconnecter" — demandé explicitement
+         * par l'utilisateur ("a cote de la partie de se deconnecter"). */}
+        <BoutonModeNuit />
         <BoutonDeconnexion />
       </div>
     );
@@ -128,6 +132,7 @@ function EtatConnexion({
 
   return (
     <>
+      <BoutonModeNuit />
       <Link
         href="/connexion"
         className={`flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-[22px] py-[13px] text-[15.5px] font-semibold text-primary transition-colors hover:bg-surface-muted ${classeBase}`}
