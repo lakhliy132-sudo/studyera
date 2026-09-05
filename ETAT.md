@@ -2,6 +2,14 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond "vague" ré-agrandi, côté droit étendu** (`app/layout.tsx`) —
+> demandé explicitement par l'utilisateur ("plus grande et plus long
+> au partie de la droite"). Hauteur `75vh` → `88vh` ; tracé retouché
+> pour que la teinte reste présente plus loin sur la droite (le bord
+> droit passe de `y=60` à `y=220`, quasiment blanc auparavant), avec
+> une légère ondulation supplémentaire plutôt qu'une remontée sèche.
+> Vérifié par capture d'écran réelle.
+>
 > **Fond "vague" agrandi** (`app/layout.tsx`) — demandé explicitement
 > par l'utilisateur ("plus grand que ca"). Hauteur du SVG passée de
 > `52vh` à `75vh` (le tracé lui-même inchangé, juste étiré verticalement

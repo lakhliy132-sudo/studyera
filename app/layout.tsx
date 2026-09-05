@@ -147,7 +147,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="font-sans">
         <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
-          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[75vh] w-full">
+          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[88vh] w-full">
             <defs>
               <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
@@ -156,7 +156,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </linearGradient>
             </defs>
             <path
-              d="M0,0 H1440 V60 C1220,150 1040,260 800,300 C560,340 340,300 160,260 C90,244 30,232 0,224 Z"
+              d="M0,0 H1440 V220 C1300,260 1160,180 980,220 C740,270 560,360 340,340 C180,326 60,290 0,260 Z"
               fill="url(#dégradé-vague-accueil)"
             />
           </svg>
