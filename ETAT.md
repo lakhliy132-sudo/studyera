@@ -2,6 +2,24 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **"Mes matières" : pastilles d'icône colorées remises, en plus des
+> photos** — demandé explicitement par l'utilisateur ("bien mais pas
+> comme la photo que je t ai envoyé") : l'entrée précédente avait
+> gardé les photos mais perdu les pastilles d'icône colorées que la
+> maquette montre à côté (une couleur par matière). `app/globals.css` :
+> 3 nouveaux tokens `--color-matiere-islamique` / `-arabe` /
+> `-histoire-geo`, valeurs échantillonnées au pixel près sur l'image
+> fournie (le français reprend `--color-primary`, déjà la même
+> teinte). `components/GrilleMatieresAccueil.tsx` : réécrite autour
+> d'une seule liste `CARTES_MATIERES` (français + les 3 autres) pour
+> éviter de dupliquer la logique entre les deux blocs qui existaient
+> avant ; chaque carte a maintenant sa pastille d'icône colorée ET sa
+> photo en fondu, comme la maquette.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) en mode clair et sombre, sans erreur console. Aussi
+> npx tsc --noEmit.
+>
 > **"Mes matières" : une photo par matière, fidèle à la maquette** —
 > demandé explicitement par l'utilisateur ("fais moi 100 pour 100 de
 > ressemblance ce qui il y a dans la photo"), après 2 essais jugés
