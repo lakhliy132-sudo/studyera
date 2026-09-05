@@ -2,6 +2,39 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Nouveaux liens de nav : Calendrier et Progrès** — demandé
+> explicitement par l'utilisateur ("Ajoute a cote de l acceuil tableau
+> de bord matiere calendrier aussi progres"). Nav connectée dans
+> l'ordre exact demandé : Accueil, Tableau de bord, Matières,
+> Calendrier, Progrès.
+>
+> - `/calendrier` (public, `app/(public)/calendrier/page.tsx`) :
+>   grille du mois en cours (`lib/calendrier.ts`, pure fonction de
+>   date), jour courant repéré. **Aucun événement affiché** : les
+>   dates réelles des examens du bac et un éventuel planning de
+>   révision n'ont pas été fournis, et ce sont des informations
+>   factuelles qu'il serait dangereux d'inventer (un élève pourrait s'y
+>   fier pour une vraie date d'examen) — message "Bientôt disponible"
+>   à la place, même logique que le contenu non inventé des nouvelles
+>   matières.
+> - `/progres` (protégée, `app/(eleve)/progres/page.tsx`, ajoutée à
+>   `CHEMINS_PROTEGES` dans `middleware.ts`) : détail complet de la
+>   progression (chapitres lus par œuvre, copies corrigées, note
+>   moyenne, série de jours), distinct du tableau de bord qui n'affiche
+>   qu'un résumé condensé. Réutilise `BlocProgression.tsx` (composant
+>   existant, plus utilisé depuis la refonte du tableau de bord) et les
+>   fonctions déjà en place dans `lib/supabase/tableauDeBord.ts` —
+>   aucune donnée inventée, tout vient de Supabase.
+> - `components/icones.tsx` : ajoute `IconeCalendrier`.
+>
+> Vérifié par capture d'écran avec un compte de test jetable (créé puis
+> supprimé, cascade confirmée) : nav connectée/non connectée dans le
+> bon ordre, `/progres` redirige bien vers `/connexion` sans session,
+> grille du calendrier correcte (septembre 2026, aujourd'hui repéré),
+> et `/progres` avec de vraies données (un chapitre marqué lu →
+> "1 chapitres lus", barre Antigone 1/22) après un état vide initial
+> cohérent.
+>
 > **"Français" déplacé dans /matieres, plus de lien de nav séparé** —
 > l'entrée précédente avait donné à "Français" son propre lien de nav
 > (à côté de "Matières") ; corrigé aussitôt à la demande explicite de

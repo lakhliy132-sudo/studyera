@@ -16,11 +16,18 @@ import { MATIERES } from "@/lib/matieres";
 const LIENS = [
   { href: "/", libelle: "Accueil" },
   { href: "/matieres", libelle: "Matières" },
+  { href: "/calendrier", libelle: "Calendrier" },
 ] as const;
 
-/** Ajouté seulement pour un utilisateur connecté — voir
- * `LiensNavigation` ci-dessous. */
+/** Ajoutés seulement pour un utilisateur connecté — voir
+ * `LiensNavigation` ci-dessous. "Tableau de bord" juste après
+ * "Accueil", "Progrès" tout à la fin — ordre demandé explicitement par
+ * l'utilisateur ("Ajoute a cote de l acceuil tableau de bord matiere
+ * calendrier aussi progres"). "Progrès" n'a pas de sens pour un
+ * visiteur non connecté (page protégée, voir middleware.ts), donc
+ * absent sinon — même logique que "Tableau de bord". */
 const LIEN_TABLEAU_DE_BORD = { href: "/tableau-de-bord", libelle: "Tableau de bord" } as const;
+const LIEN_PROGRES = { href: "/progres", libelle: "Progrès" } as const;
 
 interface LiensNavigationProps {
   /** `true` pour le tiroir mobile (liens empilés, pleine largeur) plutôt
@@ -57,7 +64,9 @@ interface LiensNavigationProps {
  */
 export default function LiensNavigation({ pleineLargeur = false, connecte = false }: LiensNavigationProps) {
   const chemin = usePathname();
-  const liens = connecte ? [LIENS[0], LIEN_TABLEAU_DE_BORD, ...LIENS.slice(1)] : LIENS;
+  const liens = connecte
+    ? [LIENS[0], LIEN_TABLEAU_DE_BORD, ...LIENS.slice(1), LIEN_PROGRES]
+    : LIENS;
 
   return (
     <>

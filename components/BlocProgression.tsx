@@ -2,9 +2,11 @@ import Link from "next/link";
 
 import type { OeuvreProgression } from "@/lib/supabase/tableauDeBord";
 
-/** ⚠️ Plus utilisé depuis aucune page : remplacé par
- * CarteProgressionAnneau.tsx (total) + ListeProgrammeOeuvres.tsx (par
- * œuvre) — voir BlocReprendre.tsx pour la même remarque. */
+/** Réutilisé par /progres (app/(eleve)/progres/page.tsx) — n'était
+ * plus utilisé depuis aucune page depuis la refonte du tableau de
+ * bord (remplacé là-bas par CarteProgressionAnneau.tsx (total) +
+ * ListeProgrammeOeuvres.tsx (par œuvre)), mais correspond exactement
+ * au détail complet voulu sur une page dédiée à la progression. */
 interface BlocProgressionProps {
   chapitresLus: number;
   copiesCorrigees: number;

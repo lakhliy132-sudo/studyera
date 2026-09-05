@@ -346,3 +346,13 @@ export function IconeGlobe({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Calendrier — page /calendrier. */
+export function IconeCalendrier({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect x="3.5" y="4.5" width="17" height="16" rx="2.5" />
+      <path d="M3.5 9.5h17M8 3v3M16 3v3" />
+    </svg>
+  );
+}
