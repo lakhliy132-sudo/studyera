@@ -80,19 +80,6 @@
   --color-validation: #0f7a57;
   --color-validation-tint: #dcf2ea;
 
-  /* Couleurs d'accent par matière (bordure gauche + barre de
-   * progression des cartes de /matieres, voir CarteMatiereProgression.tsx)
-   * — reprises telles quelles d'une maquette HTML fournie par
-   * l'utilisateur ("fais ca"), aucun équivalent existant dans la
-   * palette (les autres tokens sont tous réservés à un rôle précis :
-   * bleu = navigation/actions, rouge = erreurs, vert = validation).
-   * Une par matière, pas par sujet, pour rester stable si le nombre de
-   * leçons/œuvres change. */
-  --color-matiere-francais: #185fa5;
-  --color-matiere-islamique: #0f6e56;
-  --color-matiere-arabe: #993c1d;
-  --color-matiere-histoire-geo: #534ab7;
-
   /* Rayons de coin, plus généreux que les valeurs par défaut de
    * Tailwind : cartes et boutons arrondis, cohérent avec la maquette. */
   --radius-sm: 10px;

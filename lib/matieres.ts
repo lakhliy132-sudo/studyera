@@ -6,22 +6,9 @@ export interface Matiere {
   /** Utilisé à la fois comme segment d'URL (/[slug]) et comme valeur
    * de `cours.categorie` en base — les deux doivent rester alignés. */
   slug: string;
-  /** Nom simple de la matière (ex. "Arabe"), pour un contexte compact
-   * (carte de /matieres) — distinct de `titreAvantAccent`/`titreAccent`,
-   * pensés pour le grand titre en 2 parties du hero de /[matiere]
-   * (ex. "Cours d'" + italique "arabe"). */
-  nom: string;
   titreAvantAccent: string;
   titreAccent: string;
   description: string;
-  /** Étiquette courte (2-3 mots-clés séparés par "·"), affichée sur la
-   * carte compacte de /matieres (CarteMatiereProgression.tsx) — plus
-   * courte que `description`, toujours utilisée telle quelle sur
-   * /[matiere] (hero de la page de la matière). */
-  descriptionCourte: string;
-  /** Référence à un token `--color-matiere-*` (app/globals.css) —
-   * jamais une valeur brute, voir le commentaire à côté de ces tokens. */
-  couleur: string;
   Icone: (props: { className?: string }) => ReactElement;
 }
 
@@ -47,32 +34,23 @@ export interface Matiere {
 export const MATIERES: Matiere[] = [
   {
     slug: "education-islamique",
-    nom: "Éducation islamique",
     titreAvantAccent: "Éducation ",
     titreAccent: "islamique",
     description: "Cours, notions clés et repères pour l'examen d'éducation islamique.",
-    descriptionCourte: "Notions clés · repères",
-    couleur: "var(--color-matiere-islamique)",
     Icone: IconeCroissant,
   },
   {
     slug: "arabe",
-    nom: "Arabe",
     titreAvantAccent: "Cours d'",
     titreAccent: "arabe",
     description: "Textes, grammaire et expression pour progresser en arabe.",
-    descriptionCourte: "Textes · grammaire · expression",
-    couleur: "var(--color-matiere-arabe)",
     Icone: IconeLivreOuvert,
   },
   {
     slug: "histoire-geo",
-    nom: "Histoire-Géographie",
     titreAvantAccent: "Histoire-",
     titreAccent: "Géographie",
     description: "Chapitres d'histoire et de géographie au programme du bac.",
-    descriptionCourte: "Cartes · dates · méthode",
-    couleur: "var(--color-matiere-histoire-geo)",
     Icone: IconeGlobe,
   },
 ];
