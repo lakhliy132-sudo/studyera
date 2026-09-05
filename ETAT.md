@@ -2,6 +2,16 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond "vague" déplacé du layout racine vers la page d'accueil
+> uniquement** (`app/layout.tsx` → `app/(public)/page.tsx`) — demandé
+> explicitement par l'utilisateur ("FAIS LA JUSTE SUR L ACCEUIL") :
+> posé dans `app/layout.tsx`, il s'appliquait par erreur à toutes les
+> pages du site (Œuvres, chapitres, tableau de bord...), alors que
+> l'intention d'origine ("grand dégradé pastel EN HAUT" de la page
+> d'accueil) ne concernait que celle-ci. Code du SVG/dégradé inchangé,
+> juste déplacé — `RootLayout` n'a plus aucun fond décoratif. Vérifié
+> par capture d'écran réelle : présent sur `/`, absent sur `/oeuvres`.
+>
 > **Fond "vague" ré-agrandi, côté droit étendu** (`app/layout.tsx`) —
 > demandé explicitement par l'utilisateur ("plus grande et plus long
 > au partie de la droite"). Hauteur `75vh` → `88vh` ; tracé retouché

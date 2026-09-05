@@ -110,28 +110,13 @@ const fraunces = Fraunces({
  * référence du site Axiom), `BarreNavigation` est de nouveau une
  * simple barre en haut, dans le flux normal du document.
  *
- * Fond décoratif "vague" en haut de page — deuxième version, ajustée
- * sur la vraie capture du site Axiom (axiom-platforms.com/how-it-works)
- * fournie par l'utilisateur ("regarde la photo que je viens de mettre
- * au fichier axiom mets la comme ca") : la première tentative (une
- * ellipse floue symétrique, en dôme) était trop ronde et trop colorée
- * comparée à la vraie référence, qui est une vague *asymétrique* — un
- * seul tracé fluide, plus creux vers le centre-gauche que sur les
- * bords — et une teinte beaucoup plus discrète (gris-bleu très pâle,
- * presque neutre). Remplacé par un vrai tracé SVG (`<path>`, une seule
- * courbe de Bézier) plutôt qu'une forme CSS floue : donne un contrôle
- * précis sur l'asymétrie de la vague, impossible à obtenir avec un
- * dégradé radial + `blur`.
- *
- * `fixed`, `-z-10`, `pointer-events-none` : purement décoratif, hors
- * du flux, ne touche ni la navbar (qui garde son propre fond opaque
- * par-dessus), ni le contenu, ni les cartes, ni les boutons — comme
- * demandé explicitement lors de la première version. Le violet/lavande
- * n'existe dans aucun token `--color-*` du site (uniquement des
- * bleus) : une seule couleur brute ponctuelle (`#e2e1f5`, un
- * gris-lavande très pâle) est donc utilisée ici, pour cet effet précis
- * seulement, plutôt que d'inventer un token global pour une teinte qui
- * ne sert qu'à ce dégradé.
+ * Le fond décoratif "vague" (dégradé bleu clair → lavande pâle →
+ * blanc, façon Axiom) qui vivait ici a été déplacé dans
+ * app/(public)/page.tsx — demandé explicitement par l'utilisateur
+ * ("FAIS LA JUSTE SUR L ACCEUIL") : posé dans ce layout racine, il
+ * s'appliquait à tort à toutes les pages du site, alors qu'il n'avait
+ * de sens que sur la page d'accueil (voir l'historique des itérations
+ * dans ETAT.md).
  */
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -146,21 +131,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
     >
       <body className="font-sans">
-        <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
-          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[88vh] w-full">
-            <defs>
-              <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
-                <stop offset="55%" stopColor="#e2e1f5" />
-                <stop offset="100%" stopColor="white" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,0 H1440 V220 C1300,260 1160,180 980,220 C740,270 560,360 340,340 C180,326 60,290 0,260 Z"
-              fill="url(#dégradé-vague-accueil)"
-            />
-          </svg>
-        </div>
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}
       </body>
