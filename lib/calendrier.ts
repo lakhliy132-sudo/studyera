@@ -58,3 +58,47 @@ export function genererGrilleMois(date: Date): JourCalendrier[][] {
 }
 
 export const JOURS_SEMAINE_COURT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+export interface SessionExamen {
+  libelle: string;
+  debut: Date;
+  fin: Date;
+}
+
+/**
+ * Examen régional de la 1ère année du bac (matière/filière ciblée par
+ * tout le site, voir FILIERE_ACTUELLE dans lib/filiere.ts — les élèves
+ * de 1ère bac passent le régional, pas le national, qui concerne la
+ * 2ème année) — demandé explicitement par l'utilisateur ("juste a cote
+ * fais la date d examen regional au maroc").
+ *
+ * Dates de la session 2026-2027 (les seules disponibles à l'heure où
+ * ceci est écrit — l'année scolaire courante), sourcées via recherche
+ * web plutôt qu'inventées (voir la consigne du projet sur les
+ * informations factuelles) : rapportées par 9rayti.com comme venant
+ * de la note ministérielle relative à l'organisation de l'année
+ * scolaire 2026-2027 (session ordinaire 28-29 mai 2027, rattrapage
+ * 28-29 juin 2027) — https://www.9rayti.com/actualite/calendrier-examens-scolaires-maroc.
+ * Une seule source trouvée pour cette année précise (les autres sites
+ * consultés ne couvraient encore que la session 2025-2026, déjà
+ * passée) : à re-vérifier auprès du ministère à l'approche de la date
+ * si une note plus récente la modifie — voir le lien "Source" affiché
+ * sur la page /calendrier, pointant vers men.gov.ma.
+ *
+ * ⚠️ Cette date change chaque année scolaire : à mettre à jour l'année
+ * prochaine (et idéalement à sourcer depuis men.gov.ma directement,
+ * pas seulement un site tiers, si une note officielle plus précise est
+ * retrouvée).
+ */
+export const EXAMEN_REGIONAL_1BAC: SessionExamen[] = [
+  { libelle: "Session ordinaire", debut: new Date(2027, 4, 28), fin: new Date(2027, 4, 29) },
+  { libelle: "Session de rattrapage", debut: new Date(2027, 5, 28), fin: new Date(2027, 5, 29) },
+];
+
+/** `true` si `date` tombe dans l'une des sessions de l'examen
+ * régional — utilisé pour repérer ces jours dans la grille du mois. */
+export function estJourExamenRegional(date: Date): boolean {
+  return EXAMEN_REGIONAL_1BAC.some(
+    (session) => date >= session.debut && date <= session.fin,
+  );
+}

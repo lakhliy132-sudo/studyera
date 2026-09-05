@@ -2,6 +2,39 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Calendrier : switch de mois + date de l'examen régional** —
+> demandé explicitement par l'utilisateur ("fais le switch des mois et
+> juste a cote fais la date d examen regional au maroc").
+>
+> - `components/CalendrierMois.tsx` (nouveau, client) : remplace la
+>   grille figée de /calendrier par une version navigable (boutons
+>   mois précédent/suivant), avec un badge juste à côté du switch
+>   affichant les dates de l'examen régional (1ère bac, la seule
+>   filière ciblée par le site — voir FILIERE_ACTUELLE) ; les jours
+>   correspondants sont aussi surlignés dans la grille en les
+>   parcourant.
+> - `lib/calendrier.ts` : ajoute `EXAMEN_REGIONAL_1BAC` (session
+>   ordinaire 28-29 mai 2027, rattrapage 28-29 juin 2027) et
+>   `estJourExamenRegional`.
+>
+> **Dates vérifiées par recherche web, pas inventées** (consigne du
+> projet sur les informations factuelles — un élève pourrait s'y fier
+> pour une vraie date d'examen) : sourcées via 9rayti.com, qui les
+> rapporte comme venant de la note ministérielle relative à
+> l'organisation de l'année scolaire 2026-2027 — seule source trouvée
+> couvrant déjà cette année précise (les autres sites consultés ne
+> couvraient encore que la session 2025-2026, déjà passée). Un lien
+> "Source" sur la page pointe vers la page des notes officielles du
+> ministère (men.gov.ma) pour qu'un élève puisse vérifier lui-même.
+> ⚠️ Cette date change chaque année scolaire : à remettre à jour l'an
+> prochain, idéalement avec une source primaire (men.gov.ma) si une
+> note plus précise est retrouvée à ce moment-là — voir le commentaire
+> dans lib/calendrier.ts.
+>
+> Vérifié par capture d'écran : navigation avant/arrière fonctionne
+> (testé jusqu'à mai/juin 2027 puis retour), les jours 28-29 mai et
+> 28-29 juin 2027 bien surlignés dans la grille aux bons mois.
+>
 > **Pied de page ajouté aux pages publiques** — demandé implicitement
 > par l'utilisateur ("je sens que le site est comme une application je
 > veux quelle soit la forme d un site") : le site n'avait aucun footer,
