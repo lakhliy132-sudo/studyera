@@ -2,6 +2,34 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Pied de page ajouté aux pages publiques** — demandé implicitement
+> par l'utilisateur ("je sens que le site est comme une application je
+> veux quelle soit la forme d un site") : le site n'avait aucun footer,
+> signal fort d'"application" plutôt que de "site" (une appli/dashboard
+> n'en a généralement pas, un site web en a presque toujours un).
+> Premier changement concret proposé pour cette demande, le reste
+> (contenu plus éditorial ? accueil plus riche ? autre chose ?) reste à
+> préciser avec l'utilisateur.
+>
+> - `components/PiedDePage.tsx` (nouveau) : logo, texte court, 3
+>   colonnes de liens (Plateforme, Français, À propos), ligne de
+>   copyright.
+> - `app/(public)/layout.tsx` (nouveau) : ajoute ce pied de page à
+>   toutes les pages du groupe `(public)` uniquement, via un layout
+>   propre à ce groupe plutôt que le layout racine — les pages "app"
+>   du groupe `(eleve)` (tableau de bord, progrès, correcteur,
+>   activité, messages) et `(admin)` n'héritent pas du footer,
+>   conservant volontairement leur look "outil" pour ces écrans
+>   authentifiés.
+>
+> Vérifié par capture d'écran : footer présent sur l'accueil et
+> /matieres (en bas du contenu), reste bien collé en bas du viewport
+> sur une page courte (/a-propos, `min-h-screen flex flex-col`) plutôt
+> que de coller juste sous un texte court ; absent des pages `(eleve)`
+> par construction (pas de layout intermédiaire là-bas, confirmé par
+> lecture de l'arborescence plutôt que redondant avec la vérification
+> déjà faite de la protection middleware).
+>
 > **Nouveaux liens de nav : Calendrier et Progrès** — demandé
 > explicitement par l'utilisateur ("Ajoute a cote de l acceuil tableau
 > de bord matiere calendrier aussi progres"). Nav connectée dans
