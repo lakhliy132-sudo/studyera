@@ -2,6 +2,27 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond décoratif "vague" façon Axiom, en haut de page** (`app/layout.tsx`)
+> — demandé explicitement et en détail par l'utilisateur ("Je veux
+> vraiment l'effet visuel de la capture Axiom : grand dégradé pastel en
+> haut + forme courbée qui sépare progressivement le fond coloré du
+> fond blanc. Pas un simple dégradé linéaire"), après un premier essai
+> de fond différent retiré à sa demande. Une seule grande ellipse floue
+> (dégradé radial bleu clair → lavande pâle → blanc, `filter: blur`),
+> positionnée pour qu'on n'en voie que le bord inférieur — donne la
+> courbe qui redescend légèrement vers le centre avant de laisser place
+> au blanc, plutôt qu'un dégradé linéaire haut/bas. `fixed`, `-z-10`,
+> `pointer-events-none` : purement décoratif, ne touche ni la navbar
+> (garde son propre fond opaque), ni le contenu, ni les cartes, ni les
+> boutons, comme demandé explicitement.
+>
+> Seule exception au système de tokens `--color-*` du site (qui ne
+> contient que des bleus) : une couleur brute ponctuelle (`#ded6fb`,
+> lavande pâle) pour cette teinte précise, absente de la palette
+> existante — documentée comme telle dans le commentaire du code.
+> Vérifié par capture d'écran réelle (accueil, page Œuvres, mobile) :
+> cartes et texte toujours parfaitement lisibles par-dessus.
+>
 > **Vrai logo Studyera intégré dans la navbar** (`components/BarreNavigation.tsx`,
 > `public/logo-studyera.png`) — demandé explicitement par l'utilisateur
 > ("j ai ajouté le logo sur le fichier madrasti fais le dans le

@@ -110,12 +110,41 @@ const fraunces = Fraunces({
  * référence du site Axiom), `BarreNavigation` est de nouveau une
  * simple barre en haut, dans le flux normal du document.
  *
- * Pas de fond décoratif sur `<body>` — un dégradé bleu façon peinture
- * y avait été ajouté puis retiré à la demande explicite de
- * l'utilisateur ("enleve l arriere plan que t a fais"). Le fond reste
- * la simple couleur `--color-background` posée par `body` dans
- * app/globals.css.
+ * Fond décoratif "vague" en haut de page : une grande ellipse floue
+ * (dégradé bleu clair → lavande très pâle → blanc), positionnée pour
+ * qu'on n'en voie que le bord inférieur arrondi — donne la courbe qui
+ * redescend légèrement vers le centre avant de laisser place au blanc,
+ * plutôt qu'un simple dégradé linéaire de haut en bas. Demandé
+ * explicitement par l'utilisateur ("Je veux vraiment l'effet visuel
+ * de la capture Axiom : grand dégradé pastel en haut + forme courbée
+ * qui sépare progressivement le fond coloré du fond blanc. Pas un
+ * simple dégradé linéaire"), après avoir déjà demandé puis fait
+ * retirer un premier essai de fond différent ("enleve l arriere plan
+ * que t a fais").
+ *
+ * `fixed`, `-z-10`, `pointer-events-none` : purement décoratif, hors
+ * du flux, ne touche ni la navbar (qui garde son propre fond opaque
+ * par-dessus), ni le contenu, ni les cartes, ni les boutons — comme
+ * demandé explicitement. Le violet/lavande n'existe dans aucun token
+ * `--color-*` du site (uniquement des bleus) : une seule couleur brute
+ * ponctuelle (`#ded6fb`, un lavande pâle) est donc utilisée ici, pour
+ * cet effet précis seulement, plutôt que d'inventer un token global
+ * pour une teinte qui ne sert qu'à ce dégradé.
  */
+const FOND_VAGUE: React.CSSProperties = {
+  position: "absolute",
+  left: "50%",
+  top: "-32vh",
+  width: "170vw",
+  height: "58vh",
+  transform: "translateX(-50%)",
+  borderRadius: "50%",
+  filter: "blur(56px)",
+  backgroundImage: [
+    "radial-gradient(ellipse at center, color-mix(in srgb, var(--color-primary) 20%, white) 0%, #ded6fb 45%, white 78%)",
+  ].join(", "),
+};
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await creerClientServeur();
   const {
@@ -128,6 +157,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${fraunces.variable}`}
     >
       <body className="font-sans">
+        <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[60vh] overflow-hidden">
+          <div style={FOND_VAGUE} />
+        </div>
         <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
         {children}
       </body>
