@@ -1,23 +1,17 @@
 import Link from "next/link";
 
-import { IconeFleche, IconeGraphique } from "@/components/icones";
+import { IconeFleche, IconeGraphique, IconeLivre } from "@/components/icones";
 import { MATIERES } from "@/lib/matieres";
 
 /**
- * /matieres — page d'accueil des nouvelles matières (éducation
- * islamique, arabe, histoire-géographie), ajoutée à la demande
- * explicite de l'utilisateur ("je veux ajouter autre matiere").
- *
- * Une seule carte par matière plutôt que d'ajouter un lien de nav par
- * matière : la barre de navigation avait déjà tout juste la place
- * pour ses 6 liens existants (voir le commentaire sur le breakpoint
- * `xl` dans BarreNavigation.tsx) — en ajouter 3 de plus l'aurait fait
- * déborder. Un seul lien "Matières" ajouté à la nav (voir
- * LiensNavigation.tsx) mène ici.
- *
- * Ne liste pas le français (Œuvres / Langues / Production écrite) :
- * ces sections restent accessibles par leurs propres liens de nav,
- * inchangés.
+ * /matieres — page d'accueil de toutes les matières, y compris le
+ * français. Le français avait d'abord sa propre page hub (/francais)
+ * et son propre lien de nav, séparé de "Matières" — corrigé à la
+ * demande explicite de l'utilisateur ("NON FAIS LA DANS LA PARTIE DE
+ * MATIERE") : /francais existe toujours (voir app/(public)/francais),
+ * mais on y accède désormais par une carte "Français" ici, pas par un
+ * lien de nav à part. Nav ramenée à 2 liens (Accueil, Matières, +
+ * Tableau de bord si connecté) — voir LiensNavigation.tsx.
  */
 export default function PageMatieres() {
   return (
@@ -35,11 +29,32 @@ export default function PageMatieres() {
             Les <span className="text-primary italic">matières</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Retrouve ici les autres matières du bac, en plus du français.
+            Retrouve ici toutes les matières du bac.
           </p>
         </section>
 
         <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+          <li>
+            <Link
+              href="/francais"
+              className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+            >
+              <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
+                <IconeLivre className="size-6" />
+              </span>
+              <h2 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">
+                <span className="text-primary italic">Français</span>
+              </h2>
+              <p className="mt-1.5 font-lecture text-[14.5px] leading-relaxed text-muted-foreground">
+                Œuvres au programme, cours de langue, production écrite et correction IA.
+              </p>
+              <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
+                Découvrir
+                <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </li>
+
           {MATIERES.map((matiere) => (
             <li key={matiere.slug}>
               <Link

@@ -5,15 +5,24 @@ import { SECTIONS_FRANCAIS } from "@/lib/francais";
 
 /**
  * /francais — page hub regroupant les 4 sections françaises (Œuvres,
- * Langues, Production écrite, Correcteur IA), qui vivaient jusque-là
- * comme liens séparés dans la barre de navigation. Demandé
- * explicitement par l'utilisateur, même principe que /matieres (voir
- * ce fichier) : une carte par section plutôt que 4 liens de nav.
+ * Langues, Production écrite, Correcteur IA). Accessible depuis
+ * /matieres via une carte "Français", au même niveau que les autres
+ * matières — demandé explicitement par l'utilisateur, qui ne voulait
+ * pas de lien de nav séparé pour le français ("NON FAIS LA DANS LA
+ * PARTIE DE MATIERE").
  */
 export default function PageFrancais() {
   return (
     <main className="flex flex-col">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+        <Link
+          href="/matieres"
+          className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+        >
+          <IconeFleche className="size-4 rotate-180" />
+          Retour aux matières
+        </Link>
+
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />

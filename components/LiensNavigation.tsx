@@ -6,15 +6,15 @@ import { usePathname } from "next/navigation";
 import { PREFIXES_FRANCAIS } from "@/lib/francais";
 import { MATIERES } from "@/lib/matieres";
 
-/** Œuvres, Correcteur IA, Langues et Production écrite ne sont plus
- * des liens de nav séparés : regroupés sous /francais (page hub, voir
- * lib/francais.ts) — demandé explicitement par l'utilisateur ("fais
- * aussi barre de francais et liste maintenant la barre de oeuvres
- * langue production ecrite correcteur IA sur la barre du francais"),
- * même principe que /matieres pour les autres matières. */
+/** "Français" n'a pas de lien de nav à part : c'est une carte de plus
+ * sur /matieres (app/(public)/matieres/page.tsx), au même niveau que
+ * les autres matières — demandé explicitement par l'utilisateur après
+ * un premier essai avec un lien "Français" séparé ("NON FAIS LA DANS
+ * LA PARTIE DE MATIERE"). /francais (page hub Œuvres / Langues /
+ * Production écrite / Correcteur IA) existe toujours, seulement
+ * accessible via cette carte plutôt que par la nav. */
 const LIENS = [
   { href: "/", libelle: "Accueil" },
-  { href: "/francais", libelle: "Français" },
   { href: "/matieres", libelle: "Matières" },
 ] as const;
 
@@ -70,19 +70,21 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
         const surUneMatiere = MATIERES.some(
           (matiere) => chemin === `/${matiere.slug}` || chemin.startsWith(`/${matiere.slug}/`),
         );
-        // Idem pour "Français" : /oeuvres, /langue, /production-ecrite
-        // et /redaction/nouvelle vivent hors de /francais.
-        const surFrancais = PREFIXES_FRANCAIS.some(
-          (prefixe) => chemin === prefixe || chemin.startsWith(`${prefixe}/`),
-        );
+        // "Matières" doit aussi rester en surbrillance sur la carte
+        // "Français" et ses 4 sections (/francais, /oeuvres, /langue,
+        // /production-ecrite, /redaction/nouvelle) : elles vivent hors
+        // de /matieres mais y sont accessibles uniquement par cette
+        // carte, plus par un lien de nav séparé.
+        const surFrancais =
+          chemin === "/francais" ||
+          chemin.startsWith("/francais/") ||
+          PREFIXES_FRANCAIS.some((prefixe) => chemin === prefixe || chemin.startsWith(`${prefixe}/`));
         const actif =
           lien.href === "/"
             ? chemin === "/"
             : lien.href === "/matieres"
-              ? chemin.startsWith(lien.href) || surUneMatiere
-              : lien.href === "/francais"
-                ? chemin.startsWith(lien.href) || surFrancais
-                : chemin.startsWith(lien.href);
+              ? chemin.startsWith(lien.href) || surUneMatiere || surFrancais
+              : chemin.startsWith(lien.href);
 
         return (
           <Link

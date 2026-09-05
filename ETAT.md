@@ -2,6 +2,20 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **"Français" déplacé dans /matieres, plus de lien de nav séparé** —
+> l'entrée précédente avait donné à "Français" son propre lien de nav
+> (à côté de "Matières") ; corrigé aussitôt à la demande explicite de
+> l'utilisateur ("NON FAIS LA DANS LA PARTIE DE MATIERE") : la page
+> `/francais` existe toujours (Œuvres / Langues / Production écrite /
+> Correcteur IA), mais n'est plus accessible que via une carte
+> "Français" sur `/matieres`, au même niveau que les 3 autres matières
+> — plus de lien "Français" dans la barre. Nav ramenée à 2 liens
+> (Accueil, Matières, + Tableau de bord si connecté).
+> `components/LiensNavigation.tsx` : la surbrillance de "Matières"
+> couvre maintenant aussi /francais et ses 4 sous-sections. Ajouté un
+> lien "Retour aux matières" en haut de `/francais`, comme les autres
+> pages de matière. Vérifié par capture d'écran.
+>
 > **Regroupement des sections françaises sous /francais** — demandé
 > explicitement par l'utilisateur juste après l'ajout des nouvelles
 > matières ("fais aussi barre de francais et liste maintenant la barre
