@@ -25,19 +25,19 @@ function formaterPeriode(debut: Date, fin: Date) {
  */
 export default function CarteExamenRegional() {
   return (
-    <div className="flex h-fit flex-col gap-3 rounded-[20px] border border-border-strong bg-primary-tint p-6 shadow-sm">
-      <div className="flex items-center gap-2.5 text-primary">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface">
-          <IconeCalendrier className="size-4" />
+    <div className="flex h-fit flex-col gap-5 rounded-[24px] border border-border-strong bg-primary-tint p-7 shadow-sm">
+      <div className="flex items-center gap-3 text-primary">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface">
+          <IconeCalendrier className="size-5" />
         </span>
-        <p className="font-serif text-base font-bold text-ink">Examen régional — 1ère bac</p>
+        <p className="font-serif text-xl leading-tight font-bold text-ink">Examen régional — 1ère bac</p>
       </div>
 
-      <ul className="flex flex-col gap-2.5">
+      <ul className="flex flex-col gap-3">
         {EXAMEN_REGIONAL_1BAC.map((session) => (
-          <li key={session.libelle} className="rounded-[10px] bg-surface px-3.5 py-2.5">
-            <p className="text-xs font-semibold text-primary">{session.libelle}</p>
-            <p className="text-[15px] font-semibold text-ink">
+          <li key={session.libelle} className="rounded-[14px] bg-surface px-5 py-4">
+            <p className="text-sm font-semibold text-primary">{session.libelle}</p>
+            <p className="text-xl font-bold text-ink">
               {formaterPeriode(session.debut, session.fin)}
             </p>
           </li>
@@ -48,7 +48,7 @@ export default function CarteExamenRegional() {
         href="https://www.men.gov.ma/index.php/fr/notes"
         target="_blank"
         rel="noreferrer"
-        className="text-[11px] text-muted-foreground underline hover:text-primary"
+        className="text-xs text-muted-foreground underline hover:text-primary"
       >
         Source : ministère de l&apos;Éducation nationale
       </a>

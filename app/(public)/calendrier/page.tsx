@@ -10,14 +10,16 @@ import { IconeCalendrier } from "@/components/icones";
  * la date d examen regional au maroc"), puis réagencée en 2 colonnes
  * pour que la carte examen soit vraiment à côté de la grille, pas dans
  * son en-tête ("nonnn je veux que la partie d examen soit a coté") —
- * voir CalendrierMois.tsx et CarteExamenRegional.tsx. Conteneur élargi
- * (max-w-2xl → max-w-3xl) pour laisser de la place aux 2 colonnes ;
- * empilées sur mobile (grid-cols-1).
+ * voir CalendrierMois.tsx et CarteExamenRegional.tsx. Les deux cartes
+ * agrandies ensuite ("je veux la taille des mois grand et aussi de
+ * examen") : conteneur élargi une 2ᵉ fois (max-w-3xl → max-w-4xl) pour
+ * laisser respirer les 2 colonnes désormais plus grandes ; empilées
+ * sur mobile (grid-cols-1).
  */
 export default function PageCalendrier() {
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-9 px-6 pt-9 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
@@ -34,7 +36,7 @@ export default function PageCalendrier() {
           </p>
         </section>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1fr_260px]">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1fr_320px]">
           <CalendrierMois />
           <CarteExamenRegional />
         </div>

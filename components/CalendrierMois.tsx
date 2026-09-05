@@ -31,32 +31,32 @@ export default function CalendrierMois() {
   const semaines = genererGrilleMois(moisAffiche);
 
   return (
-    <div className="rounded-[20px] border border-border bg-surface p-6 shadow-sm sm:p-8">
-      <div className="mb-5 flex items-center justify-center gap-3">
+    <div className="rounded-[24px] border border-border bg-surface p-7 shadow-sm sm:p-10">
+      <div className="mb-7 flex items-center justify-center gap-5">
         <button
           type="button"
           onClick={() => setMoisAffiche((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
           aria-label="Mois précédent"
-          className="flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary"
+          className="flex size-11 items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary"
         >
-          <IconeFleche className="size-3.5 rotate-180" />
+          <IconeFleche className="size-5 rotate-180" />
         </button>
-        <p className="w-[168px] text-center font-serif text-lg font-bold text-ink">
+        <p className="w-[240px] text-center font-serif text-2xl font-bold text-ink sm:text-3xl">
           {NOM_MOIS[moisAffiche.getMonth()]} {moisAffiche.getFullYear()}
         </p>
         <button
           type="button"
           onClick={() => setMoisAffiche((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
           aria-label="Mois suivant"
-          className="flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary"
+          className="flex size-11 items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary"
         >
-          <IconeFleche className="size-3.5" />
+          <IconeFleche className="size-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 text-center">
+      <div className="grid grid-cols-7 gap-2.5 text-center">
         {JOURS_SEMAINE_COURT.map((jour) => (
-          <div key={jour} className="py-1.5 text-xs font-semibold text-subtle-foreground">
+          <div key={jour} className="py-2 text-sm font-semibold text-subtle-foreground">
             {jour}
           </div>
         ))}
@@ -68,7 +68,7 @@ export default function CalendrierMois() {
             <div
               key={index}
               title={examen ? "Examen régional" : undefined}
-              className={`flex aspect-square items-center justify-center rounded-lg text-sm ${
+              className={`flex aspect-square items-center justify-center rounded-xl text-lg ${
                 jour.estAujourdHui
                   ? "bg-primary font-bold text-white"
                   : examen

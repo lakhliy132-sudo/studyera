@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Calendrier agrandi (grille + carte examen)** — demandé
+> explicitement par l'utilisateur ("oui mais je veux la taille des
+> mois grand et aussi de examen"). `CalendrierMois.tsx` : titre du
+> mois `text-lg` → `text-2xl`/`text-3xl`, boutons de navigation et
+> cases de jour agrandis, espacements augmentés.
+> `CarteExamenRegional.tsx` : padding, icône, titre et dates de session
+> tous agrandis (dates `text-[15px]` → `text-xl` en gras). Conteneur de
+> la page élargi une 2ᵉ fois (`max-w-3xl` → `max-w-4xl`) et colonne de
+> la carte examen élargie (`260px` → `320px`) pour laisser respirer les
+> deux blocs désormais plus grands. Vérifié par capture d'écran desktop
+> et mobile.
+>
 > **Calendrier : carte examen régional sortie en colonne à côté** —
 > le premier essai plaçait la date de l'examen régional dans l'en-tête
 > de la grille (un badge à droite du switch de mois) ; corrigé
