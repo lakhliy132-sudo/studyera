@@ -2,6 +2,13 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-05.
 >
+> **Fond "vague" agrandi** (`app/layout.tsx`) — demandé explicitement
+> par l'utilisateur ("plus grand que ca"). Hauteur du SVG passée de
+> `52vh` à `75vh` (le tracé lui-même inchangé, juste étiré verticalement
+> via `preserveAspectRatio="none"`, déjà en place) : la vague couvre
+> maintenant tout le bloc titre + sous-titre de la page d'accueil.
+> Vérifié par capture d'écran réelle.
+>
 > **Fond décoratif "vague" : ajusté sur la vraie capture du site
 > Axiom** (`app/layout.tsx`) — l'utilisateur a fourni une capture
 > d'écran réelle de axiom-platforms.com/how-it-works ("regarde la

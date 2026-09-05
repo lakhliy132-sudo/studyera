@@ -147,7 +147,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="font-sans">
         <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
-          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[52vh] w-full">
+          <svg viewBox="0 0 1440 620" preserveAspectRatio="none" className="h-[75vh] w-full">
             <defs>
               <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, white)" />
