@@ -2,6 +2,31 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **"Mes matières" : une photo par matière, fidèle à la maquette** —
+> demandé explicitement par l'utilisateur ("fais moi 100 pour 100 de
+> ressemblance ce qui il y a dans la photo"), après 2 essais jugés
+> trop éloignés (icône seule, puis une seule matière avec photo).
+> `components/GrilleMatieresAccueil.tsx` : les 4 cartes ont maintenant
+> chacune leur photo en fondu à droite (comme la maquette), recadrée
+> depuis la même image que le reste de l'accueil — nouveaux fichiers
+> `public/education-islamique-cours.jpg`, `arabe-cours.jpg`,
+> `histoire-geo-cours.jpg` (mosquée, calligraphie, carte du monde).
+> Étiquettes courtes ajoutées sous chaque titre ("Foi · Valeurs ·
+> Citoyenneté"...), reprises de la maquette — ce sont des descriptions
+> de matière, pas des données inventées.
+>
+> **Bug de superposition CSS repéré et corrigé** en relisant la
+> capture d'écran (photos quasi invisibles au premier essai) : les
+> photos utilisaient `-z-10`, un index négatif qui les faisait
+> disparaître sous le fond opaque de la carte "Mes matières"
+> parente. Corrigé en donnant à chaque photo un `z-0` et au contenu
+> texte un wrapper `relative z-10` propre à sa carte, sans dépendre
+> d'un contexte d'empilement hérité d'un ancêtre.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) en mode clair et sombre, sans erreur console. Aussi
+> npx tsc --noEmit.
+>
 > **Corrige la photo utilisée pour "Français" sur l'accueil connecté**
 > — l'entrée précédente réutilisait la photo bureau/livres du bandeau
 > de bienvenue pour la carte "En cours" et "Mes matières" ; corrigé à
