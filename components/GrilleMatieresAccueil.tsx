@@ -122,7 +122,7 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
               aria-hidden="true"
               fill
               sizes="280px"
-              className="pointer-events-none absolute inset-0 z-0 object-cover opacity-90 [mask-image:linear-gradient(to_right,white,white_38%,transparent)]"
+              className="pointer-events-none absolute inset-0 z-0 object-cover [mask-image:linear-gradient(to_right,white,white_34%,transparent)]"
             />
 
             <div className="relative z-10 flex flex-1 flex-col">

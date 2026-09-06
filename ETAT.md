@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Photo de la mosquée rendue plus visible** — demandé explicitement
+> par l'utilisateur ("je veux que la photo du mosqué sois visible") :
+> la photo source (ciel pastel très doux, faible contraste) restait
+> trop discrète une fois passée dans le fondu de la carte. Contraste
+> et saturation renforcés sur `public/education-islamique-cours.jpg`
+> (silhouette du dôme/minaret bien plus nette) ; `opacity-90` retirée
+> et le fondu (`GrilleMatieresAccueil.tsx`) commence un peu plus tôt
+> (34 % au lieu de 38 %), pour les 4 cartes — les 3 autres photos, déjà
+> bien visibles, restent inchangées visuellement à l'œil. Vérifié avec
+> un compte de test jetable (créé puis supprimé), sans erreur console.
+> Aussi npx tsc --noEmit.
+>
 > **Corrige la photo "Français" de "Mes matières" (mauvaise forme)** —
 > demandé explicitement par l'utilisateur ("je veux quelle soit comme
 > la forme qui se trouve sur la photo dans fichier de madrasti") : la
