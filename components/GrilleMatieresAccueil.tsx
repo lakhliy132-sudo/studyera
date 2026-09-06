@@ -123,7 +123,7 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-[18px] sm:grid-cols-4">
         {CARTES_MATIERES.map((carte) => (
           <Link
             key={carte.slug}
