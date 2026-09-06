@@ -2,6 +2,41 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **"Mes matières" reconstruite depuis le code HTML/CSS fourni
+> directement par l'utilisateur** — après plusieurs allers-retours
+> infructueux à deviner depuis la capture d'écran ("tu m a decue tu m
+> a pas fais comme je veux"), l'utilisateur a fourni le code source
+> exact de la carte voulue ("je te donne le code c mieux?").
+> `components/GrilleMatieresAccueil.tsx` réécrite pour reprendre
+> précisément cette structure : carte à hauteur fixe (142px), photo à
+> `opacity: .72` + voile blanc en dégradé (`.subject-overlay`, plutôt
+> que le fondu par masque des essais précédents), pastille d'icône
+> 48px à fond teinté + icône colorée (au lieu d'un fond plein + icône
+> blanche), effet de zoom léger sur la photo au survol, barre de
+> progression ancrée en bas de la carte. `app/globals.css` : les 3
+> tokens `--color-matiere-*` mis à jour avec les valeurs exactes du
+> code fourni, plus un nouveau `--color-matiere-francais` (valeur
+> légèrement différente de `--color-primary` dans le code fourni).
+>
+> Icônes emoji du code d'origine (📖 ☪ ض 🌍) remplacées par les icônes
+> SVG déjà en place sur le site (aucune icône du site n'est un emoji) ;
+> "ض" (lettre arabe, pas un emoji) gardée telle quelle. Seule la
+> **progression du français reste réelle** (chapitres lus/total) : les
+> 3 autres matières affichent toujours "Bientôt disponible" plutôt que
+> le pourcentage d'exemple du code fourni, faute de contenu réel.
+>
+> **Écart assumé, documenté dans le code** : 3 couleurs "de confort"
+> du code fourni (bordure de carte, texte, fond de la barre de
+> progression) remplacées par les tokens du site plutôt que les
+> valeurs littérales exactes — visuellement identiques en mode clair,
+> mais les valeurs fixes resteraient illisibles en mode sombre. Les
+> couleurs d'accent propres à chaque matière (icône, barre de
+> progression), elles, restent exactement celles fournies.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) en mode clair et sombre, sans erreur console. Aussi
+> npx tsc --noEmit.
+>
 > **Photo de la mosquée rendue plus visible** — demandé explicitement
 > par l'utilisateur ("je veux que la photo du mosqué sois visible") :
 > la photo source (ciel pastel très doux, faible contraste) restait

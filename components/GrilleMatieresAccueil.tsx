@@ -3,98 +3,101 @@ import type { ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { IconeFleche, IconeLivre } from "@/components/icones";
-import { MATIERES } from "@/lib/matieres";
+import { IconeCroissant, IconeFleche, IconeGlobe, IconeLivre } from "@/components/icones";
 
 interface GrilleMatieresAccueilProps {
   chapitresLus: number;
   totalChapitres: number;
 }
 
-interface CarteMatiereAffichage {
+interface CarteMatiere {
   slug: string;
   href: string;
   titre: string;
   etiquette: string;
   photo: string;
+  /** Référence à un token `--color-matiere-*` (app/globals.css). */
   couleur: string;
-  Icone: (props: { className?: string }) => ReactElement;
+  /** Fond de la pastille d'icône — reprend exactement les valeurs
+   * rgba du code fourni (teinte très claire de la couleur d'accent) ;
+   * gardée en valeur littérale plutôt qu'un token, propre à cet usage. */
+  teinte: string;
+  icone: ReactElement;
 }
 
 /**
- * Français + les 3 matières de lib/matieres.ts, avec tout ce qu'il
- * faut pour reprendre la maquette au pixel près ("bien mais pas comme
- * la photo que je t ai envoyé") : pastille d'icône colorée (couleur
- * échantillonnée directement sur la maquette, voir les tokens
- * `--color-matiere-*` dans app/globals.css — le français reprend
- * `--color-primary`, déjà la même teinte que la maquette), photo en
- * fondu à droite, étiquette courte.
+ * Une carte par matière — structure, dimensions et couleurs reprises
+ * du code HTML/CSS fourni directement par l'utilisateur (`.subjects`,
+ * `.subject-card`...), après plusieurs essais jugés trop éloignés de
+ * la maquette. Icônes emoji du code d'origine (📖 ☪ ض 🌍) remplacées
+ * par les icônes SVG déjà en place sur le site (aucune icône du site
+ * n'est un emoji, voir components/icones.tsx) ; "ض" (lettre arabe, pas
+ * un emoji) gardée telle quelle, en vraie police arabe.
+ *
+ * Trois couleurs "de confort" du code fourni (bordure de carte, texte
+ * du titre/étiquette/pourcentage, fond de la barre de progression)
+ * sont remplacées par les tokens du site (`border-border`,
+ * `text-ink`/`text-muted-foreground`, `bg-surface-muted`) plutôt que
+ * les valeurs littérales exactes : visuellement identiques en mode
+ * clair, mais ces valeurs fixes resteraient illisibles en mode
+ * sombre. Les couleurs d'accent propres à chaque matière (icône,
+ * barre de progression) restent, elles, exactement celles fournies
+ * (voir les tokens `--color-matiere-*` dans app/globals.css).
  */
-const CARTES_MATIERES: CarteMatiereAffichage[] = [
+const CARTES_MATIERES: CarteMatiere[] = [
   {
     slug: "francais",
     href: "/francais",
     titre: "Français",
     etiquette: "Lecture · Écriture · Expression",
     photo: "/francais-livre-ouvert.jpg",
-    couleur: "var(--color-primary)",
-    Icone: IconeLivre,
+    couleur: "var(--color-matiere-francais)",
+    teinte: "rgba(224,238,255,.95)",
+    icone: <IconeLivre className="size-5" />,
   },
-  ...MATIERES.map((matiere) => {
-    const PAR_SLUG: Record<string, { etiquette: string; photo: string; couleur: string }> = {
-      "education-islamique": {
-        etiquette: "Foi · Valeurs · Citoyenneté",
-        photo: "/education-islamique-cours.jpg",
-        couleur: "var(--color-matiere-islamique)",
-      },
-      arabe: {
-        etiquette: "Grammaire · Lecture · Expression",
-        photo: "/arabe-cours.jpg",
-        couleur: "var(--color-matiere-arabe)",
-      },
-      "histoire-geo": {
-        etiquette: "Histoire · Géographie · EMC",
-        photo: "/histoire-geo-cours.jpg",
-        couleur: "var(--color-matiere-histoire-geo)",
-      },
-    };
-    const infos = PAR_SLUG[matiere.slug];
-
-    return {
-      slug: matiere.slug,
-      href: `/${matiere.slug}`,
-      titre: `${matiere.titreAvantAccent}${matiere.titreAccent}`,
-      etiquette: infos.etiquette,
-      photo: infos.photo,
-      couleur: infos.couleur,
-      Icone: matiere.Icone,
-    };
-  }),
+  {
+    slug: "education-islamique",
+    href: "/education-islamique",
+    titre: "Éducation islamique",
+    etiquette: "Foi · Valeurs · Citoyenneté",
+    photo: "/education-islamique-cours.jpg",
+    couleur: "var(--color-matiere-islamique)",
+    teinte: "rgba(225,248,242,.95)",
+    icone: <IconeCroissant className="size-5" />,
+  },
+  {
+    slug: "arabe",
+    href: "/arabe",
+    titre: "Arabe",
+    etiquette: "Grammaire · Lecture · Expression",
+    photo: "/arabe-cours.jpg",
+    couleur: "var(--color-matiere-arabe)",
+    teinte: "rgba(238,230,255,.95)",
+    icone: (
+      <span className="font-arabe text-[20px] font-bold" aria-hidden="true">
+        ض
+      </span>
+    ),
+  },
+  {
+    slug: "histoire-geo",
+    href: "/histoire-geo",
+    titre: "Histoire - Géographie",
+    etiquette: "Histoire · Géographie · EMC",
+    photo: "/histoire-geo-cours.jpg",
+    couleur: "var(--color-matiere-histoire-geo)",
+    teinte: "rgba(255,239,218,.95)",
+    icone: <IconeGlobe className="size-5" />,
+  },
 ];
 
 /**
- * "Mes matières" de l'accueil (élève connecté) — reprend une maquette
- * fournie par l'utilisateur ("j ai ajouté une photo dans le fichier
- * fais la comme ca dans l acuueil"). La maquette illustrait un
- * pourcentage pour chaque matière (68%, 54%, 72%, 49%) : seul celui du
- * français est réel (chapitres lus/total, déjà calculé pour le
- * tableau de bord) — les 3 autres matières n'ont encore aucun contenu
- * importé, leur carte affiche "Bientôt disponible" plutôt qu'un
- * chiffre inventé.
- *
- * Après plusieurs allers-retours pour se rapprocher de la maquette
- * (icône seule → une seule matière avec photo → 4 photos sans icône
- * → icônes + photos remises) cette version reprend les 3 éléments
- * ensemble : pastille d'icône colorée (une couleur par matière),
- * photo en fondu à droite, étiquette courte.
- *
- * Photo "Français" corrigée une dernière fois ("je veux quelle soit
- * comme la forme qui se trouve sur la photo dans fichier de
- * madrasti") : la carte "Mes matières" utilisait par erreur la même
- * photo que la carte "En cours" (document + stylo,
- * public/francais-cours.jpg) ; la maquette montre en fait une photo
- * différente ici (un livre ouvert, à la silhouette bien visible) —
- * recadrée séparément dans public/francais-livre-ouvert.jpg.
+ * "Mes matières" de l'accueil (élève connecté). Seul le français a
+ * une vraie progression (chapitres lus/total, déjà calculée pour le
+ * tableau de bord) : les 3 autres matières n'ont encore aucun contenu
+ * importé, leur carte affiche "Bientôt disponible" à la place d'un
+ * pourcentage inventé — le code fourni illustrait un pourcentage pour
+ * les 4, mais seul celui du français correspond à une vraie donnée.
  */
 export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: GrilleMatieresAccueilProps) {
   const pourcentageFrancais = totalChapitres > 0 ? Math.round((chapitresLus / totalChapitres) * 100) : 0;
@@ -109,12 +112,12 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
         {CARTES_MATIERES.map((carte) => (
           <Link
             key={carte.slug}
             href={carte.href}
-            className="group relative flex flex-col overflow-hidden rounded-[14px] border border-border p-4 transition-colors hover:border-border-strong"
+            className="group relative h-[142px] overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_rgba(25,75,140,0.12)]"
           >
             <Image
               src={carte.photo}
@@ -122,33 +125,48 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
               aria-hidden="true"
               fill
               sizes="280px"
-              className="pointer-events-none absolute inset-0 z-0 object-cover [mask-image:linear-gradient(to_right,white,white_34%,transparent)]"
+              className="absolute inset-0 object-cover opacity-[0.72] transition-transform duration-300 ease-in-out group-hover:scale-[1.04]"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 98%, transparent) 0%, color-mix(in srgb, var(--color-surface) 91%, transparent) 42%, color-mix(in srgb, var(--color-surface) 30%, transparent) 100%)",
+              }}
             />
 
-            <div className="relative z-10 flex flex-1 flex-col">
-              <div className="flex items-start justify-between gap-2">
-                <span
-                  style={{ backgroundColor: carte.couleur }}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-[10px] text-white"
-                >
-                  <carte.Icone className="size-[18px]" />
-                </span>
-                <IconeFleche className="mt-1.5 size-3.5 shrink-0 text-ink/70 transition-transform group-hover:translate-x-0.5" />
-              </div>
-              <p className="mt-2.5 text-sm font-semibold text-ink">{carte.titre}</p>
-              <p className="text-xs text-ink/70">{carte.etiquette}</p>
+            <div className="relative z-[2] flex h-full items-start gap-3.5 p-[18px]">
+              <span
+                style={{ backgroundColor: carte.teinte, color: carte.couleur }}
+                className="flex size-12 shrink-0 items-center justify-center rounded-[13px] backdrop-blur-[5px]"
+              >
+                {carte.icone}
+              </span>
 
+              <div className="pt-[3px]">
+                <h3 className="mb-[5px] text-[15px] font-bold text-ink">{carte.titre}</h3>
+                <p className="text-[11px] text-muted-foreground">{carte.etiquette}</p>
+              </div>
+
+              <IconeFleche className="relative z-[3] ml-auto size-5 shrink-0 text-subtle-foreground" />
+            </div>
+
+            <div className="absolute right-[18px] bottom-[17px] left-[18px] z-[4] flex items-center gap-2">
               {carte.slug === "francais" ? (
-                <div className="mt-auto pt-3.5">
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/60">
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${pourcentageFrancais}%` }} />
+                <>
+                  <div className="h-[7px] flex-1 overflow-hidden rounded-full bg-surface-muted">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${pourcentageFrancais}%`, backgroundColor: carte.couleur }}
+                    />
                   </div>
-                  <p className="mt-1.5 text-right text-xs font-semibold text-primary">{pourcentageFrancais}%</p>
-                </div>
+                  <span className="text-[11px] font-semibold text-muted-foreground">{pourcentageFrancais}%</span>
+                </>
               ) : (
-                <p className="mt-auto w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                <span className="rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-subtle-foreground">
                   Bientôt disponible
-                </p>
+                </span>
               )}
             </div>
           </Link>
