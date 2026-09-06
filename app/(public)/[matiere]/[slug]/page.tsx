@@ -32,7 +32,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-9 pb-16">
+      <div className="flex w-full flex-col gap-6 px-6 pt-9 pb-16 sm:px-9">
         <Link
           href={`/${matiere.slug}`}
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"

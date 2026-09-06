@@ -2,6 +2,46 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **16 leçons d'Histoire-Géographie ajoutées (contenu réel)** — demandé
+> explicitement par l'utilisateur ("j ai mis un pdf des cours de
+> histoire geo fais une case dans histoire geo et appelle la cours et
+> mets dok les lecons qui sont dans le fichier"). Le PDF déposé à la
+> racine du projet (`خطاطات-الاجتماعيات-1.pdf`, fiches de révision
+> "1 Bac Excellence" par ذ. علي زهيني, source L9ray.com) a été rendu
+> page par page (24 pages, via une page HTML locale chargeant
+> `pdfjs-dist` dans Chromium headless — `pdftotext`/`pdftoppm`
+> n'extrayaient pas l'arabe de ce PDF, police sans table Unicode) pour
+> lire son sommaire et le contenu réel de chaque leçon.
+>
+> Deux tables des matières trouvées (Histoire p.2, Géographie p.14),
+> soit 8 + 8 = 16 vraies leçons, chacune sur une page dédiée du PDF.
+> **Premier essai avec les images des pages du PDF, explicitement
+> refusé par l'utilisateur** ("nonnn je veux ps les image juste ecris
+> les comme cours avec un modele bien") : les 16 leçons ont plutôt été
+> **retranscrites fidèlement en texte** (titres, dates, chiffres, noms
+> — rien d'inventé) et mises en forme en Markdown structuré (titres de
+> section, sous-titres, listes à puces, termes en gras), pour reprendre
+> le même « modèle » que les autres cours du site (`ContenuMarkdown`,
+> déjà utilisé par /langue et les 3 nouvelles matières).
+>
+> Insérées directement dans la table `cours` (categorie="histoire-geo",
+> filiere="1bac", une ligne par leçon, `ordre` 1 à 16) via un script
+> Node ponctuel (clé service_role), sur le modèle de
+> `scripts/importer.ts` mais sans passer par le classeur Excel — script
+> non commité (usage unique), comme les scripts de compte de test.
+> `/histoire-geo` (page générique déjà existante,
+> `app/(public)/[matiere]/page.tsx`) affiche donc directement les 16
+> cartes sans code nouveau : seule la table `cours` a changé.
+>
+> **Page d'un cours passée en pleine largeur** — demandé explicitement
+> par l'utilisateur ("je veux le cours occupe toute la page") :
+> `app/(public)/[matiere]/[slug]/page.tsx` (route partagée par les 3
+> nouvelles matières) n'a plus de `max-w-3xl`/`mx-auto`, même principe
+> que l'accueil et /calendrier.
+>
+> Vérifié par capture d'écran (liste des 16 cartes + une leçon
+> ouverte), sans erreur console. Aussi npx tsc --noEmit.
+>
 > **Recadrage de la photo "Éducation islamique" pour bien montrer la
 > mosquée** — demandé explicitement par l'utilisateur ("montre la
 > mosquée"), après que le recadrage précédent (fait dans la même
