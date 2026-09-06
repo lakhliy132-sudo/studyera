@@ -42,6 +42,14 @@ function pad(n: number) {
  * Disparaît silencieusement si aucune session à venir (comme sur
  * /calendrier) plutôt que d'afficher un décompte négatif absurde.
  *
+ * Chaque cellule (jours/heures/min/sec) a un liseré de couleur
+ * distinct, repris des 4 tokens `--color-matiere-*` (même ordre que
+ * "Mes matières" : français/éducation islamique/arabe/histoire-géo) —
+ * demandé explicitement par l'utilisateur ("ajoute des couleurs sur
+ * l acceuil pour donner la vie au site") : le bloc était entièrement
+ * gris/bleu, ce liseré rappelle en plus que le décompte concerne les 4
+ * matières de l'examen régional.
+ *
  * État initial toujours `null` (calculé nulle part avant l'effet) :
  * calculer `calculerDecompte(...)` dès le rendu (côté serveur pendant
  * le SSR, puis à nouveau côté client à l'hydratation) produisait deux
@@ -79,12 +87,16 @@ export default function CompteARebourExamenLive() {
 
       <div className="grid grid-cols-4 gap-2 text-center">
         {[
-          { valeur: decompte.jours, libelle: "jours" },
-          { valeur: decompte.heures, libelle: "heures" },
-          { valeur: decompte.minutes, libelle: "min" },
-          { valeur: decompte.secondes, libelle: "sec" },
+          { valeur: decompte.jours, libelle: "jours", accent: "var(--color-matiere-francais)" },
+          { valeur: decompte.heures, libelle: "heures", accent: "var(--color-matiere-islamique)" },
+          { valeur: decompte.minutes, libelle: "min", accent: "var(--color-matiere-arabe)" },
+          { valeur: decompte.secondes, libelle: "sec", accent: "var(--color-matiere-histoire-geo)" },
         ].map((unite) => (
-          <div key={unite.libelle} className="rounded-[12px] bg-background py-2.5">
+          <div
+            key={unite.libelle}
+            className="rounded-[12px] border-t-[3px] bg-background py-2.5"
+            style={{ borderTopColor: unite.accent }}
+          >
             <p className="font-serif text-xl font-bold tabular-nums text-ink">{pad(unite.valeur)}</p>
             <p className="text-[10px] font-semibold tracking-wide text-subtle-foreground uppercase">
               {unite.libelle}

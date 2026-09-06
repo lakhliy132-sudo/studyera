@@ -2,6 +2,40 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Couleurs ajoutées à l'accueil connecté** — demandé explicitement
+> par l'utilisateur ("ajoute des couleurs sur l acceuil pour donner la
+> vie au site") : la page était presque entièrement bleu pâle/blanc
+> (gris en mode nuit), les seules touches de couleur étant les petites
+> pastilles d'icône de "Mes matières". Choix fait librement (pas de
+> maquette fournie pour cette demande), en réutilisant uniquement les
+> tokens de couleur déjà en place plutôt que d'en inventer de
+> nouveaux :
+> - `app/(public)/page.tsx` (`AccueilConnecte`) : 3 grands cercles flous
+>   décoratifs en fond (`--color-primary`, `--color-matiere-arabe`,
+>   `--color-matiere-histoire-geo`, très faible opacité), même
+>   principe que la vague décorative de l'accueil visiteur plus bas
+>   (`fixed ... -z-10`) — purement visuel, aucune donnée. La carte
+>   motivante ("Tu es plus proche...") passe d'un dégradé bleu → bleu
+>   marine (`primary`→`ink`, peu contrasté) à bleu → mauve
+>   (`primary`→`matiere-arabe`).
+> - `components/BandeauBienvenueAccueil.tsx` : le fondu bleu pâle →
+>   transparent du bandeau de bienvenue se termine maintenant sur une
+>   touche de mauve (`color-mix` avec `--color-matiere-arabe`) plutôt
+>   que de disparaître platement dans le fond de page.
+> - `components/CompteARebourExamenLive.tsx` : les 4 cellules du
+>   compte à rebours (jours/heures/min/sec) ont chacune un liseré de
+>   couleur distinct, repris des 4 tokens `--color-matiere-*` dans le
+>   même ordre que "Mes matières" — rappelle que l'examen régional
+>   porte sur les 4 matières, plutôt qu'une pure décoration arbitraire.
+>
+> Toutes les nouvelles couleurs passent par `color-mix`/variables CSS
+> existantes (pas de valeur littérale nouvelle) : vérifié identique en
+> intention en mode clair et sombre par capture d'écran (compte de
+> test jetable, créé puis supprimé, cascade confirmée), aucune erreur
+> console. "Mes matières" (`GrilleMatieresAccueil.tsx`), reconstruite à
+> l'identique du code fourni par l'utilisateur lors d'une demande
+> précédente, n'a pas été retouchée ici. Aussi npx tsc --noEmit.
+>
 > **"Mes matières" reconstruite depuis le code HTML/CSS fourni
 > directement par l'utilisateur** — après plusieurs allers-retours
 > infructueux à deviner depuis la capture d'écran ("tu m a decue tu m

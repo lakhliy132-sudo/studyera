@@ -48,6 +48,19 @@ function deriverPrenom(nomComplet: string | null, email: string | null): string 
  * Pleine largeur (`max-w-5xl` retiré) — demandé explicitement par
  * l'utilisateur ("je veux que l acceuil occupe toute la page"), même
  * principe que /calendrier (pas de centrage/plafond de largeur).
+ *
+ * Taches de couleur décoratives en fond (grands cercles flous, très
+ * faible opacité) — demandé explicitement par l'utilisateur ("ajoute
+ * des couleurs sur l acceuil pour donner la vie au site") : sans ça,
+ * la page était presque entièrement bleu pâle/blanc (gris en mode
+ * nuit), les seules touches de couleur étant les petites pastilles
+ * d'icône de "Mes matières". Mêmes couleurs que les 4 matières
+ * (tokens `--color-matiere-*`, voir app/globals.css), en fond derrière
+ * les cartes plutôt que dessus (toutes les cartes ont un fond opaque
+ * `bg-surface`) : même technique que la vague décorative de l'accueil
+ * visiteur plus bas (`fixed ... -z-10`), purement décoratif, aucune
+ * donnée. Vérifié en mode clair et sombre avant de garder les mêmes
+ * opacités dans les deux.
  */
 async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: string }) {
   const [progression, reprise] = await Promise.all([
@@ -63,24 +76,44 @@ async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: str
       : null;
 
   return (
-    <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
-      <BandeauBienvenueAccueil prenom={prenom} />
+    <>
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute -top-24 -left-24 size-[420px] rounded-full opacity-[0.16] blur-3xl"
+          style={{ backgroundColor: "var(--color-primary)" }}
+        />
+        <div
+          className="absolute top-32 -right-32 size-[380px] rounded-full opacity-[0.14] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+        />
+        <div
+          className="absolute bottom-[-160px] left-1/3 size-[460px] rounded-full opacity-[0.12] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
-        <div className="flex flex-col gap-6">
-          {reprise && <CarteEnCours reprise={reprise} pourcentage={pourcentageReprise} />}
-          <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
-        </div>
+      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
+        <BandeauBienvenueAccueil prenom={prenom} />
 
-        <div className="flex flex-col gap-6">
-          <CompteARebourExamenLive />
-          <div className="flex items-center gap-3 rounded-[24px] bg-gradient-to-br from-primary to-ink p-6 text-white shadow-sm">
-            <IconeEtoile className="size-6 shrink-0" />
-            <p className="text-sm leading-snug">Tu es plus proche de tes rêves que tu ne le penses.</p>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
+          <div className="flex flex-col gap-6">
+            {reprise && <CarteEnCours reprise={reprise} pourcentage={pourcentageReprise} />}
+            <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <CompteARebourExamenLive />
+            <div
+              className="flex items-center gap-3 rounded-[24px] p-6 text-white shadow-sm"
+              style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-matiere-arabe) 100%)" }}
+            >
+              <IconeEtoile className="size-6 shrink-0" />
+              <p className="text-sm leading-snug">Tu es plus proche de tes rêves que tu ne le penses.</p>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 

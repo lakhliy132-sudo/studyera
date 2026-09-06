@@ -19,10 +19,24 @@ interface BandeauBienvenueAccueilProps {
  * par-dessus la citation, les deux se chevauchant sur grand écran
  * (repéré en relisant la capture d'écran — texte de la citation
  * visible en transparence sous la photo).
+ *
+ * Dégradé teinté de mauve vers la droite (`color-mix` avec
+ * `--color-matiere-arabe`) en plus du bleu — demandé explicitement par
+ * l'utilisateur ("ajoute des couleurs sur l acceuil pour donner la vie
+ * au site") : un simple fondu bleu pâle → transparent était plat, et
+ * fondait presque avec le fond de page. `color-mix` plutôt qu'un rgba
+ * fixe pour rester lisible en mode sombre (mêmes principes déjà en
+ * place ailleurs sur l'accueil, voir app/(public)/page.tsx).
  */
 export default function BandeauBienvenueAccueil({ prenom }: BandeauBienvenueAccueilProps) {
   return (
-    <div className="flex flex-col gap-6 overflow-hidden rounded-[24px] border border-border bg-gradient-to-r from-primary-tint via-primary-tint/45 to-transparent p-7 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8">
+    <div
+      className="flex flex-col gap-6 overflow-hidden rounded-[24px] border border-border p-7 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8"
+      style={{
+        background:
+          "linear-gradient(105deg, var(--color-primary-tint) 0%, color-mix(in srgb, var(--color-primary-tint) 55%, transparent) 45%, color-mix(in srgb, var(--color-matiere-arabe) 16%, transparent) 100%)",
+      }}
+    >
       <div className="shrink-0">
         <h1 className="font-serif text-3xl font-bold text-ink">Bonjour, {prenom} ! 👋</h1>
         <p className="mt-1 text-muted-foreground">Prête à faire un pas de plus vers tes objectifs ?</p>
