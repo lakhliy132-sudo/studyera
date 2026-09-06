@@ -2,6 +2,22 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Puces et numéros mal placés sur les cours en arabe, corrigé** —
+> signalé explicitement par l'utilisateur ("dans les cours les points
+> et les chiffres ajuste les ils ne sont pas bien mises") :
+> `ContenuMarkdown.tsx` utilisait des paddings/bordures fixes à gauche
+> (`pl-*`, `border-l-4`), corrects en français mais qui plaquaient les
+> puces/numéros à gauche même pour un texte arabe qui se lit de droite
+> à gauche — le sens de lecture du texte s'adaptait automatiquement
+> (détection du navigateur), pas les puces (propriété CSS, pas
+> couverte par cette détection). Corrigé par : détection automatique
+> de l'arabe dans le texte (`dir="rtl"` posé sur le conteneur) +
+> propriétés CSS "logiques" (`ps-*`/`border-s-*` au lieu de
+> `pl-*`/`border-l-*`, qui suivent `dir` au lieu d'être toujours à
+> gauche). Le français (/langue, déjà en place) reste inchangé
+> (`dir="ltr"` par défaut). Vérifié par capture d'écran sur une leçon
+> d'histoire-géo, sans erreur console. Aussi npx tsc --noEmit.
+>
 > **16 leçons d'Histoire-Géographie ajoutées (contenu réel)** — demandé
 > explicitement par l'utilisateur ("j ai mis un pdf des cours de
 > histoire geo fais une case dans histoire geo et appelle la cours et
