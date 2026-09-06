@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -45,12 +46,22 @@ function CarteLecon({ matiereSlug, cours, numero }: { matiereSlug: string; cours
 }
 
 /** En-tête d'une section ("Histoire"/"Géographie") — pastille d'icône
- * + titre serif + décompte + filet en dégradé qui prend le reste de
- * la largeur, repris du même motif que l'en-tête de la page (icône
- * entourée de traits en dégradé) plutôt qu'un simple `<h2>` nu — plus
- * "chic" (demandé explicitement par l'utilisateur : "fais la d une
- * maniere chic") sans introduire de nouveau langage visuel. */
-function EnTeteSection({ icone, titre, nombre }: { icone: ReactElement; titre: string; nombre: number }) {
+ * + titre serif + décompte + petite photo (histoire-geo-histoire.jpg ou
+ * histoire-geo-geographie.jpg) qui apporte de la brillance + filet en
+ * dégradé. Demandé explicitement par l'utilisateur : "ajoute des petits
+ * photo a coté du histoire et geo pour ajouter de la brillance et de la
+ * vie au site". */
+function EnTeteSection({
+  icone,
+  titre,
+  nombre,
+  imageSrc,
+}: {
+  icone: ReactElement;
+  titre: string;
+  nombre: number;
+  imageSrc?: string;
+}) {
   return (
     <div className="flex items-center gap-4">
       <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
@@ -63,6 +74,17 @@ function EnTeteSection({ icone, titre, nombre }: { icone: ReactElement; titre: s
         </p>
       </div>
       <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-border-strong to-transparent" />
+      {imageSrc && (
+        <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg shadow-sm">
+          <Image
+            src={imageSrc}
+            alt={titre}
+            width={80}
+            height={64}
+            className="size-full object-cover"
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -148,13 +170,23 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <div className="flex flex-col gap-12">
             {leconsHistoire.length > 0 && (
               <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeHorloge className="size-5" />} titre="Histoire" nombre={leconsHistoire.length} />
+                <EnTeteSection
+                  icone={<IconeHorloge className="size-5" />}
+                  titre="Histoire"
+                  nombre={leconsHistoire.length}
+                  imageSrc="/histoire-geo-histoire.jpg"
+                />
                 <GrilleLecons matiereSlug={matiere.slug} lecons={leconsHistoire} />
               </section>
             )}
             {leconsGeographie.length > 0 && (
               <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeGlobe className="size-5" />} titre="Géographie" nombre={leconsGeographie.length} />
+                <EnTeteSection
+                  icone={<IconeGlobe className="size-5" />}
+                  titre="Géographie"
+                  nombre={leconsGeographie.length}
+                  imageSrc="/histoire-geo-geographie.jpg"
+                />
                 <GrilleLecons matiereSlug={matiere.slug} lecons={leconsGeographie} numeroDepart={leconsHistoire.length + 1} />
               </section>
             )}
