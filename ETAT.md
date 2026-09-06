@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **/histoire-geo : deux sections "Histoire" et "Géographie"** —
+> demandé explicitement par l'utilisateur ("fais moi une partie de
+> histoire et une partie de geo") : les 16 leçons étaient listées dans
+> une seule grille sans distinction. `app/(public)/[matiere]/page.tsx`
+> (page générique, partagée avec éducation islamique et arabe) sépare
+> maintenant les leçons en deux grilles avec titre, uniquement pour
+> histoire-geo — distinguées par le préfixe du `slug`
+> (`histoire-*`/`geographie-*`), sans nouvelle colonne en base. Les 2
+> autres matières gardent la grille unique inchangée. Numérotation des
+> cartes continue (01-08 puis 09-16) plutôt que de repartir à 01.
+>
+> Vérifié par capture d'écran, sans erreur console. Aussi npx tsc --noEmit.
+>
 > **Puces et numéros mal placés sur les cours en arabe, corrigé** —
 > signalé explicitement par l'utilisateur ("dans les cours les points
 > et les chiffres ajuste les ils ne sont pas bien mises") :
