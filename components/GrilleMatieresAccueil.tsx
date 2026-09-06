@@ -136,7 +136,7 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
                 "--halo-matiere": `color-mix(in srgb, ${carte.couleur} 26%, transparent)`,
               } as CSSProperties
             }
-            className="group relative h-[142px] overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
+            className="group relative aspect-square overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
           >
             <Image
               src={carte.photo}
