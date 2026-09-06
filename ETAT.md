@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Corrige la photo "Français" de "Mes matières" (mauvaise forme)** —
+> demandé explicitement par l'utilisateur ("je veux quelle soit comme
+> la forme qui se trouve sur la photo dans fichier de madrasti") : la
+> carte "Mes matières" réutilisait par erreur la même photo que la
+> carte "En cours" (document + stylo, `public/francais-cours.jpg`) ;
+> en zoomant sur la maquette, cette carte utilise en fait une photo
+> différente — un livre ouvert, à la silhouette bien reconnaissable.
+> Recadrée séparément dans `public/francais-livre-ouvert.jpg`
+> (nouveau fichier) ; `francais-cours.jpg` reste utilisée telle quelle
+> par `CarteEnCours.tsx`, qui était déjà correcte. Vérifié avec un
+> compte de test jetable (créé puis supprimé, cascade confirmée), sans
+> erreur console. Aussi npx tsc --noEmit.
+>
 > **"Mes matières" : pastilles d'icône colorées remises, en plus des
 > photos** — demandé explicitement par l'utilisateur ("bien mais pas
 > comme la photo que je t ai envoyé") : l'entrée précédente avait

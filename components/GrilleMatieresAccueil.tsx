@@ -36,7 +36,7 @@ const CARTES_MATIERES: CarteMatiereAffichage[] = [
     href: "/francais",
     titre: "Français",
     etiquette: "Lecture · Écriture · Expression",
-    photo: "/francais-cours.jpg",
+    photo: "/francais-livre-ouvert.jpg",
     couleur: "var(--color-primary)",
     Icone: IconeLivre,
   },
@@ -83,10 +83,18 @@ const CARTES_MATIERES: CarteMatiereAffichage[] = [
  * chiffre inventé.
  *
  * Après plusieurs allers-retours pour se rapprocher de la maquette
- * (icône seule → une seule matière avec photo → 4 photos sans icône)
- * — "bien mais pas comme la photo que je t ai envoyé" — cette version
- * reprend les 3 éléments ensemble : pastille d'icône colorée (une
- * couleur par matière), photo en fondu à droite, étiquette courte.
+ * (icône seule → une seule matière avec photo → 4 photos sans icône
+ * → icônes + photos remises) cette version reprend les 3 éléments
+ * ensemble : pastille d'icône colorée (une couleur par matière),
+ * photo en fondu à droite, étiquette courte.
+ *
+ * Photo "Français" corrigée une dernière fois ("je veux quelle soit
+ * comme la forme qui se trouve sur la photo dans fichier de
+ * madrasti") : la carte "Mes matières" utilisait par erreur la même
+ * photo que la carte "En cours" (document + stylo,
+ * public/francais-cours.jpg) ; la maquette montre en fait une photo
+ * différente ici (un livre ouvert, à la silhouette bien visible) —
+ * recadrée séparément dans public/francais-livre-ouvert.jpg.
  */
 export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: GrilleMatieresAccueilProps) {
   const pourcentageFrancais = totalChapitres > 0 ? Math.round((chapitresLus / totalChapitres) * 100) : 0;
