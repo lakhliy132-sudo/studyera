@@ -2,6 +2,36 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Cartes "Mes matières" de l'accueil reconstruites selon une
+> maquette envoyée par l'utilisateur** ("je veux comme ca a 100 pour
+> 100", capture d'écran complète de l'accueil visé) —
+> `components/GrilleMatieresAccueil.tsx`. Chaque carte : icône en
+> pastille pleine couleur (icône blanche dessus, plus la version
+> "teinte pâle" d'avant) + titre/étiquette + petite photo carrée (56px)
+> + chevron sur une ligne, barre de progression en dessous — remplace
+> l'essai précédent où la photo occupait toute la carte en fond avec le
+> texte flottant par-dessus (peu lisible une fois les cartes réduites).
+> Grille repassée à 2 colonnes (`sm:grid-cols-2`) : la carte
+> horizontale a besoin de plus de largeur qu'un carré en 4 colonnes.
+>
+> Au passage : 3 des 4 vraies photos (mosquée, monde arabe, carte du
+> monde) avaient été **écrasées par erreur** par des dégradés unis
+> (générés en réponse à "mauvaise qualité", sans avoir compris que la
+> demande portait sur la mise en page, pas sur remplacer les vraies
+> photos) — restaurées depuis l'historique git (`git show <commit
+> avant l'écrasement>:chemin > chemin`) plutôt que recréées.
+>
+> Vérifié visuellement via une route temporaire
+> (`app/(public)/verif-temp-*/page.tsx`, créée puis supprimée) rendant
+> `GrilleMatieresAccueil` hors contexte d'authentification — plus
+> simple et fiable que simuler une connexion Google dans ce projet
+> (auth Google uniquement, pas de mot de passe). Note : la connexion
+> par email/mot de passe pour les comptes de test jetables ne
+> fonctionne donc plus pour visiter les pages qui exigent une session
+> (seul Google OAuth est configuré) — utiliser ce pattern de route
+> temporaire pour vérifier visuellement un composant qui a besoin d'un
+> utilisateur connecté, plutôt que d'essayer de simuler la connexion.
+>
 > **En-têtes "Histoire"/"Géographie" plus soignés** — demandé
 > explicitement par l'utilisateur ("fais la d une maniere chic") : le
 > simple `<h2>` en gras des deux sections (ajoutées juste avant) est
