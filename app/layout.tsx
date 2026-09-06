@@ -3,6 +3,7 @@ import { Caveat, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Disp
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
+import { deriverPrenom } from "@/lib/prenom";
 import { creerClientServeur } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -121,13 +122,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Prénom affiché à côté de l'avatar dans la nav (maquette envoyée par
+  // l'utilisateur) — une requête de plus uniquement pour un utilisateur
+  // connecté, comme AccueilConnecte le fait déjà pour la même donnée.
+  let prenom: string | null = null;
+  if (user) {
+    const { data: profil } = await supabase.from("profils").select("nom_complet").eq("id", user.id).maybeSingle();
+    prenom = deriverPrenom(profil?.nom_complet ?? null, user.email ?? null);
+  }
+
   return (
     <html
       lang="fr"
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
     >
       <body className="font-sans">
-        <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} />
+        <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} prenom={prenom} />
         {children}
       </body>
     </html>

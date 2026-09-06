@@ -3,12 +3,15 @@ import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
-import { IconeMenu, IconePersonne } from "@/components/icones";
+import { IconeChevronBas, IconeCloche, IconeMenu, IconePersonne, IconeRecherche } from "@/components/icones";
 import LiensNavigation from "@/components/LiensNavigation";
 
 interface BarreNavigationProps {
   connecte: boolean;
   email: string | null;
+  /** Prénom affiché à côté de l'avatar — `null` pour un visiteur non
+   * connecté (voir app/layout.tsx). */
+  prenom?: string | null;
 }
 
 /**
@@ -47,76 +50,140 @@ interface BarreNavigationProps {
  * dessous, le menu `<details>` prend le relais plutôt que de laisser
  * la page défiler horizontalement.
  */
-export default function BarreNavigation({ connecte, email }: BarreNavigationProps) {
+export default function BarreNavigation({ connecte, email, prenom = null }: BarreNavigationProps) {
+  const logo = (
+    <Link href="/" className="flex shrink-0 items-center gap-3">
+      <Image src="/logo-studyera.png" alt="Studyera" width={868} height={568} priority className="h-[52px] w-auto" />
+      <span className="font-lecture hidden text-[12.5px] leading-tight text-primary-vif sm:block">
+        Révisez ·
+        <br />
+        Comprenez ·
+        <br />
+        Progressez
+      </span>
+    </Link>
+  );
+
+  const menuMobile = (
+    // Pas de `relative` sur ce `<details>` : sa propre boîte ne fait que
+    // la largeur du bouton hamburger, donc un `relative` ici ferait
+    // résoudre `inset-x-0` du panneau ci-dessous contre cette boîte
+    // étroite plutôt que contre la largeur de l'écran. `<header>` est
+    // déjà `sticky`, donc déjà positionné : c'est lui qui sert de
+    // référence pour `inset-x-0`/`top-full` du panneau.
+    <details className="justify-self-end xl:hidden">
+      <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
+        <IconeMenu className="size-6" />
+        <span className="sr-only">Ouvrir le menu</span>
+      </summary>
+      <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
+        {connecte && <ChampRecherche pleineLargeur />}
+        <LiensNavigation pleineLargeur connecte={connecte} />
+        <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
+          <EtatConnexion connecte={connecte} email={email} prenom={prenom} pleineLargeur />
+        </div>
+      </div>
+    </details>
+  );
+
+  // Élève connecté : deux lignes (logo + recherche + compte, puis liens
+  // de nav centrés en dessous) — reprend la maquette complète envoyée
+  // par l'utilisateur ("tu peux faire juste ce qui est sur cette
+  // page"), qui montre une recherche et une cloche de notifications en
+  // plus de ce qui existait déjà (avatar, mode nuit, déconnexion).
+  if (connecte) {
+    return (
+      <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
+        <div className="grid h-16 w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
+          {logo}
+          <div className="hidden max-w-xl justify-self-center xl:block xl:w-full">
+            <ChampRecherche />
+          </div>
+          <div className="hidden items-center justify-end gap-3 xl:flex">
+            <button
+              type="button"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-subtle-foreground transition-colors hover:bg-surface-muted"
+              aria-label="Notifications"
+            >
+              <IconeCloche className="size-[18px]" />
+            </button>
+            <EtatConnexion connecte={connecte} email={email} prenom={prenom} />
+          </div>
+          {menuMobile}
+        </div>
+        <nav
+          aria-label="Navigation principale"
+          className="hidden items-center justify-center gap-2 border-t border-border py-1.5 xl:flex"
+        >
+          <LiensNavigation connecte={connecte} />
+        </nav>
+      </header>
+    );
+  }
+
   return (
     <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
       <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo-studyera.png"
-            alt="Studyera"
-            width={868}
-            height={568}
-            priority
-            className="h-[52px] w-auto"
-          />
-          <span className="font-lecture hidden text-[12.5px] leading-tight text-primary-vif sm:block">
-            Révisez ·
-            <br />
-            Comprenez ·
-            <br />
-            Progressez
-          </span>
-        </Link>
+        {logo}
 
         <nav aria-label="Navigation principale" className="hidden items-center justify-center gap-2 xl:flex">
           <LiensNavigation connecte={connecte} />
         </nav>
 
         <div className="hidden items-center justify-end gap-3 xl:flex">
-          <EtatConnexion connecte={connecte} email={email} />
+          <EtatConnexion connecte={connecte} email={email} prenom={prenom} />
         </div>
 
-        {/* Pas de `relative` sur ce `<details>` : sa propre boîte ne fait
-         * que la largeur du bouton hamburger, donc un `relative` ici
-         * ferait résoudre `inset-x-0` du panneau ci-dessous contre cette
-         * boîte étroite plutôt que contre la largeur de l'écran.
-         * `<header>` est déjà `sticky`, donc déjà positionné : c'est lui
-         * qui sert de référence pour `inset-x-0`/`top-full` du panneau. */}
-        <details className="justify-self-end xl:hidden">
-          <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
-            <IconeMenu className="size-6" />
-            <span className="sr-only">Ouvrir le menu</span>
-          </summary>
-          <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
-            <LiensNavigation pleineLargeur connecte={connecte} />
-            <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
-              <EtatConnexion connecte={connecte} email={email} pleineLargeur />
-            </div>
-          </div>
-        </details>
+        {menuMobile}
       </div>
     </header>
+  );
+}
+
+/** Barre de recherche du header connecté — reprend la maquette envoyée
+ * par l'utilisateur, purement visuelle : aucun moteur de recherche du
+ * contenu n'existe encore côté serveur, donc pas de `<form>`/`action`
+ * (une saisie suivie d'Entrée ne fait rien, plutôt que de donner
+ * l'illusion d'une recherche qui ne mène nulle part). */
+function ChampRecherche({ pleineLargeur = false }: { pleineLargeur?: boolean }) {
+  return (
+    <label className={`relative flex items-center ${pleineLargeur ? "w-full" : ""}`}>
+      <IconeRecherche className="pointer-events-none absolute left-3.5 size-4 text-subtle-foreground" />
+      <span className="sr-only">Rechercher</span>
+      <input
+        type="search"
+        placeholder="Rechercher une matière, un cours, un exercice..."
+        className="w-full rounded-full border border-border bg-background py-2 pr-4 pl-10 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
+      />
+    </label>
   );
 }
 
 function EtatConnexion({
   connecte,
   email,
+  prenom = null,
   pleineLargeur = false,
 }: BarreNavigationProps & { pleineLargeur?: boolean }) {
   if (connecte) {
     return (
       <div className={pleineLargeur ? "flex items-center gap-3 px-3 py-2" : "flex items-center gap-3"}>
-        <Link href="/tableau-de-bord" className="flex items-center gap-3" title={email ?? undefined}>
+        <Link href="/tableau-de-bord" className="flex items-center gap-2" title={email ?? undefined}>
           <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
-          {/* Email visible seulement dans le tiroir mobile (assez de
-           * place en vertical) — sur la nav desktop compacte, l'avatar
-           * seul suffit à indiquer "connecté", le survol (title
-           * ci-dessus) donne l'adresse complète si besoin. */}
-          {pleineLargeur && (
+          {/* Prénom + chevron — maquette envoyée par l'utilisateur
+           * ("avatar avec S, prénom Sara, petite flèche"). Caché en nav
+           * desktop compacte quand on n'a pas de prénom réel (compte
+           * Google dont les métadonnées n'ont pas encore été propagées),
+           * l'avatar seul suffit alors à indiquer "connecté". */}
+          {prenom && (
+            <span className="hidden items-center gap-1 sm:flex">
+              <span className="text-sm font-semibold text-ink">{prenom}</span>
+              <IconeChevronBas className="size-3.5 text-subtle-foreground" />
+            </span>
+          )}
+          {pleineLargeur && !prenom && (
             <span className="truncate text-sm text-muted-foreground">{email}</span>
           )}
         </Link>

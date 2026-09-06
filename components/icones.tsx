@@ -356,3 +356,23 @@ export function IconeCalendrier({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Cloche de notifications — barre de navigation (accueil connecté). */
+export function IconeCloche({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M6 9a6 6 0 1112 0c0 3.6 1 5.2 1.7 6.1a1 1 0 01-.8 1.6H5.1a1 1 0 01-.8-1.6C5 14.2 6 12.6 6 9z" />
+      <path d="M9.5 19a2.5 2.5 0 005 0" />
+    </svg>
+  );
+}
+
+/** Petit chevron vers le bas — indicateur de menu déroulant (avatar de
+ * la barre de navigation). */
+export function IconeChevronBas({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}

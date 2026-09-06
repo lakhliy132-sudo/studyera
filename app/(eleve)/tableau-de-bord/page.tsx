@@ -4,6 +4,7 @@ import CarteProductionEcrite from "@/components/CarteProductionEcrite";
 import CarteProgressionAnneau from "@/components/CarteProgressionAnneau";
 import CarteReprise from "@/components/CarteReprise";
 import ListeProgrammeOeuvres from "@/components/ListeProgrammeOeuvres";
+import { deriverPrenom } from "@/lib/prenom";
 import { QUOTA_QUOTIDIEN_MAX } from "@/lib/quota";
 import { recupererAnnonces } from "@/lib/supabase/communication";
 import { creerClientServeur } from "@/lib/supabase/server";
@@ -21,17 +22,6 @@ const NOMBRE_ACTIVITES_RECENTES = 5;
 
 function joursCourant() {
   return new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-}
-
-/** Premier prénom déduit de `nom_complet`, avec repli sur la partie
- * locale de l'email si `nom_complet` est vide — arrive pour un compte
- * Google dont les métadonnées n'ont pas encore été propagées vers
- * `profils`. Jamais de "Bonjour undefined". */
-function deriverPrenom(nomComplet: string | null, email: string | null): string {
-  const premierMot = nomComplet?.trim().split(/\s+/)[0];
-  if (premierMot) return premierMot;
-  const local = email?.split("@")[0];
-  return local ? local.charAt(0).toUpperCase() + local.slice(1) : "toi";
 }
 
 /**

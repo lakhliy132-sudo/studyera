@@ -1,22 +1,15 @@
 import Link from "next/link";
 
 import BandeauBienvenueAccueil from "@/components/BandeauBienvenueAccueil";
+import BarreObjectifAccueil from "@/components/BarreObjectifAccueil";
+import CarteAujourdhuiAccueil from "@/components/CarteAujourdhuiAccueil";
 import CarteEnCours from "@/components/CarteEnCours";
 import CompteARebourExamenLive from "@/components/CompteARebourExamenLive";
 import GrilleMatieresAccueil from "@/components/GrilleMatieresAccueil";
 import { IconeEtoile } from "@/components/icones";
+import { deriverPrenom } from "@/lib/prenom";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { recupererProgressionParOeuvre, recupererRepriseLecture } from "@/lib/supabase/tableauDeBord";
-
-/** Premier prénom déduit de `nom_complet`, avec repli sur la partie
- * locale de l'email — même logique que /tableau-de-bord (dupliquée
- * ici : trop petite pour justifier un fichier partagé). */
-function deriverPrenom(nomComplet: string | null, email: string | null): string {
-  const premierMot = nomComplet?.trim().split(/\s+/)[0];
-  if (premierMot) return premierMot;
-  const local = email?.split("@")[0];
-  return local ? local.charAt(0).toUpperCase() + local.slice(1) : "toi";
-}
 
 /**
  * Accueil d'un élève connecté — reprend une maquette complète fournie
@@ -25,19 +18,24 @@ function deriverPrenom(nomComplet: string | null, email: string | null): string 
  * "Mes matières", compte à rebours avant l'examen régional.
  *
  * Écarts assumés par rapport à la maquette, pour ne rien inventer :
- * - Pas de cloche de notifications : demandé puis explicitement
- *   écarté par l'utilisateur lors d'une session précédente ("non le
- *   mode de nuit" en réponse à la question posée à ce sujet) — la
- *   maquette en montre une, mais la garder contredirait ce choix déjà
- *   fait.
- * - Pas de planning "Aujourd'hui" (tâches horodatées) : aucune table
- *   de rappels/tâches personnelles n'existe en base, ces tâches de la
- *   maquette ("Lire le chapitre 2 — 08:00"...) sont des exemples de
- *   mise en page, pas de vraies données à reproduire.
- * - Pas de barre de recherche fonctionnelle (aucun moteur de
- *   recherche du contenu n'existe encore) ni de nouvelle barre de
- *   navigation : la navbar actuelle (BarreNavigation.tsx) a déjà été
- *   longuement ajustée à la demande de l'utilisateur, non reprise ici.
+ * "Objectif : Réussir le Bac !" (BarreObjectifAccueil) et "Aujourd'hui"
+ * (CarteAujourdhuiAccueil) ajoutés à la demande explicite de
+ * l'utilisateur, capture d'écran de la maquette complète à l'appui
+ * ("tu peux faire juste ce qui est sur cette page") — reviennent sur
+ * le choix précédent de les omettre. "Aujourd'hui" garde toutefois un
+ * état honnête "Bientôt disponible" plutôt que la liste de tâches
+ * horodatées de la maquette ("Lire le chapitre 2 — 08:00"...) : aucune
+ * table de rappels/tâches personnelles n'existe en base, ces tâches
+ * sont des exemples de mise en page dans la maquette, pas de vraies
+ * données à reproduire (voir le composant pour le détail).
+ *
+ * Écarts encore assumés par rapport à la maquette, pour ne rien
+ * inventer :
+ * - Pas de cloche de notifications ni de barre de recherche
+ *   fonctionnelle dans la navbar (BarreNavigation.tsx) : aucun système
+ *   de notifications ni moteur de recherche du contenu n'existe encore
+ *   côté serveur — les ajouter purement visuels, sans rien derrière,
+ *   induirait l'élève en erreur (bouton qui ne fait rien).
  * - "Mes matières" : seul le français a un vrai pourcentage
  *   (chapitres lus/total) — les 3 autres matières n'ont encore aucun
  *   contenu, "Bientôt disponible" plutôt qu'un chiffre inventé (la
@@ -99,10 +97,12 @@ async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: str
           <div className="flex flex-col gap-6">
             {reprise && <CarteEnCours reprise={reprise} pourcentage={pourcentageReprise} />}
             <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
+            <BarreObjectifAccueil />
           </div>
 
           <div className="flex flex-col gap-6">
             <CompteARebourExamenLive />
+            <CarteAujourdhuiAccueil />
             <div
               className="flex items-center gap-3 rounded-[24px] p-6 text-white shadow-sm"
               style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-matiere-arabe) 100%)" }}
