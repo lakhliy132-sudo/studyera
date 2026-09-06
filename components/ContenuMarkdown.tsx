@@ -18,15 +18,17 @@ interface ContenuMarkdownProps {
   couleurAccent?: string;
 }
 
-/** Grands numéros (pastilles des sections `##`) en rouge, petits
- * numéros (puces des listes `1. 2. 3.`) en vert — demandé explicitement
- * par l'utilisateur ("LES GRAND NUMERO 1 2 3 en rouge et les petits
- * nmr 1 2 3 en vert"), plutôt que la couleur de la matière (orange)
- * utilisée partout jusqu'ici pour `styleFeuille`. Valeurs fixes, pas de
- * token dans app/globals.css : distinction demandée pour ce style de
- * feuille précisément, pas une couleur de marque à réutiliser ailleurs. */
-const COULEUR_GRAND_NUMERO = "#dc2626";
-const COULEUR_PETIT_NUMERO = "#16a34a";
+/** Grands titres (`h2`) entièrement en rouge, petits titres (`h3`)
+ * entièrement en vert — demandé explicitement par l'utilisateur, qui a
+ * d'abord précisé les numéros seuls ("LES GRAND NUMERO 1 2 3 en rouge
+ * et les petits nmr 1 2 3 en vert") puis corrigé pour la phrase
+ * entière ("nn pour les grand titre en rouge et pour les petits titre
+ * en verts toute phrase") : la couleur s'applique au titre au complet
+ * (texte + pastille pour `h2`), pas seulement au numéro. Valeurs
+ * fixes, pas de token dans app/globals.css : distinction propre à ce
+ * style de feuille, pas une couleur de marque à réutiliser ailleurs. */
+const COULEUR_GRAND_TITRE = "#dc2626";
+const COULEUR_PETIT_TITRE = "#16a34a";
 
 /** Vrai si `texte` contient au moins un caractère arabe — heuristique
  * simple pour détecter automatiquement le sens de lecture (aucune
@@ -85,9 +87,12 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             }
             compteurSection += 1;
             return (
-              <h2 className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold text-ink first:mt-0">
+              <h2
+                style={{ color: COULEUR_GRAND_TITRE }}
+                className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold first:mt-0"
+              >
                 <span
-                  style={{ backgroundColor: COULEUR_GRAND_NUMERO }}
+                  style={{ backgroundColor: COULEUR_GRAND_TITRE }}
                   className="flex size-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white shadow-sm"
                 >
                   {compteurSection}
@@ -99,7 +104,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           h3: (props) =>
             styleFeuille ? (
               <h3
-                style={{ color: couleurAccent }}
+                style={{ color: COULEUR_PETIT_TITRE }}
                 className="mt-7 mb-2 font-serif text-lg font-bold"
                 {...props}
               />
@@ -117,7 +122,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           ),
           ol: (props) => (
             <ol
-              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[#16a34a]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
               {...props}
             />
           ),
