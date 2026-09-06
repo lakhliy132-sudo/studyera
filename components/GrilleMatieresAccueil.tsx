@@ -150,13 +150,13 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
                 <p className="truncate text-[12px] text-muted-foreground">{carte.etiquette}</p>
               </div>
 
-              <div className="relative size-14 shrink-0 overflow-hidden rounded-[12px]">
+              <div className="relative size-20 shrink-0 overflow-hidden rounded-[12px]">
                 <Image
                   src={carte.photo}
                   alt=""
                   aria-hidden="true"
                   fill
-                  sizes="56px"
+                  sizes="80px"
                   className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.08]"
                 />
               </div>
