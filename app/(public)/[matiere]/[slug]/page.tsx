@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
+import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
-import { recupererCoursParSlug } from "@/lib/supabase/contenu";
+import { recupererCoursParCategorie, recupererCoursParSlug } from "@/lib/supabase/contenu";
 
 interface PagePropsCoursMatiere {
   params: Promise<{ matiere: string; slug: string }>;
@@ -30,6 +32,13 @@ interface PagePropsCoursMatiere {
  * par l'utilisateur ("dans la partie de histoire geo les cours fais les
  * comme dans une feuille chic et stylée"). Les autres matières gardent
  * la présentation simple d'origine, inchangée.
+ *
+ * Sommaire des 16 leçons à côté du cours (histoire-geo uniquement) —
+ * demandé explicitement par l'utilisateur ("ajoute a coté sommaire des
+ * cours stylée"). Récupère toutes les leçons de la catégorie (même
+ * requête que /histoire-geo) pour construire ce sommaire : un peu plus
+ * de données chargées qu'un simple "leçon précédente/suivante", mais
+ * permet de sauter directement à n'importe quelle leçon.
  */
 export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
@@ -42,6 +51,10 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estHistoire = cours.slug.startsWith("histoire-");
   const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
+
+  const toutesLesLecons = estHistoireGeo ? await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE) : [];
+  const leconsHistoire = toutesLesLecons.filter((c) => c.slug.startsWith("histoire-"));
+  const leconsGeographie = toutesLesLecons.filter((c) => c.slug.startsWith("geographie-"));
 
   return (
     <main className="flex flex-col">
@@ -66,22 +79,26 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
             </span>
             <h1 className="font-serif text-[32px] leading-tight font-bold tracking-tight text-ink">{cours.titre}</h1>
 
-            <div className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
-              <div aria-hidden="true" style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }} className="h-2 w-full" />
-              {/* Pastille en filigrane, purement décorative — même
-               * technique que les taches de couleur de l'accueil.
-               * `IconeProps` ne prend pas de `style` : la couleur passe
-               * par un `<span>` englobant (`currentColor` du SVG). */}
-              <span
-                aria-hidden="true"
-                style={{ color: "var(--color-matiere-histoire-geo)" } as CSSProperties}
-                className="pointer-events-none absolute -top-6 -right-6 opacity-[0.05]"
-              >
-                <IconeSection className="size-40" />
-              </span>
-              <div className="relative p-9 sm:p-12">
-                <ContenuMarkdown texte={cours.contenu_mdx} styleFeuille couleurAccent="var(--color-matiere-histoire-geo)" />
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_270px]">
+              <div className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
+                <div aria-hidden="true" style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }} className="h-2 w-full" />
+                {/* Pastille en filigrane, purement décorative — même
+                 * technique que les taches de couleur de l'accueil.
+                 * `IconeProps` ne prend pas de `style` : la couleur passe
+                 * par un `<span>` englobant (`currentColor` du SVG). */}
+                <span
+                  aria-hidden="true"
+                  style={{ color: "var(--color-matiere-histoire-geo)" } as CSSProperties}
+                  className="pointer-events-none absolute -top-6 -right-6 opacity-[0.05]"
+                >
+                  <IconeSection className="size-40" />
+                </span>
+                <div className="relative p-9 sm:p-12">
+                  <ContenuMarkdown texte={cours.contenu_mdx} styleFeuille couleurAccent="var(--color-matiere-histoire-geo)" />
+                </div>
               </div>
+
+              <SommaireHistoireGeo leconsHistoire={leconsHistoire} leconsGeographie={leconsGeographie} sluCourant={cours.slug} />
             </div>
           </>
         ) : (
