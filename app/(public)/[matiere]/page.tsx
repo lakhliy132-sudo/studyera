@@ -1,7 +1,9 @@
+import type { ReactElement } from "react";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { IconeFleche, IconeFlecheHaut } from "@/components/icones";
+import { IconeFleche, IconeFlecheHaut, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -39,6 +41,29 @@ function CarteLecon({ matiereSlug, cours, numero }: { matiereSlug: string; cours
         </span>
       </Link>
     </li>
+  );
+}
+
+/** En-tête d'une section ("Histoire"/"Géographie") — pastille d'icône
+ * + titre serif + décompte + filet en dégradé qui prend le reste de
+ * la largeur, repris du même motif que l'en-tête de la page (icône
+ * entourée de traits en dégradé) plutôt qu'un simple `<h2>` nu — plus
+ * "chic" (demandé explicitement par l'utilisateur : "fais la d une
+ * maniere chic") sans introduire de nouveau langage visuel. */
+function EnTeteSection({ icone, titre, nombre }: { icone: ReactElement; titre: string; nombre: number }) {
+  return (
+    <div className="flex items-center gap-4">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
+        {icone}
+      </span>
+      <div className="flex shrink-0 flex-col">
+        <h2 className="font-serif text-2xl font-bold text-ink">{titre}</h2>
+        <p className="text-sm text-muted-foreground">
+          {nombre} leçon{nombre > 1 ? "s" : ""}
+        </p>
+      </div>
+      <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-border-strong to-transparent" />
+    </div>
   );
 }
 
@@ -122,14 +147,14 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
         ) : estHistoireGeo ? (
           <div className="flex flex-col gap-12">
             {leconsHistoire.length > 0 && (
-              <section className="flex flex-col gap-4">
-                <h2 className="font-serif text-2xl font-bold text-ink">Histoire</h2>
+              <section className="flex flex-col gap-6">
+                <EnTeteSection icone={<IconeHorloge className="size-5" />} titre="Histoire" nombre={leconsHistoire.length} />
                 <GrilleLecons matiereSlug={matiere.slug} lecons={leconsHistoire} />
               </section>
             )}
             {leconsGeographie.length > 0 && (
-              <section className="flex flex-col gap-4">
-                <h2 className="font-serif text-2xl font-bold text-ink">Géographie</h2>
+              <section className="flex flex-col gap-6">
+                <EnTeteSection icone={<IconeGlobe className="size-5" />} titre="Géographie" nombre={leconsGeographie.length} />
                 <GrilleLecons matiereSlug={matiere.slug} lecons={leconsGeographie} numeroDepart={leconsHistoire.length + 1} />
               </section>
             )}

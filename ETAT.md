@@ -2,6 +2,16 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **En-têtes "Histoire"/"Géographie" plus soignés** — demandé
+> explicitement par l'utilisateur ("fais la d une maniere chic") : le
+> simple `<h2>` en gras des deux sections (ajoutées juste avant) est
+> remplacé par un vrai en-tête de section (`EnTeteSection` dans
+> `app/(public)/[matiere]/page.tsx`) — pastille d'icône (horloge pour
+> "Histoire", globe pour "Géographie", icônes déjà existantes),
+> décompte du nombre de leçons, filet en dégradé qui prend le reste de
+> la largeur. Reprend le même motif que l'en-tête de la page (icône +
+> traits en dégradé), pas un nouveau langage visuel.
+>
 > **/histoire-geo : deux sections "Histoire" et "Géographie"** —
 > demandé explicitement par l'utilisateur ("fais moi une partie de
 > histoire et une partie de geo") : les 16 leçons étaient listées dans
