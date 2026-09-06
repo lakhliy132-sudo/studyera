@@ -88,7 +88,8 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             compteurSection += 1;
             return (
               <h2
-                style={{ color: COULEUR_GRAND_TITRE }}
+                id={`section-${compteurSection}`}
+                style={{ color: COULEUR_GRAND_TITRE, scrollMarginTop: "6rem" }}
                 className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold first:mt-0"
               >
                 <span

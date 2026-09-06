@@ -6,12 +6,23 @@ import { notFound } from "next/navigation";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
-import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
-import { recupererCoursParCategorie, recupererCoursParSlug } from "@/lib/supabase/contenu";
+import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
 interface PagePropsCoursMatiere {
   params: Promise<{ matiere: string; slug: string }>;
+}
+
+/** Titres des sections (`##`) d'un cours, dans l'ordre du document —
+ * même source que la numérotation de `ContenuMarkdown` (`styleFeuille`),
+ * pour construire le sommaire à côté du cours sans reparser le Markdown
+ * dans ContenuMarkdown lui-même (qui ne renvoie rien à son parent). */
+function extraireTitresSections(contenuMdx: string | null): string[] {
+  if (!contenuMdx) return [];
+  return contenuMdx
+    .split("\n")
+    .filter((ligne) => ligne.startsWith("## "))
+    .map((ligne) => ligne.slice(3).trim());
 }
 
 /**
@@ -33,12 +44,13 @@ interface PagePropsCoursMatiere {
  * comme dans une feuille chic et stylée"). Les autres matières gardent
  * la présentation simple d'origine, inchangée.
  *
- * Sommaire des 16 leçons à côté du cours (histoire-geo uniquement) —
- * demandé explicitement par l'utilisateur ("ajoute a coté sommaire des
- * cours stylée"). Récupère toutes les leçons de la catégorie (même
- * requête que /histoire-geo) pour construire ce sommaire : un peu plus
- * de données chargées qu'un simple "leçon précédente/suivante", mais
- * permet de sauter directement à n'importe quelle leçon.
+ * Sommaire à côté du cours (histoire-geo uniquement) — demandé
+ * explicitement par l'utilisateur ("ajoute a coté sommaire des cours
+ * stylée"). Un premier essai listait les 16 leçons de la matière,
+ * corrigé sur demande explicite ("non du chaque cours") : le sommaire
+ * liste les sections (`##`) du cours affiché, pas les autres leçons —
+ * liens d'ancrage vers chaque section (`#section-N`, posé par
+ * ContenuMarkdown).
  */
 export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
@@ -51,10 +63,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estHistoire = cours.slug.startsWith("histoire-");
   const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
-
-  const toutesLesLecons = estHistoireGeo ? await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE) : [];
-  const leconsHistoire = toutesLesLecons.filter((c) => c.slug.startsWith("histoire-"));
-  const leconsGeographie = toutesLesLecons.filter((c) => c.slug.startsWith("geographie-"));
+  const titresSections = estHistoireGeo ? extraireTitresSections(cours.contenu_mdx) : [];
 
   return (
     <main className="flex flex-col">
@@ -98,7 +107,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                 </div>
               </div>
 
-              <SommaireHistoireGeo leconsHistoire={leconsHistoire} leconsGeographie={leconsGeographie} sluCourant={cours.slug} />
+              <SommaireHistoireGeo titresSections={titresSections} />
             </div>
           </>
         ) : (
