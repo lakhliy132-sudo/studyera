@@ -12,10 +12,21 @@ interface ContenuMarkdownProps {
    * source plutôt qu'un style générique. `false` par défaut : /langue
    * (déjà en place) garde le liseré simple, inchangé. */
   styleFeuille?: boolean;
-  /** Couleur de la pastille numérotée quand `styleFeuille` est actif —
-   * un token `--color-matiere-*` (app/globals.css). Sans effet sinon. */
+  /** Couleur des titres (`h3`), du bandeau/filigrane posés par la page
+   * appelante — un token `--color-matiere-*` (app/globals.css). Sans
+   * effet si `styleFeuille` est `false`. */
   couleurAccent?: string;
 }
+
+/** Grands numéros (pastilles des sections `##`) en rouge, petits
+ * numéros (puces des listes `1. 2. 3.`) en vert — demandé explicitement
+ * par l'utilisateur ("LES GRAND NUMERO 1 2 3 en rouge et les petits
+ * nmr 1 2 3 en vert"), plutôt que la couleur de la matière (orange)
+ * utilisée partout jusqu'ici pour `styleFeuille`. Valeurs fixes, pas de
+ * token dans app/globals.css : distinction demandée pour ce style de
+ * feuille précisément, pas une couleur de marque à réutiliser ailleurs. */
+const COULEUR_GRAND_NUMERO = "#dc2626";
+const COULEUR_PETIT_NUMERO = "#16a34a";
 
 /** Vrai si `texte` contient au moins un caractère arabe — heuristique
  * simple pour détecter automatiquement le sens de lecture (aucune
@@ -76,7 +87,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             return (
               <h2 className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold text-ink first:mt-0">
                 <span
-                  style={{ backgroundColor: couleurAccent }}
+                  style={{ backgroundColor: COULEUR_GRAND_NUMERO }}
                   className="flex size-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white shadow-sm"
                 >
                   {compteurSection}
@@ -106,7 +117,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           ),
           ol: (props) => (
             <ol
-              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[#16a34a]" : "marker:text-primary"}`}
               {...props}
             />
           ),
