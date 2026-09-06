@@ -144,14 +144,14 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
               aria-hidden="true"
               fill
               sizes="280px"
-              className="absolute inset-0 object-cover opacity-[0.85] transition-transform duration-300 ease-in-out group-hover:scale-[1.04]"
+              className="absolute inset-0 object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.04]"
             />
             <div
               aria-hidden="true"
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 85%, transparent) 0%, color-mix(in srgb, var(--color-surface) 75%, transparent) 42%, color-mix(in srgb, var(--color-surface) 15%, transparent) 100%)",
+                  "linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 60%, transparent) 0%, color-mix(in srgb, var(--color-surface) 40%, transparent) 42%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%)",
               }}
             />
 
