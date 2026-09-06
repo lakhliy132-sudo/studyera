@@ -112,8 +112,15 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             ) : (
               <h3 className="mt-7 mb-2 font-serif text-lg font-bold text-primary" {...props} />
             ),
+          // Texte du cours en gras en styleFeuille (paragraphes, listes,
+          // citations) — demandé explicitement par l'utilisateur
+          // ("L ECRITURE DU COURS EN GRAS SLP"). /langue (styleFeuille
+          // à `false`) garde le texte normal, inchangé.
           p: (props) => (
-            <p className="mb-4 font-lecture text-[16px] leading-relaxed text-foreground" {...props} />
+            <p
+              className={`mb-4 font-lecture text-[16px] leading-relaxed text-foreground ${styleFeuille ? "font-bold" : ""}`}
+              {...props}
+            />
           ),
           ul: (props) => (
             <ul
@@ -128,12 +135,15 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             />
           ),
           li: (props) => (
-            <li className="ps-1 font-lecture text-[15.5px] leading-relaxed text-foreground" {...props} />
+            <li
+              className={`ps-1 font-lecture text-[15.5px] leading-relaxed text-foreground ${styleFeuille ? "font-bold" : ""}`}
+              {...props}
+            />
           ),
           strong: (props) => <strong className="font-semibold text-ink" {...props} />,
           blockquote: (props) => (
             <blockquote
-              className="my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-[15.5px] text-foreground"
+              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-[15.5px] text-foreground ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
