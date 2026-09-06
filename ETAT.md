@@ -2,6 +2,23 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **"Mes matières" : chaque carte a sa propre couleur** — demandé
+> explicitement par l'utilisateur ("la partie de chaque matiere ...
+> fais la avec une couleur differente de l autre") : avant, les 4
+> cartes ne se distinguaient que par la petite pastille d'icône (48px),
+> même bordure grise et même halo bleu au survol pour les 4.
+> `components/GrilleMatieresAccueil.tsx` : bandeau plein de 4px en haut
+> de chaque carte, dans la couleur exacte de sa matière
+> (`--color-matiere-*`), plus un halo au survol teinté pareil
+> (`color-mix`, remplace le halo bleu fixe). Un premier essai teintait
+> toute la bordure très légèrement (26 %) : trop discret pour se voir
+> comme "une couleur différente" au premier coup d'œil, remplacé par le
+> bandeau plein.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) en mode clair et sombre, y compris au survol, sans erreur
+> console. Aussi npx tsc --noEmit.
+>
 > **Couleurs ajoutées à l'accueil connecté** — demandé explicitement
 > par l'utilisateur ("ajoute des couleurs sur l acceuil pour donner la
 > vie au site") : la page était presque entièrement bleu pâle/blanc

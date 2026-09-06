@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { CSSProperties, ReactElement } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -34,15 +34,26 @@ interface CarteMatiere {
  * n'est un emoji, voir components/icones.tsx) ; "ض" (lettre arabe, pas
  * un emoji) gardée telle quelle, en vraie police arabe.
  *
- * Trois couleurs "de confort" du code fourni (bordure de carte, texte
- * du titre/étiquette/pourcentage, fond de la barre de progression)
- * sont remplacées par les tokens du site (`border-border`,
- * `text-ink`/`text-muted-foreground`, `bg-surface-muted`) plutôt que
- * les valeurs littérales exactes : visuellement identiques en mode
- * clair, mais ces valeurs fixes resteraient illisibles en mode
- * sombre. Les couleurs d'accent propres à chaque matière (icône,
- * barre de progression) restent, elles, exactement celles fournies
- * (voir les tokens `--color-matiere-*` dans app/globals.css).
+ * Trois couleurs "de confort" du code fourni (texte du
+ * titre/étiquette/pourcentage, fond de la barre de progression) sont
+ * remplacées par les tokens du site (`text-ink`/`text-muted-foreground`,
+ * `bg-surface-muted`) plutôt que les valeurs littérales exactes :
+ * visuellement identiques en mode clair, mais ces valeurs fixes
+ * resteraient illisibles en mode sombre. Les couleurs d'accent propres
+ * à chaque matière (icône, barre de progression) restent, elles,
+ * exactement celles fournies (voir les tokens `--color-matiere-*` dans
+ * app/globals.css).
+ *
+ * Liseré du haut + halo au survol teintés par matière — demandé
+ * explicitement par l'utilisateur ("la partie de chaque matiere ...
+ * fais la avec une couleur differente de l autre") : avant, les 4
+ * cartes partageaient exactement la même bordure grise et le même
+ * halo bleu au survol, seule la petite pastille d'icône changeait de
+ * couleur. Un premier essai teintait la bordure entière très
+ * légèrement (26 % de mélange) : trop discret pour se voir comme "une
+ * couleur différente" au premier coup d'œil. Un bandeau plein de 4px
+ * en haut de chaque carte (`carte.couleur` exacte) rend la différence
+ * évidente sans repeindre toute la carte.
  */
 const CARTES_MATIERES: CarteMatiere[] = [
   {
@@ -117,7 +128,15 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
           <Link
             key={carte.slug}
             href={carte.href}
-            className="group relative h-[142px] overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_rgba(25,75,140,0.12)]"
+            style={
+              {
+                borderTopColor: carte.couleur,
+                borderTopWidth: "4px",
+                // Halo de survol propre à la matière, lu par `hover:shadow-[...]` ci-dessous.
+                "--halo-matiere": `color-mix(in srgb, ${carte.couleur} 26%, transparent)`,
+              } as CSSProperties
+            }
+            className="group relative h-[142px] overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
           >
             <Image
               src={carte.photo}
