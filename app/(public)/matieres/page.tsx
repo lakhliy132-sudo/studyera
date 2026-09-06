@@ -37,7 +37,7 @@ export default function PageMatieres() {
           <li>
             <Link
               href="/francais"
-              className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+              className="group flex aspect-square flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
             >
               <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
                 <IconeLivre className="size-6" />
@@ -59,7 +59,7 @@ export default function PageMatieres() {
             <li key={matiere.slug}>
               <Link
                 href={`/${matiere.slug}`}
-                className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                className="group flex aspect-square flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
               >
                 <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
                   <matiere.Icone className="size-6" />
