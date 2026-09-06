@@ -1,8 +1,10 @@
+import type { CSSProperties } from "react";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ContenuMarkdown from "@/components/ContenuMarkdown";
-import { IconeFleche } from "@/components/icones";
+import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
@@ -21,6 +23,13 @@ interface PagePropsCoursMatiere {
  * (même garde que /production-ecrite/[slug]) : évite qu'un slug de
  * cours existant dans une autre matière ne s'affiche sous la mauvaise
  * URL.
+ *
+ * Habillage "feuille" pour histoire-geo (kicker Histoire/Géographie,
+ * titre plus grand, bandeau de couleur + pastille en filigrane, sections
+ * numérotées via `ContenuMarkdown styleFeuille`) — demandé explicitement
+ * par l'utilisateur ("dans la partie de histoire geo les cours fais les
+ * comme dans une feuille chic et stylée"). Les autres matières gardent
+ * la présentation simple d'origine, inchangée.
  */
 export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
@@ -29,6 +38,10 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
 
   const cours = await recupererCoursParSlug(slug);
   if (!cours || cours.categorie !== matiere.slug) notFound();
+
+  const estHistoireGeo = matiere.slug === "histoire-geo";
+  const estHistoire = cours.slug.startsWith("histoire-");
+  const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
 
   return (
     <main className="flex flex-col">
@@ -42,16 +55,49 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
           {matiere.titreAccent.toLowerCase()}
         </Link>
 
-        <div className="flex items-center gap-3.5 text-primary">
-          <span className="flex size-11 items-center justify-center rounded-[13px] bg-primary-tint">
-            <matiere.Icone className="size-5" />
-          </span>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
-        </div>
+        {estHistoireGeo ? (
+          <>
+            <span
+              style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
+              className="flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white"
+            >
+              <IconeSection className="size-3.5" />
+              {estHistoire ? "Histoire" : "Géographie"}
+            </span>
+            <h1 className="font-serif text-[32px] leading-tight font-bold tracking-tight text-ink">{cours.titre}</h1>
 
-        <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
-          <ContenuMarkdown texte={cours.contenu_mdx} />
-        </div>
+            <div className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
+              <div aria-hidden="true" style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }} className="h-2 w-full" />
+              {/* Pastille en filigrane, purement décorative — même
+               * technique que les taches de couleur de l'accueil.
+               * `IconeProps` ne prend pas de `style` : la couleur passe
+               * par un `<span>` englobant (`currentColor` du SVG). */}
+              <span
+                aria-hidden="true"
+                style={{ color: "var(--color-matiere-histoire-geo)" } as CSSProperties}
+                className="pointer-events-none absolute -top-6 -right-6 opacity-[0.05]"
+              >
+                <IconeSection className="size-40" />
+              </span>
+              <div className="relative p-9 sm:p-12">
+                <ContenuMarkdown texte={cours.contenu_mdx} styleFeuille couleurAccent="var(--color-matiere-histoire-geo)" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-3.5 text-primary">
+              <span className="flex size-11 items-center justify-center rounded-[13px] bg-primary-tint">
+                <matiere.Icone className="size-5" />
+              </span>
+              <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
+            </div>
+
+            <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
+              <ContenuMarkdown texte={cours.contenu_mdx} />
+            </div>
+          </>
+        )}
       </div>
     </main>
   );

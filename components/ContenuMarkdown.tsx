@@ -1,8 +1,20 @@
+import type { CSSProperties } from "react";
+
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface ContenuMarkdownProps {
   texte: string | null;
+  /** Section (`##`) numérotée dans une pastille pleine couleur au lieu
+   * du simple liseré — demandé explicitement par l'utilisateur pour
+   * les cours d'histoire-géo ("fais les comme dans une feuille chic et
+   * stylée"). Reprend la numérotation ❶❷❸ des schémas du document
+   * source plutôt qu'un style générique. `false` par défaut : /langue
+   * (déjà en place) garde le liseré simple, inchangé. */
+  styleFeuille?: boolean;
+  /** Couleur de la pastille numérotée quand `styleFeuille` est actif —
+   * un token `--color-matiere-*` (app/globals.css). Sans effet sinon. */
+  couleurAccent?: string;
 }
 
 /** Vrai si `texte` contient au moins un caractère arabe — heuristique
@@ -31,32 +43,70 @@ function contientArabe(texte: string): boolean {
  * visuellement puces/numéros du texte qu'ils accompagnent. Le
  * français (déjà utilisé par /langue) garde `dir="ltr"`, inchangé.
  */
-export default function ContenuMarkdown({ texte }: ContenuMarkdownProps) {
+export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAccent = "var(--color-primary)" }: ContenuMarkdownProps) {
   const sensDeLecture = texte && contientArabe(texte) ? "rtl" : "ltr";
+  // Incrémenté à chaque `##` rencontré par ReactMarkdown, dans l'ordre
+  // du document — simple variable de fermeture (pas un state React,
+  // recalculée à chaque rendu de la fonction), pas de compteur CSS.
+  let compteurSection = 0;
 
   return (
-    <div dir={sensDeLecture}>
+    // `--couleur-feuille` posée ici (plutôt qu'une classe Tailwind
+    // générée dynamiquement type `marker:text-[${couleurAccent}]`) :
+    // Tailwind scanne le code source à la recherche de classes
+    // écrites littéralement, une classe construite à l'exécution comme
+    // ça n'est jamais vue par le scanner et ne génère donc aucun CSS.
+    // `marker:text-[var(--couleur-feuille)]` ci-dessous reste lui une
+    // chaîne littérale (seule la valeur de la variable change), donc
+    // bien repéré par Tailwind.
+    <div dir={sensDeLecture} style={{ "--couleur-feuille": couleurAccent } as CSSProperties}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h2: (props) => (
-            <h2
-              className="mt-10 mb-4 border-s-4 border-primary ps-4 font-serif text-[24px] font-bold text-ink first:mt-0"
-              {...props}
-            />
-          ),
-          h3: (props) => (
-            <h3 className="mt-7 mb-2 font-serif text-lg font-bold text-primary" {...props} />
-          ),
+          h2: (props) => {
+            if (!styleFeuille) {
+              return (
+                <h2
+                  className="mt-10 mb-4 border-s-4 border-primary ps-4 font-serif text-[24px] font-bold text-ink first:mt-0"
+                  {...props}
+                />
+              );
+            }
+            compteurSection += 1;
+            return (
+              <h2 className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold text-ink first:mt-0">
+                <span
+                  style={{ backgroundColor: couleurAccent }}
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white shadow-sm"
+                >
+                  {compteurSection}
+                </span>
+                <span className="pt-0.5">{props.children}</span>
+              </h2>
+            );
+          },
+          h3: (props) =>
+            styleFeuille ? (
+              <h3
+                style={{ color: couleurAccent }}
+                className="mt-7 mb-2 font-serif text-lg font-bold"
+                {...props}
+              />
+            ) : (
+              <h3 className="mt-7 mb-2 font-serif text-lg font-bold text-primary" {...props} />
+            ),
           p: (props) => (
             <p className="mb-4 font-lecture text-[16px] leading-relaxed text-foreground" {...props} />
           ),
           ul: (props) => (
-            <ul className="mb-4 flex list-disc flex-col gap-2 ps-5 marker:text-primary" {...props} />
+            <ul
+              className={`mb-4 flex list-disc flex-col gap-2 ps-5 ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
+              {...props}
+            />
           ),
           ol: (props) => (
             <ol
-              className="mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold marker:text-primary"
+              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
               {...props}
             />
           ),
