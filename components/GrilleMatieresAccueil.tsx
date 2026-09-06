@@ -16,12 +16,10 @@ interface CarteMatiere {
   titre: string;
   etiquette: string;
   photo: string;
-  /** Référence à un token `--color-matiere-*` (app/globals.css). */
+  /** Référence à un token `--color-matiere-*` (app/globals.css) —
+   * fond plein de la pastille d'icône (icône en blanc dessus) et
+   * couleur de la barre de progression. */
   couleur: string;
-  /** Fond de la pastille d'icône — reprend exactement les valeurs
-   * rgba du code fourni (teinte très claire de la couleur d'accent) ;
-   * gardée en valeur littérale plutôt qu'un token, propre à cet usage. */
-  teinte: string;
   icone: ReactElement;
 }
 
@@ -44,16 +42,18 @@ interface CarteMatiere {
  * exactement celles fournies (voir les tokens `--color-matiere-*` dans
  * app/globals.css).
  *
- * Liseré du haut + halo au survol teintés par matière — demandé
- * explicitement par l'utilisateur ("la partie de chaque matiere ...
- * fais la avec une couleur differente de l autre") : avant, les 4
- * cartes partageaient exactement la même bordure grise et le même
- * halo bleu au survol, seule la petite pastille d'icône changeait de
- * couleur. Un premier essai teintait la bordure entière très
- * légèrement (26 % de mélange) : trop discret pour se voir comme "une
- * couleur différente" au premier coup d'œil. Un bandeau plein de 4px
- * en haut de chaque carte (`carte.couleur` exacte) rend la différence
- * évidente sans repeindre toute la carte.
+ * Halo de survol teinté par matière — demandé explicitement par
+ * l'utilisateur ("la partie de chaque matiere ... fais la avec une
+ * couleur differente de l autre") : avant, les 4 cartes partageaient
+ * exactement le même halo bleu au survol, seule la petite pastille
+ * d'icône changeait de couleur.
+ *
+ * Carte réorganisée (icône pleine couleur + titre/étiquette + petite
+ * photo carrée + chevron sur une ligne, barre de progression en
+ * dessous) pour coller exactement à une maquette envoyée par
+ * l'utilisateur ("je veux comme ca a 100 pour 100") — remplace un
+ * essai précédent où la photo occupait toute la carte en fond, jugé
+ * peu lisible une fois les cartes réduites en taille.
  */
 const CARTES_MATIERES: CarteMatiere[] = [
   {
@@ -63,7 +63,6 @@ const CARTES_MATIERES: CarteMatiere[] = [
     etiquette: "Lecture · Écriture · Expression",
     photo: "/francais-livre-ouvert.jpg",
     couleur: "var(--color-matiere-francais)",
-    teinte: "rgba(224,238,255,.95)",
     icone: <IconeLivre className="size-5" />,
   },
   {
@@ -73,7 +72,6 @@ const CARTES_MATIERES: CarteMatiere[] = [
     etiquette: "Foi · Valeurs · Citoyenneté",
     photo: "/education-islamique-cours.jpg",
     couleur: "var(--color-matiere-islamique)",
-    teinte: "rgba(225,248,242,.95)",
     icone: <IconeCroissant className="size-5" />,
   },
   {
@@ -83,7 +81,6 @@ const CARTES_MATIERES: CarteMatiere[] = [
     etiquette: "Grammaire · Lecture · Expression",
     photo: "/arabe-cours.jpg",
     couleur: "var(--color-matiere-arabe)",
-    teinte: "rgba(238,230,255,.95)",
     icone: (
       <span className="font-arabe text-[20px] font-bold" aria-hidden="true">
         ض
@@ -97,7 +94,6 @@ const CARTES_MATIERES: CarteMatiere[] = [
     etiquette: "Histoire · Géographie · EMC",
     photo: "/histoire-geo-cours.jpg",
     couleur: "var(--color-matiere-histoire-geo)",
-    teinte: "rgba(255,239,218,.95)",
     icone: <IconeGlobe className="size-5" />,
   },
 ];
@@ -123,71 +119,66 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-[18px] sm:grid-cols-4">
+      {/* Carte horizontale (icône pleine couleur + titre/étiquette +
+       * petite photo carrée + chevron, barre de progression en pleine
+       * largeur en bas) — reprend exactement la maquette envoyée par
+       * l'utilisateur ("je veux comme ca a 100 pour 100"), à la place
+       * de la photo en fond de carte des essais précédents. */}
+      <div className="grid grid-cols-1 gap-[14px] sm:grid-cols-2">
         {CARTES_MATIERES.map((carte) => (
           <Link
             key={carte.slug}
             href={carte.href}
             style={
               {
-                borderTopColor: carte.couleur,
-                borderTopWidth: "4px",
                 // Halo de survol propre à la matière, lu par `hover:shadow-[...]` ci-dessous.
                 "--halo-matiere": `color-mix(in srgb, ${carte.couleur} 26%, transparent)`,
               } as CSSProperties
             }
-            className="group relative aspect-square overflow-hidden rounded-[16px] border border-border bg-surface transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
+            className="group flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 shadow-sm transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
           >
-            <Image
-              src={carte.photo}
-              alt=""
-              aria-hidden="true"
-              fill
-              sizes="280px"
-              className="absolute inset-0 object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.04]"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 60%, transparent) 0%, color-mix(in srgb, var(--color-surface) 40%, transparent) 42%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%)",
-              }}
-            />
-
-            <div className="relative z-[2] flex h-full items-start gap-3.5 p-[18px]">
+            <div className="flex items-center gap-3">
               <span
-                style={{ backgroundColor: carte.teinte, color: carte.couleur }}
-                className="flex size-12 shrink-0 items-center justify-center rounded-[13px] backdrop-blur-[5px]"
+                style={{ backgroundColor: carte.couleur }}
+                className="flex size-11 shrink-0 items-center justify-center rounded-[12px] text-white"
               >
                 {carte.icone}
               </span>
 
-              <div className="pt-[3px]">
-                <h3 className="mb-[5px] text-[15px] font-bold text-ink">{carte.titre}</h3>
-                <p className="text-[11px] text-muted-foreground">{carte.etiquette}</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-[15px] font-bold text-ink">{carte.titre}</h3>
+                <p className="truncate text-[12px] text-muted-foreground">{carte.etiquette}</p>
               </div>
 
-              <IconeFleche className="relative z-[3] ml-auto size-5 shrink-0 text-subtle-foreground" />
+              <div className="relative size-14 shrink-0 overflow-hidden rounded-[12px]">
+                <Image
+                  src={carte.photo}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  sizes="56px"
+                  className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.08]"
+                />
+              </div>
+
+              <IconeFleche className="size-4 shrink-0 text-subtle-foreground" />
             </div>
 
-            <div className="absolute right-[18px] bottom-[17px] left-[18px] z-[4] flex items-center gap-2">
-              {carte.slug === "francais" ? (
-                <>
-                  <div className="h-[7px] flex-1 overflow-hidden rounded-full bg-surface-muted">
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${pourcentageFrancais}%`, backgroundColor: carte.couleur }}
-                    />
-                  </div>
-                  <span className="text-[11px] font-semibold text-muted-foreground">{pourcentageFrancais}%</span>
-                </>
-              ) : (
-                <span className="rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-subtle-foreground">
-                  Bientôt disponible
-                </span>
-              )}
-            </div>
+            {carte.slug === "francais" ? (
+              <div className="flex items-center gap-2">
+                <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-surface-muted">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${pourcentageFrancais}%`, backgroundColor: carte.couleur }}
+                  />
+                </div>
+                <span className="text-[11px] font-semibold text-muted-foreground">{pourcentageFrancais}%</span>
+              </div>
+            ) : (
+              <span className="w-fit rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-subtle-foreground">
+                Bientôt disponible
+              </span>
+            )}
           </Link>
         ))}
       </div>
