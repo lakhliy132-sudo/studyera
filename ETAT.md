@@ -2,6 +2,39 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
 >
+> **Recadrage de la photo "Éducation islamique" pour bien montrer la
+> mosquée** — demandé explicitement par l'utilisateur ("montre la
+> mosquée"), après que le recadrage précédent (fait dans la même
+> session) ne laissait voir que le minaret, le dôme étant quasiment
+> hors cadre. Deux causes cumulées, corrigées ensemble :
+> - **Mauvais ratio** : la carte réelle fait 484×142px (ratio ≈3,41),
+>   très different du ratio de la maquette miniature d'où venait le
+>   premier recadrage (≈1,7-2,1) — `object-cover` compensait en
+>   zoomant énormément et rognait presque toute la hauteur, ne
+>   laissant que le minaret (élément vertical) visible. Nouveau
+>   recadrage de `public/education-islamique-cours.jpg` au ratio exact
+>   de la carte (155×46px), pris directement dans la maquette source
+>   (`ChatGPT Image 5 sept. 2026, 23_59_00.png`, retrouvée à la racine
+>   du projet).
+> - **Mauvais cadrage horizontal** : le voile blanc de la carte
+>   (`GrilleMatieresAccueil.tsx`) est opaque à gauche (pour la
+>   pastille/le titre) et transparent à droite — le premier recadrage
+>   plaçait le dôme dans la zone opaque à gauche, où il disparaissait
+>   sous le voile. Nouveau recadrage centré sur le dôme dans la moitié
+>   droite/transparente de la carte, minaret coupé en partie à droite
+>   plutôt que le dôme à gauche.
+>
+> **Piège rencontré en vérifiant** : après avoir remplacé le fichier,
+> les captures d'écran montraient encore l'ancienne photo malgré
+> `page.reload()` — le cache disque de l'optimiseur d'image de Next.js
+> (`.next/cache/images/`) servait l'ancienne version. Vidé
+> (`rm -rf .next/cache/images/*`) pour que le nouveau recadrage
+> s'affiche ; à refaire si une future photo remplacée dans `public/`
+> semble "ne pas changer" malgré un fichier bien mis à jour sur disque.
+>
+> Vérifié avec un compte de test jetable (créé puis supprimé, cascade
+> confirmée) en mode clair et sombre, sans erreur console.
+>
 > **"Mes matières" : chaque carte a sa propre couleur** — demandé
 > explicitement par l'utilisateur ("la partie de chaque matiere ...
 > fais la avec une couleur differente de l autre") : avant, les 4
