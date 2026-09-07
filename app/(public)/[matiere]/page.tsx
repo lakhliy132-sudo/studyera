@@ -1,81 +1,36 @@
-import type { ReactElement } from "react";
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { IconeFleche, IconeFlecheHaut, IconeGlobe, IconeHorloge, IconeQuiz } from "@/components/icones";
+import { GrilleLecons } from "@/components/GrilleLeconsMatiere";
+import { IconeFleche, IconeLivre, IconeQuiz } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
-import type { Cours } from "@/types/base-de-donnees";
 
 interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
 }
 
-/** Une carte de leçon — extrait pour être réutilisé tel quel par la
- * grille unique (la plupart des matières) et par les deux grilles
- * "Histoire"/"Géographie" (histoire-geo, voir plus bas). `numero`
- * séparé de l'index du tableau : dans le rendu à deux grilles, la
- * numérotation de "Géographie" doit repartir après celle d'"Histoire",
- * pas de 1. */
-function CarteLecon({ matiereSlug, cours, numero }: { matiereSlug: string; cours: Cours; numero: number }) {
-  return (
-    <li>
-      <Link
-        href={`/${matiereSlug}/${cours.slug}`}
-        className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
-      >
-        <div className="flex items-center justify-between">
-          <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
-            <IconeFlecheHaut className="size-6" />
-          </span>
-          <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-primary-vif">
-            {String(numero).padStart(2, "0")}
-          </span>
-        </div>
-        <h3 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">{cours.titre}</h3>
-        <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
-          Lire le cours
-          <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-        </span>
-      </Link>
-    </li>
-  );
-}
-
-/** En-tête d'une section ("Histoire"/"Géographie") — pastille d'icône
- * + titre serif + décompte + filet en dégradé qui prend le reste de
- * la largeur, repris du même motif que l'en-tête de la page (icône
- * entourée de traits en dégradé) plutôt qu'un simple `<h2>` nu — plus
- * "chic" (demandé explicitement par l'utilisateur : "fais la d une
- * maniere chic") sans introduire de nouveau langage visuel. */
-function EnTeteSection({ icone, titre, nombre }: { icone: ReactElement; titre: string; nombre: number }) {
-  return (
-    <div className="flex items-center gap-4">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-        {icone}
-      </span>
-      <div className="flex shrink-0 flex-col">
-        <h2 className="font-serif text-2xl font-bold text-ink">{titre}</h2>
-        <p className="text-sm text-muted-foreground">
-          {nombre} leçon{nombre > 1 ? "s" : ""}
-        </p>
-      </div>
-      <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-border-strong to-transparent" />
-    </div>
-  );
-}
-
-function GrilleLecons({ matiereSlug, lecons, numeroDepart = 1 }: { matiereSlug: string; lecons: Cours[]; numeroDepart?: number }) {
-  return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[18px]">
-      {lecons.map((cours, index) => (
-        <CarteLecon key={cours.id} matiereSlug={matiereSlug} cours={cours} numero={numeroDepart + index} />
-      ))}
-    </ul>
-  );
-}
+/** Les 2 cases du hub histoire-geo ("Cours"/"Flash cards") — mêmes
+ * dimensions et style que SECTIONS_FRANCAIS (lib/francais.ts), pas de
+ * fichier de données séparé pour seulement 2 entrées propres à cette
+ * seule matière. */
+const CASES_HISTOIRE_GEO = [
+  {
+    href: "/histoire-geo/cours",
+    titreAvantAccent: "Les ",
+    titreAccent: "cours",
+    description: "16 leçons d'histoire et de géographie, réparties par thème.",
+    Icone: IconeLivre,
+  },
+  {
+    href: "/histoire-geo/flashcards",
+    titreAvantAccent: "Flash",
+    titreAccent: "cards",
+    description: "Révise les notions clés en un coup d'œil.",
+    Icone: IconeQuiz,
+  },
+] as const;
 
 /**
  * /[matiere] — page de liste d'une matière ajoutée à la demande de
@@ -96,23 +51,25 @@ function GrilleLecons({ matiereSlug, lecons, numeroDepart = 1 }: { matiereSlug: 
  * disponible" tant que rien n'a été importé, comme /oeuvres avant
  * son premier contenu.
  *
- * Histoire-géographie : deux grilles séparées ("Histoire" /
- * "Géographie") au lieu d'une seule — demandé explicitement par
- * l'utilisateur ("fais moi une partie de histoire et une partie de
- * geo"). Distinguées par le préfixe du `slug` (`histoire-*` /
- * `geographie-*`, voir l'insertion des 16 leçons dans `cours`) plutôt
- * qu'une colonne dédiée en base — propre à cette matière, les 2
- * autres (éducation islamique, arabe) gardent la grille unique.
+ * Histoire-géographie : hub à 2 cases ("Cours"/"Flash cards") au lieu
+ * de lister les leçons directement ici — demandé explicitement par
+ * l'utilisateur ("je veux que les cours sois dans une cases et la
+ * partie de flash cardes dans une autre come francais"), même
+ * principe que /francais (Œuvres, Langue, Production écrite,
+ * Correcteur IA sont chacune leur propre page, pas listées sur
+ * /francais). Les leçons elles-mêmes vivent maintenant sur
+ * /histoire-geo/cours (deux grilles Histoire/Géographie, voir ce
+ * fichier), les fiches sur /histoire-geo/flashcards. Les 2 autres
+ * matières génériques (éducation islamique, arabe) gardent la grille
+ * de leçons directement sur /[matiere], inchangée.
  */
 export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const { matiere: slugMatiere } = await params;
   const matiere = recupererMatiereParSlug(slugMatiere);
   if (!matiere) notFound();
 
-  const lecons = await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
   const estHistoireGeo = matiere.slug === "histoire-geo";
-  const leconsHistoire = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("histoire-")) : [];
-  const leconsGeographie = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("geographie-")) : [];
+  const lecons = estHistoireGeo ? [] : await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
 
   return (
     <main className="flex flex-col">
@@ -140,47 +97,34 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <p className="mt-3 max-w-xl text-base text-muted-foreground">{matiere.description}</p>
         </section>
 
-        {/* Case "Flash cards" — demandée explicitement par
-         * l'utilisateur ("fais moi une case qui s appelle flash
-         * cards"), propre à histoire-geo (seule matière avec assez de
-         * contenu réel pour en tirer des fiches, voir
-         * lib/flashcards.ts). */}
-        {estHistoireGeo && (
-          <Link
-            href="/histoire-geo/flashcards"
-            style={{ background: "linear-gradient(120deg, var(--color-matiere-histoire-geo) 0%, var(--color-primary) 100%)" }}
-            className="group flex items-center gap-4 rounded-[20px] p-6 text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(27,58,143,0.18)]"
-          >
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-[16px] bg-white/15 backdrop-blur-sm">
-              <IconeQuiz className="size-7" />
-            </span>
-            <div className="flex-1">
-              <h2 className="font-serif text-xl font-bold">Flash cards</h2>
-              <p className="text-sm text-white/80">Révise les notions clés des cours d&apos;histoire et de géographie.</p>
-            </div>
-            <IconeFleche className="size-5 shrink-0 transition-transform group-hover:translate-x-1" />
-          </Link>
-        )}
-
-        {lecons.length === 0 ? (
+        {estHistoireGeo ? (
+          <ul className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-[18px] sm:grid-cols-2">
+            {CASES_HISTOIRE_GEO.map((cas) => (
+              <li key={cas.href}>
+                <Link
+                  href={cas.href}
+                  className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                >
+                  <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
+                    <cas.Icone className="size-6" />
+                  </span>
+                  <h2 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">
+                    {cas.titreAvantAccent}
+                    <span className="text-primary italic">{cas.titreAccent}</span>
+                  </h2>
+                  <p className="mt-1.5 font-lecture text-[14.5px] leading-relaxed text-muted-foreground">{cas.description}</p>
+                  <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
+                    Découvrir
+                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
           </p>
-        ) : estHistoireGeo ? (
-          <div className="flex flex-col gap-12">
-            {leconsHistoire.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeHorloge className="size-5" />} titre="Histoire" nombre={leconsHistoire.length} />
-                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsHistoire} />
-              </section>
-            )}
-            {leconsGeographie.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeGlobe className="size-5" />} titre="Géographie" nombre={leconsGeographie.length} />
-                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsGeographie} numeroDepart={leconsHistoire.length + 1} />
-              </section>
-            )}
-          </div>
         ) : (
           <GrilleLecons matiereSlug={matiere.slug} lecons={lecons} />
         )}
