@@ -2,6 +2,23 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-07.
 >
+> **Flash cards pour histoire-geo** — demandé explicitement par
+> l'utilisateur ("fais moi une case qui s appelle flash cards").
+> `lib/flashcards.ts` extrait de vraies fiches (question/réponse)
+> directement du contenu des 16 cours, motif `**Terme**: description`
+> déjà très présent dans le texte transcrit — aucun contenu inventé
+> (160 fiches obtenues). `components/FlashcardsHistoireGeo.tsx` :
+> visionneuse cliente (carte qui se retourne au clic, précédent/
+> suivant, mélanger). Nouvelle route statique
+> `app/(public)/histoire-geo/flashcards/page.tsx` (prime sur la route
+> générique `/[matiere]/[slug]` pour ce chemin précis — Next.js
+> résout les segments statiques avant les dynamiques du même niveau).
+> Carte "Flash cards" (dégradé orange→bleu) ajoutée sur `/histoire-geo`
+> juste au-dessus des grilles Histoire/Géographie.
+>
+> Vérifié visuellement (carte du hub, page flashcards, retournement),
+> sans erreur console. Aussi npx tsc --noEmit.
+>
 > **Parenthèses retirées du contenu des 16 leçons d'histoire-géo** —
 > demandé explicitement par l'utilisateur ("enleve ) dans toutes les
 > ecritures"). Script ponctuel (non commité, comme les autres scripts

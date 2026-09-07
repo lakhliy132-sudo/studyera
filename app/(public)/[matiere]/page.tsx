@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { IconeFleche, IconeFlecheHaut, IconeGlobe, IconeHorloge } from "@/components/icones";
+import { IconeFleche, IconeFlecheHaut, IconeGlobe, IconeHorloge, IconeQuiz } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -139,6 +139,28 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">{matiere.description}</p>
         </section>
+
+        {/* Case "Flash cards" — demandée explicitement par
+         * l'utilisateur ("fais moi une case qui s appelle flash
+         * cards"), propre à histoire-geo (seule matière avec assez de
+         * contenu réel pour en tirer des fiches, voir
+         * lib/flashcards.ts). */}
+        {estHistoireGeo && (
+          <Link
+            href="/histoire-geo/flashcards"
+            style={{ background: "linear-gradient(120deg, var(--color-matiere-histoire-geo) 0%, var(--color-primary) 100%)" }}
+            className="group flex items-center gap-4 rounded-[20px] p-6 text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(27,58,143,0.18)]"
+          >
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-[16px] bg-white/15 backdrop-blur-sm">
+              <IconeQuiz className="size-7" />
+            </span>
+            <div className="flex-1">
+              <h2 className="font-serif text-xl font-bold">Flash cards</h2>
+              <p className="text-sm text-white/80">Révise les notions clés des cours d&apos;histoire et de géographie.</p>
+            </div>
+            <IconeFleche className="size-5 shrink-0 transition-transform group-hover:translate-x-1" />
+          </Link>
+        )}
 
         {lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
