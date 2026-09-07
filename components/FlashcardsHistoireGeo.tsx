@@ -100,23 +100,29 @@ export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: Flash
               className={`relative h-96 w-full transition-transform duration-500 [transform-style:preserve-3d] ${retournee ? "[transform:rotateY(180deg)]" : ""}`}
             >
               {/* Face avant — la question. Nom de la leçon et question
-               * sur la même ligne (`flex-wrap` : la question passe à la
-               * ligne suivante si la leçon a un long titre, mais reste
-               * toujours juste à côté du nom plutôt qu'en dessous) —
-               * demandé explicitement par l'utilisateur ("je veux les
-               * noms de cours et les questions sur la meme ligne"). */}
+               * strictement sur une seule ligne horizontale (`flex-nowrap`,
+               * pas de retour à la ligne — un premier essai en
+               * `flex-wrap` repassait à la ligne pour un titre de leçon
+               * long, pas assez strictement "sur la même ligne" pour
+               * l'utilisateur : "non horizatelement sur la ligne").
+               * Titre de la leçon tronqué (`truncate`) pour laisser la
+               * place à la question, sens de lecture RTL explicite sur
+               * cette ligne (contenu arabe) pour que la leçon et la
+               * question s'enchaînent dans le bon ordre visuel. */}
               <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden]">
                 <FormesDecoratives />
                 <div className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-y-auto p-8 text-center">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
                     <IconeGlobe className="size-4.5" />
                   </span>
-                  <p className="flex flex-wrap items-baseline justify-center gap-x-2.5 gap-y-1">
-                    <span className="w-fit shrink-0 rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">
+                  <div dir="rtl" className="flex w-full flex-nowrap items-baseline gap-2.5">
+                    <span className="max-w-[35%] shrink-0 truncate rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">
                       {carte.leconTitre}
                     </span>
-                    <span className="font-serif text-[26px] leading-snug font-bold text-ink">{carte.question}</span>
-                  </p>
+                    <span className="min-w-0 flex-1 truncate font-serif text-[26px] leading-snug font-bold text-ink">
+                      {carte.question}
+                    </span>
+                  </div>
                 </div>
                 <p className="relative shrink-0 border-t border-border bg-background py-2.5 text-center text-xs font-semibold text-subtle-foreground">
                   Clique pour voir la réponse
