@@ -37,8 +37,8 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
         borderColor: actif ? couleur : `color-mix(in srgb, ${couleur} 35%, transparent)`,
         backgroundColor: actif ? couleur : "transparent",
       }}
-      className={`flex items-center gap-2 rounded-full border-2 py-1.5 pr-3.5 pl-1.5 text-left text-[13px] font-semibold transition-all ${
-        actif ? "text-white shadow-md" : "bg-surface text-ink hover:-translate-y-0.5"
+      className={`flex w-full items-center gap-2.5 rounded-full border-2 py-1.5 pr-3.5 pl-1.5 text-left text-[13px] font-semibold transition-all ${
+        actif ? "text-white shadow-md" : "bg-surface text-ink hover:-translate-x-0.5"
       }`}
     >
       <span
@@ -47,7 +47,7 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
       >
         {numero}
       </span>
-      <span className="line-clamp-1 max-w-[220px]">{lecon.titre}</span>
+      <span className="line-clamp-1">{lecon.titre}</span>
     </button>
   );
 }
@@ -61,11 +61,18 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
  * Passé d'un `<select>` natif à des puces colorées cliquables — demandé
  * explicitement par l'utilisateur ("je veux qu il soit trop stylé avec
  * des couleurs") : un `<select>` natif ne peut pas être stylé aussi
- * richement (impossible de colorer les options individuellement de
- * façon fiable dans tous les navigateurs). Groupé Histoire/Géographie,
- * une couleur par leçon (voir `PALETTE`), navigue vers `?cours=<slug>`
- * au clic. `"use client"` : seul ce sélecteur a besoin de `useRouter`,
- * le reste de la page reste un Composant Serveur.
+ * richement. Une couleur par leçon (voir `PALETTE`), navigue vers
+ * `?cours=<slug>` au clic.
+ *
+ * Liste verticale (colonne étroite) plutôt que des puces qui
+ * s'enchaînaient horizontalement au-dessus de la carte — corrige un
+ * malentendu ("je veux les noms de cours et les questions du
+ * flashcards sur la meme ligne" / "NOOOO LA LISTE DE COURS") :
+ * l'utilisateur voulait la liste des leçons à côté de la carte de
+ * question (même ligne/rangée de la page), pas empilée au-dessus.
+ * Voir app/(public)/histoire-geo/flashcards/page.tsx pour la mise en
+ * page à deux colonnes. `"use client"` : seul ce sélecteur a besoin de
+ * `useRouter`, le reste de la page reste un Composant Serveur.
  */
 export default function SelecteurLeconFlashcards({
   leconsHistoire,
@@ -80,12 +87,12 @@ export default function SelecteurLeconFlashcards({
   }
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-4">
+    <div className="sticky top-24 flex max-h-[calc(100vh-7rem)] w-full flex-col gap-4 overflow-y-auto rounded-[18px] border border-border bg-surface p-4 shadow-sm">
       <button
         type="button"
         onClick={() => allerA(null)}
         style={{ backgroundColor: "var(--color-primary)" }}
-        className={`flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-sm transition-opacity ${
+        className={`flex w-full items-center justify-between gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-sm transition-opacity ${
           sluActif ? "opacity-50 hover:opacity-100" : ""
         }`}
       >
@@ -94,11 +101,11 @@ export default function SelecteurLeconFlashcards({
       </button>
 
       <div className="flex flex-col gap-2">
-        <p className="flex items-center gap-1.5 text-xs font-bold tracking-wide text-subtle-foreground uppercase">
+        <p className="flex items-center gap-1.5 px-1 text-xs font-bold tracking-wide text-subtle-foreground uppercase">
           <IconeHorloge className="size-3.5" />
           Histoire
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-1.5">
           {leconsHistoire.map((lecon, index) => (
             <PuceLecon
               key={lecon.slug}
@@ -112,11 +119,11 @@ export default function SelecteurLeconFlashcards({
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="flex items-center gap-1.5 text-xs font-bold tracking-wide text-subtle-foreground uppercase">
+        <p className="flex items-center gap-1.5 px-1 text-xs font-bold tracking-wide text-subtle-foreground uppercase">
           <IconeGlobe className="size-3.5" />
           Géographie
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-1.5">
           {leconsGeographie.map((lecon, index) => (
             <PuceLecon
               key={lecon.slug}

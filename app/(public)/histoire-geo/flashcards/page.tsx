@@ -26,14 +26,20 @@ interface PagePropsFlashcards {
  *
  * `?cours=<slug>` limite les fiches à une seule leçon — demandé
  * explicitement par l'utilisateur ("je veux que chaque cours a ces
- * flashcardes"). Posé par `SelecteurLeconFlashcards` ci-dessous
- * (`<select>` sur cette page même) : un premier essai posait ce choix
- * comme une case sur chaque page de cours, revenu en arrière sur
- * demande explicite de l'utilisateur ("non dans la partie de flash
- * cards") — la sélection se fait depuis cette page-ci. Paramètre d'URL
- * plutôt qu'une route dédiée par leçon
+ * flashcardes"). Posé par `SelecteurLeconFlashcards` (un premier essai
+ * posait ce choix comme une case sur chaque page de cours, revenu en
+ * arrière sur demande explicite : "non dans la partie de flash
+ * cards"). Paramètre d'URL plutôt qu'une route dédiée par leçon
  * (`/histoire-geo/flashcards/[slug]`) : même visionneuse, mêmes
  * boutons "Mélanger"/navigation, seul l'ensemble de départ change.
+ *
+ * Sélecteur de leçon à côté de la carte (deux colonnes), pas empilé
+ * au-dessus — corrige un malentendu ("je veux les noms de cours et
+ * les questions du flashcards sur la meme ligne" / "NOOOO LA LISTE DE
+ * COURS") : l'utilisateur voulait la liste des leçons sur la même
+ * ligne/rangée que la carte, pas au-dessus. Même mise en page à deux
+ * colonnes que app/(public)/[matiere]/[slug]/page.tsx (cours +
+ * sommaire).
  */
 export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePropsFlashcards) {
   const { cours: sluFiltre } = await searchParams;
@@ -47,8 +53,8 @@ export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePr
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col items-center gap-6 px-6 pt-9 pb-16 sm:px-9">
-        <div className="flex w-full max-w-xl flex-col gap-2">
+      <div className="flex w-full flex-col gap-6 px-6 pt-9 pb-16 sm:px-9">
+        <div className="flex w-full flex-col gap-2">
           <Link
             href="/histoire-geo"
             className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -73,20 +79,24 @@ export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePr
           </p>
         </div>
 
-        <SelecteurLeconFlashcards
-          leconsHistoire={leconsHistoire}
-          leconsGeographie={leconsGeographie}
-          sluActif={leconFiltree?.slug}
-          totalFiches={toutesLesFiches.length}
-        />
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_300px]">
+          <div className="flex w-full flex-col items-center">
+            {cartes.length === 0 ? (
+              <p className="w-full max-w-xl rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
+                Bientôt disponible.
+              </p>
+            ) : (
+              <FlashcardsHistoireGeo key={sluFiltre ?? "toutes"} cartes={cartes} />
+            )}
+          </div>
 
-        {cartes.length === 0 ? (
-          <p className="w-full max-w-xl rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
-            Bientôt disponible.
-          </p>
-        ) : (
-          <FlashcardsHistoireGeo key={sluFiltre ?? "toutes"} cartes={cartes} />
-        )}
+          <SelecteurLeconFlashcards
+            leconsHistoire={leconsHistoire}
+            leconsGeographie={leconsGeographie}
+            sluActif={leconFiltree?.slug}
+            totalFiches={toutesLesFiches.length}
+          />
+        </div>
       </div>
     </main>
   );
