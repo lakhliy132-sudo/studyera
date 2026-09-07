@@ -4,48 +4,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ContenuMarkdown from "@/components/ContenuMarkdown";
-import { IconeCartes, IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
+import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
-import { extraireFlashcards } from "@/lib/flashcards";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
 interface PagePropsCoursMatiere {
   params: Promise<{ matiere: string; slug: string }>;
-}
-
-/** Case "Flashcards de cette leçon" — demandé explicitement par
- * l'utilisateur ("je veux que chaque cours a ces flashcardes et je
- * veux qu'il etre esthetique") : même langage visuel que le sommaire
- * juste en dessous (bandeau de couleur, ombre marquée), en bleu comme
- * la page /histoire-geo/flashcards (voir FlashcardsHistoireGeo.tsx)
- * plutôt que l'orange de la matière — pour que la case annonce
- * clairement "flashcards", pas "encore une leçon". `?cours=<slug>`
- * filtre la visionneuse à cette seule leçon (voir
- * app/(public)/histoire-geo/flashcards/page.tsx). */
-function CarteFlashcardsLecon({ sluCours, nombre }: { sluCours: string; nombre: number }) {
-  if (nombre === 0) return null;
-
-  return (
-    <Link
-      href={`/histoire-geo/flashcards?cours=${sluCours}`}
-      className="group flex w-full items-center gap-3 overflow-hidden rounded-[18px] border border-border bg-surface shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(20,30,60,0.2)]"
-    >
-      <div aria-hidden="true" style={{ backgroundColor: "var(--color-primary)" }} className="h-full w-1.5 self-stretch" />
-      <div className="flex flex-1 items-center gap-3 py-4 pr-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-          <IconeCartes className="size-4" />
-        </span>
-        <div className="flex-1">
-          <p className="font-serif text-sm font-bold text-ink">Flashcards</p>
-          <p className="text-xs text-muted-foreground">
-            {nombre} fiche{nombre > 1 ? "s" : ""} de cette leçon
-          </p>
-        </div>
-        <IconeFleche className="size-4 shrink-0 text-subtle-foreground transition-transform group-hover:translate-x-1" />
-      </div>
-    </Link>
-  );
 }
 
 /** Titres des sections (`##`) d'un cours, dans l'ordre du document —
@@ -86,6 +51,13 @@ function extraireTitresSections(contenuMdx: string | null): string[] {
  * liste les sections (`##`) du cours affiché, pas les autres leçons —
  * liens d'ancrage vers chaque section (`#section-N`, posé par
  * ContenuMarkdown).
+ *
+ * Pas de case "Flashcards" ici : un essai a été fait (case à côté du
+ * sommaire, liant vers /histoire-geo/flashcards?cours=<slug>), revenu
+ * en arrière sur demande explicite de l'utilisateur ("non dans la
+ * partie de flash cards") — la sélection d'une leçon pour ses
+ * flashcards se fait depuis /histoire-geo/flashcards lui-même (voir
+ * ce fichier), pas depuis chaque page de cours.
  */
 export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
@@ -99,7 +71,6 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   const estHistoire = cours.slug.startsWith("histoire-");
   const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
   const titresSections = estHistoireGeo ? extraireTitresSections(cours.contenu_mdx) : [];
-  const flashcardsLecon = estHistoireGeo ? extraireFlashcards(cours.contenu_mdx, cours.titre, cours.slug) : [];
 
   return (
     <main className="flex flex-col">
@@ -143,10 +114,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                 </div>
               </div>
 
-              <div className="flex w-full flex-col gap-4">
-                <CarteFlashcardsLecon sluCours={cours.slug} nombre={flashcardsLecon.length} />
-                <SommaireHistoireGeo titresSections={titresSections} />
-              </div>
+              <SommaireHistoireGeo titresSections={titresSections} />
             </div>
           </>
         ) : (

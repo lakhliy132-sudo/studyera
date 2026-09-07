@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import FlashcardsHistoireGeo from "@/components/FlashcardsHistoireGeo";
 import { IconeCartes, IconeFleche } from "@/components/icones";
+import SelecteurLeconFlashcards from "@/components/SelecteurLeconFlashcards";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { extraireFlashcards } from "@/lib/flashcards";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -25,31 +26,35 @@ interface PagePropsFlashcards {
  *
  * `?cours=<slug>` limite les fiches à une seule leçon — demandé
  * explicitement par l'utilisateur ("je veux que chaque cours a ces
- * flashcardes"), posé par le bouton "Flashcards de cette leçon" sur
- * app/(public)/[matiere]/[slug]/page.tsx. Paramètre d'URL plutôt
- * qu'une route dédiée par leçon (`/histoire-geo/flashcards/[slug]`) :
- * même visionneuse, mêmes boutons "Mélanger"/navigation, seul
- * l'ensemble de départ change — pas besoin d'une page distincte.
- * Sans le paramètre (ou avec un slug inconnu), retombe sur les 160
- * fiches de toutes les leçons.
+ * flashcardes"). Posé par `SelecteurLeconFlashcards` ci-dessous
+ * (`<select>` sur cette page même) : un premier essai posait ce choix
+ * comme une case sur chaque page de cours, revenu en arrière sur
+ * demande explicite de l'utilisateur ("non dans la partie de flash
+ * cards") — la sélection se fait depuis cette page-ci. Paramètre d'URL
+ * plutôt qu'une route dédiée par leçon
+ * (`/histoire-geo/flashcards/[slug]`) : même visionneuse, mêmes
+ * boutons "Mélanger"/navigation, seul l'ensemble de départ change.
  */
 export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePropsFlashcards) {
   const { cours: sluFiltre } = await searchParams;
   const lecons = await recupererCoursParCategorie("histoire-geo", FILIERE_ACTUELLE);
+  const leconsHistoire = lecons.filter((c) => c.slug.startsWith("histoire-"));
+  const leconsGeographie = lecons.filter((c) => c.slug.startsWith("geographie-"));
+
   const leconFiltree = sluFiltre ? lecons.find((l) => l.slug === sluFiltre) : undefined;
-  const leconsAffichees = leconFiltree ? [leconFiltree] : lecons;
-  const cartes = leconsAffichees.flatMap((lecon) => extraireFlashcards(lecon.contenu_mdx, lecon.titre, lecon.slug));
+  const toutesLesFiches = lecons.flatMap((lecon) => extraireFlashcards(lecon.contenu_mdx, lecon.titre, lecon.slug));
+  const cartes = leconFiltree ? toutesLesFiches.filter((c) => c.leconSlug === leconFiltree.slug) : toutesLesFiches;
 
   return (
     <main className="flex flex-col">
       <div className="flex w-full flex-col items-center gap-6 px-6 pt-9 pb-16 sm:px-9">
         <div className="flex w-full max-w-xl flex-col gap-2">
           <Link
-            href={leconFiltree ? `/histoire-geo/${leconFiltree.slug}` : "/histoire-geo"}
+            href="/histoire-geo"
             className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
           >
             <IconeFleche className="size-4 rotate-180" />
-            {leconFiltree ? "Retour au cours" : "Retour histoire-géographie"}
+            Retour histoire-géographie
           </Link>
           <h1 className="flex items-center gap-3 font-serif text-[32px] leading-tight font-bold tracking-tight text-ink">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
@@ -60,17 +65,20 @@ export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePr
           <p className="text-muted-foreground">
             {leconFiltree ? (
               <>
-                {cartes.length} fiches de la leçon <strong className="font-semibold text-ink">{leconFiltree.titre}</strong> — ou{" "}
-                <Link href="/histoire-geo/flashcards" className="font-semibold text-primary hover:underline">
-                  réviser les 160 fiches
-                </Link>
-                .
+                {cartes.length} fiches de la leçon <strong className="font-semibold text-ink">{leconFiltree.titre}</strong>.
               </>
             ) : (
-              `${cartes.length} fiches tirées des cours d'histoire et de géographie.`
+              `${toutesLesFiches.length} fiches tirées des cours d'histoire et de géographie.`
             )}
           </p>
         </div>
+
+        <SelecteurLeconFlashcards
+          leconsHistoire={leconsHistoire}
+          leconsGeographie={leconsGeographie}
+          sluActif={leconFiltree?.slug}
+          totalFiches={toutesLesFiches.length}
+        />
 
         {cartes.length === 0 ? (
           <p className="w-full max-w-xl rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
