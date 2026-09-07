@@ -2,6 +2,19 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-07.
 >
+> **Flashcards par leçon** — demandé explicitement par l'utilisateur
+> ("je veux que chaque cours a ces flashcardes et je veux qu'il etre
+> esthetique"). `app/(public)/histoire-geo/flashcards/page.tsx` accepte
+> `?cours=<slug>` pour limiter la visionneuse aux fiches d'une seule
+> leçon (même visionneuse que les 160 fiches, juste un ensemble de
+> départ plus petit — pas de route dédiée par leçon). Nouvelle case
+> "Flashcards" sur `app/(public)/[matiere]/[slug]/page.tsx`
+> (histoire-geo), au-dessus du sommaire, avec le vrai décompte de
+> fiches de la leçon affichée.
+>
+> Vérifié visuellement (case sur une leçon, page filtrée), sans erreur
+> console. Aussi npx tsc --noEmit.
+>
 > **Flash cards pour histoire-geo** — demandé explicitement par
 > l'utilisateur ("fais moi une case qui s appelle flash cards").
 > `lib/flashcards.ts` extrait de vraies fiches (question/réponse)
