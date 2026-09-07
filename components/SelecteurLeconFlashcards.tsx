@@ -37,7 +37,8 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
         borderColor: actif ? couleur : `color-mix(in srgb, ${couleur} 35%, transparent)`,
         backgroundColor: actif ? couleur : "transparent",
       }}
-      className={`flex w-full items-center gap-2.5 rounded-full border-2 py-1.5 pr-3.5 pl-1.5 text-left text-[13px] font-semibold transition-all ${
+      title={lecon.titre}
+      className={`flex w-full min-w-0 items-center gap-2.5 rounded-full border-2 py-1.5 pr-3.5 pl-1.5 text-left text-[13px] font-semibold transition-all ${
         actif ? "text-white shadow-md" : "bg-surface text-ink hover:-translate-x-0.5"
       }`}
     >
@@ -47,7 +48,17 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
       >
         {numero}
       </span>
-      <span className="line-clamp-1">{lecon.titre}</span>
+      {/* Titre tronqué court (pas juste `line-clamp-1`, qui n'écourtait
+       * pas vraiment le texte tant qu'il tenait sur une ligne) —
+       * demandé explicitement par l'utilisateur ("je ne veux pas que
+       * les titres du cours soient aussi longs"). Titre complet en
+       * infobulle (`title` ci-dessus) pour ne rien perdre. `dir="rtl"`
+       * explicite : sans lui, la troncature coupait le début du titre
+       * arabe au lieu de la fin (le sens de troncature suit la
+       * direction du bloc, pas la détection automatique du texte). */}
+      <span dir="rtl" className="min-w-0 flex-1 truncate">
+        {lecon.titre}
+      </span>
     </button>
   );
 }
