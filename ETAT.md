@@ -1,6 +1,15 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-06.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-07.
+>
+> **Parenthèses retirées du contenu des 16 leçons d'histoire-géo** —
+> demandé explicitement par l'utilisateur ("enleve ) dans toutes les
+> ecritures"). Script ponctuel (non commité, comme les autres scripts
+> d'import) : retire les caractères `(` et `)` de `contenu_mdx` pour
+> les 16 lignes `categorie = "histoire-geo"`, garde le texte qu'ils
+> contenaient. Vérifié qu'aucun contenu n'utilisait la syntaxe Markdown
+> `[texte](lien)` avant de le faire (`(` `)` retirés sans risque de
+> casser un lien). Vérifié visuellement après coup.
 >
 > **Cartes "Mes matières" de l'accueil reconstruites selon une
 > maquette envoyée par l'utilisateur** ("je veux comme ca a 100 pour
