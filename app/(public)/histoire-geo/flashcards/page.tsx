@@ -33,13 +33,12 @@ interface PagePropsFlashcards {
  * (`/histoire-geo/flashcards/[slug]`) : même visionneuse, mêmes
  * boutons "Mélanger"/navigation, seul l'ensemble de départ change.
  *
- * Sélecteur de leçon à côté de la carte (deux colonnes), pas empilé
- * au-dessus — corrige un malentendu ("je veux les noms de cours et
- * les questions du flashcards sur la meme ligne" / "NOOOO LA LISTE DE
- * COURS") : l'utilisateur voulait la liste des leçons sur la même
- * ligne/rangée que la carte, pas au-dessus. Même mise en page à deux
- * colonnes que app/(public)/[matiere]/[slug]/page.tsx (cours +
- * sommaire).
+ * Sélecteur de leçon en pleine largeur au-dessus de la carte, puces
+ * disposées horizontalement — demandé explicitement par l'utilisateur
+ * ("la partie du titre de cours fais la aussi horizontalement dans la
+ * partie de flash cards") après un essai en colonne étroite à droite
+ * de la carte, où les titres arabes se retrouvaient tronqués ("j ai
+ * pas du tout aimé comme ca").
  */
 export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePropsFlashcards) {
   const { cours: sluFiltre } = await searchParams;
@@ -79,23 +78,21 @@ export default async function PageFlashcardsHistoireGeo({ searchParams }: PagePr
           </p>
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_300px]">
-          <div className="flex w-full flex-col items-center">
-            {cartes.length === 0 ? (
-              <p className="w-full max-w-xl rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
-                Bientôt disponible.
-              </p>
-            ) : (
-              <FlashcardsHistoireGeo key={sluFiltre ?? "toutes"} cartes={cartes} />
-            )}
-          </div>
+        <SelecteurLeconFlashcards
+          leconsHistoire={leconsHistoire}
+          leconsGeographie={leconsGeographie}
+          sluActif={leconFiltree?.slug}
+          totalFiches={toutesLesFiches.length}
+        />
 
-          <SelecteurLeconFlashcards
-            leconsHistoire={leconsHistoire}
-            leconsGeographie={leconsGeographie}
-            sluActif={leconFiltree?.slug}
-            totalFiches={toutesLesFiches.length}
-          />
+        <div className="flex w-full flex-col items-center">
+          {cartes.length === 0 ? (
+            <p className="w-full max-w-xl rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
+              Bientôt disponible.
+            </p>
+          ) : (
+            <FlashcardsHistoireGeo key={sluFiltre ?? "toutes"} cartes={cartes} />
+          )}
         </div>
       </div>
     </main>

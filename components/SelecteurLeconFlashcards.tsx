@@ -38,8 +38,8 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
         backgroundColor: actif ? couleur : "transparent",
       }}
       title={lecon.titre}
-      className={`flex w-full min-w-0 items-center gap-2.5 rounded-full border-2 py-1.5 pr-3.5 pl-1.5 text-left text-[13px] font-semibold transition-all ${
-        actif ? "text-white shadow-md" : "bg-surface text-ink hover:-translate-x-0.5"
+      className={`flex shrink-0 items-center gap-2.5 rounded-full border-2 py-1.5 pr-4 pl-1.5 text-left text-[13px] font-semibold transition-all ${
+        actif ? "text-white shadow-md" : "bg-surface text-ink hover:-translate-y-0.5"
       }`}
     >
       <span
@@ -48,15 +48,14 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
       >
         {numero}
       </span>
-      {/* Titre tronqué court (pas juste `line-clamp-1`, qui n'écourtait
-       * pas vraiment le texte tant qu'il tenait sur une ligne) —
-       * demandé explicitement par l'utilisateur ("je ne veux pas que
-       * les titres du cours soient aussi longs"). Titre complet en
-       * infobulle (`title` ci-dessus) pour ne rien perdre. `dir="rtl"`
-       * explicite : sans lui, la troncature coupait le début du titre
-       * arabe au lieu de la fin (le sens de troncature suit la
-       * direction du bloc, pas la détection automatique du texte). */}
-      <span dir="rtl" className="min-w-0 flex-1 truncate">
+      {/* Titre sur une seule ligne, jamais coupé en plein milieu par une
+       * colonne étroite : la liste est disposée horizontalement (voir
+       * plus bas), donc chaque puce prend la largeur de son titre —
+       * demandé explicitement par l'utilisateur après un essai en
+       * colonne verticale où les titres étaient tronqués ("j ai pas du
+       * tout aimé comme ca" / "la partie du titre de cours fais la
+       * aussi horizontalement dans la partie de flash cards"). */}
+      <span dir="rtl" className="whitespace-nowrap">
         {lecon.titre}
       </span>
     </button>
@@ -75,15 +74,17 @@ function PuceLecon({ lecon, numero, actif, onClick }: { lecon: Cours; numero: nu
  * richement. Une couleur par leçon (voir `PALETTE`), navigue vers
  * `?cours=<slug>` au clic.
  *
- * Liste verticale (colonne étroite) plutôt que des puces qui
- * s'enchaînaient horizontalement au-dessus de la carte — corrige un
- * malentendu ("je veux les noms de cours et les questions du
- * flashcards sur la meme ligne" / "NOOOO LA LISTE DE COURS") :
- * l'utilisateur voulait la liste des leçons à côté de la carte de
- * question (même ligne/rangée de la page), pas empilée au-dessus.
- * Voir app/(public)/histoire-geo/flashcards/page.tsx pour la mise en
- * page à deux colonnes. `"use client"` : seul ce sélecteur a besoin de
- * `useRouter`, le reste de la page reste un Composant Serveur.
+ * Disposition horizontale (puces qui s'enchaînent sur toute la largeur
+ * de la page, une rangée par groupe qui défile latéralement si besoin)
+ * — demandé explicitement par l'utilisateur ("la partie du titre de
+ * cours fais la aussi horizontalement dans la partie de flash cards"),
+ * après un essai en colonne verticale étroite à côté de la carte, où
+ * les titres arabes se retrouvaient tronqués faute de largeur ("j ai
+ * pas du tout aimé comme ca"). En pleine largeur, chaque puce prend la
+ * place de son titre complet, plus rien n'est coupé.
+ *
+ * `"use client"` : seul ce sélecteur a besoin de `useRouter`, le reste
+ * de la page reste un Composant Serveur.
  */
 export default function SelecteurLeconFlashcards({
   leconsHistoire,
@@ -98,12 +99,12 @@ export default function SelecteurLeconFlashcards({
   }
 
   return (
-    <div className="sticky top-24 flex max-h-[calc(100vh-7rem)] w-full flex-col gap-4 overflow-y-auto rounded-[18px] border border-border bg-surface p-4 shadow-sm">
+    <div className="flex w-full flex-col gap-4 rounded-[18px] border border-border bg-surface p-4 shadow-sm">
       <button
         type="button"
         onClick={() => allerA(null)}
         style={{ backgroundColor: "var(--color-primary)" }}
-        className={`flex w-full items-center justify-between gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-sm transition-opacity ${
+        className={`flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-sm transition-opacity ${
           sluActif ? "opacity-50 hover:opacity-100" : ""
         }`}
       >
@@ -116,7 +117,7 @@ export default function SelecteurLeconFlashcards({
           <IconeHorloge className="size-3.5" />
           Histoire
         </p>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {leconsHistoire.map((lecon, index) => (
             <PuceLecon
               key={lecon.slug}
@@ -134,7 +135,7 @@ export default function SelecteurLeconFlashcards({
           <IconeGlobe className="size-3.5" />
           Géographie
         </p>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {leconsGeographie.map((lecon, index) => (
             <PuceLecon
               key={lecon.slug}
