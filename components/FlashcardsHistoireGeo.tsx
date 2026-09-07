@@ -99,18 +99,24 @@ export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: Flash
             <div
               className={`relative h-96 w-full transition-transform duration-500 [transform-style:preserve-3d] ${retournee ? "[transform:rotateY(180deg)]" : ""}`}
             >
-              {/* Face avant — la question. */}
+              {/* Face avant — la question. Nom de la leçon et question
+               * sur la même ligne (`flex-wrap` : la question passe à la
+               * ligne suivante si la leçon a un long titre, mais reste
+               * toujours juste à côté du nom plutôt qu'en dessous) —
+               * demandé explicitement par l'utilisateur ("je veux les
+               * noms de cours et les questions sur la meme ligne"). */}
               <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden]">
                 <FormesDecoratives />
-                <div className="relative flex flex-1 flex-col items-center justify-center gap-5 overflow-y-auto p-8 text-center">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-                    <IconeGlobe className="size-5" />
+                <div className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-y-auto p-8 text-center">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
+                    <IconeGlobe className="size-4.5" />
                   </span>
-                  <span className="w-fit max-w-[85%] rounded-full bg-primary-tint px-3.5 py-1.5 text-xs font-semibold text-primary">
-                    {carte.leconTitre}
-                  </span>
-                  <span aria-hidden="true" className="h-px w-16 bg-border-strong" />
-                  <p className="font-serif text-[26px] leading-snug font-bold text-ink">{carte.question}</p>
+                  <p className="flex flex-wrap items-baseline justify-center gap-x-2.5 gap-y-1">
+                    <span className="w-fit shrink-0 rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">
+                      {carte.leconTitre}
+                    </span>
+                    <span className="font-serif text-[26px] leading-snug font-bold text-ink">{carte.question}</span>
+                  </p>
                 </div>
                 <p className="relative shrink-0 border-t border-border bg-background py-2.5 text-center text-xs font-semibold text-subtle-foreground">
                   Clique pour voir la réponse
