@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import FlashcardsHistoireGeo from "@/components/FlashcardsHistoireGeo";
-import { IconeFleche } from "@/components/icones";
+import { IconeCartes, IconeFleche } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { extraireFlashcards } from "@/lib/flashcards";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -34,7 +34,10 @@ export default async function PageFlashcardsHistoireGeo() {
             <IconeFleche className="size-4 rotate-180" />
             Retour histoire-géographie
           </Link>
-          <h1 className="font-serif text-[32px] leading-tight font-bold tracking-tight text-ink">
+          <h1 className="flex items-center gap-3 font-serif text-[32px] leading-tight font-bold tracking-tight text-ink">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
+              <IconeCartes className="size-5" />
+            </span>
             Flash<span className="text-primary italic">cards</span>
           </h1>
           <p className="text-muted-foreground">

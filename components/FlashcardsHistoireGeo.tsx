@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { IconeFleche } from "@/components/icones";
+import { IconeFleche, IconeGlobe, IconeMelanger } from "@/components/icones";
 import type { Flashcard } from "@/lib/flashcards";
 
 interface FlashcardsHistoireGeoProps {
@@ -28,15 +28,13 @@ function melanger<T>(items: T[]): T[] {
  * d'inventé. `"use client"` : retournement et navigation au clic,
  * pas de sens sans interaction.
  *
- * Revu à la demande explicite de l'utilisateur ("j ai pas aimé
- * comment le contenue de flash card est mie et aussi la couleur
- * orange") : couleur d'accent passée de l'orange de la matière au
- * bleu primaire du site (plus proche de l'identité générale plutôt
- * que la couleur d'une seule matière). Face arrière restructurée avec
- * une étiquette "Réponse" en en-tête (au lieu d'un bloc de texte seul
- * et indifférencié) et hauteur qui s'adapte au contenu (`min-h-*` au
- * lieu d'une hauteur fixe) : une réponse longue ne se retrouve plus
- * comprimée.
+ * Effet de pile ("deck") derrière la carte + flèches circulaires sur
+ * les côtés + formes décoratives dans les coins — reprend une
+ * maquette envoyée par l'utilisateur ("je veux comme ca"). La barre
+ * latérale visible sur cette même maquette n'est, elle, pas reprise :
+ * confirmé explicitement par l'utilisateur que la navigation
+ * horizontale actuelle (choix déjà fait plus tôt dans le projet)
+ * reste inchangée.
  */
 export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: FlashcardsHistoireGeoProps) {
   const [cartes, setCartes] = useState(cartesInitiales);
@@ -52,9 +50,9 @@ export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: Flash
   }
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="flex w-full max-w-xl items-center justify-between text-sm font-semibold text-muted-foreground">
-        <span>{progression}</span>
+    <div className="flex w-full max-w-2xl flex-col items-center gap-6">
+      <div className="flex w-full max-w-xl items-center justify-between">
+        <span className="rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-semibold text-primary">{progression}</span>
         <button
           type="button"
           onClick={() => {
@@ -62,49 +60,89 @@ export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: Flash
             setIndex(0);
             setRetournee(false);
           }}
-          className="rounded-full border border-border px-3.5 py-1.5 text-primary transition-colors hover:bg-primary-tint"
+          className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-primary-tint"
         >
+          <IconeMelanger className="size-4" />
           Mélanger
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setRetournee((r) => !r)}
-        aria-label={retournee ? "Voir la question" : "Voir la réponse"}
-        className="[perspective:1200px] w-full max-w-xl"
-      >
-        <div
-          className={`relative h-96 w-full transition-transform duration-500 [transform-style:preserve-3d] ${retournee ? "[transform:rotateY(180deg)]" : ""}`}
+      <div className="flex w-full items-center justify-center gap-4 sm:gap-6">
+        <button
+          type="button"
+          onClick={() => allerA(index - 1)}
+          aria-label="Fiche précédente"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-sm transition-colors hover:bg-surface-muted"
         >
-          {/* Face avant — la question. */}
-          <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden]">
-            <div aria-hidden="true" style={{ backgroundColor: "var(--color-primary)" }} className="h-1.5 w-full shrink-0" />
-            <div className="flex flex-1 flex-col items-center justify-center gap-5 overflow-y-auto p-8 text-center">
-              <span className="w-fit rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">
-                {carte.leconTitre}
-              </span>
-              <p className="font-serif text-[26px] leading-snug font-bold text-ink">{carte.question}</p>
-            </div>
-            <p className="shrink-0 border-t border-border bg-background py-2.5 text-center text-xs font-semibold text-subtle-foreground">
-              Clique pour voir la réponse
-            </p>
-          </div>
+          <IconeFleche className="size-4 rotate-180" />
+        </button>
 
-          {/* Face arrière — la réponse. Contenu défilable
-           * (`overflow-y-auto`) : la hauteur de la carte est fixe (les
-           * deux faces sont en `absolute`, elles ne peuvent pas
-           * l'agrandir selon leur contenu), certaines réponses sont
-           * plus longues que d'autres. */}
-          <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            <div aria-hidden="true" style={{ backgroundColor: "var(--color-primary)" }} className="h-1.5 w-full shrink-0" />
-            <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-8">
-              <span className="w-fit rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">Réponse</span>
-              <p className="font-lecture text-[17px] leading-relaxed font-bold text-foreground">{carte.reponse}</p>
+        {/* Pile de cartes : deux échos décalés/tournés derrière la
+         * carte active, façon jeu de cartes — purement visuel
+         * (`aria-hidden`), leur contenu ne change jamais. */}
+        <div className="relative w-full max-w-xl [perspective:1200px]">
+          <div
+            aria-hidden="true"
+            className="absolute inset-2 -z-10 translate-y-2 -rotate-2 rounded-[22px] border border-border bg-primary-tint/60"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-1 -z-10 translate-y-1 rotate-1 rounded-[22px] border border-border bg-surface-muted"
+          />
+
+          <button
+            type="button"
+            onClick={() => setRetournee((r) => !r)}
+            aria-label={retournee ? "Voir la question" : "Voir la réponse"}
+            className="block w-full"
+          >
+            <div
+              className={`relative h-96 w-full transition-transform duration-500 [transform-style:preserve-3d] ${retournee ? "[transform:rotateY(180deg)]" : ""}`}
+            >
+              {/* Face avant — la question. */}
+              <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden]">
+                <FormesDecoratives />
+                <div className="relative flex flex-1 flex-col items-center justify-center gap-5 overflow-y-auto p-8 text-center">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
+                    <IconeGlobe className="size-5" />
+                  </span>
+                  <span className="w-fit max-w-[85%] rounded-full bg-primary-tint px-3.5 py-1.5 text-xs font-semibold text-primary">
+                    {carte.leconTitre}
+                  </span>
+                  <span aria-hidden="true" className="h-px w-16 bg-border-strong" />
+                  <p className="font-serif text-[26px] leading-snug font-bold text-ink">{carte.question}</p>
+                </div>
+                <p className="relative shrink-0 border-t border-border bg-background py-2.5 text-center text-xs font-semibold text-subtle-foreground">
+                  Clique pour voir la réponse
+                </p>
+              </div>
+
+              {/* Face arrière — la réponse. Contenu défilable
+               * (`overflow-y-auto`) : la hauteur de la carte est fixe
+               * (les deux faces sont en `absolute`, elles ne peuvent
+               * pas l'agrandir selon leur contenu), certaines réponses
+               * sont plus longues que d'autres. */}
+              <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <FormesDecoratives />
+                <div className="relative flex flex-1 flex-col gap-3 overflow-y-auto p-8">
+                  <span className="w-fit rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">Réponse</span>
+                  <p className="font-lecture text-[17px] leading-relaxed font-bold text-foreground">{carte.reponse}</p>
+                </div>
+              </div>
             </div>
-          </div>
+          </button>
         </div>
-      </button>
+
+        <button
+          type="button"
+          onClick={() => allerA(index + 1)}
+          aria-label="Fiche suivante"
+          style={{ backgroundColor: "var(--color-primary)" }}
+          className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-sm transition-opacity hover:opacity-90"
+        >
+          <IconeFleche className="size-4" />
+        </button>
+      </div>
 
       <div className="flex items-center gap-4">
         <button
@@ -125,6 +163,25 @@ export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: Flash
           <IconeFleche className="size-4" />
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Deux triangles dégradés dans les coins opposés de la carte, très
+ * discrets — purement décoratifs, reprend la maquette envoyée par
+ * l'utilisateur. `-z-[1]` relatif à la face de la carte (positionnée),
+ * pas à toute la pile de cartes derrière. */
+function FormesDecoratives() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-[1] overflow-hidden rounded-[22px]">
+      <div
+        className="absolute -top-10 -left-10 size-32 rotate-45"
+        style={{ background: "linear-gradient(135deg, var(--color-primary-tint) 0%, transparent 70%)" }}
+      />
+      <div
+        className="absolute -right-10 -bottom-10 size-32 rotate-45"
+        style={{ background: "linear-gradient(-45deg, var(--color-primary-tint) 0%, transparent 70%)" }}
+      />
     </div>
   );
 }

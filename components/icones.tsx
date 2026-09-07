@@ -376,3 +376,22 @@ export function IconeChevronBas({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Cartes empilées — page /histoire-geo/flashcards. */
+export function IconeCartes({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect x="7" y="7" width="14" height="14" rx="3" />
+      <path d="M4.5 14.5V6a2 2 0 012-2h8.5" />
+    </svg>
+  );
+}
+
+/** Deux flèches croisées — bouton "Mélanger" des flashcards. */
+export function IconeMelanger({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M3 6h4l10 12h4M17 6h4v4M3 18h4l3.5-4.2M17 18h4v-4M14.3 9.9L17 6" />
+    </svg>
+  );
+}
