@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { GrilleLecons } from "@/components/GrilleLeconsMatiere";
-import { IconeFleche, IconeLivre, IconeQuiz } from "@/components/icones";
+import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
+import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -10,27 +10,6 @@ import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
 }
-
-/** Les 2 cases du hub histoire-geo ("Cours"/"Flash cards") — mêmes
- * dimensions et style que SECTIONS_FRANCAIS (lib/francais.ts), pas de
- * fichier de données séparé pour seulement 2 entrées propres à cette
- * seule matière. */
-const CASES_HISTOIRE_GEO = [
-  {
-    href: "/histoire-geo/cours",
-    titreAvantAccent: "Les ",
-    titreAccent: "cours",
-    description: "16 leçons d'histoire et de géographie, réparties par thème.",
-    Icone: IconeLivre,
-  },
-  {
-    href: "/histoire-geo/flashcards",
-    titreAvantAccent: "Flash",
-    titreAccent: "cards",
-    description: "Révise les notions clés en un coup d'œil.",
-    Icone: IconeQuiz,
-  },
-] as const;
 
 /**
  * /[matiere] — page de liste d'une matière ajoutée à la demande de
@@ -51,25 +30,24 @@ const CASES_HISTOIRE_GEO = [
  * disponible" tant que rien n'a été importé, comme /oeuvres avant
  * son premier contenu.
  *
- * Histoire-géographie : hub à 2 cases ("Cours"/"Flash cards") au lieu
- * de lister les leçons directement ici — demandé explicitement par
- * l'utilisateur ("je veux que les cours sois dans une cases et la
- * partie de flash cardes dans une autre come francais"), même
- * principe que /francais (Œuvres, Langue, Production écrite,
- * Correcteur IA sont chacune leur propre page, pas listées sur
- * /francais). Les leçons elles-mêmes vivent maintenant sur
- * /histoire-geo/cours (deux grilles Histoire/Géographie, voir ce
- * fichier), les fiches sur /histoire-geo/flashcards. Les 2 autres
- * matières génériques (éducation islamique, arabe) gardent la grille
- * de leçons directement sur /[matiere], inchangée.
+ * Histoire-géographie : deux grilles séparées ("Histoire" /
+ * "Géographie"), distinguées par le préfixe du `slug` (`histoire-*` /
+ * `geographie-*`) plutôt qu'une colonne dédiée en base. Un hub à 2
+ * cases ("Cours"/"Flash cards", à la manière de /francais) a existé
+ * entretemps, retiré quand les flashcards sont passées dans chaque
+ * page de cours ("enleve cette partie de flash cards et ajoute la
+ * dans chaque cours") : avec une seule case restante, l'étape
+ * intermédiaire n'apportait plus qu'un clic de plus.
  */
 export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const { matiere: slugMatiere } = await params;
   const matiere = recupererMatiereParSlug(slugMatiere);
   if (!matiere) notFound();
 
+  const lecons = await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
   const estHistoireGeo = matiere.slug === "histoire-geo";
-  const lecons = estHistoireGeo ? [] : await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
+  const leconsHistoire = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("histoire-")) : [];
+  const leconsGeographie = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("geographie-")) : [];
 
   return (
     <main className="flex flex-col">
@@ -97,34 +75,25 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <p className="mt-3 max-w-xl text-base text-muted-foreground">{matiere.description}</p>
         </section>
 
-        {estHistoireGeo ? (
-          <ul className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-[18px] sm:grid-cols-2">
-            {CASES_HISTOIRE_GEO.map((cas) => (
-              <li key={cas.href}>
-                <Link
-                  href={cas.href}
-                  className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
-                >
-                  <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
-                    <cas.Icone className="size-6" />
-                  </span>
-                  <h2 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">
-                    {cas.titreAvantAccent}
-                    <span className="text-primary italic">{cas.titreAccent}</span>
-                  </h2>
-                  <p className="mt-1.5 font-lecture text-[14.5px] leading-relaxed text-muted-foreground">{cas.description}</p>
-                  <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
-                    Découvrir
-                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : lecons.length === 0 ? (
+        {lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
           </p>
+        ) : estHistoireGeo ? (
+          <div className="flex flex-col gap-12">
+            {leconsHistoire.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection icone={<IconeHorloge className="size-5" />} titre="Histoire" nombre={leconsHistoire.length} />
+                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsHistoire} />
+              </section>
+            )}
+            {leconsGeographie.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection icone={<IconeGlobe className="size-5" />} titre="Géographie" nombre={leconsGeographie.length} />
+                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsGeographie} numeroDepart={leconsHistoire.length + 1} />
+              </section>
+            )}
+          </div>
         ) : (
           <GrilleLecons matiereSlug={matiere.slug} lecons={lecons} />
         )}

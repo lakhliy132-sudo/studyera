@@ -4,8 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ContenuMarkdown from "@/components/ContenuMarkdown";
-import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
+import FlashcardsHistoireGeo from "@/components/FlashcardsHistoireGeo";
+import { IconeCartes, IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
+import { extraireFlashcards } from "@/lib/flashcards";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
@@ -52,12 +54,14 @@ function extraireTitresSections(contenuMdx: string | null): string[] {
  * liens d'ancrage vers chaque section (`#section-N`, posé par
  * ContenuMarkdown).
  *
- * Pas de case "Flashcards" ici : un essai a été fait (case à côté du
- * sommaire, liant vers /histoire-geo/flashcards?cours=<slug>), revenu
- * en arrière sur demande explicite de l'utilisateur ("non dans la
- * partie de flash cards") — la sélection d'une leçon pour ses
- * flashcards se fait depuis /histoire-geo/flashcards lui-même (voir
- * ce fichier), pas depuis chaque page de cours.
+ * Flashcards de la leçon directement en bas de la page (histoire-geo)
+ * — demandé explicitement par l'utilisateur ("enleve cette partie de
+ * flash cards et ajoute la dans chaque cours") : la page dédiée
+ * /histoire-geo/flashcards, avec son sélecteur de leçon, a été
+ * supprimée au profit de fiches propres à chaque cours, juste sous
+ * son contenu. Fiches extraites du cours affiché (voir
+ * lib/flashcards.ts), section masquée si la leçon n'en produit
+ * aucune.
  */
 export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
@@ -71,6 +75,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   const estHistoire = cours.slug.startsWith("histoire-");
   const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
   const titresSections = estHistoireGeo ? extraireTitresSections(cours.contenu_mdx) : [];
+  const flashcards = estHistoireGeo ? extraireFlashcards(cours.contenu_mdx, cours.titre, cours.slug) : [];
 
   return (
     <main className="flex flex-col">
@@ -116,6 +121,28 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
 
               <SommaireHistoireGeo titresSections={titresSections} />
             </div>
+
+            {flashcards.length > 0 && (
+              <section className="mt-6 flex flex-col gap-6 rounded-[22px] border border-border bg-surface p-6 shadow-sm sm:p-8">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
+                    <IconeCartes className="size-5" />
+                  </span>
+                  <div>
+                    <h2 className="font-serif text-2xl font-bold text-ink">
+                      Flash<span className="text-primary italic">cards</span>
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {flashcards.length} fiche{flashcards.length > 1 ? "s" : ""} tirée
+                      {flashcards.length > 1 ? "s" : ""} de cette leçon.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex w-full flex-col items-center">
+                  <FlashcardsHistoireGeo cartes={flashcards} />
+                </div>
+              </section>
+            )}
           </>
         ) : (
           <>
