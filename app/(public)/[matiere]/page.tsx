@@ -11,6 +11,47 @@ interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
 }
 
+/** Les 4 modules du programme d'arabe — demandé explicitement par
+ * l'utilisateur ("dans la partie d arabe fais 4 case المجزوءة 1 et 2 et
+ * 3 et 4"). Une couleur par module, comme les puces de leçons ailleurs
+ * sur le site. Aucun contenu de cours d'arabe n'a encore été fourni :
+ * les cases affichent "Bientôt disponible" plutôt qu'un lien qui
+ * mènerait à une page vide (même principe que le reste du site). */
+const MODULES_ARABE = [
+  { numero: 1, titre: "المجزوءة 1", couleur: "#2563eb" },
+  { numero: 2, titre: "المجزوءة 2", couleur: "#7c3aed" },
+  { numero: 3, titre: "المجزوءة 3", couleur: "#059669" },
+  { numero: 4, titre: "المجزوءة 4", couleur: "#ea580c" },
+] as const;
+
+function CartesModulesArabe() {
+  return (
+    <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+      {MODULES_ARABE.map((module) => (
+        <li key={module.numero}>
+          <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
+            <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
+            <div className="flex flex-1 flex-col p-[26px]">
+              <span
+                style={{ backgroundColor: module.couleur }}
+                className="flex size-[52px] items-center justify-center rounded-full text-xl font-bold text-white"
+              >
+                {module.numero}
+              </span>
+              <h2 dir="rtl" className="font-arabe mt-4 text-2xl leading-snug font-bold text-ink">
+                {module.titre}
+              </h2>
+              <span className="mt-4 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                Bientôt disponible
+              </span>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
  * /[matiere] — page de liste d'une matière ajoutée à la demande de
  * l'utilisateur (éducation islamique, arabe, histoire-géographie —
@@ -46,6 +87,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
 
   const lecons = await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
   const estHistoireGeo = matiere.slug === "histoire-geo";
+  const estArabe = matiere.slug === "arabe";
   const leconsHistoire = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("histoire-")) : [];
   const leconsGeographie = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("geographie-")) : [];
 
@@ -75,7 +117,9 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <p className="mt-3 max-w-xl text-base text-muted-foreground">{matiere.description}</p>
         </section>
 
-        {lecons.length === 0 ? (
+        {estArabe ? (
+          <CartesModulesArabe />
+        ) : lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
           </p>
