@@ -163,7 +163,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
               <ContenuMarkdown
                 texte={cours.contenu_mdx}
                 grandeTaille={matiere.slug === "arabe"}
-                titresColores={matiere.slug === "arabe"}
+                schemaCouleursArabe={matiere.slug === "arabe"}
               />
             </div>
           </>

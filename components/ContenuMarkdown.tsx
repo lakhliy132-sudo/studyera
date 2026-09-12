@@ -23,14 +23,17 @@ interface ContenuMarkdownProps {
    * pas de hampes/jambages, beaucoup de signes distinctifs (points,
    * hamza, chadda) qui demandent plus de corps pour rester nets. */
   grandeTaille?: boolean;
-  /** Grands titres (`##`) en rouge et petits titres (`###`) en vert,
-   * sans les pastilles numérotées ni le texte en gras de
-   * `styleFeuille` — demandé explicitement par l'utilisateur pour les
-   * cours d'arabe ("I- ca fais les avec le rouge et 1 2 3 avec le
-   * vert"), où les titres portent déjà leur propre numérotation
-   * ("I-", "II-", "1-1/", "2-1/"...) : une pastille numérotée en plus
-   * ferait doublon. `styleFeuille` implique déjà ces couleurs. */
-  titresColores?: boolean;
+  /** Jeu de couleurs des cours d'arabe, demandé pièce par pièce par
+   * l'utilisateur : grands titres (`##`) en rouge et petits titres
+   * (`###`) en vert ("I- ca fais les avec le rouge et 1 2 3 avec le
+   * vert"), puces/numéros de liste et mots en gras en bleu ciel ("les
+   * phrases ou les chiffres qui sont en bleu remplace la couleur avec
+   * le bleu ciel" — ils étaient au bleu primaire du site, trop proche
+   * du reste de l'interface). Pas de pastilles numérotées ni de texte
+   * entièrement en gras, contrairement à `styleFeuille` : les titres
+   * des cours d'arabe portent déjà leur propre numérotation ("I-",
+   * "1-1/"...), une pastille en plus ferait doublon. */
+  schemaCouleursArabe?: boolean;
 }
 
 /** Grands titres (`h2`) entièrement en rouge, petits titres (`h3`)
@@ -44,6 +47,11 @@ interface ContenuMarkdownProps {
  * style de feuille, pas une couleur de marque à réutiliser ailleurs. */
 const COULEUR_GRAND_TITRE = "#dc2626";
 const COULEUR_PETIT_TITRE = "#16a34a";
+
+/** Bleu ciel des puces/numéros de liste et des mots en gras dans les
+ * cours d'arabe (`schemaCouleursArabe`) — assez soutenu pour rester
+ * lisible sur fond blanc, contrairement à un bleu ciel très pâle. */
+const COULEUR_BLEU_CIEL = "#0ea5e9";
 
 /** Vrai si `texte` contient au moins un caractère arabe — heuristique
  * simple pour détecter automatiquement le sens de lecture (aucune
@@ -76,7 +84,7 @@ export default function ContenuMarkdown({
   styleFeuille = false,
   couleurAccent = "var(--color-primary)",
   grandeTaille = false,
-  titresColores = false,
+  schemaCouleursArabe = false,
 }: ContenuMarkdownProps) {
   const sensDeLecture = texte && contientArabe(texte) ? "rtl" : "ltr";
   // Incrémenté à chaque `##` rencontré par ReactMarkdown, dans l'ordre
@@ -101,8 +109,8 @@ export default function ContenuMarkdown({
             if (!styleFeuille) {
               return (
                 <h2
-                  style={titresColores ? { color: COULEUR_GRAND_TITRE, borderColor: COULEUR_GRAND_TITRE } : undefined}
-                  className={`mt-10 mb-4 border-s-4 ps-4 font-serif font-bold first:mt-0 ${titresColores ? "" : "border-primary text-ink"} ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
+                  style={schemaCouleursArabe ? { color: COULEUR_GRAND_TITRE, borderColor: COULEUR_GRAND_TITRE } : undefined}
+                  className={`mt-10 mb-4 border-s-4 ps-4 font-serif font-bold first:mt-0 ${schemaCouleursArabe ? "" : "border-primary text-ink"} ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
                   {...props}
                 />
               );
@@ -133,8 +141,8 @@ export default function ContenuMarkdown({
               />
             ) : (
               <h3
-                style={titresColores ? { color: COULEUR_PETIT_TITRE } : undefined}
-                className={`mt-7 mb-2 font-serif font-bold ${titresColores ? "" : "text-primary"} ${grandeTaille ? "text-[23px]" : "text-lg"}`}
+                style={schemaCouleursArabe ? { color: COULEUR_PETIT_TITRE } : undefined}
+                className={`mt-7 mb-2 font-serif font-bold ${schemaCouleursArabe ? "" : "text-primary"} ${grandeTaille ? "text-[23px]" : "text-lg"}`}
                 {...props}
               />
             ),
@@ -150,13 +158,13 @@ export default function ContenuMarkdown({
           ),
           ul: (props) => (
             <ul
-              className={`mb-4 flex list-disc flex-col gap-2 ps-5 ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-disc flex-col gap-2 ps-5 ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#0ea5e9]" : "marker:text-primary"}`}
               {...props}
             />
           ),
           ol: (props) => (
             <ol
-              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#0ea5e9]" : "marker:text-primary"}`}
               {...props}
             />
           ),
@@ -166,7 +174,12 @@ export default function ContenuMarkdown({
               {...props}
             />
           ),
-          strong: (props) => <strong className="font-semibold text-ink" {...props} />,
+          strong: (props) =>
+            schemaCouleursArabe ? (
+              <strong style={{ color: COULEUR_BLEU_CIEL }} className="font-bold" {...props} />
+            ) : (
+              <strong className="font-semibold text-ink" {...props} />
+            ),
           blockquote: (props) => (
             <blockquote
               className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
