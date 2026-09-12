@@ -6,6 +6,7 @@ import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
+import type { Cours } from "@/types/base-de-donnees";
 
 interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
@@ -14,9 +15,11 @@ interface PagePropsMatiere {
 /** Les 4 modules du programme d'arabe — demandé explicitement par
  * l'utilisateur ("dans la partie d arabe fais 4 case المجزوءة 1 et 2 et
  * 3 et 4"). Une couleur par module, comme les puces de leçons ailleurs
- * sur le site. Aucun contenu de cours d'arabe n'a encore été fourni :
- * les cases affichent "Bientôt disponible" plutôt qu'un lien qui
- * mènerait à une page vide (même principe que le reste du site). */
+ * sur le site. Chaque case liste les leçons de son module, reconnues
+ * par le préfixe du `slug` (`majzuaa-<numéro>-*`, même principe que
+ * `histoire-*`/`geographie-*` pour histoire-géo) — "Bientôt
+ * disponible" tant qu'un module n'a aucune leçon, plutôt qu'un lien
+ * qui mènerait à une page vide. */
 const MODULES_ARABE = [
   { numero: 1, titre: "المجزوءة 1", couleur: "#2563eb" },
   { numero: 2, titre: "المجزوءة 2", couleur: "#7c3aed" },
@@ -24,30 +27,53 @@ const MODULES_ARABE = [
   { numero: 4, titre: "المجزوءة 4", couleur: "#ea580c" },
 ] as const;
 
-function CartesModulesArabe() {
+function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   return (
     <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
-      {MODULES_ARABE.map((module) => (
-        <li key={module.numero}>
-          <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
-            <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
-            <div className="flex flex-1 flex-col p-[26px]">
-              <span
-                style={{ backgroundColor: module.couleur }}
-                className="flex size-[52px] items-center justify-center rounded-full text-xl font-bold text-white"
-              >
-                {module.numero}
-              </span>
-              <h2 dir="rtl" className="font-arabe mt-4 text-2xl leading-snug font-bold text-ink">
-                {module.titre}
-              </h2>
-              <span className="mt-4 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
-                Bientôt disponible
-              </span>
+      {MODULES_ARABE.map((module) => {
+        const leconsModule = lecons.filter((c) => c.slug.startsWith(`majzuaa-${module.numero}-`));
+
+        return (
+          <li key={module.numero}>
+            <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
+              <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
+              <div className="flex flex-1 flex-col p-[26px]">
+                <span
+                  style={{ backgroundColor: module.couleur }}
+                  className="flex size-[52px] items-center justify-center rounded-full text-xl font-bold text-white"
+                >
+                  {module.numero}
+                </span>
+                <h2 dir="rtl" className="font-arabe mt-4 text-2xl leading-snug font-bold text-ink">
+                  {module.titre}
+                </h2>
+
+                {leconsModule.length === 0 ? (
+                  <span className="mt-4 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                    Bientôt disponible
+                  </span>
+                ) : (
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {leconsModule.map((cours) => (
+                      <li key={cours.id}>
+                        <Link
+                          href={`/arabe/${cours.slug}`}
+                          className="group flex items-center gap-2 rounded-[10px] bg-surface-muted px-3 py-2 transition-colors hover:bg-primary-tint"
+                        >
+                          <span dir="rtl" className="font-arabe flex-1 text-[15px] font-bold text-ink">
+                            {cours.titre}
+                          </span>
+                          <IconeFleche className="size-4 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -118,7 +144,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
         </section>
 
         {estArabe ? (
-          <CartesModulesArabe />
+          <CartesModulesArabe lecons={lecons} />
         ) : lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
