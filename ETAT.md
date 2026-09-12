@@ -1,6 +1,33 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-07.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-12.
+>
+> **Arabe : 4 cases المجزوءة, la 1ʳᵉ remplie** — demandé explicitement
+> par l'utilisateur ("dans la partie d arabe fais 4 case المجزوءة 1 et
+> 2 et 3 et 4", puis contenu envoyé message par message). `/arabe`
+> affiche 4 cartes (une couleur chacune) qui listent les leçons de
+> leur module, reconnues par le préfixe du `slug`
+> (`majzuaa-<numéro>-*`, même principe que `histoire-*`/`geographie-*`
+> pour histoire-géo) ; "Bientôt disponible" tant qu'un module est
+> vide. Deux leçons insérées dans `cours` (categorie="arabe",
+> filiere="1bac") à partir du texte fourni, rien d'inventé :
+> `majzuaa-1-anwa-al-khitab` ("أنواع الخطاب") et
+> `majzuaa-1-at-tamyiz` ("الدرس اللغوي 1-1: التمييز").
+>
+> Les deux schémas de la leçon التمييز (سمات التمييز, أنواع التمييز)
+> sont arrivés vides dans le premier message, signalé à l'utilisateur
+> plutôt que comblé au jugé ; il a ensuite envoyé les images, dont le
+> contenu a été transcrit en listes (script ponctuel de mise à jour).
+>
+> **Flashcards déplacées dans chaque cours d'histoire-géo** — la page
+> dédiée `/histoire-geo/flashcards` et son sélecteur de leçon ont été
+> supprimés ("enleve cette partie de flash cards et ajoute la dans
+> chaque cours") ; chaque cours d'histoire-géo affiche ses propres
+> fiches en bas de page. `/histoire-geo` reliste directement les
+> leçons (le hub à 2 cases et `/histoire-geo/cours` ont disparu avec).
+>
+> Vérifié visuellement à chaque étape, sans erreur console. Aussi
+> npx tsc --noEmit.
 >
 > **Flashcards par leçon** — demandé explicitement par l'utilisateur
 > ("je veux que chaque cours a ces flashcardes et je veux qu'il etre
