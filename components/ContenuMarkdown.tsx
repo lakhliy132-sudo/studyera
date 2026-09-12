@@ -16,6 +16,13 @@ interface ContenuMarkdownProps {
    * appelante — un token `--color-matiere-*` (app/globals.css). Sans
    * effet si `styleFeuille` est `false`. */
   couleurAccent?: string;
+  /** Texte nettement plus grand (paragraphes, listes, titres) —
+   * demandé explicitement par l'utilisateur pour les cours d'arabe
+   * ("je veux l ecriture taille soit encore plus dans les cours d
+   * arabe"). L'arabe se lit mal à la taille prévue pour le français :
+   * pas de hampes/jambages, beaucoup de signes distinctifs (points,
+   * hamza, chadda) qui demandent plus de corps pour rester nets. */
+  grandeTaille?: boolean;
 }
 
 /** Grands titres (`h2`) entièrement en rouge, petits titres (`h3`)
@@ -56,7 +63,12 @@ function contientArabe(texte: string): boolean {
  * visuellement puces/numéros du texte qu'ils accompagnent. Le
  * français (déjà utilisé par /langue) garde `dir="ltr"`, inchangé.
  */
-export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAccent = "var(--color-primary)" }: ContenuMarkdownProps) {
+export default function ContenuMarkdown({
+  texte,
+  styleFeuille = false,
+  couleurAccent = "var(--color-primary)",
+  grandeTaille = false,
+}: ContenuMarkdownProps) {
   const sensDeLecture = texte && contientArabe(texte) ? "rtl" : "ltr";
   // Incrémenté à chaque `##` rencontré par ReactMarkdown, dans l'ordre
   // du document — simple variable de fermeture (pas un state React,
@@ -80,7 +92,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
             if (!styleFeuille) {
               return (
                 <h2
-                  className="mt-10 mb-4 border-s-4 border-primary ps-4 font-serif text-[24px] font-bold text-ink first:mt-0"
+                  className={`mt-10 mb-4 border-s-4 border-primary ps-4 font-serif font-bold text-ink first:mt-0 ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
                   {...props}
                 />
               );
@@ -110,7 +122,10 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
                 {...props}
               />
             ) : (
-              <h3 className="mt-7 mb-2 font-serif text-lg font-bold text-primary" {...props} />
+              <h3
+                className={`mt-7 mb-2 font-serif font-bold text-primary ${grandeTaille ? "text-[23px]" : "text-lg"}`}
+                {...props}
+              />
             ),
           // Texte du cours en gras en styleFeuille (paragraphes, listes,
           // citations) — demandé explicitement par l'utilisateur
@@ -118,7 +133,7 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           // à `false`) garde le texte normal, inchangé.
           p: (props) => (
             <p
-              className={`mb-4 font-lecture text-[16px] leading-relaxed text-foreground ${styleFeuille ? "font-bold" : ""}`}
+              className={`mb-4 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[20px]" : "text-[16px]"} ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
@@ -136,14 +151,14 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           ),
           li: (props) => (
             <li
-              className={`ps-1 font-lecture text-[15.5px] leading-relaxed text-foreground ${styleFeuille ? "font-bold" : ""}`}
+              className={`ps-1 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
           strong: (props) => <strong className="font-semibold text-ink" {...props} />,
           blockquote: (props) => (
             <blockquote
-              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-[15.5px] text-foreground ${styleFeuille ? "font-bold" : ""}`}
+              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
@@ -154,12 +169,15 @@ export default function ContenuMarkdown({ texte, styleFeuille = false, couleurAc
           ),
           th: (props) => (
             <th
-              className="border-b border-border bg-primary-tint px-4 py-2.5 text-start text-sm font-semibold text-ink"
+              className={`border-b border-border bg-primary-tint px-4 py-2.5 text-start font-semibold text-ink ${grandeTaille ? "text-[17px]" : "text-sm"}`}
               {...props}
             />
           ),
           td: (props) => (
-            <td className="border-b border-border px-4 py-2 text-start font-lecture text-[15px] text-foreground" {...props} />
+            <td
+              className={`border-b border-border px-4 py-2 text-start font-lecture text-foreground ${grandeTaille ? "text-[18px]" : "text-[15px]"}`}
+              {...props}
+            />
           ),
         }}
       >

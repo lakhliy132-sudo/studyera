@@ -153,8 +153,12 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
               <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
             </div>
 
+            {/* `grandeTaille` pour l'arabe — demandé explicitement par
+             * l'utilisateur ("je veux l ecriture taille soit encore
+             * plus dans les cours d arabe") : l'écriture arabe demande
+             * plus de corps que le français pour rester lisible. */}
             <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
-              <ContenuMarkdown texte={cours.contenu_mdx} />
+              <ContenuMarkdown texte={cours.contenu_mdx} grandeTaille={matiere.slug === "arabe"} />
             </div>
           </>
         )}
