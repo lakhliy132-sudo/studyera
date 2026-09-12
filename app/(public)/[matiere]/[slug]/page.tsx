@@ -114,8 +114,18 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                 >
                   <IconeSection className="size-40" />
                 </span>
+                {/* `grandeTaille` aussi pour histoire-géo — demandé
+                 * explicitement par l'utilisateur ("dans la partie de
+                 * histoire geo agrande la taille" / "la taille du
+                 * lecon de cours") : ces leçons sont en arabe elles
+                 * aussi, elles se lisaient petit. */}
                 <div className="relative p-9 sm:p-12">
-                  <ContenuMarkdown texte={cours.contenu_mdx} styleFeuille couleurAccent="var(--color-matiere-histoire-geo)" />
+                  <ContenuMarkdown
+                    texte={cours.contenu_mdx}
+                    styleFeuille
+                    grandeTaille
+                    couleurAccent="var(--color-matiere-histoire-geo)"
+                  />
                 </div>
               </div>
 

@@ -129,11 +129,11 @@ export default function ContenuMarkdown({
               <h2
                 id={`section-${compteurSection}`}
                 style={{ color: COULEUR_GRAND_TITRE, scrollMarginTop: "6rem" }}
-                className="mt-11 mb-5 flex items-center gap-3.5 font-serif text-[22px] font-bold first:mt-0"
+                className={`mt-11 mb-5 flex items-center gap-3.5 font-serif font-bold first:mt-0 ${grandeTaille ? "text-[28px]" : "text-[22px]"}`}
               >
                 <span
                   style={{ backgroundColor: COULEUR_GRAND_TITRE }}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white shadow-sm"
+                  className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white shadow-sm ${grandeTaille ? "size-11 text-[17px]" : "size-9 text-[14px]"}`}
                 >
                   {compteurSection}
                 </span>
@@ -145,7 +145,7 @@ export default function ContenuMarkdown({
             styleFeuille ? (
               <h3
                 style={{ color: COULEUR_PETIT_TITRE }}
-                className="mt-7 mb-2 font-serif text-lg font-bold"
+                className={`mt-7 mb-2 font-serif font-bold ${grandeTaille ? "text-[22px]" : "text-lg"}`}
                 {...props}
               />
             ) : (
