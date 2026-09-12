@@ -23,6 +23,14 @@ interface ContenuMarkdownProps {
    * pas de hampes/jambages, beaucoup de signes distinctifs (points,
    * hamza, chadda) qui demandent plus de corps pour rester nets. */
   grandeTaille?: boolean;
+  /** Grands titres (`##`) en rouge et petits titres (`###`) en vert,
+   * sans les pastilles numérotées ni le texte en gras de
+   * `styleFeuille` — demandé explicitement par l'utilisateur pour les
+   * cours d'arabe ("I- ca fais les avec le rouge et 1 2 3 avec le
+   * vert"), où les titres portent déjà leur propre numérotation
+   * ("I-", "II-", "1-1/", "2-1/"...) : une pastille numérotée en plus
+   * ferait doublon. `styleFeuille` implique déjà ces couleurs. */
+  titresColores?: boolean;
 }
 
 /** Grands titres (`h2`) entièrement en rouge, petits titres (`h3`)
@@ -68,6 +76,7 @@ export default function ContenuMarkdown({
   styleFeuille = false,
   couleurAccent = "var(--color-primary)",
   grandeTaille = false,
+  titresColores = false,
 }: ContenuMarkdownProps) {
   const sensDeLecture = texte && contientArabe(texte) ? "rtl" : "ltr";
   // Incrémenté à chaque `##` rencontré par ReactMarkdown, dans l'ordre
@@ -92,7 +101,8 @@ export default function ContenuMarkdown({
             if (!styleFeuille) {
               return (
                 <h2
-                  className={`mt-10 mb-4 border-s-4 border-primary ps-4 font-serif font-bold text-ink first:mt-0 ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
+                  style={titresColores ? { color: COULEUR_GRAND_TITRE, borderColor: COULEUR_GRAND_TITRE } : undefined}
+                  className={`mt-10 mb-4 border-s-4 ps-4 font-serif font-bold first:mt-0 ${titresColores ? "" : "border-primary text-ink"} ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
                   {...props}
                 />
               );
@@ -123,7 +133,8 @@ export default function ContenuMarkdown({
               />
             ) : (
               <h3
-                className={`mt-7 mb-2 font-serif font-bold text-primary ${grandeTaille ? "text-[23px]" : "text-lg"}`}
+                style={titresColores ? { color: COULEUR_PETIT_TITRE } : undefined}
+                className={`mt-7 mb-2 font-serif font-bold ${titresColores ? "" : "text-primary"} ${grandeTaille ? "text-[23px]" : "text-lg"}`}
                 {...props}
               />
             ),

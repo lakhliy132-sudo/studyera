@@ -153,12 +153,18 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
               <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
             </div>
 
-            {/* `grandeTaille` pour l'arabe — demandé explicitement par
-             * l'utilisateur ("je veux l ecriture taille soit encore
-             * plus dans les cours d arabe") : l'écriture arabe demande
-             * plus de corps que le français pour rester lisible. */}
+            {/* Pour l'arabe : texte plus grand ("je veux l ecriture
+             * taille soit encore plus dans les cours d arabe" —
+             * l'écriture arabe demande plus de corps que le français
+             * pour rester lisible) et titres colorés, rouge pour les
+             * "I-/II-/III-" et vert pour les "1-1/, 2-1/..." ("I- ca
+             * fais les avec le rouge et 1 2 3 avec le vert"). */}
             <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
-              <ContenuMarkdown texte={cours.contenu_mdx} grandeTaille={matiere.slug === "arabe"} />
+              <ContenuMarkdown
+                texte={cours.contenu_mdx}
+                grandeTaille={matiere.slug === "arabe"}
+                titresColores={matiere.slug === "arabe"}
+              />
             </div>
           </>
         )}
