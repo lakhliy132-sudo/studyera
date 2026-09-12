@@ -2,6 +2,27 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-12.
 >
+> **Mise en forme propre aux cours d'arabe** (`schemaCouleursArabe` +
+> `grandeTaille` dans `components/ContenuMarkdown.tsx`, activés depuis
+> `app/(public)/[matiere]/[slug]/page.tsx` pour `matiere.slug ===
+> "arabe"`), demandée pièce par pièce par l'utilisateur :
+> - Texte agrandi (paragraphes 16 → 20px, listes 15.5 → 19.5px, titres
+>   et tableaux au prorata) — l'arabe se lit mal à la taille prévue
+>   pour le français.
+> - Grands titres (`##`, "I-/II-/III-") en rouge, petits titres
+>   (`###`, "1-1/, 2-1/...") en vert. Pas les pastilles numérotées de
+>   `styleFeuille` : ces titres portent déjà leur numérotation.
+> - Puces, numéros de liste et mots en gras en bleu ciel (#0ea5e9).
+> - Parenthèses retirées du contenu en base et remplacées par de
+>   l'emphase Markdown (`*...*`), rendue en noir appuyé et **non**
+>   en italique (illisible en arabe) — script ponctuel, 19 passages
+>   sur 2 leçons.
+>
+> Une 3ᵉ leçon a été ajoutée à la المجزوءة 1 : `majzuaa-1-al-adad`
+> ("الدرس اللغوي 1-2: العدد"). Coquilles mécaniques du texte fourni
+> corrigées et signalées à l'utilisateur (dont la citation de سورة
+> البقرة, rétablie en "فرجل وامرأتان", آية 282).
+>
 > **Arabe : 4 cases المجزوءة, la 1ʳᵉ remplie** — demandé explicitement
 > par l'utilisateur ("dans la partie d arabe fais 4 case المجزوءة 1 et
 > 2 et 3 et 4", puis contenu envoyé message par message). `/arabe`

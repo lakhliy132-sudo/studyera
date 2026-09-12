@@ -53,6 +53,15 @@ const COULEUR_PETIT_TITRE = "#16a34a";
  * lisible sur fond blanc, contrairement à un bleu ciel très pâle. */
 const COULEUR_BLEU_CIEL = "#0ea5e9";
 
+/** Noir soutenu des passages qui étaient entre parenthèses dans les
+ * cours d'arabe — demandé explicitement par l'utilisateur ("enleve )
+ * dans toutes les phrases et fais les phrases qui sont entouré par ca
+ * plus foncé noir") : les parenthèses ont été retirées du contenu en
+ * base et remplacées par de l'emphase Markdown (`*...*`), rendue ici
+ * en noir appuyé plutôt qu'en italique — l'italique se lit mal en
+ * arabe. */
+const COULEUR_NOIR_APPUYE = "#0b1020";
+
 /** Vrai si `texte` contient au moins un caractère arabe — heuristique
  * simple pour détecter automatiquement le sens de lecture (aucune
  * colonne `langue` sur `cours` pour l'instant). */
@@ -179,6 +188,14 @@ export default function ContenuMarkdown({
               <strong style={{ color: COULEUR_BLEU_CIEL }} className="font-bold" {...props} />
             ) : (
               <strong className="font-semibold text-ink" {...props} />
+            ),
+          em: (props) =>
+            schemaCouleursArabe ? (
+              // Ex-parenthèses des cours d'arabe : noir appuyé, et pas
+              // d'italique (illisible en écriture arabe).
+              <em style={{ color: COULEUR_NOIR_APPUYE }} className="font-semibold not-italic" {...props} />
+            ) : (
+              <em {...props} />
             ),
           blockquote: (props) => (
             <blockquote
