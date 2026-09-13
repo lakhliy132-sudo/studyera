@@ -209,17 +209,22 @@ export default function ContenuMarkdown({
           // sans les dimensions dont `next/image` a besoin. Cadrée
           // comme les autres blocs du cours (coins arrondis, bordure,
           // centrée, jamais plus large que la colonne de texte).
-          // eslint-disable-next-line @next/next/no-img-element
+          //
+          // `<span>` mis en `block` plutôt que `<figure>`/`<figcaption>` :
+          // Markdown place une image seule dans un paragraphe, et un
+          // `<figure>` dans un `<p>` est un imbriquement invalide que le
+          // navigateur corrige de lui-même — ce qui cassait l'hydratation
+          // React (le DOM rendu ne correspondait plus au HTML serveur).
           img: ({ src, alt }) => (
-            <figure className="my-6 flex flex-col items-center gap-2">
+            <span className="my-6 flex flex-col items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={typeof src === "string" ? src : ""}
                 alt={alt ?? ""}
                 className="h-auto max-w-full rounded-[14px] border border-border shadow-sm"
               />
-              {alt && <figcaption className="text-center text-sm text-muted-foreground">{alt}</figcaption>}
-            </figure>
+              {alt && <span className="block text-center text-sm text-muted-foreground">{alt}</span>}
+            </span>
           ),
           table: (props) => (
             <div className="my-5 overflow-x-auto rounded-[10px] border border-border">
