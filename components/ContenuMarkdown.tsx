@@ -216,7 +216,11 @@ export default function ContenuMarkdown({
           // navigateur corrige de lui-même — ce qui cassait l'hydratation
           // React (le DOM rendu ne correspondait plus au HTML serveur).
           img: ({ src, alt }) => (
-            <span className="my-6 flex flex-col items-center gap-2">
+            // Largeur plafonnée (`max-w-[520px]`) : sans cela l'image
+            // prenait toute la largeur de la colonne de cours, jugée
+            // trop grande par l'utilisateur ("la photo est trop
+            // grande"). Reste responsive en dessous de cette largeur.
+            <span className="mx-auto my-6 flex w-full max-w-[520px] flex-col items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={typeof src === "string" ? src : ""}
