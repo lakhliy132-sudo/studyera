@@ -203,6 +203,24 @@ export default function ContenuMarkdown({
               {...props}
             />
           ),
+          // Image d'un cours (`![légende](/fichier.jpg)` dans
+          // `contenu_mdx`) — balise `<img>` volontairement, pas
+          // `next/image` : `react-markdown` ne fournit que `src`/`alt`,
+          // sans les dimensions dont `next/image` a besoin. Cadrée
+          // comme les autres blocs du cours (coins arrondis, bordure,
+          // centrée, jamais plus large que la colonne de texte).
+          // eslint-disable-next-line @next/next/no-img-element
+          img: ({ src, alt }) => (
+            <figure className="my-6 flex flex-col items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={typeof src === "string" ? src : ""}
+                alt={alt ?? ""}
+                className="h-auto max-w-full rounded-[14px] border border-border shadow-sm"
+              />
+              {alt && <figcaption className="text-center text-sm text-muted-foreground">{alt}</figcaption>}
+            </figure>
+          ),
           table: (props) => (
             <div className="my-5 overflow-x-auto rounded-[10px] border border-border">
               <table className="w-full border-collapse text-start" {...props} />
