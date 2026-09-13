@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ContenuMarkdown from "@/components/ContenuMarkdown";
+import CorrectionRepliable from "@/components/CorrectionRepliable";
 import FlashcardsHistoireGeo from "@/components/FlashcardsHistoireGeo";
 import { IconeCartes, IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
@@ -13,6 +14,29 @@ import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
 interface PagePropsCoursMatiere {
   params: Promise<{ matiere: string; slug: string }>;
+}
+
+/** Sépare le corrigé du reste du cours : tout ce qui suit un titre de
+ * section (`##`) contenant "التصحيح" part dans `correction`, pour être
+ * affiché replié derrière un bouton (voir CorrectionRepliable) —
+ * demandé explicitement par l'utilisateur ("fais l option de afficher
+ * la correction ou pas"). Le titre `##` lui-même est retiré : c'est le
+ * bouton qui en tient lieu. Sans section de ce type, le cours est
+ * renvoyé tel quel. */
+function separerCorrection(contenuMdx: string | null): { cours: string; correction: string | null } {
+  if (!contenuMdx) return { cours: "", correction: null };
+
+  const lignes = contenuMdx.split("\n");
+  const debut = lignes.findIndex((ligne) => ligne.startsWith("## ") && ligne.includes("التصحيح"));
+  if (debut === -1) return { cours: contenuMdx, correction: null };
+
+  return {
+    cours: lignes.slice(0, debut).join("\n").trimEnd(),
+    correction: lignes
+      .slice(debut + 1)
+      .join("\n")
+      .trim(),
+  };
 }
 
 /** Titres des sections (`##`) d'un cours, dans l'ordre du document —
@@ -74,8 +98,11 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estHistoire = cours.slug.startsWith("histoire-");
   const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
-  const titresSections = estHistoireGeo ? extraireTitresSections(cours.contenu_mdx) : [];
-  const flashcards = estHistoireGeo ? extraireFlashcards(cours.contenu_mdx, cours.titre, cours.slug) : [];
+  const { cours: contenuCours, correction } = separerCorrection(cours.contenu_mdx);
+  const titresSections = estHistoireGeo ? extraireTitresSections(contenuCours) : [];
+  // Fiches tirées du cours seul, corrigé exclu : une correction est un
+  // modèle de rédaction, pas des notions à réviser en flashcards.
+  const flashcards = estHistoireGeo ? extraireFlashcards(contenuCours, cours.titre, cours.slug) : [];
 
   return (
     <main className="flex flex-col">
@@ -121,7 +148,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                  * aussi, elles se lisaient petit. */}
                 <div className="relative p-9 sm:p-12">
                   <ContenuMarkdown
-                    texte={cours.contenu_mdx}
+                    texte={contenuCours}
                     styleFeuille
                     grandeTaille
                     couleurAccent="var(--color-matiere-histoire-geo)"
@@ -131,6 +158,8 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
 
               <SommaireHistoireGeo titresSections={titresSections} />
             </div>
+
+            {correction && <CorrectionRepliable contenu={correction} grandeTaille />}
 
             {flashcards.length > 0 && (
               <section className="mt-6 flex flex-col gap-6 rounded-[22px] border border-border bg-surface p-6 shadow-sm sm:p-8">
@@ -171,11 +200,19 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
              * fais les avec le rouge et 1 2 3 avec le vert"). */}
             <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
               <ContenuMarkdown
-                texte={cours.contenu_mdx}
+                texte={contenuCours}
                 grandeTaille={matiere.slug === "arabe"}
                 schemaCouleursArabe={matiere.slug === "arabe"}
               />
             </div>
+
+            {correction && (
+              <CorrectionRepliable
+                contenu={correction}
+                grandeTaille={matiere.slug === "arabe"}
+                schemaCouleursArabe={matiere.slug === "arabe"}
+              />
+            )}
           </>
         )}
       </div>

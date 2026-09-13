@@ -1,6 +1,29 @@
 # État du projet MADRASTI
 
-> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-12.
+> Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-13.
+>
+> **Corrigés repliables** (`components/CorrectionRepliable.tsx`) —
+> demandé explicitement par l'utilisateur ("fais l option de afficher
+> la correction ou pas") : dans `app/(public)/[matiere]/[slug]/page.tsx`,
+> `separerCorrection()` détache du contenu tout ce qui suit un titre
+> `##` contenant "التصحيح" et l'affiche replié derrière un bouton.
+> `<details>`/`<summary>` natifs, pas de composant client (même
+> philosophie que le menu mobile de BarreNavigation.tsx). Les
+> flashcards sont extraites du cours **sans** le corrigé : un modèle
+> de rédaction n'est pas une notion à réviser.
+>
+> **Images dans les cours** : `ContenuMarkdown` rend `![légende](/x.jpg)`
+> dans un bloc centré, largeur plafonnée à 520px ("la photo est trop
+> grande"). Les `<span>` mis en `block` remplacent `<figure>`/
+> `<figcaption>` : Markdown place une image seule dans un `<p>`, et un
+> `<figure>` y était un imbriquement invalide qui cassait
+> l'hydratation React. Première image en place :
+> `public/tahlil-sura-exercice.jpg` (photo fournie par l'utilisateur,
+> optimisée 2,2 Mo → 166 Ko).
+>
+> La المجزوءة 1 d'arabe compte désormais 4 leçons, dont
+> `majzuaa-1-tahlil-sura` ("مهارة تحليل صورة") avec son exercice
+> illustré et son corrigé.
 >
 > **Mise en forme propre aux cours d'arabe** (`schemaCouleursArabe` +
 > `grandeTaille` dans `components/ContenuMarkdown.tsx`, activés depuis
