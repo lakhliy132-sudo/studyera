@@ -26,10 +26,9 @@ interface ContenuMarkdownProps {
   /** Jeu de couleurs des cours d'arabe, demandé pièce par pièce par
    * l'utilisateur : grands titres (`##`) en rouge et petits titres
    * (`###`) en vert ("I- ca fais les avec le rouge et 1 2 3 avec le
-   * vert"), puces/numéros de liste et mots en gras en bleu ciel ("les
-   * phrases ou les chiffres qui sont en bleu remplace la couleur avec
-   * le bleu ciel" — ils étaient au bleu primaire du site, trop proche
-   * du reste de l'interface). Pas de pastilles numérotées ni de texte
+   * vert"), puces/numéros de liste et mots en gras en violet (voir
+   * COULEUR_MOTS_CLES pour l'historique de cette couleur). Pas de
+   * pastilles numérotées ni de texte
    * entièrement en gras, contrairement à `styleFeuille` : les titres
    * des cours d'arabe portent déjà leur propre numérotation ("I-",
    * "1-1/"...), une pastille en plus ferait doublon. */
@@ -44,14 +43,22 @@ interface ContenuMarkdownProps {
  * en verts toute phrase") : la couleur s'applique au titre au complet
  * (texte + pastille pour `h2`), pas seulement au numéro. Valeurs
  * fixes, pas de token dans app/globals.css : distinction propre à ce
- * style de feuille, pas une couleur de marque à réutiliser ailleurs. */
+ * style de feuille, pas une couleur de marque à réutiliser ailleurs.
+ *
+ * Une version assourdie (bordeaux/vert forêt) a été essayée puis
+ * écartée par l'utilisateur ("j ai pas aimé") : le rouge et le vert
+ * vifs sont bien ceux qu'il veut, ne pas les "adoucir" à nouveau. */
 const COULEUR_GRAND_TITRE = "#dc2626";
 const COULEUR_PETIT_TITRE = "#16a34a";
 
-/** Bleu ciel des puces/numéros de liste et des mots en gras dans les
- * cours d'arabe (`schemaCouleursArabe`) — assez soutenu pour rester
- * lisible sur fond blanc, contrairement à un bleu ciel très pâle. */
-const COULEUR_BLEU_CIEL = "#0ea5e9";
+/** Couleur des puces/numéros de liste et des mots en gras dans les
+ * cours d'arabe (`schemaCouleursArabe`). D'abord le bleu primaire du
+ * site (trop proche du reste de l'interface), puis un bleu ciel
+ * (#0ea5e9) demandé par l'utilisateur, enfin ce violet à sa demande
+ * ("remplace le bleu ciel avec autre couleur") : il se distingue nettement
+ * du rouge des grands titres et du vert des petits, sans entrer en
+ * concurrence avec le bleu de la navigation. */
+const COULEUR_MOTS_CLES = "#6d28d9";
 
 /** Noir soutenu des passages qui étaient entre parenthèses dans les
  * cours d'arabe — demandé explicitement par l'utilisateur ("enleve )
@@ -167,13 +174,13 @@ export default function ContenuMarkdown({
           ),
           ul: (props) => (
             <ul
-              className={`mb-4 flex list-disc flex-col gap-2 ps-5 ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#0ea5e9]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-disc flex-col gap-2 ps-5 ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#6d28d9]" : "marker:text-primary"}`}
               {...props}
             />
           ),
           ol: (props) => (
             <ol
-              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#0ea5e9]" : "marker:text-primary"}`}
+              className={`mb-4 flex list-decimal flex-col gap-2 ps-5 marker:font-semibold ${styleFeuille ? "marker:text-[var(--couleur-feuille)]" : schemaCouleursArabe ? "marker:text-[#6d28d9]" : "marker:text-primary"}`}
               {...props}
             />
           ),
@@ -185,7 +192,7 @@ export default function ContenuMarkdown({
           ),
           strong: (props) =>
             schemaCouleursArabe ? (
-              <strong style={{ color: COULEUR_BLEU_CIEL }} className="font-bold" {...props} />
+              <strong style={{ color: COULEUR_MOTS_CLES }} className="font-bold" {...props} />
             ) : (
               <strong className="font-semibold text-ink" {...props} />
             ),
@@ -197,9 +204,16 @@ export default function ContenuMarkdown({
             ) : (
               <em {...props} />
             ),
+          // Cours d'arabe : citations (surtout les قصائد, un vers par
+          // paragraphe) centrées et plus grandes — demandé explicitement
+          // par l'utilisateur ("je veux qasida etre الوسط avec l ecriture
+          // un peu plus grande"). Sélecteurs `[&_p]:` : le texte est
+          // dans les `<p>` du renderer ci-dessus, qui portent leur propre
+          // taille ; une classe sur le `<blockquote>` seul ne l'emporterait
+          // pas.
           blockquote: (props) => (
             <blockquote
-              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
+              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""} ${schemaCouleursArabe ? "py-6 [&_p]:text-center [&_p]:text-[23px] [&_p]:leading-loose" : ""}`}
               {...props}
             />
           ),

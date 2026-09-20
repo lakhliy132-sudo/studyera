@@ -46,6 +46,14 @@
    * distinguer à la fois du fond et des cartes blanches. */
   --color-surface-muted: #f1f6fe;
 
+  /* Fond de la "feuille" sur laquelle est écrit un cours (pages de
+   * leçon) — demandé explicitement par l'utilisateur ("je veux la page
+   * ou ya le cours ecrit ne soit pas blanche") : un ivoire très léger,
+   * qui fatigue moins les yeux qu'un blanc pur sur de longues pages de
+   * révision, sans virer au jaune. Distinct de --color-surface, qui
+   * reste blanc pour toutes les autres cartes du site. */
+  --color-feuille: #fbf8f1;
+
   --color-border: #e3ebf9;
   /* Bordure plus marquée : état hover d'une carte/pilule. */
   --color-border-strong: #c7d9f5;
@@ -102,7 +110,8 @@
 
   /* Ombre légère à teinte bleutée (pas un simple gris), utilisée par
    * tous les `shadow-sm` du site : cartes, bannière, barre d'onglets. */
-  --shadow-sm: 0 1px 2px rgba(27, 58, 143, 0.04), 0 6px 20px rgba(27, 58, 143, 0.05);
+  --shadow-sm:
+    0 1px 2px rgba(27, 58, 143, 0.04), 0 6px 20px rgba(27, 58, 143, 0.05);
 
   /* Durée par défaut de `transition-*` : légèrement plus lente que le
    * défaut Tailwind (150ms), pour matcher la maquette sans avoir à
@@ -147,6 +156,30 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Personnes ayant demandé à leur système de limiter les animations :
+ * les entrées de cartes (accueil, /oeuvres) et les transitions de
+ * survol sont neutralisées plutôt que jouées au ralenti. */
+/* Bouton "couper les animations" de la barre de navigation
+ * (components/BoutonAnimations.tsx) : même effet que le réglage
+ * système ci-dessous, mais choisi depuis le site. */
+:root[data-animations="off"] *,
+:root[data-animations="off"] *::before,
+:root[data-animations="off"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -199,6 +232,7 @@ body {
     --color-foreground: #e7e9ee;
     --color-surface: #15171e;
     --color-surface-muted: #1b1e27;
+    --color-feuille: #191b23;
     --color-border: #272b36;
     --color-border-strong: #3a3f4d;
     --color-primary: #5b8def;
@@ -220,6 +254,7 @@ body {
   --color-foreground: #e7e9ee;
   --color-surface: #15171e;
   --color-surface-muted: #1b1e27;
+  --color-feuille: #191b23;
   --color-border: #272b36;
   --color-border-strong: #3a3f4d;
   --color-primary: #5b8def;

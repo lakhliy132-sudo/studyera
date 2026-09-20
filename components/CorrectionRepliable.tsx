@@ -26,7 +26,7 @@ export default function CorrectionRepliable({
   schemaCouleursArabe = false,
 }: CorrectionRepliableProps) {
   return (
-    <details className="group mt-8 overflow-hidden rounded-[18px] border border-border bg-surface shadow-sm">
+    <details className="group mt-8 overflow-hidden rounded-[18px] border border-border bg-feuille shadow-sm">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 transition-colors hover:bg-surface-muted [&::-webkit-details-marker]:hidden">
         <span className="flex items-center gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">

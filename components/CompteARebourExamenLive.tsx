@@ -74,13 +74,17 @@ export default function CompteARebourExamenLive() {
   if (!session || !decompte) return null;
 
   return (
-    <div className="rounded-[24px] border border-border bg-surface p-6 shadow-sm">
+    <div className="transition hover:-translate-y-0.5 hover:shadow-md rounded-[24px] border border-border bg-surface p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
           <IconeEtoile className="size-5" />
         </span>
         <div>
-          <p className="font-serif text-lg font-bold text-ink">Bac {session.debut.getFullYear()}</p>
+          {/* "1Bac" et pas "Bac" — précisé par l'utilisateur ("c pas bac
+           * 2027 C est 1bac 2027") : le compte à rebours vise l'examen
+           * régional de 1re année du bac, pas l'examen national de 2e
+           * année. */}
+          <p className="font-serif text-lg font-bold text-ink">1Bac {session.debut.getFullYear()}</p>
           <p className="text-xs text-muted-foreground">Il te reste encore du temps !</p>
         </div>
       </div>

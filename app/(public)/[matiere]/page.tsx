@@ -5,6 +5,7 @@ import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
+import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 import type { Cours } from "@/types/base-de-donnees";
 
@@ -12,65 +13,66 @@ interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
 }
 
-/** Les 4 modules du programme d'arabe — demandé explicitement par
- * l'utilisateur ("dans la partie d arabe fais 4 case المجزوءة 1 et 2 et
- * 3 et 4"). Une couleur par module, comme les puces de leçons ailleurs
- * sur le site. Chaque case liste les leçons de son module, reconnues
- * par le préfixe du `slug` (`majzuaa-<numéro>-*`, même principe que
- * `histoire-*`/`geographie-*` pour histoire-géo) — "Bientôt
- * disponible" tant qu'un module n'a aucune leçon, plutôt qu'un lien
- * qui mènerait à une page vide. */
-const MODULES_ARABE = [
-  { numero: 1, titre: "المجزوءة 1", couleur: "#2563eb" },
-  { numero: 2, titre: "المجزوءة 2", couleur: "#7c3aed" },
-  { numero: 3, titre: "المجزوءة 3", couleur: "#059669" },
-  { numero: 4, titre: "المجزوءة 4", couleur: "#ea580c" },
-] as const;
-
+/** Les 4 cases des modules d'arabe. Aucune leçon n'est listée ici —
+ * demandé explicitement par l'utilisateur ("je veux que les lecons du
+ * المجزوءة ne s affiche pas au debut jusqu au je clique sur المجزوءة
+ * concerné", puis "quand on clique on voit chaque cours dans une
+ * case") : cliquer sur un module ouvre sa page
+ * /arabe/majzuaa/[numero], où chaque leçon a sa propre case. Un
+ * premier essai dépliait la liste sur place, écarté par l'utilisateur.
+ *
+ * Un module sans leçon reste une case inerte marquée "Bientôt
+ * disponible", plutôt qu'un lien qui mènerait à une page vide. */
 function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   return (
     <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
       {MODULES_ARABE.map((module) => {
-        const leconsModule = lecons.filter((c) => c.slug.startsWith(`majzuaa-${module.numero}-`));
+        const nombre = lecons.filter((c) => c.slug.startsWith(prefixeSlugModule(module.numero))).length;
 
-        return (
-          <li key={module.numero}>
-            <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
-              <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
-              <div className="flex flex-1 flex-col p-[26px]">
+        const interieur = (
+          <>
+            <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
+            <div className="flex flex-1 flex-col p-[26px]">
+              <span className="flex items-center justify-between gap-3">
                 <span
                   style={{ backgroundColor: module.couleur }}
-                  className="flex size-[52px] items-center justify-center rounded-full text-xl font-bold text-white"
+                  className="flex size-[52px] shrink-0 items-center justify-center rounded-full text-xl font-bold text-white"
                 >
                   {module.numero}
                 </span>
-                <h2 dir="rtl" className="font-arabe mt-4 text-2xl leading-snug font-bold text-ink">
-                  {module.titre}
-                </h2>
-
-                {leconsModule.length === 0 ? (
-                  <span className="mt-4 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
-                    Bientôt disponible
-                  </span>
-                ) : (
-                  <ul className="mt-4 flex flex-col gap-2">
-                    {leconsModule.map((cours) => (
-                      <li key={cours.id}>
-                        <Link
-                          href={`/arabe/${cours.slug}`}
-                          className="group flex items-center gap-2 rounded-[10px] bg-surface-muted px-3 py-2 transition-colors hover:bg-primary-tint"
-                        >
-                          <span dir="rtl" className="font-arabe flex-1 text-[15px] font-bold text-ink">
-                            {cours.titre}
-                          </span>
-                          <IconeFleche className="size-4 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                {nombre > 0 && (
+                  <IconeFleche className="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
                 )}
-              </div>
+              </span>
+              <span dir="rtl" className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink">
+                {module.titre}
+              </span>
+              {module.sousTitre && (
+                <span dir="rtl" className="font-arabe mt-1.5 block text-sm leading-snug text-muted-foreground">
+                  {module.sousTitre}
+                </span>
+              )}
+              <span className="mt-3 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                {nombre === 0 ? "Bientôt disponible" : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
+              </span>
             </div>
+          </>
+        );
+
+        return (
+          <li key={module.numero}>
+            {nombre === 0 ? (
+              <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
+                {interieur}
+              </div>
+            ) : (
+              <Link
+                href={`/arabe/majzuaa/${module.numero}`}
+                className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm transition-shadow hover:shadow-md"
+              >
+                {interieur}
+              </Link>
+            )}
           </li>
         );
       })}

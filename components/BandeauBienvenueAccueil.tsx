@@ -1,59 +1,77 @@
-import Image from "next/image";
-
 interface BandeauBienvenueAccueilProps {
   prenom: string;
 }
 
+/** Date du jour en toutes lettres ("mardi 20 septembre"), calculée au
+ * rendu côté serveur — le composant n'est pas un composant client, le
+ * navigateur ne la recalcule donc pas et il n'y a pas de risque de
+ * décalage d'hydratation. */
+function dateDuJour(): string {
+  return new Intl.DateTimeFormat("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(new Date());
+}
+
 /**
- * Bandeau de bienvenue de l'accueil (élève connecté) — reprend une
- * maquette fournie par l'utilisateur ("j ai ajouté une photo dans le
- * fichier fais la comme ca dans l acuueil") : prénom, citation
- * motivante, photo décorative. La photo (bureau/livres/plante) vient
- * de l'image même que l'utilisateur a déposée pour cette demande —
- * recadrée (voir public/accueil-bureau.jpg), pas une photo de banque
- * d'images tierce (voir le refus des images pngtree/.avif plus tôt
- * dans le projet).
+ * Bandeau de bienvenue de l'accueil (élève connecté). Il a d'abord
+ * repris une maquette fournie par l'utilisateur (prénom, citation
+ * motivante, photo de bureau recadrée depuis l'image qu'il avait
+ * déposée), puis a été allégé à sa demande, en deux temps : l'emoji
+ * du bonjour ("enleve l emogie a coté"), puis la citation et la photo
+ * ("enleve aussi la phrase et la photo"). Il ne reste que la date du
+ * jour, le bonjour et le sous-titre, posés sur un fond dégradé avec
+ * deux halos de couleur très diffus — tout sur les tokens du site
+ * (`--color-primary`, `--color-matiere-arabe`), donc lisible aussi en
+ * mode sombre.
  *
- * Citation et photo dans le même flux `flex` (pas de positionnement
- * `absolute`) : un premier essai plaçait la photo en position absolue
- * par-dessus la citation, les deux se chevauchant sur grand écran
- * (repéré en relisant la capture d'écran — texte de la citation
- * visible en transparence sous la photo).
- *
- * Dégradé teinté de mauve vers la droite (`color-mix` avec
- * `--color-matiere-arabe`) en plus du bleu — demandé explicitement par
- * l'utilisateur ("ajoute des couleurs sur l acceuil pour donner la vie
- * au site") : un simple fondu bleu pâle → transparent était plat, et
- * fondait presque avec le fond de page. `color-mix` plutôt qu'un rgba
- * fixe pour rester lisible en mode sombre (mêmes principes déjà en
- * place ailleurs sur l'accueil, voir app/(public)/page.tsx).
+ * public/accueil-bureau.jpg n'est plus utilisée ici, mais reste dans
+ * le dépôt : c'est une image fournie par l'utilisateur, pas à nous de
+ * la supprimer.
  */
-export default function BandeauBienvenueAccueil({ prenom }: BandeauBienvenueAccueilProps) {
+export default function BandeauBienvenueAccueil({
+  prenom,
+}: BandeauBienvenueAccueilProps) {
   return (
     <div
-      className="flex flex-col gap-6 overflow-hidden rounded-[24px] border border-border p-7 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8"
+      className="relative overflow-hidden rounded-[28px] border border-border p-8 shadow-[0_18px_40px_-28px_rgba(20,30,60,0.45)] sm:p-9"
       style={{
         background:
           "linear-gradient(105deg, var(--color-primary-tint) 0%, color-mix(in srgb, var(--color-primary-tint) 55%, transparent) 45%, color-mix(in srgb, var(--color-matiere-arabe) 16%, transparent) 100%)",
       }}
     >
-      <div className="shrink-0">
-        <h1 className="font-serif text-3xl font-bold text-ink">Bonjour, {prenom} ! 👋</h1>
-        <p className="mt-1 text-muted-foreground">Prête à faire un pas de plus vers tes objectifs ?</p>
+      {/* Halos diffus, purement décoratifs — même technique que les
+       * taches de couleur du fond de l'accueil. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div
+          className="absolute -top-20 -left-10 size-56 rounded-full opacity-[0.18] blur-3xl"
+          style={{ backgroundColor: "var(--color-primary)" }}
+        />
+        <div
+          className="absolute -right-10 -bottom-24 size-64 rounded-full opacity-[0.12] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+        />
       </div>
 
-      <p className="hidden max-w-[220px] shrink-0 border-l-2 border-primary/30 pl-4 font-serif text-[15px] leading-snug text-ink italic xl:block">
-        « La discipline d&apos;aujourd&apos;hui est la réussite de demain. »
-      </p>
-
-      <Image
-        src="/accueil-bureau.jpg"
-        alt=""
-        aria-hidden="true"
-        width={380}
-        height={175}
-        className="hidden h-[110px] w-[240px] shrink-0 rounded-[16px] object-cover 2xl:block"
-      />
+      <div className="relative shrink-0">
+        <p className="text-[11px] font-bold tracking-[0.16em] text-primary uppercase">
+          {dateDuJour()}
+        </p>
+        <h1 className="mt-2 font-serif text-[34px] leading-tight font-bold text-ink">
+          Bonjour, {prenom} !
+        </h1>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">
+          Prête à faire un pas de plus vers tes objectifs ?
+        </p>
+        <span
+          aria-hidden="true"
+          className="mt-4 block h-[3px] w-14 rounded-full bg-primary/40"
+        />
+      </div>
     </div>
   );
 }

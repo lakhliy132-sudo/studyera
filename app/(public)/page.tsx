@@ -3,13 +3,17 @@ import Link from "next/link";
 import BandeauBienvenueAccueil from "@/components/BandeauBienvenueAccueil";
 import BarreObjectifAccueil from "@/components/BarreObjectifAccueil";
 import CarteAujourdhuiAccueil from "@/components/CarteAujourdhuiAccueil";
-import CarteEnCours from "@/components/CarteEnCours";
+import CarteMotivationAccueil from "@/components/CarteMotivationAccueil";
+import TuilesStatsAccueil from "@/components/TuilesStatsAccueil";
 import CompteARebourExamenLive from "@/components/CompteARebourExamenLive";
 import GrilleMatieresAccueil from "@/components/GrilleMatieresAccueil";
-import { IconeEtoile } from "@/components/icones";
 import { deriverPrenom } from "@/lib/prenom";
 import { creerClientServeur } from "@/lib/supabase/server";
-import { recupererProgressionParOeuvre, recupererRepriseLecture } from "@/lib/supabase/tableauDeBord";
+import { recupererProgressionParOeuvre } from "@/lib/supabase/tableauDeBord";
+import { compterCours } from "@/lib/supabase/contenu";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
+import { MATIERES } from "@/lib/matieres";
+import { joursAvant, prochaineSession } from "@/lib/calendrier";
 
 /**
  * Accueil d'un élève connecté — reprend une maquette complète fournie
@@ -60,22 +64,30 @@ import { recupererProgressionParOeuvre, recupererRepriseLecture } from "@/lib/su
  * donnée. Vérifié en mode clair et sombre avant de garder les mêmes
  * opacités dans les deux.
  */
-async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: string }) {
-  const [progression, reprise] = await Promise.all([
+async function AccueilConnecte({
+  prenom,
+  userId,
+}: {
+  prenom: string;
+  userId: string;
+}) {
+  const [progression, nombreCours] = await Promise.all([
     recupererProgressionParOeuvre(userId),
-    recupererRepriseLecture(userId),
+    compterCours(FILIERE_ACTUELLE),
   ]);
+  const session = prochaineSession();
 
-  const totalChapitres = progression.parOeuvre.reduce((somme, o) => somme + o.totalChapitres, 0);
-  const oeuvreReprise = reprise ? progression.parOeuvre.find((o) => o.slug === reprise.oeuvreSlug) : undefined;
-  const pourcentageReprise =
-    oeuvreReprise && oeuvreReprise.totalChapitres > 0
-      ? Math.round((oeuvreReprise.chapitresLus / oeuvreReprise.totalChapitres) * 100)
-      : null;
+  const totalChapitres = progression.parOeuvre.reduce(
+    (somme, o) => somme + o.totalChapitres,
+    0,
+  );
 
   return (
     <>
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      >
         <div
           className="absolute -top-24 -left-24 size-[420px] rounded-full opacity-[0.16] blur-3xl"
           style={{ backgroundColor: "var(--color-primary)" }}
@@ -91,24 +103,66 @@ async function AccueilConnecte({ prenom, userId }: { prenom: string; userId: str
       </div>
 
       <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
-        <BandeauBienvenueAccueil prenom={prenom} />
+        {/* Entrée échelonnée des blocs au chargement — demandé par
+         * l'utilisateur parmi plusieurs propositions d'élégance. Même
+         * animation que les cartes de /oeuvres
+         * (`animate-entree-carte`, app/globals.css), avec un décalage
+         * croissant : les blocs apparaissent de haut en bas, colonne
+         * de gauche puis colonne de droite. Le délai est en style
+         * inline parce qu'il change d'un bloc à l'autre — une classe
+         * Tailwind construite à l'exécution ne serait pas générée. */}
+        <div className="animate-entree-carte">
+          <BandeauBienvenueAccueil prenom={prenom} />
+        </div>
+
+        <div
+          className="animate-entree-carte"
+          style={{ animationDelay: "60ms" }}
+        >
+          <TuilesStatsAccueil
+            nombreCours={nombreCours}
+            nombreMatieres={MATIERES.length}
+            joursAvantExamen={session ? joursAvant(session.debut) : null}
+          />
+        </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
           <div className="flex flex-col gap-6">
-            {reprise && <CarteEnCours reprise={reprise} pourcentage={pourcentageReprise} />}
-            <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
-            <BarreObjectifAccueil />
+            <div
+              className="animate-entree-carte"
+              style={{ animationDelay: "90ms" }}
+            >
+              <GrilleMatieresAccueil
+                chapitresLus={progression.totalChapitresLus}
+                totalChapitres={totalChapitres}
+              />
+            </div>
+            <div
+              className="animate-entree-carte"
+              style={{ animationDelay: "180ms" }}
+            >
+              <BarreObjectifAccueil />
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            <CompteARebourExamenLive />
-            <CarteAujourdhuiAccueil />
             <div
-              className="flex items-center gap-3 rounded-[24px] p-6 text-white shadow-sm"
-              style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-matiere-arabe) 100%)" }}
+              className="animate-entree-carte"
+              style={{ animationDelay: "150ms" }}
             >
-              <IconeEtoile className="size-6 shrink-0" />
-              <p className="text-sm leading-snug">Tu es plus proche de tes rêves que tu ne le penses.</p>
+              <CompteARebourExamenLive />
+            </div>
+            <div
+              className="animate-entree-carte"
+              style={{ animationDelay: "240ms" }}
+            >
+              <CarteAujourdhuiAccueil />
+            </div>
+            <div
+              className="animate-entree-carte"
+              style={{ animationDelay: "330ms" }}
+            >
+              <CarteMotivationAccueil />
             </div>
           </div>
         </div>
@@ -132,8 +186,15 @@ export default async function PageAccueil() {
   } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: profil } = await supabase.from("profils").select("nom_complet").eq("id", user.id).maybeSingle();
-    const prenom = deriverPrenom(profil?.nom_complet ?? null, user.email ?? null);
+    const { data: profil } = await supabase
+      .from("profils")
+      .select("nom_complet")
+      .eq("id", user.id)
+      .maybeSingle();
+    const prenom = deriverPrenom(
+      profil?.nom_complet ?? null,
+      user.email ?? null,
+    );
     return <AccueilConnecte prenom={prenom} userId={user.id} />;
   }
 
@@ -145,17 +206,34 @@ export default async function PageAccueil() {
           50% { transform: translateY(14px) scale(1.015); }
         }
       `}</style>
-      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full"
+      >
         <svg
           viewBox="0 0 1440 620"
           preserveAspectRatio="none"
           className="h-[88vh] w-full"
-          style={{ animation: "vague-accueil-respire 10s ease-in-out infinite" }}
+          style={{
+            animation: "vague-accueil-respire 10s ease-in-out infinite",
+          }}
         >
           <defs>
-            <linearGradient id="dégradé-vague-accueil" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="color-mix(in srgb, var(--color-primary) 14%, var(--color-background))" />
-              <stop offset="55%" stopColor="color-mix(in srgb, var(--color-primary) 22%, var(--color-background))" />
+            <linearGradient
+              id="dégradé-vague-accueil"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop
+                offset="0%"
+                stopColor="color-mix(in srgb, var(--color-primary) 14%, var(--color-background))"
+              />
+              <stop
+                offset="55%"
+                stopColor="color-mix(in srgb, var(--color-primary) 22%, var(--color-background))"
+              />
               <stop offset="100%" stopColor="var(--color-background)" />
             </linearGradient>
           </defs>

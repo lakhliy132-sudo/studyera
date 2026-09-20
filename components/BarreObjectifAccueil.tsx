@@ -12,7 +12,7 @@ import { IconeCible, IconeFleche } from "@/components/icones";
  */
 export default function BarreObjectifAccueil() {
   return (
-    <div className="flex flex-col items-start justify-between gap-4 rounded-[24px] border border-border bg-surface p-6 shadow-sm sm:flex-row sm:items-center">
+    <div className="transition hover:-translate-y-0.5 hover:shadow-md flex flex-col items-start justify-between gap-4 rounded-[24px] border border-border bg-surface p-6 shadow-sm sm:flex-row sm:items-center">
       <div className="flex items-center gap-3.5">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
           <IconeCible className="size-5" />

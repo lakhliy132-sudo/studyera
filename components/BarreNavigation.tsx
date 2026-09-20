@@ -2,8 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
+import BoutonAnimations from "@/components/BoutonAnimations";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
-import { IconeChevronBas, IconeCloche, IconeMenu, IconePersonne, IconeRecherche } from "@/components/icones";
+import {
+  IconeChevronBas,
+  IconeCloche,
+  IconeMenu,
+  IconePersonne,
+  IconeRecherche,
+} from "@/components/icones";
 import LiensNavigation from "@/components/LiensNavigation";
 
 interface BarreNavigationProps {
@@ -50,10 +57,21 @@ interface BarreNavigationProps {
  * dessous, le menu `<details>` prend le relais plutôt que de laisser
  * la page défiler horizontalement.
  */
-export default function BarreNavigation({ connecte, email, prenom = null }: BarreNavigationProps) {
+export default function BarreNavigation({
+  connecte,
+  email,
+  prenom = null,
+}: BarreNavigationProps) {
   const logo = (
     <Link href="/" className="flex shrink-0 items-center gap-3">
-      <Image src="/logo-studyera.png" alt="Studyera" width={868} height={568} priority className="h-[52px] w-auto" />
+      <Image
+        src="/logo-studyera.png"
+        alt="Studyera"
+        width={868}
+        height={568}
+        priority
+        className="h-[52px] w-auto"
+      />
       <span className="font-lecture hidden text-[12.5px] leading-tight text-primary-vif sm:block">
         Révisez ·
         <br />
@@ -80,7 +98,12 @@ export default function BarreNavigation({ connecte, email, prenom = null }: Barr
         {connecte && <ChampRecherche pleineLargeur />}
         <LiensNavigation pleineLargeur connecte={connecte} />
         <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
-          <EtatConnexion connecte={connecte} email={email} prenom={prenom} pleineLargeur />
+          <EtatConnexion
+            connecte={connecte}
+            email={email}
+            prenom={prenom}
+            pleineLargeur
+          />
         </div>
       </div>
     </details>
@@ -126,7 +149,10 @@ export default function BarreNavigation({ connecte, email, prenom = null }: Barr
       <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
         {logo}
 
-        <nav aria-label="Navigation principale" className="hidden items-center justify-center gap-2 xl:flex">
+        <nav
+          aria-label="Navigation principale"
+          className="hidden items-center justify-center gap-2 xl:flex"
+        >
           <LiensNavigation connecte={connecte} />
         </nav>
 
@@ -145,17 +171,35 @@ export default function BarreNavigation({ connecte, email, prenom = null }: Barr
  * contenu n'existe encore côté serveur, donc pas de `<form>`/`action`
  * (une saisie suivie d'Entrée ne fait rien, plutôt que de donner
  * l'illusion d'une recherche qui ne mène nulle part). */
-function ChampRecherche({ pleineLargeur = false }: { pleineLargeur?: boolean }) {
+function ChampRecherche({
+  pleineLargeur = false,
+}: {
+  pleineLargeur?: boolean;
+}) {
+  // Vrai formulaire GET vers /recherche — le champ n'était qu'un
+  // décor jusqu'ici (aucun `form`, aucune action) ; rendre la recherche
+  // utilisable a été demandé par l'utilisateur parmi plusieurs
+  // propositions. Formulaire natif plutôt qu'un composant client : la
+  // touche Entrée suffit, aucun JavaScript nécessaire.
   return (
-    <label className={`relative flex items-center ${pleineLargeur ? "w-full" : ""}`}>
+    <form
+      action="/recherche"
+      method="get"
+      role="search"
+      className={`relative flex items-center ${pleineLargeur ? "w-full" : ""}`}
+    >
       <IconeRecherche className="pointer-events-none absolute left-3.5 size-4 text-subtle-foreground" />
-      <span className="sr-only">Rechercher</span>
+      <label htmlFor={pleineLargeur ? "recherche-mobile" : "recherche"} className="sr-only">
+        Rechercher
+      </label>
       <input
+        id={pleineLargeur ? "recherche-mobile" : "recherche"}
+        name="q"
         type="search"
         placeholder="Rechercher une matière, un cours, un exercice..."
         className="w-full rounded-full border border-border bg-background py-2 pr-4 pl-10 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
       />
-    </label>
+    </form>
   );
 }
 
@@ -167,8 +211,18 @@ function EtatConnexion({
 }: BarreNavigationProps & { pleineLargeur?: boolean }) {
   if (connecte) {
     return (
-      <div className={pleineLargeur ? "flex items-center gap-3 px-3 py-2" : "flex items-center gap-3"}>
-        <Link href="/tableau-de-bord" className="flex items-center gap-2" title={email ?? undefined}>
+      <div
+        className={
+          pleineLargeur
+            ? "flex items-center gap-3 px-3 py-2"
+            : "flex items-center gap-3"
+        }
+      >
+        <Link
+          href="/tableau-de-bord"
+          className="flex items-center gap-2"
+          title={email ?? undefined}
+        >
           <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
@@ -184,11 +238,14 @@ function EtatConnexion({
             </span>
           )}
           {pleineLargeur && !prenom && (
-            <span className="truncate text-sm text-muted-foreground">{email}</span>
+            <span className="truncate text-sm text-muted-foreground">
+              {email}
+            </span>
           )}
         </Link>
         {/* Mode nuit à côté de "Se déconnecter" — demandé explicitement
          * par l'utilisateur ("a cote de la partie de se deconnecter"). */}
+        <BoutonAnimations />
         <BoutonModeNuit />
         <BoutonDeconnexion />
       </div>
@@ -199,6 +256,7 @@ function EtatConnexion({
 
   return (
     <>
+      <BoutonAnimations />
       <BoutonModeNuit />
       <Link
         href="/connexion"

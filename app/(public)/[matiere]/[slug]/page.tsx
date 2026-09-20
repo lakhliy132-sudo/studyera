@@ -128,7 +128,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
             <h1 className="font-serif text-[38px] leading-tight font-bold tracking-tight text-ink">{cours.titre}</h1>
 
             <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_270px]">
-              <div className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
+              <div className="relative overflow-hidden rounded-[22px] border border-border bg-feuille shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
                 <div aria-hidden="true" style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }} className="h-2 w-full" />
                 {/* Pastille en filigrane, purement décorative — même
                  * technique que les taches de couleur de l'accueil.
@@ -198,7 +198,12 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
              * pour rester lisible) et titres colorés, rouge pour les
              * "I-/II-/III-" et vert pour les "1-1/, 2-1/..." ("I- ca
              * fais les avec le rouge et 1 2 3 avec le vert"). */}
-            <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
+            {/* `bg-feuille` plutôt que `bg-surface` — demandé
+             * explicitement par l'utilisateur ("je veux la page ou ya
+             * le cours ecrit ne soit pas blanche") : la feuille de
+             * cours est ivoire, les autres cartes du site restent
+             * blanches. */}
+            <div className="rounded-lg border border-border bg-feuille p-9 shadow-sm">
               <ContenuMarkdown
                 texte={contenuCours}
                 grandeTaille={matiere.slug === "arabe"}

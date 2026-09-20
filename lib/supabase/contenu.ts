@@ -304,3 +304,45 @@ export async function recupererCoursParSlug(slug: string): Promise<Cours | null>
   if (error) throw error;
   return data as Cours | null;
 }
+
+/** Cours dont le titre contient `terme`, toutes catégories confondues,
+ * pour une filière donnée — page /recherche, alimentée par le champ de
+ * recherche de la barre de navigation (qui n'était jusque-là qu'un
+ * décor). `ilike` : insensible à la casse et aux accents absents du
+ * terme saisi n'est pas géré par Postgres ici, mais les titres du site
+ * sont en français accentué ou en arabe, et la recherche porte sur ce
+ * que la personne voit à l'écran. Limité à 40 résultats, largement au
+ *-dessus du nombre de cours par matière aujourd'hui. */
+export async function rechercherCours(terme: string, filiere: string): Promise<Cours[]> {
+  const recherche = terme.trim();
+  if (recherche.length < 2) return [];
+
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase
+    .from("cours")
+    .select("*")
+    .eq("filiere", filiere)
+    .ilike("titre", `%${recherche}%`)
+    .order("categorie")
+    .order("ordre")
+    .limit(40);
+
+  if (error) throw error;
+  return (data as Cours[]) ?? [];
+}
+
+/** Nombre de cours disponibles pour une filière, toutes matières
+ * confondues — tuile "cours disponibles" de l'accueil. `head: true` :
+ * seul le compte est demandé, aucune ligne n'est transférée. */
+export async function compterCours(filiere: string): Promise<number> {
+  const supabase = await creerClientServeur();
+
+  const { count, error } = await supabase
+    .from("cours")
+    .select("*", { count: "exact", head: true })
+    .eq("filiere", filiere);
+
+  if (error) throw error;
+  return count ?? 0;
+}
