@@ -26,7 +26,11 @@ const LIENS = [
  * calendrier aussi progres"). "Progrès" n'a pas de sens pour un
  * visiteur non connecté (page protégée, voir middleware.ts), donc
  * absent sinon — même logique que "Tableau de bord". */
-const LIEN_TABLEAU_DE_BORD = { href: "/tableau-de-bord", libelle: "Tableau de bord" } as const;
+const LIEN_TABLEAU_DE_BORD = {
+  href: "/tableau-de-bord",
+  libelle: "Tableau de bord",
+} as const;
+const LIEN_COMMUNAUTE = { href: "/communaute", libelle: "Communauté" } as const;
 const LIEN_PROGRES = { href: "/progres", libelle: "Progrès" } as const;
 
 interface LiensNavigationProps {
@@ -62,10 +66,19 @@ interface LiensNavigationProps {
  * par toutes les pages (contrairement à OngletsOeuvre/OngletsChapitre,
  * qui connaissent leur onglet actif via un prop explicite).
  */
-export default function LiensNavigation({ pleineLargeur = false, connecte = false }: LiensNavigationProps) {
+export default function LiensNavigation({
+  pleineLargeur = false,
+  connecte = false,
+}: LiensNavigationProps) {
   const chemin = usePathname();
   const liens = connecte
-    ? [LIENS[0], LIEN_TABLEAU_DE_BORD, ...LIENS.slice(1), LIEN_PROGRES]
+    ? [
+        LIENS[0],
+        LIEN_TABLEAU_DE_BORD,
+        ...LIENS.slice(1),
+        LIEN_COMMUNAUTE,
+        LIEN_PROGRES,
+      ]
     : LIENS;
 
   return (
@@ -77,7 +90,9 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
         // lib/matieres.ts), donc un simple `startsWith("/matieres")`
         // ne suffit pas.
         const surUneMatiere = MATIERES.some(
-          (matiere) => chemin === `/${matiere.slug}` || chemin.startsWith(`/${matiere.slug}/`),
+          (matiere) =>
+            chemin === `/${matiere.slug}` ||
+            chemin.startsWith(`/${matiere.slug}/`),
         );
         // "Matières" doit aussi rester en surbrillance sur la carte
         // "Français" et ses 4 sections (/francais, /oeuvres, /langue,
@@ -87,7 +102,9 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
         const surFrancais =
           chemin === "/francais" ||
           chemin.startsWith("/francais/") ||
-          PREFIXES_FRANCAIS.some((prefixe) => chemin === prefixe || chemin.startsWith(`${prefixe}/`));
+          PREFIXES_FRANCAIS.some(
+            (prefixe) => chemin === prefixe || chemin.startsWith(`${prefixe}/`),
+          );
         const actif =
           lien.href === "/"
             ? chemin === "/"
@@ -103,15 +120,15 @@ export default function LiensNavigation({ pleineLargeur = false, connecte = fals
             className={
               (actif
                 ? "text-primary font-semibold"
-                : "text-foreground hover:text-primary") +
-              ` relative px-3.5 py-2.5 text-base whitespace-nowrap ${pleineLargeur ? "block" : ""}`
+                : "text-muted-foreground hover:text-primary") +
+              ` relative px-3.5 py-2.5 text-[15px] whitespace-nowrap transition-colors ${pleineLargeur ? "block" : ""}`
             }
           >
             {lien.libelle}
-            {actif && (
+            {actif && !pleineLargeur && (
               <span
                 aria-hidden="true"
-                className="absolute inset-x-3.5 bottom-0.5 h-[2.5px] rounded-full bg-primary"
+                className="absolute inset-x-0 bottom-1 mx-auto block size-1 rounded-full bg-primary"
               />
             )}
           </Link>

@@ -6,7 +6,6 @@ import BoutonAnimations from "@/components/BoutonAnimations";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
 import {
   IconeChevronBas,
-  IconeCloche,
   IconeMenu,
   IconePersonne,
   IconeRecherche,
@@ -72,12 +71,8 @@ export default function BarreNavigation({
         priority
         className="h-[52px] w-auto"
       />
-      <span className="font-lecture hidden text-[12.5px] leading-tight text-primary-vif sm:block">
-        Révisez ·
-        <br />
-        Comprenez ·
-        <br />
-        Progressez
+      <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground uppercase xl:block">
+        Révisez · Comprenez · Progressez
       </span>
     </Link>
   );
@@ -116,36 +111,39 @@ export default function BarreNavigation({
   // plus de ce qui existait déjà (avatar, mode nuit, déconnexion).
   if (connecte) {
     return (
-      <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
-        <div className="grid h-16 w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
+      <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
+        <div className="grid h-[76px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 px-7">
           {logo}
-          <div className="hidden max-w-xl justify-self-center xl:block xl:w-full">
-            <ChampRecherche />
-          </div>
+
+          <nav
+            aria-label="Navigation principale"
+            className="hidden items-center justify-center gap-1 xl:flex"
+          >
+            <LiensNavigation connecte={connecte} />
+          </nav>
+
           <div className="hidden items-center justify-end gap-3 xl:flex">
-            <button
-              type="button"
-              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-subtle-foreground transition-colors hover:bg-surface-muted"
-              aria-label="Notifications"
+            <Link
+              href="/recherche"
+              aria-label="Rechercher"
+              title="Rechercher"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full text-subtle-foreground transition-colors hover:bg-surface-muted hover:text-primary"
             >
-              <IconeCloche className="size-[18px]" />
-            </button>
+              <IconeRecherche className="size-[18px]" />
+            </Link>
+            <BoutonAnimations />
+            <BoutonModeNuit />
             <EtatConnexion connecte={connecte} email={email} prenom={prenom} />
           </div>
+
           {menuMobile}
         </div>
-        <nav
-          aria-label="Navigation principale"
-          className="hidden items-center justify-center gap-2 border-t border-border py-1.5 xl:flex"
-        >
-          <LiensNavigation connecte={connecte} />
-        </nav>
       </header>
     );
   }
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-border bg-surface">
+    <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
       <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
         {logo}
 
@@ -189,7 +187,10 @@ function ChampRecherche({
       className={`relative flex items-center ${pleineLargeur ? "w-full" : ""}`}
     >
       <IconeRecherche className="pointer-events-none absolute left-3.5 size-4 text-subtle-foreground" />
-      <label htmlFor={pleineLargeur ? "recherche-mobile" : "recherche"} className="sr-only">
+      <label
+        htmlFor={pleineLargeur ? "recherche-mobile" : "recherche"}
+        className="sr-only"
+      >
         Rechercher
       </label>
       <input
@@ -197,7 +198,7 @@ function ChampRecherche({
         name="q"
         type="search"
         placeholder="Rechercher une matière, un cours, un exercice..."
-        className="w-full rounded-full border border-border bg-background py-2 pr-4 pl-10 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
+        className="w-full rounded-full border border-transparent bg-surface-muted py-2.5 pr-4 pl-11 text-sm text-foreground transition-colors placeholder:text-subtle-foreground focus:border-primary focus:bg-surface focus:outline-none"
       />
     </form>
   );
@@ -223,7 +224,13 @@ function EtatConnexion({
           className="flex items-center gap-2"
           title={email ?? undefined}
         >
-          <span className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-ink">
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-sm"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--color-primary) 0%, var(--color-matiere-arabe) 100%)",
+            }}
+          >
             {email ? email.charAt(0).toUpperCase() : "?"}
           </span>
           {/* Prénom + chevron — maquette envoyée par l'utilisateur
@@ -243,10 +250,15 @@ function EtatConnexion({
             </span>
           )}
         </Link>
-        {/* Mode nuit à côté de "Se déconnecter" — demandé explicitement
-         * par l'utilisateur ("a cote de la partie de se deconnecter"). */}
-        <BoutonAnimations />
-        <BoutonModeNuit />
+        {/* Sur la barre desktop, les boutons d'affichage sont dans la
+         * pilule à gauche du compte ; ils restent ici pour le menu
+         * mobile, qui n'a pas cette pilule. */}
+        {pleineLargeur && (
+          <>
+            <BoutonAnimations />
+            <BoutonModeNuit />
+          </>
+        )}
         <BoutonDeconnexion />
       </div>
     );

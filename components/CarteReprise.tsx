@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { IconeFleche, IconeLivre } from "@/components/icones";
+import { COUVERTURES_OEUVRES } from "@/lib/couvertures";
 import { libelleChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { RepriseLecture } from "@/lib/supabase/tableauDeBord";
 
@@ -32,51 +34,99 @@ export default function CarteReprise({ reprise }: CarteRepriseProps) {
     unite,
   );
 
-  return (
-    <section className="overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm">
-      <div className="flex items-center gap-3 bg-gradient-to-r from-primary to-ink px-7 py-4">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-white">
-          <IconeLivre className="size-5" />
-        </span>
-        <p className="text-sm font-semibold text-white">
-          {reprise.estRecommandation ? "À découvrir" : "Reprends ta lecture"}
-        </p>
-      </div>
+  const couverture = COUVERTURES_OEUVRES[reprise.oeuvreSlug];
 
-      <div className="p-7 sm:p-8">
-        <div className="flex flex-wrap items-baseline gap-3">
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-ink">{reprise.oeuvreTitreFr}</h2>
-          {reprise.oeuvreTitreAr && (
-            <span dir="rtl" lang="ar" className="font-arabe text-lg text-primary-vif">
-              {reprise.oeuvreTitreAr}
+  return (
+    <section
+      className="overflow-hidden rounded-[24px] border shadow-sm"
+      style={{
+        backgroundColor:
+          "color-mix(in srgb, var(--color-matiere-arabe) 7%, var(--color-surface))",
+        borderColor:
+          "color-mix(in srgb, var(--color-matiere-arabe) 24%, var(--color-border))",
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="block h-1.5 w-full"
+        style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+      />
+      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:p-5">
+        <span
+          className="relative hidden h-[148px] w-[104px] shrink-0 overflow-hidden rounded-[12px] sm:block"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--color-matiere-arabe) 16%, var(--color-surface))",
+          }}
+        >
+          {couverture ? (
+            <Image
+              src={couverture}
+              alt=""
+              aria-hidden="true"
+              width={264}
+              height={380}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="flex h-full items-center justify-center text-primary">
+              <IconeLivre className="size-8" />
             </span>
           )}
-        </div>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          {reprise.auteur ? `${reprise.auteur} — ` : ""}
-          {unite.numeroDejaDansTitre ? reprise.chapitreTitreFr : libelleChap}
-        </p>
+        </span>
 
-        {reprise.resumeCourt && (
-          <p className="mt-4 max-w-2xl border-l-2 border-primary/40 py-0.5 pl-4 font-lecture text-[15px] leading-relaxed text-foreground">
-            {reprise.resumeCourt}
+        <div className="flex min-w-0 flex-col">
+          <span
+            className="flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white"
+            style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+          >
+            <IconeLivre className="size-3.5" />
+            {reprise.estRecommandation ? "À découvrir" : "Reprends ta lecture"}
+          </span>
+
+          <div className="mt-3 flex flex-wrap items-baseline gap-3">
+            <h2 className="font-serif text-[22px] leading-tight font-bold tracking-tight text-ink">
+              {reprise.oeuvreTitreFr}
+            </h2>
+            {reprise.oeuvreTitreAr && (
+              <span
+                dir="rtl"
+                lang="ar"
+                className="font-arabe text-lg text-primary-vif"
+              >
+                {reprise.oeuvreTitreAr}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {reprise.auteur ? `${reprise.auteur} — ` : ""}
+            {unite.numeroDejaDansTitre ? reprise.chapitreTitreFr : libelleChap}
           </p>
-        )}
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Link
-            href={reprise.url}
-            className="inline-flex items-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink"
-          >
-            {reprise.estRecommandation ? "Commencer la lecture" : "Continuer la lecture"}
-            <IconeFleche className="size-4" />
-          </Link>
-          <Link
-            href={`/oeuvres/${reprise.oeuvreSlug}`}
-            className="rounded-[10px] px-5 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-ink"
-          >
-            Voir la fiche de l&apos;œuvre
-          </Link>
+          {reprise.resumeCourt && (
+            <p className="mt-2.5 max-w-2xl font-lecture text-[14.5px] leading-relaxed text-foreground">
+              {reprise.resumeCourt}
+            </p>
+          )}
+
+          <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
+            <Link
+              href={reprise.url}
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-semibold text-white shadow-sm transition-all hover:-translate-y-px"
+              style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+            >
+              {reprise.estRecommandation
+                ? "Commencer la lecture"
+                : "Continuer la lecture"}
+              <IconeFleche className="size-4" />
+            </Link>
+            <Link
+              href={`/oeuvres/${reprise.oeuvreSlug}`}
+              className="rounded-full px-3 py-2 text-[13.5px] font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-ink"
+            >
+              Voir la fiche de l&apos;œuvre
+            </Link>
+          </div>
         </div>
       </div>
     </section>

@@ -4,6 +4,11 @@ import Link from "next/link";
 
 import { IconeFleche, IconeLivre } from "@/components/icones";
 import {
+  ENCRE_MATIERE,
+  ENCRE_MATIERE_DOUCE,
+  PALETTE_MATIERES,
+} from "@/lib/palette-matieres";
+import {
   IllustrationGlobe,
   IllustrationLivre,
   IllustrationLivreOuvert,
@@ -52,10 +57,7 @@ const CARTES: CarteMatierePage[] = [
     titre: "Français",
     description:
       "Étudie la langue française, la littérature, la production écrite et la correction.",
-    fond: "#fdeef5",
-    bordure: "#f8dbe8",
-    pastille: "#f9d2e4",
-    bouton: "#e8447f",
+    ...PALETTE_MATIERES.francais,
     Illustration: IllustrationLivre,
   },
   {
@@ -63,10 +65,7 @@ const CARTES: CarteMatierePage[] = [
     titre: "Arabe",
     description:
       "Textes, grammaire et expression pour renforcer tes compétences en langue arabe.",
-    fond: "#f4eefe",
-    bordure: "#e6dcfc",
-    pastille: "#ded0fb",
-    bouton: "#7c3aed",
+    ...PALETTE_MATIERES.arabe,
     Illustration: IllustrationLivreOuvert,
   },
   {
@@ -75,10 +74,7 @@ const CARTES: CarteMatierePage[] = [
     titreItalique: "Géographie",
     description:
       "Comprends le passé, explore le monde et analyse les sociétés.",
-    fond: "#fdf7e6",
-    bordure: "#f7e8bf",
-    pastille: "#fde68a",
-    bouton: "#e0a413",
+    ...PALETTE_MATIERES["histoire-geo"],
     Illustration: IllustrationGlobe,
   },
   {
@@ -87,10 +83,7 @@ const CARTES: CarteMatierePage[] = [
     titreItalique: "islamique",
     description:
       "Cours, notions clés et repères pour l'examen d'éducation islamique.",
-    fond: "#e9f8f4",
-    bordure: "#cdeee6",
-    pastille: "#a7e8dc",
-    bouton: "#0fb39b",
+    ...PALETTE_MATIERES["education-islamique"],
     Illustration: IllustrationMosquee,
   },
 ];
@@ -147,30 +140,30 @@ export default function PageMatieres() {
 
       <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-6 pt-12 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <span style={{ color: "#5b5bd6" }}>
+          <span className="text-primary">
             <IconeLivre className="size-10" />
           </span>
           <h1
             className="mt-4 font-serif text-[42px] leading-tight font-bold tracking-tight"
-            style={{ color: "#1e2a6b" }}
+            style={{ color: ENCRE_MATIERE }}
           >
             Les{" "}
-            <span className="italic" style={{ color: "#7c3aed" }}>
-              matières
-            </span>
+            <span className="text-primary italic">matières</span>
           </h1>
-          <p className="mt-3 max-w-xl text-[15px]" style={{ color: "#4b5578" }}>
+          <p
+            className="mt-3 max-w-xl text-[15px]"
+            style={{ color: ENCRE_MATIERE_DOUCE }}
+          >
             Explore toutes les matières de ton parcours et progresse à ton
             rythme.
           </p>
           <span
             aria-hidden="true"
-            className="mt-5 block h-1 w-20 rounded-full"
-            style={{ backgroundColor: "#7c3aed" }}
+            className="mt-5 block h-1 w-20 rounded-full bg-primary"
           />
         </section>
 
-        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-x-10 md:gap-y-9">
           {CARTES.map((carte) => (
             <li key={carte.href}>
               <Link
@@ -213,7 +206,7 @@ export default function PageMatieres() {
                   <div className="min-w-0">
                     <h2
                       className="font-serif text-[22px] leading-snug font-bold"
-                      style={{ color: "#1e2a6b" }}
+                      style={{ color: ENCRE_MATIERE }}
                     >
                       {carte.titre}
                       {carte.titreItalique && (
@@ -222,7 +215,7 @@ export default function PageMatieres() {
                     </h2>
                     <p
                       className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
-                      style={{ color: "#4b5578" }}
+                      style={{ color: ENCRE_MATIERE_DOUCE }}
                     >
                       {carte.description}
                     </p>

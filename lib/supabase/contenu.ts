@@ -346,3 +346,21 @@ export async function compterCours(filiere: string): Promise<number> {
   if (error) throw error;
   return count ?? 0;
 }
+
+/** Nombre de cours par catégorie pour une filière — bandeau des
+ * matières du tableau de bord. Une seule requête (on ne demande que la
+ * colonne `categorie`) plutôt qu'un compte par matière. */
+export async function compterCoursParCategorie(filiere: string): Promise<Record<string, number>> {
+  const supabase = await creerClientServeur();
+
+  const { data, error } = await supabase.from("cours").select("categorie").eq("filiere", filiere);
+  if (error) throw error;
+
+  const comptes: Record<string, number> = {};
+  for (const ligne of data ?? []) {
+    const categorie = (ligne as { categorie: string | null }).categorie;
+    if (!categorie) continue;
+    comptes[categorie] = (comptes[categorie] ?? 0) + 1;
+  }
+  return comptes;
+}

@@ -35,7 +35,8 @@ export default function PageFrancais() {
             Le <span className="text-primary italic">français</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Œuvres au programme, cours de langue, production écrite et correction IA.
+            Œuvres au programme, cours de langue, production écrite et
+            correction IA.
           </p>
         </section>
 
@@ -51,7 +52,9 @@ export default function PageFrancais() {
                 </span>
                 <h2 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">
                   {section.titreAvantAccent}
-                  <span className="text-primary italic">{section.titreAccent}</span>
+                  <span className="text-primary italic">
+                    {section.titreAccent}
+                  </span>
                 </h2>
                 <p className="mt-1.5 font-lecture text-[14.5px] leading-relaxed text-muted-foreground">
                   {section.description}

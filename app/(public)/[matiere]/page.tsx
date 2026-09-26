@@ -27,11 +27,17 @@ function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   return (
     <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
       {MODULES_ARABE.map((module) => {
-        const nombre = lecons.filter((c) => c.slug.startsWith(prefixeSlugModule(module.numero))).length;
+        const nombre = lecons.filter((c) =>
+          c.slug.startsWith(prefixeSlugModule(module.numero)),
+        ).length;
 
         const interieur = (
           <>
-            <div aria-hidden="true" style={{ backgroundColor: module.couleur }} className="h-1.5 w-full" />
+            <div
+              aria-hidden="true"
+              style={{ backgroundColor: module.couleur }}
+              className="h-1.5 w-full"
+            />
             <div className="flex flex-1 flex-col p-[26px]">
               <span className="flex items-center justify-between gap-3">
                 <span
@@ -44,16 +50,24 @@ function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
                   <IconeFleche className="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
                 )}
               </span>
-              <span dir="rtl" className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink">
+              <span
+                dir="rtl"
+                className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink"
+              >
                 {module.titre}
               </span>
               {module.sousTitre && (
-                <span dir="rtl" className="font-arabe mt-1.5 block text-sm leading-snug text-muted-foreground">
+                <span
+                  dir="rtl"
+                  className="font-arabe mt-1.5 block text-sm leading-snug text-muted-foreground"
+                >
                   {module.sousTitre}
                 </span>
               )}
               <span className="mt-3 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
-                {nombre === 0 ? "Bientôt disponible" : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
+                {nombre === 0
+                  ? "Bientôt disponible"
+                  : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
               </span>
             </div>
           </>
@@ -113,11 +127,18 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const matiere = recupererMatiereParSlug(slugMatiere);
   if (!matiere) notFound();
 
-  const lecons = await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
+  const lecons = await recupererCoursParCategorie(
+    matiere.slug,
+    FILIERE_ACTUELLE,
+  );
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estArabe = matiere.slug === "arabe";
-  const leconsHistoire = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("histoire-")) : [];
-  const leconsGeographie = estHistoireGeo ? lecons.filter((c) => c.slug.startsWith("geographie-")) : [];
+  const leconsHistoire = estHistoireGeo
+    ? lecons.filter((c) => c.slug.startsWith("histoire-"))
+    : [];
+  const leconsGeographie = estHistoireGeo
+    ? lecons.filter((c) => c.slug.startsWith("geographie-"))
+    : [];
 
   return (
     <main className="flex flex-col">
@@ -142,7 +163,9 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
             {matiere.titreAvantAccent}
             <span className="text-primary italic">{matiere.titreAccent}</span>
           </h1>
-          <p className="mt-3 max-w-xl text-base text-muted-foreground">{matiere.description}</p>
+          <p className="mt-3 max-w-xl text-base text-muted-foreground">
+            {matiere.description}
+          </p>
         </section>
 
         {estArabe ? (
@@ -155,14 +178,29 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <div className="flex flex-col gap-12">
             {leconsHistoire.length > 0 && (
               <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeHorloge className="size-5" />} titre="Histoire" nombre={leconsHistoire.length} />
-                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsHistoire} />
+                <EnTeteSection
+                  icone={<IconeHorloge className="size-5" />}
+                  titre="Histoire"
+                  nombre={leconsHistoire.length}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsHistoire}
+                />
               </section>
             )}
             {leconsGeographie.length > 0 && (
               <section className="flex flex-col gap-6">
-                <EnTeteSection icone={<IconeGlobe className="size-5" />} titre="Géographie" nombre={leconsGeographie.length} />
-                <GrilleLecons matiereSlug={matiere.slug} lecons={leconsGeographie} numeroDepart={leconsHistoire.length + 1} />
+                <EnTeteSection
+                  icone={<IconeGlobe className="size-5" />}
+                  titre="Géographie"
+                  nombre={leconsGeographie.length}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsGeographie}
+                  numeroDepart={leconsHistoire.length + 1}
+                />
               </section>
             )}
           </div>
