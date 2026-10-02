@@ -2,7 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
-import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
+import {
+  IconeCroissant,
+  IconeFleche,
+  IconeGlobe,
+  IconeHorloge,
+  IconeLivreOuvert,
+  IconeTexte,
+} from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { couleurMatiere } from "@/lib/palette-matieres";
@@ -137,6 +144,24 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const couleur = couleurMatiere(matiere.slug);
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estArabe = matiere.slug === "arabe";
+  const estIslamique = matiere.slug === "education-islamique";
+  // Éducation islamique : trois ensembles distincts dans le résumé
+  // source, mélangés jusqu'ici dans une seule grille — demandé
+  // explicitement par l'utilisateur ("fais la partie de sourat
+  // youssef seul et les cours seuls et les autres qui reste solo").
+  // Repérés par préfixe de slug, comme Histoire/Géographie, plutôt
+  // qu'une colonne dédiée en base.
+  const leconsYoussef = estIslamique
+    ? lecons.filter((c) => /^islamique-youssef-/.test(c.slug))
+    : [];
+  const leconsDourous = estIslamique
+    ? lecons.filter((c) => c.slug.startsWith("islamique-dourous-"))
+    : [];
+  const leconsOutils = estIslamique
+    ? lecons.filter(
+        (c) => !leconsYoussef.includes(c) && !leconsDourous.includes(c),
+      )
+    : [];
   const leconsHistoire = estHistoireGeo
     ? lecons.filter((c) => c.slug.startsWith("histoire-"))
     : [];
@@ -193,6 +218,56 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
           </p>
+        ) : estIslamique ? (
+          <div className="flex flex-col gap-12">
+            {leconsYoussef.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection
+                  icone={<IconeLivreOuvert className="size-5" />}
+                  titre="Sourate Youssef"
+                  nombre={leconsYoussef.length}
+                  couleur={couleur}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsYoussef}
+                  couleur={couleur}
+                />
+              </section>
+            )}
+            {leconsDourous.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection
+                  icone={<IconeCroissant className="size-5" />}
+                  titre="Les cours"
+                  nombre={leconsDourous.length}
+                  couleur={couleur}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsDourous}
+                  numeroDepart={leconsYoussef.length + 1}
+                  couleur={couleur}
+                />
+              </section>
+            )}
+            {leconsOutils.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection
+                  icone={<IconeTexte className="size-5" />}
+                  titre="Révision et méthodologie"
+                  nombre={leconsOutils.length}
+                  couleur={couleur}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsOutils}
+                  numeroDepart={leconsYoussef.length + leconsDourous.length + 1}
+                  couleur={couleur}
+                />
+              </section>
+            )}
+          </div>
         ) : estHistoireGeo ? (
           <div className="flex flex-col gap-12">
             {leconsHistoire.length > 0 && (
