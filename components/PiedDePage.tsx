@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+
+import LogoStudyera from "@/components/LogoStudyera";
 
 interface ColonnePied {
   titre: string;
@@ -50,13 +51,7 @@ export default function PiedDePage() {
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
           <div className="flex max-w-xs flex-col gap-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <Image
-                src="/logo-studyera.png"
-                alt="Studyera"
-                width={868}
-                height={568}
-                className="logo-nuit h-7 w-auto"
-              />
+              <LogoStudyera className="h-7 text-primary" />
             </Link>
             {/* Texte mis à jour quand l'arabe, l'histoire-géographie et
              * l'éducation islamique ont rejoint le français : il

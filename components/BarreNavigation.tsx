@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
+import LogoStudyera from "@/components/LogoStudyera";
 import BoutonAnimations from "@/components/BoutonAnimations";
 import MenuLateral from "@/components/MenuLateral";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
@@ -64,19 +64,7 @@ export default function BarreNavigation({
 }: BarreNavigationProps) {
   const logo = (
     <Link href="/" className="flex shrink-0 items-center gap-3">
-      <Image
-        src="/logo-studyera.png"
-        alt="Studyera"
-        width={868}
-        height={568}
-        priority
-        /* `logo-nuit` (app/globals.css) : le logo est un bleu nuit sur
-         * fond transparent, lisible en clair mais presque invisible sur
-         * le fond sombre. La classe l'éclaircit en mode nuit — pas un
-         * variant `dark:` de Tailwind, ce projet gère le thème par
-         * `prefers-color-scheme` + `[data-theme]`. */
-        className="logo-nuit h-[52px] w-auto"
-      />
+      <LogoStudyera className="h-[52px] text-primary" />
       <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground uppercase xl:block">
         Révisez · Comprenez · Progressez
       </span>

@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+
+import LogoStudyera from "@/components/LogoStudyera";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -227,13 +228,8 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           className={`flex items-center pt-6 pb-4 ${reduit ? "justify-center px-2" : "justify-between px-5"}`}
         >
           <Link href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/logo-studyera.png"
-              alt="Studyera"
-              width={868}
-              height={568}
-              priority
-              className={reduit ? "h-8 w-auto" : "h-9 w-auto"}
+            <LogoStudyera
+              className={`text-primary ${reduit ? "h-8" : "h-9"}`}
             />
           </Link>
           <button
