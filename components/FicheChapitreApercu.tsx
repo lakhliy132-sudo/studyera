@@ -64,7 +64,7 @@ export default function FicheChapitreApercu({
   sujets,
 }: FicheChapitreApercuProps) {
   return (
-    <section className="relative overflow-hidden rounded-[26px] border border-border bg-surface p-[30px] shadow-[0_1px_3px_rgba(27,58,143,0.05),0_14px_44px_rgba(27,58,143,0.07)]">
+    <section className="relative overflow-hidden rounded-[26px] border border-border bg-surface p-5 sm:p-[30px] shadow-[0_1px_3px_rgba(27,58,143,0.05),0_14px_44px_rgba(27,58,143,0.07)]">
       <span
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-ink),var(--color-primary-vif),var(--color-primary-tint))]"

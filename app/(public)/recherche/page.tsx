@@ -51,7 +51,7 @@ export default async function PageRecherche({ searchParams }: PagePropsRecherche
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <div className="flex items-center gap-3.5">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
             <IconeRecherche className="size-5" />
@@ -111,7 +111,7 @@ export default async function PageRecherche({ searchParams }: PagePropsRecherche
         )}
 
         {terme.length >= 2 && total === 0 && (
-          <p className="rounded-[14px] border border-dashed border-border-strong bg-surface p-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-[14px] border border-dashed border-border-strong bg-surface p-5 sm:p-8 text-center text-sm text-muted-foreground">
             Aucun cours ne correspond à « {terme} ». La recherche porte sur le titre des cours et le nom des matières.
           </p>
         )}

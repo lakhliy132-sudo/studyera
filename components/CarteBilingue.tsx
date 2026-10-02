@@ -58,7 +58,7 @@ export default function CarteBilingue({ contenuFr, contenuAr, long = false }: Ca
     <div className="group/resume relative grid grid-cols-1 gap-[22px] md:grid-cols-2">
       {long && <input type="checkbox" id={idRepli} className="sr-only" />}
 
-      <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+      <div className="rounded-lg border border-border bg-surface p-5 sm:p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
         <p className="mb-[18px] flex items-center gap-[11px] font-serif text-lg font-bold text-primary">
           <IconeLivre className="size-[22px]" />
           Résumé
@@ -77,7 +77,7 @@ export default function CarteBilingue({ contenuFr, contenuAr, long = false }: Ca
       </div>
 
       {contenuAr && (
-        <div className="rounded-lg border border-border bg-surface p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
+        <div className="rounded-lg border border-border bg-surface p-5 sm:p-[34px] px-[38px] shadow-sm transition-shadow hover:shadow-[0_4px_28px_rgba(27,58,143,0.09)]">
           <p className="mb-[18px] flex flex-row-reverse items-center justify-end gap-[11px] font-serif text-lg font-bold text-primary">
             <IconeLivre className="size-[22px]" />
             ملخص

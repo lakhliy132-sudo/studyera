@@ -164,7 +164,7 @@ export default function PageMatieres() {
               <li key={carte.href}>
                 <Link
                   href={carte.href}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border p-7 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border p-5 sm:p-7 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                   style={{
                     backgroundColor: fondMatiere(accent),
                     borderColor: bordureMatiere(accent),

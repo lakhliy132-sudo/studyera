@@ -74,7 +74,7 @@ export default function OngletPersonnages({ slug, personnages, chapitreParId }: 
   const secondaires = personnages.filter((p) => !p.role || !ROLES_PRINCIPAUX.has(p.role));
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconePersonne className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
@@ -88,7 +88,7 @@ export default function OngletPersonnages({ slug, personnages, chapitreParId }: 
       {personnages.length === 0 ? (
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
-        <div className="flex flex-col gap-9">
+        <div className="flex flex-col gap-6 sm:gap-9">
           {principaux.length > 0 && (
             <div className="flex flex-col gap-4">
               <p className="text-sm font-bold tracking-wide text-primary uppercase">
@@ -124,7 +124,7 @@ function GrillePersonnages({
   // voir lib/uniteChapitre.ts.
   const unite = libelleUniteChapitre(slug);
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
       {personnages.map((personnage) => {
         const chapitreDApparition = personnage.chapitre_apparition_id
           ? chapitreParId.get(personnage.chapitre_apparition_id)
@@ -133,7 +133,7 @@ function GrillePersonnages({
         return (
           <li
             key={personnage.id}
-            className="relative overflow-hidden rounded-[20px] border border-border bg-surface p-[26px] pt-[30px] text-center shadow-sm transition-all hover:-translate-y-1 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+            className="relative overflow-hidden rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] pt-[30px] text-center shadow-sm transition-all hover:-translate-y-1 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
           >
             <span
               aria-hidden="true"

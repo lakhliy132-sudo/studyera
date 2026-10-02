@@ -180,7 +180,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
       </div>
 
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
-        <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-7 shadow-sm">
+        <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-5 sm:p-7 shadow-sm">
           {/* Pastille "Chapitre N" masquée quand le titre contient déjà
            * l'ordinal (Antigone : "Scène 1"...) — sinon doublon
            * incohérent avec le h1 juste en dessous, voir

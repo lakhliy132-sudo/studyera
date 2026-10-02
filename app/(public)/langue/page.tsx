@@ -76,7 +76,7 @@ export default async function PageLangue() {
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
@@ -85,7 +85,7 @@ export default async function PageLangue() {
             </span>
             <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
           </div>
-          <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-5 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
             Cours de <span className="text-primary italic">langue</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
@@ -101,7 +101,7 @@ export default async function PageLangue() {
           </h2>
         </div>
 
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[18px]">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3 sm:gap-[18px]">
           {LEÇONS.map((lecon) => {
             const disponible = slugsDisponibles.has(lecon.slug);
             const contenuCarte = (
@@ -138,12 +138,12 @@ export default async function PageLangue() {
                 {disponible ? (
                   <Link
                     href={`/langue/${lecon.slug}`}
-                    className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                    className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
                   >
                     {contenuCarte}
                   </Link>
                 ) : (
-                  <div className="flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] opacity-70">
+                  <div className="flex h-full flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] opacity-70">
                     {contenuCarte}
                   </div>
                 )}

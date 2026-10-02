@@ -39,7 +39,7 @@ export default async function PageModuleArabe({
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-9 px-6 pt-9 pb-16 sm:px-9">
+      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16 sm:px-9">
         <Link
           href="/arabe"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -77,7 +77,7 @@ export default async function PageModuleArabe({
           </div>
         </div>
 
-        <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
           {lecons.map((cours, index) => (
             <li key={cours.id}>
               <Link
@@ -89,7 +89,7 @@ export default async function PageModuleArabe({
                   style={{ backgroundColor: majzuaa.couleur }}
                   className="h-1.5 w-full"
                 />
-                <div className="flex flex-1 flex-col p-[26px]">
+                <div className="flex flex-1 flex-col p-5 sm:p-[26px]">
                   <span className="flex items-center justify-between gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-primary-tint text-primary">
                       <IconeLivre className="size-5" />

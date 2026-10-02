@@ -33,7 +33,7 @@ interface OngletFicheLectureProps {
  */
 export default function OngletFicheLecture({ oeuvre, fiche }: OngletFicheLectureProps) {
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeInfo className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">Fiche de lecture</h2>
@@ -143,7 +143,7 @@ function BlocBiographie({ auteur, bio }: { auteur: string | null; bio: Biographi
         <div className="flex shrink-0 flex-col items-center gap-2.5">
           <span
             aria-hidden="true"
-            className="flex size-[120px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
+            className="flex size-[120px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-3xl sm:text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
           >
             {initiales(nom)}
           </span>

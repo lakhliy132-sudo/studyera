@@ -29,7 +29,7 @@ interface PagePropsMatiere {
  * disponible", plutôt qu'un lien qui mènerait à une page vide. */
 function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   return (
-    <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
       {MODULES_ARABE.map((module) => {
         const nombre = lecons.filter((c) =>
           c.slug.startsWith(prefixeSlugModule(module.numero)),
@@ -42,7 +42,7 @@ function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
               style={{ backgroundColor: module.couleur }}
               className="h-1.5 w-full"
             />
-            <div className="flex flex-1 flex-col p-[26px]">
+            <div className="flex flex-1 flex-col p-5 sm:p-[26px]">
               <span className="flex items-center justify-between gap-3">
                 <span
                   style={{ backgroundColor: module.couleur }}
@@ -114,7 +114,7 @@ function CartesPartiesIslamique({
   couleur: string;
 }) {
   return (
-    <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
       {SECTIONS_ISLAMIQUE.map((section) => {
         const nombre = leconsDeSection(lecons, section).length;
 
@@ -125,7 +125,7 @@ function CartesPartiesIslamique({
               style={{ backgroundColor: couleur }}
               className="h-1.5 w-full"
             />
-            <div className="flex flex-1 flex-col p-[26px]">
+            <div className="flex flex-1 flex-col p-5 sm:p-[26px]">
               <span className="flex items-center justify-between gap-3">
                 <span
                   style={{
@@ -243,7 +243,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <Link
           href="/matieres"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -273,7 +273,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
               className="h-px w-16"
             />
           </div>
-          <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-5 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
             {matiere.titreAvantAccent}
             <span style={{ color: couleur }} className="italic">
               {matiere.titreAccent}
@@ -293,7 +293,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
         ) : estIslamique ? (
           <CartesPartiesIslamique lecons={lecons} couleur={couleur} />
         ) : estHistoireGeo ? (
-          <div className="flex flex-col gap-12">
+          <div className="flex flex-col gap-8 sm:gap-12">
             {leconsHistoire.length > 0 && (
               <section className="flex flex-col gap-6">
                 <EnTeteSection

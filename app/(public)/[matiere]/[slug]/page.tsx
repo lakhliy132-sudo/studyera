@@ -141,7 +141,7 @@ export default async function PageCoursMatiere({
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-6 px-6 pt-9 pb-16 sm:px-9">
+      <div className="flex w-full flex-col gap-6 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16 sm:px-9">
         <Link
           href={`/${matiere.slug}`}
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -160,7 +160,7 @@ export default async function PageCoursMatiere({
               <IconeSection className="size-3.5" />
               {kicker}
             </span>
-            <h1 className="font-serif text-[38px] leading-tight font-bold tracking-tight text-ink">
+            <h1 className="font-serif text-[28px] sm:text-[38px] leading-tight font-bold tracking-tight text-ink">
               {cours.titre}
             </h1>
 
@@ -187,7 +187,7 @@ export default async function PageCoursMatiere({
                  * histoire geo agrande la taille" / "la taille du
                  * lecon de cours") : ces leçons sont en arabe elles
                  * aussi, elles se lisaient petit. */}
-                <div className="relative p-9 sm:p-12">
+                <div className="relative p-5 sm:p-9 lg:p-12">
                   <ContenuMarkdown
                     texte={contenuCours}
                     styleFeuille
@@ -252,7 +252,7 @@ export default async function PageCoursMatiere({
              * le cours ecrit ne soit pas blanche") : la feuille de
              * cours est ivoire, les autres cartes du site restent
              * blanches. */}
-            <div className="rounded-lg border border-border bg-feuille p-9 shadow-sm">
+            <div className="rounded-lg border border-border bg-feuille p-5 sm:p-9 shadow-sm">
               <ContenuMarkdown
                 texte={contenuCours}
                 grandeTaille={matiere.slug === "arabe"}

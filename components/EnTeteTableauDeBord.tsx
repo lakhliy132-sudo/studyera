@@ -27,7 +27,7 @@ function dateDuJour(): string {
 export default function EnTeteTableauDeBord({ prenom, serie }: EnTeteTableauDeBordProps) {
   return (
     <div
-      className="relative flex flex-col gap-5 overflow-hidden rounded-[28px] border border-border p-8 shadow-[0_18px_40px_-28px_rgba(20,30,60,0.45)] sm:flex-row sm:items-center sm:justify-between sm:p-9"
+      className="relative flex flex-col gap-5 overflow-hidden rounded-[28px] border border-border p-5 sm:p-8 shadow-[0_18px_40px_-28px_rgba(20,30,60,0.45)] sm:flex-row sm:items-center sm:justify-between sm:p-9"
       style={{
         background:
           "linear-gradient(105deg, var(--color-primary-tint) 0%, color-mix(in srgb, var(--color-primary-tint) 55%, transparent) 45%, color-mix(in srgb, var(--color-matiere-arabe) 16%, transparent) 100%)",

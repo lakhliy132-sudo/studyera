@@ -51,7 +51,7 @@ export default function OngletThemes({ fiches, numeroParChapitreId }: OngletThem
     .sort((a, b) => a[0].localeCompare(b[0], "fr"));
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeIdee className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
@@ -65,11 +65,11 @@ export default function OngletThemes({ fiches, numeroParChapitreId }: OngletThem
       {themes.length === 0 ? (
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
           {themes.map(([theme, numeros]) => (
             <li
               key={theme}
-              className="flex gap-5 rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+              className="flex gap-5 rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
             >
               <span className="flex size-[54px] shrink-0 items-center justify-center rounded-[14px] border border-border bg-primary-tint text-primary">
                 <IconeIdee className="size-[26px]" />

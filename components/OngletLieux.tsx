@@ -57,7 +57,7 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
   );
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeLieu className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
@@ -71,11 +71,11 @@ export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
       {lieux.length === 0 ? (
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[18px]">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3 sm:gap-[18px]">
           {lieux.map(([lieu, chapitresDuLieu]) => (
             <li
               key={lieu}
-              className="flex gap-5 rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+              className="flex gap-5 rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
             >
               <span className="flex size-[66px] shrink-0 items-center justify-center rounded-[14px] border border-border bg-primary-tint text-primary">
                 <IconeLieu className="size-[30px]" />

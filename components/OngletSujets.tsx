@@ -36,7 +36,7 @@ function libelleType(type: string | null): string {
  */
 export default function OngletSujets({ sujets }: OngletSujetsProps) {
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeDocument className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
@@ -54,7 +54,7 @@ export default function OngletSujets({ sujets }: OngletSujetsProps) {
           {sujets.map((sujet, index) => (
             <article
               key={sujet.id}
-              className="rounded-md border border-border border-l-4 border-l-erreur bg-surface p-[26px] pl-[30px] shadow-sm transition-all hover:translate-x-0.5 hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+              className="rounded-md border border-border border-l-4 border-l-erreur bg-surface p-5 sm:p-[26px] pl-[30px] shadow-sm transition-all hover:translate-x-0.5 hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
             >
               <div className="mb-2.5 flex flex-wrap items-center gap-3">
                 <span className="flex size-[34px] items-center justify-center rounded-full bg-[#FDF0EF] text-sm font-bold text-erreur">

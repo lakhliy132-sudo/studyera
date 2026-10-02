@@ -44,7 +44,7 @@ export default function ListeProgrammeOeuvres({
         className="block h-1.5 w-full"
         style={{ backgroundColor: "var(--color-matiere-arabe)" }}
       />
-      <div className="p-7 sm:p-8">
+      <div className="p-5 sm:p-7 sm:p-8">
         <div className="mb-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">

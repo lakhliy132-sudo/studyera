@@ -27,19 +27,26 @@ function CarteLecon({
 }) {
   return (
     <li>
+      {/* Deux mises en page dans un seul composant : une ligne compacte
+       * sur téléphone, la carte habituelle à partir de `sm`. Demandé
+       * par l'utilisateur, qui trouvait le site trop long à faire
+       * défiler, surtout sur téléphone ; en pleine carte, une liste de
+       * 16 leçons y occupait près de cinq écrans. La ligne compacte
+       * garde le numéro et le titre, et remplace le libellé "Lire le
+       * cours" par la seule flèche. */}
       <Link
         href={`/${matiereSlug}/${cours.slug}`}
-        className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+        className="group flex h-full items-center gap-3 rounded-[16px] border border-border bg-surface p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)] sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-[20px] sm:p-[26px]"
       >
-        <div className="flex items-center justify-between">
+        <span className="flex shrink-0 items-center gap-3 sm:w-full sm:justify-between">
           <span
             style={{
               backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
               color: couleur,
             }}
-            className="flex size-[52px] items-center justify-center rounded-full"
+            className="flex size-9 items-center justify-center rounded-full sm:size-[52px]"
           >
-            <IconeFlecheHaut className="size-6" />
+            <IconeFlecheHaut className="size-5 sm:size-6" />
           </span>
           <span
             style={{ color: couleur }}
@@ -47,13 +54,15 @@ function CarteLecon({
           >
             {String(numero).padStart(2, "0")}
           </span>
-        </div>
-        <h3 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">{cours.titre}</h3>
+        </span>
+        <h3 className="min-w-0 flex-1 font-serif text-[15px] leading-snug font-bold text-ink sm:mt-4 sm:text-lg">
+          {cours.titre}
+        </h3>
         <span
           style={{ color: couleur }}
-          className="mt-4 flex items-center gap-1.5 text-sm font-semibold"
+          className="flex shrink-0 items-center gap-1.5 text-sm font-semibold sm:mt-4"
         >
-          Lire le cours
+          <span className="hidden sm:inline">Lire le cours</span>
           <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
         </span>
       </Link>
@@ -112,7 +121,7 @@ export function GrilleLecons({
   couleur: string;
 }) {
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[18px]">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3 sm:gap-[18px]">
       {lecons.map((cours, index) => (
         <CarteLecon
           key={cours.id}

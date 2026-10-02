@@ -47,7 +47,7 @@ export default async function PagePartieIslamique({
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-9 px-6 pt-9 pb-16 sm:px-9">
+      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16 sm:px-9">
         <Link
           href={`/${slugMatiere}`}
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"

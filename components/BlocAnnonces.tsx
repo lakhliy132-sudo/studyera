@@ -40,7 +40,7 @@ export default function BlocAnnonces({ annonces }: BlocAnnoncesProps) {
         className="block h-1.5 w-full shrink-0"
         style={{ backgroundColor: "var(--color-primary)" }}
       />
-      <div className="flex h-full flex-col justify-between gap-5 p-7 sm:p-8">
+      <div className="flex h-full flex-col justify-between gap-5 p-5 sm:p-7 sm:p-8">
         <div className="flex items-center gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
             <IconeInfo className="size-5" />

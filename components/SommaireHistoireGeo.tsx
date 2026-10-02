@@ -68,7 +68,11 @@ export default function SommaireHistoireGeo({
   if (titresSections.length === 0) return null;
 
   return (
-    <aside className="sticky top-24 w-full overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
+    // Masqué sur téléphone : faute de place pour une colonne, le
+    // sommaire y atterrissait sous le cours, c'est-à-dire après le
+    // texte qu'il sert à parcourir, en allongeant la page d'un écran
+    // pour rien.
+    <aside className="sticky top-24 hidden w-full overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] lg:block">
       <div aria-hidden="true" style={{ backgroundColor: couleur }} className="h-1.5 w-full" />
       <div className="flex flex-col gap-4 p-5">
         <div className="flex items-center gap-2">

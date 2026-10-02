@@ -51,7 +51,7 @@ export default function CarteProgressionAnneau({
         className="block h-1.5 w-full shrink-0"
         style={{ backgroundColor: "var(--color-matiere-francais)" }}
       />
-      <div className="flex h-full flex-col items-center p-7 text-center">
+      <div className="flex h-full flex-col items-center p-5 sm:p-7 text-center">
         <div className="mb-5 flex items-center gap-3 self-start">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
             <IconeGraphique className="size-5" />

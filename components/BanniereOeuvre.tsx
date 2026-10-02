@@ -103,7 +103,7 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
       className={
         aUnePhoto
           ? "relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm sm:h-[250px] sm:flex-row sm:items-center"
-          : "relative flex items-center overflow-hidden rounded-lg border border-border bg-surface p-7 shadow-sm sm:h-[250px] sm:p-0"
+          : "relative flex items-center overflow-hidden rounded-lg border border-border bg-surface p-5 sm:p-7 shadow-sm sm:h-[250px] sm:p-0"
       }
     >
       {aUnePhoto && (

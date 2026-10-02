@@ -14,7 +14,7 @@ import { SECTIONS_FRANCAIS } from "@/lib/francais";
 export default function PageFrancais() {
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <Link
           href="/matieres"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -31,7 +31,7 @@ export default function PageFrancais() {
             </span>
             <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
           </div>
-          <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-5 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
             Le <span className="text-primary italic">français</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
@@ -40,12 +40,12 @@ export default function PageFrancais() {
           </p>
         </section>
 
-        <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
           {SECTIONS_FRANCAIS.map((section) => (
             <li key={section.href}>
               <Link
                 href={section.href}
-                className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
               >
                 <span className="flex size-[52px] items-center justify-center rounded-full bg-primary-tint text-primary">
                   <section.Icone className="size-6" />

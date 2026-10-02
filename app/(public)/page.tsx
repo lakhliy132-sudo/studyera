@@ -292,11 +292,11 @@ export default async function PageAccueil() {
       </div>
 
       <main className="flex w-full flex-col px-6 pb-20 sm:px-9">
-        <section className="flex flex-col items-center gap-6 py-20 text-center">
+        <section className="flex flex-col items-center gap-6 py-12 sm:py-20 text-center">
           <span className="rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             1<sup>ère</sup> année du baccalauréat · Maroc
           </span>
-          <h1 className="max-w-3xl font-serif text-4xl leading-tight font-bold tracking-tight text-ink sm:text-[46px]">
+          <h1 className="max-w-3xl font-serif text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-ink sm:text-[46px]">
             Révise tout ton programme,{" "}
             <span className="text-primary italic">chapitre par chapitre</span>.
           </h1>
@@ -339,7 +339,7 @@ export default async function PageAccueil() {
             </Link>
           </div>
 
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[18px]">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3 sm:gap-[18px]">
             {[{ slug: "francais", href: "/francais" }, ...MATIERES.map((m) => ({ slug: m.slug, href: `/${m.slug}` }))].map(
               ({ slug, href }) => {
                 const matiere = MATIERES.find((m) => m.slug === slug);
@@ -356,7 +356,7 @@ export default async function PageAccueil() {
                   <li key={slug}>
                     <Link
                       href={href}
-                      className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+                      className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
                     >
                       <span
                         style={{
@@ -390,7 +390,7 @@ export default async function PageAccueil() {
           </ul>
         </section>
 
-        <section className="mt-16 flex flex-col gap-6">
+        <section className="mt-10 sm:mt-16 flex flex-col gap-6">
           <div>
             <h2 className="font-serif text-2xl font-bold text-ink">
               Le français en trois espaces
@@ -399,7 +399,7 @@ export default async function PageAccueil() {
               Les trois épreuves de l&apos;examen, chacune avec ses pages.
             </p>
           </div>
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[18px]">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
             {espacesFrancais.map(({ href, titre, texte, Icone }) => (
               <li key={href}>
                 <Link
@@ -424,8 +424,8 @@ export default async function PageAccueil() {
         </section>
 
         {session && joursRestants !== null && joursRestants >= 0 && (
-          <section className="mt-16">
-            <div className="flex flex-col items-start gap-5 rounded-[22px] border border-border bg-surface p-8 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <section className="mt-10 sm:mt-16">
+            <div className="flex flex-col items-start gap-5 rounded-[22px] border border-border bg-surface p-5 sm:p-8 shadow-sm sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
                   <IconeCalendrier className="size-6" />

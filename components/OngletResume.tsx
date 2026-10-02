@@ -31,7 +31,7 @@ export default function OngletResume({ slug, chapitres, chapitresLusIds }: Ongle
   const unite = libelleUniteChapitre(slug);
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeLivre className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">

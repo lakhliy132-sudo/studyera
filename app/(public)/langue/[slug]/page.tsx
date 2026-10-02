@@ -95,7 +95,7 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-9 pb-16">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <Link
           href="/langue"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -114,7 +114,7 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
         <OngletsLecon slug={slug} ongletActif={ongletActif} />
 
         {ongletActif === "cours" && (
-          <div className="rounded-lg border border-border bg-surface p-9 shadow-sm">
+          <div className="rounded-lg border border-border bg-surface p-5 sm:p-9 shadow-sm">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{

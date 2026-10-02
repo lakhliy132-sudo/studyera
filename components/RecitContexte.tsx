@@ -49,7 +49,7 @@ export default function RecitContexte({ texte, motsCles }: RecitContexteProps) {
   const paragraphes = texte.split(/\n{2,}/);
 
   return (
-    <section className="rounded-lg border-2 border-primary bg-surface p-8">
+    <section className="rounded-lg border-2 border-primary bg-surface p-5 sm:p-8">
       <div className="flex flex-col gap-4">
         {paragraphes.map((paragraphe, index) => (
           <p key={index} className="font-lecture text-[16px] leading-relaxed text-foreground">

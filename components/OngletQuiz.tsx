@@ -103,7 +103,7 @@ export default function OngletQuiz({ slug, chapitres, questionsParChapitre }: On
   }
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-9 pb-10 shadow-sm">
+    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
       <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
         <IconeQuiz className="size-[30px]" />
         <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">Quiz</h2>
@@ -169,7 +169,7 @@ export default function OngletQuiz({ slug, chapitres, questionsParChapitre }: On
               return (
                 <li
                   key={q.id}
-                  className="rounded-[20px] border border-border bg-surface p-[26px] shadow-sm"
+                  className="rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm"
                 >
                   <p className="mb-4 flex gap-3 font-serif text-lg font-bold text-ink">
                     <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm text-primary">
