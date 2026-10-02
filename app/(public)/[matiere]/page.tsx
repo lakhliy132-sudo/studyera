@@ -2,17 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
-import {
-  IconeCroissant,
-  IconeFleche,
-  IconeGlobe,
-  IconeHorloge,
-  IconeLivreOuvert,
-  IconeTexte,
-} from "@/components/icones";
+import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
 import { couleurMatiere } from "@/lib/palette-matieres";
+import {
+  leconsDeSection,
+  SECTIONS_ISLAMIQUE,
+} from "@/lib/sections-islamique";
 import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 import type { Cours } from "@/types/base-de-donnees";
@@ -102,6 +99,95 @@ function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   );
 }
 
+/** Les 4 cases de l'éducation islamique. Aucune leçon n'est listée ici
+ * — demandé explicitement par l'utilisateur ("au debut ne l affiche pas
+ * juste apres quon click comme francais") : cliquer sur une partie
+ * ouvre sa page /education-islamique/partie/[id], où chaque leçon a sa
+ * propre case. Même principe que les modules d'arabe au-dessus.
+ *
+ * Une partie sans leçon reste une case inerte marquée "Bientôt
+ * disponible", plutôt qu'un lien qui mènerait à une page vide. */
+function CartesPartiesIslamique({
+  lecons,
+  couleur,
+}: {
+  lecons: Cours[];
+  couleur: string;
+}) {
+  return (
+    <ul className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+      {SECTIONS_ISLAMIQUE.map((section) => {
+        const nombre = leconsDeSection(lecons, section).length;
+
+        const interieur = (
+          <>
+            <div
+              aria-hidden="true"
+              style={{ backgroundColor: couleur }}
+              className="h-1.5 w-full"
+            />
+            <div className="flex flex-1 flex-col p-[26px]">
+              <span className="flex items-center justify-between gap-3">
+                <span
+                  style={{
+                    backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
+                    color: couleur,
+                  }}
+                  className="flex size-[52px] shrink-0 items-center justify-center rounded-full"
+                >
+                  <section.Icone className="size-6" />
+                </span>
+                {nombre > 0 && (
+                  <span
+                    style={{ color: couleur }}
+                    className="shrink-0 transition-transform group-hover:translate-x-1"
+                  >
+                    <IconeFleche className="size-5" />
+                  </span>
+                )}
+              </span>
+              <span
+                dir="rtl"
+                className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink"
+              >
+                {section.titreArabe}
+              </span>
+              <span className="mt-1.5 block font-serif text-base font-bold text-ink">
+                {section.titre}
+              </span>
+              <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
+                {section.description}
+              </span>
+              <span className="mt-3 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
+                {nombre === 0
+                  ? "Bientôt disponible"
+                  : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
+              </span>
+            </div>
+          </>
+        );
+
+        return (
+          <li key={section.id}>
+            {nombre === 0 ? (
+              <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
+                {interieur}
+              </div>
+            ) : (
+              <Link
+                href={`/education-islamique/partie/${section.id}`}
+                className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm transition-shadow hover:shadow-md"
+              >
+                {interieur}
+              </Link>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /**
  * /[matiere] — page de liste d'une matière ajoutée à la demande de
  * l'utilisateur (éducation islamique, arabe, histoire-géographie —
@@ -145,29 +231,6 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estArabe = matiere.slug === "arabe";
   const estIslamique = matiere.slug === "education-islamique";
-  // Éducation islamique : trois ensembles distincts dans le résumé
-  // source, mélangés jusqu'ici dans une seule grille — demandé
-  // explicitement par l'utilisateur ("fais la partie de sourat
-  // youssef seul et les cours seuls et les autres qui reste solo").
-  // Repérés par préfixe de slug, comme Histoire/Géographie, plutôt
-  // qu'une colonne dédiée en base.
-  const leconsYoussef = estIslamique
-    ? lecons.filter((c) => /^islamique-youssef-/.test(c.slug))
-    : [];
-  const leconsDawra1 = estIslamique
-    ? lecons.filter((c) => c.slug.startsWith("islamique-dawra1-"))
-    : [];
-  const leconsDawra2 = estIslamique
-    ? lecons.filter((c) => c.slug.startsWith("islamique-dawra2-"))
-    : [];
-  const leconsOutils = estIslamique
-    ? lecons.filter(
-        (c) =>
-          !leconsYoussef.includes(c) &&
-          !leconsDawra1.includes(c) &&
-          !leconsDawra2.includes(c),
-      )
-    : [];
   const leconsHistoire = estHistoireGeo
     ? lecons.filter((c) => c.slug.startsWith("histoire-"))
     : [];
@@ -225,76 +288,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
             Bientôt disponible.
           </p>
         ) : estIslamique ? (
-          <div className="flex flex-col gap-12">
-            {leconsYoussef.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeLivreOuvert className="size-5" />}
-                  titre="Sourate Youssef"
-                  nombre={leconsYoussef.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsYoussef}
-                  couleur={couleur}
-                />
-              </section>
-            )}
-            {leconsDawra1.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeCroissant className="size-5" />}
-                  titre="Les cours — 1ʳᵉ période"
-                  nombre={leconsDawra1.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsDawra1}
-                  numeroDepart={leconsYoussef.length + 1}
-                  couleur={couleur}
-                />
-              </section>
-            )}
-            {leconsDawra2.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeCroissant className="size-5" />}
-                  titre="Les cours — 2ᵉ période"
-                  nombre={leconsDawra2.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsDawra2}
-                  numeroDepart={leconsYoussef.length + leconsDawra1.length + 1}
-                  couleur={couleur}
-                />
-              </section>
-            )}
-            {leconsOutils.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeTexte className="size-5" />}
-                  titre="Révision et méthodologie"
-                  nombre={leconsOutils.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsOutils}
-                  numeroDepart={
-                    leconsYoussef.length +
-                    leconsDawra1.length +
-                    leconsDawra2.length +
-                    1
-                  }
-                  couleur={couleur}
-                />
-              </section>
-            )}
-          </div>
+          <CartesPartiesIslamique lecons={lecons} couleur={couleur} />
         ) : estHistoireGeo ? (
           <div className="flex flex-col gap-12">
             {leconsHistoire.length > 0 && (
