@@ -154,12 +154,18 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const leconsYoussef = estIslamique
     ? lecons.filter((c) => /^islamique-youssef-/.test(c.slug))
     : [];
-  const leconsDourous = estIslamique
-    ? lecons.filter((c) => c.slug.startsWith("islamique-dourous-"))
+  const leconsDawra1 = estIslamique
+    ? lecons.filter((c) => c.slug.startsWith("islamique-dawra1-"))
+    : [];
+  const leconsDawra2 = estIslamique
+    ? lecons.filter((c) => c.slug.startsWith("islamique-dawra2-"))
     : [];
   const leconsOutils = estIslamique
     ? lecons.filter(
-        (c) => !leconsYoussef.includes(c) && !leconsDourous.includes(c),
+        (c) =>
+          !leconsYoussef.includes(c) &&
+          !leconsDawra1.includes(c) &&
+          !leconsDawra2.includes(c),
       )
     : [];
   const leconsHistoire = estHistoireGeo
@@ -235,18 +241,34 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
                 />
               </section>
             )}
-            {leconsDourous.length > 0 && (
+            {leconsDawra1.length > 0 && (
               <section className="flex flex-col gap-6">
                 <EnTeteSection
                   icone={<IconeCroissant className="size-5" />}
-                  titre="Les cours"
-                  nombre={leconsDourous.length}
+                  titre="Les cours — 1ʳᵉ période"
+                  nombre={leconsDawra1.length}
                   couleur={couleur}
                 />
                 <GrilleLecons
                   matiereSlug={matiere.slug}
-                  lecons={leconsDourous}
+                  lecons={leconsDawra1}
                   numeroDepart={leconsYoussef.length + 1}
+                  couleur={couleur}
+                />
+              </section>
+            )}
+            {leconsDawra2.length > 0 && (
+              <section className="flex flex-col gap-6">
+                <EnTeteSection
+                  icone={<IconeCroissant className="size-5" />}
+                  titre="Les cours — 2ᵉ période"
+                  nombre={leconsDawra2.length}
+                  couleur={couleur}
+                />
+                <GrilleLecons
+                  matiereSlug={matiere.slug}
+                  lecons={leconsDawra2}
+                  numeroDepart={leconsYoussef.length + leconsDawra1.length + 1}
                   couleur={couleur}
                 />
               </section>
@@ -262,7 +284,12 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
                 <GrilleLecons
                   matiereSlug={matiere.slug}
                   lecons={leconsOutils}
-                  numeroDepart={leconsYoussef.length + leconsDourous.length + 1}
+                  numeroDepart={
+                    leconsYoussef.length +
+                    leconsDawra1.length +
+                    leconsDawra2.length +
+                    1
+                  }
                   couleur={couleur}
                 />
               </section>
