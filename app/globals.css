@@ -607,3 +607,34 @@ body {
 :root[data-theme="dark"] .logo-nuit {
   filter: brightness(2.2) saturate(1.3);
 }
+
+/* Encre des grands titres, dérivée de la palette choisie.
+ *
+ * Les blocs de palette ci-dessus ne redéfinissaient que
+ * `--color-primary` et ses variantes : `--color-ink`, l'encre des
+ * titres sérif ("Ma progression", "Les matières"…), gardait le bleu
+ * nuit de base. Résultat, changer de thème laissait une bonne partie
+ * des titres en bleu alors que tout le reste avait viré de couleur.
+ *
+ * Une seule règle plutôt qu'une ligne dans chacune des 16 palettes :
+ * l'encre est une version très sombre de la couleur active, donc elle
+ * suit automatiquement toute palette ajoutée plus tard. La palette
+ * "default" n'a pas d'attribut `data-palette` (voir le script
+ * d'app/layout.tsx) et garde donc son bleu d'origine.
+ *
+ * Les deux règles suivantes rendent aux titres leur encre claire en
+ * mode nuit : sans elles, cette règle-ci, plus spécifique que le bloc
+ * sombre de base, les repasserait en sombre sur fond sombre. */
+:root[data-palette] {
+  --color-ink: color-mix(in srgb, var(--color-primary) 78%, #0a1020);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette]:not([data-theme="light"]) {
+    --color-ink: #eef1f7;
+  }
+}
+
+:root[data-palette][data-theme="dark"] {
+  --color-ink: #eef1f7;
+}
