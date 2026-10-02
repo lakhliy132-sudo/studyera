@@ -25,7 +25,13 @@ export function extraireFlashcards(contenuMdx: string | null, leconTitre: string
   if (!contenuMdx) return [];
 
   const cartes: Flashcard[] = [];
-  const regex = /\*\*([^*\n]{2,70})\*\*\s*:\s*([^\n]{5,260})/g;
+  // `[ \t]*` et non `\s*` entre le terme et sa description : `\s`
+  // comprend le saut de ligne, si bien qu'un terme seul sur sa ligne
+  // (« **الضغوط العسكرية**: » suivi d'une liste) happait la ligne
+  // suivante — la carte affichait alors le Markdown brut de cette
+  // ligne, tirets et astérisques compris. La description doit tenir
+  // sur la même ligne que le terme.
+  const regex = /\*\*([^*\n]{2,70})\*\*[ \t]*:[ \t]*([^\n]{5,260})/g;
   let correspondance: RegExpExecArray | null;
 
   while ((correspondance = regex.exec(contenuMdx)) !== null) {
