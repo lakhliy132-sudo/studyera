@@ -1,199 +1,308 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { IconeFleche, IconeGlobe, IconeMelanger } from "@/components/icones";
 import type { Flashcard } from "@/lib/flashcards";
 
 interface FlashcardsHistoireGeoProps {
   cartes: Flashcard[];
 }
 
-/** Mélange Fisher-Yates — copie `cartes`, ne modifie pas le tableau
- * reçu (utilisé aussi tel quel côté serveur pour l'ordre initial). */
-function melanger<T>(items: T[]): T[] {
-  const copie = [...items];
-  for (let i = copie.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copie[i], copie[j]] = [copie[j], copie[i]];
-  }
-  return copie;
+type Resultat = "su" | "revoir";
+
+/** Catégorie déduite de la réponse : une réponse qui tient dans une
+ * date (une année, éventuellement un jour et un mois) est étiquetée
+ * "Date", le reste est une "Notion". Déduction volontairement simple
+ * et lisible : les cartes sont extraites automatiquement du cours
+ * (lib/flashcards.ts), aucune catégorie n'est saisie à la main. */
+function categorieDe(reponse: string): "Date" | "Notion" {
+  return /^[^.]{0,40}\b(1[0-9]{3}|20[0-9]{2})\b[^.]{0,20}$/.test(reponse.trim())
+    ? "Date"
+    : "Notion";
 }
 
+const COULEUR_CATEGORIE: Record<string, string> = {
+  Date: "var(--color-matiere-histoire-geo)",
+  Notion: "var(--color-matiere-arabe)",
+};
+
 /**
- * Visionneuse de fiches (question/réponse) — carte qui se retourne au
- * clic, navigation précédent/suivant, mélange. Demandé explicitement
- * par l'utilisateur ("fais moi une case qui s appelle flash cards"),
- * contenu réel extrait des cours (voir lib/flashcards.ts), rien
- * d'inventé. `"use client"` : retournement et navigation au clic,
- * pas de sens sans interaction.
+ * Jeu de flashcards affiché en bas de chaque leçon d'histoire-géo —
+ * refondu d'après le composant `Flashcards.jsx` fourni par
+ * l'utilisateur ("remplace les flashcards de histoire geo par ça") :
+ * carte qui se retourne en 3D, boutons "À revoir" / "Je savais",
+ * barre de progression en deux couleurs, écran de fin avec le score et
+ * la reprise des erreurs, mélange, et raccourcis clavier (Espace pour
+ * retourner, ← et → pour répondre).
  *
- * Effet de pile ("deck") derrière la carte + flèches circulaires sur
- * les côtés + formes décoratives dans les coins — reprend une
- * maquette envoyée par l'utilisateur ("je veux comme ca"). La barre
- * latérale visible sur cette même maquette n'est, elle, pas reprise :
- * confirmé explicitement par l'utilisateur que la navigation
- * horizontale actuelle (choix déjà fait plus tôt dans le projet)
- * reste inchangée.
+ * Trois différences avec le fichier fourni, toutes pour coller aux
+ * données réelles :
+ *
+ * - les cartes ne sont pas une liste écrite en dur : elles sont
+ *   extraites du cours affiché (voir lib/flashcards.ts), donc une
+ *   carte a une question, une réponse et la leçon d'origine — pas de
+ *   champ "détail" séparé ;
+ * - le filtre par chapitre n'apparaît que si les cartes viennent de
+ *   plusieurs leçons (sur une page de leçon, il n'y en a qu'une) ;
+ * - les couleurs passent par les tokens du site, pour suivre le thème
+ *   et le mode sombre.
  */
-export default function FlashcardsHistoireGeo({ cartes: cartesInitiales }: FlashcardsHistoireGeoProps) {
-  const [cartes, setCartes] = useState(cartesInitiales);
+export default function FlashcardsHistoireGeo({
+  cartes,
+}: FlashcardsHistoireGeoProps) {
+  const lecons = useMemo(
+    () => [...new Set(cartes.map((carte) => carte.leconTitre))],
+    [cartes],
+  );
+  const [lecon, setLecon] = useState("Tout");
+  const [ordre, setOrdre] = useState(() => cartes.map((_, index) => index));
   const [index, setIndex] = useState(0);
   const [retournee, setRetournee] = useState(false);
+  const [resultats, setResultats] = useState<Record<number, Resultat>>({});
 
-  const carte = cartes[index];
-  const progression = useMemo(() => `${index + 1} / ${cartes.length}`, [index, cartes.length]);
+  const paquet = useMemo(
+    () =>
+      ordre
+        .map((rang) => ({ rang, carte: cartes[rang] }))
+        .filter(({ carte }) => lecon === "Tout" || carte.leconTitre === lecon),
+    [cartes, ordre, lecon],
+  );
 
-  function allerA(nouvelIndex: number) {
-    setIndex((nouvelIndex + cartes.length) % cartes.length);
+  const fini = index >= paquet.length;
+  const courante = paquet[index];
+  const nbSu = paquet.filter(({ rang }) => resultats[rang] === "su").length;
+  const nbRevoir = paquet.filter(
+    ({ rang }) => resultats[rang] === "revoir",
+  ).length;
+
+  function repondre(valeur: Resultat) {
+    if (!courante) return;
+    setResultats({ ...resultats, [courante.rang]: valeur });
     setRetournee(false);
+    setIndex(index + 1);
   }
 
+  function recommencer() {
+    setIndex(0);
+    setRetournee(false);
+    setResultats({});
+  }
+
+  function melanger() {
+    const copie = [...ordre];
+    for (let i = copie.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copie[i], copie[j]] = [copie[j], copie[i]];
+    }
+    setOrdre(copie);
+    recommencer();
+  }
+
+  function revoirErreurs() {
+    const erreurs = paquet
+      .filter(({ rang }) => resultats[rang] === "revoir")
+      .map(({ rang }) => rang);
+    setOrdre([...erreurs, ...ordre.filter((rang) => !erreurs.includes(rang))]);
+    setLecon("Tout");
+    recommencer();
+  }
+
+  // Espace retourne la carte, ← et → répondent une fois retournée.
+  useEffect(() => {
+    const auClavier = (evenement: KeyboardEvent) => {
+      if (fini) return;
+      if (evenement.code === "Space") {
+        evenement.preventDefault();
+        setRetournee((valeur) => !valeur);
+      }
+      if (retournee && evenement.key === "ArrowRight") repondre("su");
+      if (retournee && evenement.key === "ArrowLeft") repondre("revoir");
+    };
+    window.addEventListener("keydown", auClavier);
+    return () => window.removeEventListener("keydown", auClavier);
+  });
+
+  if (cartes.length === 0) return null;
+
   return (
-    <div className="flex w-full max-w-2xl flex-col items-center gap-6">
-      <div className="flex w-full max-w-xl items-center justify-between">
-        <span className="rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-semibold text-primary">{progression}</span>
+    <div className="flex w-full max-w-3xl flex-col gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-sm text-muted-foreground">
+          {paquet.length} carte{paquet.length > 1 ? "s" : ""} dans ce paquet
+        </span>
         <button
           type="button"
-          onClick={() => {
-            setCartes(melanger(cartesInitiales));
-            setIndex(0);
-            setRetournee(false);
-          }}
-          className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-primary-tint"
+          onClick={melanger}
+          className="rounded-[12px] border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
         >
-          <IconeMelanger className="size-4" />
           Mélanger
         </button>
       </div>
 
-      <div className="flex w-full items-center justify-center gap-4 sm:gap-6">
-        <button
-          type="button"
-          onClick={() => allerA(index - 1)}
-          aria-label="Fiche précédente"
-          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-sm transition-colors hover:bg-surface-muted"
-        >
-          <IconeFleche className="size-4 rotate-180" />
-        </button>
-
-        {/* Pile de cartes : deux échos décalés/tournés derrière la
-         * carte active, façon jeu de cartes — purement visuel
-         * (`aria-hidden`), leur contenu ne change jamais. */}
-        <div className="relative w-full max-w-xl [perspective:1200px]">
-          <div
-            aria-hidden="true"
-            className="absolute inset-2 -z-10 translate-y-2 -rotate-2 rounded-[22px] border border-border bg-primary-tint/60"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-1 -z-10 translate-y-1 rotate-1 rounded-[22px] border border-border bg-surface-muted"
-          />
-
-          <button
-            type="button"
-            onClick={() => setRetournee((r) => !r)}
-            aria-label={retournee ? "Voir la question" : "Voir la réponse"}
-            className="block w-full"
-          >
-            <div
-              className={`relative h-96 w-full transition-transform duration-500 [transform-style:preserve-3d] ${retournee ? "[transform:rotateY(180deg)]" : ""}`}
+      {lecons.length > 1 && (
+        <div className="flex flex-wrap gap-2">
+          {["Tout", ...lecons].map((choix) => (
+            <button
+              key={choix}
+              type="button"
+              onClick={() => {
+                setLecon(choix);
+                setIndex(0);
+                setRetournee(false);
+              }}
+              className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition ${
+                lecon === choix
+                  ? "bg-ink text-white"
+                  : "bg-surface text-muted-foreground ring-1 ring-border hover:ring-border-strong"
+              }`}
             >
-              {/* Face avant — la question. Nom de la leçon et question
-               * strictement sur une seule ligne horizontale (`flex-nowrap`,
-               * pas de retour à la ligne — un premier essai en
-               * `flex-wrap` repassait à la ligne pour un titre de leçon
-               * long, pas assez strictement "sur la même ligne" pour
-               * l'utilisateur : "non horizatelement sur la ligne").
-               * Titre de la leçon tronqué (`truncate`) pour laisser la
-               * place à la question, sens de lecture RTL explicite sur
-               * cette ligne (contenu arabe) pour que la leçon et la
-               * question s'enchaînent dans le bon ordre visuel. */}
-              <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden]">
-                <FormesDecoratives />
-                <div className="relative flex flex-1 flex-col items-center justify-center gap-4 overflow-y-auto p-8 text-center">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-                    <IconeGlobe className="size-4.5" />
-                  </span>
-                  <div dir="rtl" className="flex w-full flex-nowrap items-baseline gap-2.5">
-                    <span className="max-w-[35%] shrink-0 truncate rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">
-                      {carte.leconTitre}
+              {choix}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 text-sm">
+        <div className="flex h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
+          <div
+            className="bg-validation"
+            style={{ width: `${(nbSu / paquet.length) * 100}%` }}
+          />
+          <div
+            className="bg-erreur"
+            style={{ width: `${(nbRevoir / paquet.length) * 100}%` }}
+          />
+        </div>
+        <span className="tabular-nums text-muted-foreground">
+          {Math.min(index + 1, paquet.length)}/{paquet.length}
+        </span>
+      </div>
+
+      {fini ? (
+        <section className="rounded-[24px] border border-border bg-surface p-10 text-center shadow-sm">
+          <p className="font-serif text-5xl font-bold tabular-nums text-ink">
+            {nbSu}/{paquet.length}
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            cartes sues du premier coup
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            {nbRevoir > 0 && (
+              <button
+                type="button"
+                onClick={revoirErreurs}
+                className="rounded-[12px] bg-primary px-5 py-2.5 font-semibold text-white shadow-sm transition-all hover:-translate-y-px"
+              >
+                Revoir mes {nbRevoir} erreur{nbRevoir > 1 ? "s" : ""}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={recommencer}
+              className="rounded-[12px] border border-border px-5 py-2.5 font-semibold text-ink transition-colors hover:bg-surface-muted"
+            >
+              Recommencer
+            </button>
+          </div>
+        </section>
+      ) : (
+        courante && (
+          <>
+            <button
+              type="button"
+              onClick={() => setRetournee(!retournee)}
+              aria-label="Retourner la carte"
+              className="block w-full [perspective:1200px]"
+            >
+              <div
+                className={`relative h-80 w-full transition-transform duration-500 [transform-style:preserve-3d] ${
+                  retournee ? "[transform:rotateY(180deg)]" : ""
+                }`}
+              >
+                <div className="absolute inset-0 flex flex-col rounded-[24px] border border-border bg-surface p-6 shadow-sm [backface-visibility:hidden]">
+                  <div className="flex items-start justify-between gap-3">
+                    <span
+                      className="rounded-full px-3 py-1 text-xs font-bold"
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${COULEUR_CATEGORIE[categorieDe(courante.carte.reponse)]} 15%, var(--color-surface))`,
+                        color:
+                          COULEUR_CATEGORIE[
+                            categorieDe(courante.carte.reponse)
+                          ],
+                      }}
+                    >
+                      {categorieDe(courante.carte.reponse)}
                     </span>
-                    <span className="min-w-0 flex-1 truncate font-serif text-[26px] leading-snug font-bold text-ink">
-                      {carte.question}
+                    <span
+                      dir="rtl"
+                      className="font-arabe max-w-[55%] truncate text-xs text-subtle-foreground"
+                    >
+                      {courante.carte.leconTitre}
                     </span>
                   </div>
-                </div>
-                <p className="relative shrink-0 border-t border-border bg-background py-2.5 text-center text-xs font-semibold text-subtle-foreground">
-                  Clique pour voir la réponse
-                </p>
-              </div>
 
-              {/* Face arrière — la réponse. Contenu défilable
-               * (`overflow-y-auto`) : la hauteur de la carte est fixe
-               * (les deux faces sont en `absolute`, elles ne peuvent
-               * pas l'agrandir selon leur contenu), certaines réponses
-               * sont plus longues que d'autres. */}
-              <div className="absolute inset-0 flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)] [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <FormesDecoratives />
-                <div className="relative flex flex-1 flex-col gap-3 overflow-y-auto p-8">
-                  <span className="w-fit rounded-full bg-primary-tint px-3 py-1 text-xs font-semibold text-primary">Réponse</span>
-                  <p className="font-lecture text-[17px] leading-relaxed font-bold text-foreground">{carte.reponse}</p>
+                  <p
+                    dir="auto"
+                    className="font-arabe flex flex-1 items-center justify-center overflow-y-auto px-2 text-center text-[26px] leading-snug font-bold text-ink"
+                  >
+                    {courante.carte.question}
+                  </p>
+                  <p className="text-center text-sm text-subtle-foreground">
+                    Clique ou appuie sur Espace pour retourner
+                  </p>
+                </div>
+
+                <div
+                  className="absolute inset-0 flex flex-col rounded-[24px] p-6 text-white shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]"
+                  style={{ backgroundColor: "#131b33" }}
+                >
+                  <p
+                    dir="auto"
+                    className="font-arabe truncate text-sm text-white/60"
+                  >
+                    {courante.carte.question}
+                  </p>
+                  <div className="flex flex-1 items-center justify-center overflow-y-auto text-center">
+                    <p
+                      dir="auto"
+                      className="font-arabe text-[24px] leading-relaxed font-bold"
+                      style={{ color: "var(--color-matiere-histoire-geo)" }}
+                    >
+                      {courante.carte.reponse}
+                    </p>
+                  </div>
+                  <p className="text-center text-xs text-white/50">
+                    ← à revoir · je savais →
+                  </p>
                 </div>
               </div>
+            </button>
+
+            <div
+              className={`grid grid-cols-2 gap-3 transition-opacity ${
+                retournee ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => repondre("revoir")}
+                className="rounded-[18px] bg-erreur/10 py-4 font-semibold text-erreur ring-1 ring-erreur/25 transition-colors hover:bg-erreur/15"
+              >
+                À revoir{" "}
+                <span className="ml-1 text-xs font-normal opacity-70">←</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => repondre("su")}
+                className="rounded-[18px] bg-validation/10 py-4 font-semibold text-validation ring-1 ring-validation/25 transition-colors hover:bg-validation/15"
+              >
+                Je savais{" "}
+                <span className="ml-1 text-xs font-normal opacity-70">→</span>
+              </button>
             </div>
-          </button>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => allerA(index + 1)}
-          aria-label="Fiche suivante"
-          style={{ backgroundColor: "var(--color-primary)" }}
-          className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-sm transition-opacity hover:opacity-90"
-        >
-          <IconeFleche className="size-4" />
-        </button>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={() => allerA(index - 1)}
-          className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface-muted"
-        >
-          <IconeFleche className="size-4 rotate-180" />
-          Précédent
-        </button>
-        <button
-          type="button"
-          onClick={() => allerA(index + 1)}
-          style={{ backgroundColor: "var(--color-primary)" }}
-          className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          Suivant
-          <IconeFleche className="size-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/** Deux triangles dégradés dans les coins opposés de la carte, très
- * discrets — purement décoratifs, reprend la maquette envoyée par
- * l'utilisateur. `-z-[1]` relatif à la face de la carte (positionnée),
- * pas à toute la pile de cartes derrière. */
-function FormesDecoratives() {
-  return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-[1] overflow-hidden rounded-[22px]">
-      <div
-        className="absolute -top-10 -left-10 size-32 rotate-45"
-        style={{ background: "linear-gradient(135deg, var(--color-primary-tint) 0%, transparent 70%)" }}
-      />
-      <div
-        className="absolute -right-10 -bottom-10 size-32 rotate-45"
-        style={{ background: "linear-gradient(-45deg, var(--color-primary-tint) 0%, transparent 70%)" }}
-      />
+          </>
+        )
+      )}
     </div>
   );
 }

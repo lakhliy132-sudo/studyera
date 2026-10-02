@@ -32,24 +32,24 @@ const SUJETS: Sujet[] = [
   },
   {
     numero: 2,
-    slug: "sujets-redaction",
-    titre: "Sujets de rédaction",
-    description: "Des sujets classés pour s'entraîner, seul ou avec le Correcteur IA.",
-    Icone: IconeIdee,
-  },
-  {
-    numero: 3,
     slug: "modeles-corriges",
     titre: "Modèles de rédactions corrigées",
     description: "Des copies bien construites, annotées, pour voir ce qui est attendu.",
     Icone: IconeDocument,
   },
   {
-    numero: 4,
+    numero: 3,
     slug: "grille-auto-evaluation",
     titre: "Grille d'auto-évaluation",
     description: "Les critères de notation d'une rédaction, pour se relire avec les bons repères.",
     Icone: IconeCoche,
+  },
+  {
+    numero: 4,
+    slug: "aide-expression",
+    titre: "Aide à l'expression",
+    description: "Des expressions utiles pour rédiger : introduire, argumenter, opposer, conclure.",
+    Icone: IconeIdee,
   },
 ];
 
@@ -71,10 +71,13 @@ export default async function PageProductionEcrite() {
     <main className="flex flex-col">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-1.5 text-xs font-bold tracking-wide text-white uppercase">
-            <IconeLivreOuvert className="size-3.5" />
-            Français – 1ère Bac
-          </span>
+          <div className="flex items-center justify-center gap-3">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
+            <span className="flex size-8 items-center justify-center rounded-full border border-primary/20 bg-primary-tint text-primary">
+              <IconePlume className="size-4" />
+            </span>
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
+          </div>
           <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
             Production <span className="text-primary italic">écrite</span>
           </h1>

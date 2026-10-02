@@ -235,10 +235,10 @@ body {
     --color-feuille: #191b23;
     --color-border: #272b36;
     --color-border-strong: #3a3f4d;
-    --color-primary: #5b8def;
+    --color-primary: #a78bfa;
     --color-primary-foreground: #ffffff;
-    --color-primary-tint: #16233d;
-    --color-primary-vif: #86aef5;
+    --color-primary-tint: #241a3d;
+    --color-primary-vif: #c4b5fd;
     --color-ink: #eef1f7;
     --color-muted-foreground: #9199a8;
     --color-subtle-foreground: #656b7a;
@@ -257,10 +257,10 @@ body {
   --color-feuille: #191b23;
   --color-border: #272b36;
   --color-border-strong: #3a3f4d;
-  --color-primary: #5b8def;
+  --color-primary: #a78bfa;
   --color-primary-foreground: #ffffff;
-  --color-primary-tint: #16233d;
-  --color-primary-vif: #86aef5;
+  --color-primary-tint: #241a3d;
+  --color-primary-vif: #c4b5fd;
   --color-ink: #eef1f7;
   --color-muted-foreground: #9199a8;
   --color-subtle-foreground: #656b7a;
@@ -281,3 +281,315 @@ body {
  * variables, supprimées avec la page qui les utilisait plutôt que
  * laissées mortes dans ce fichier.
  */
+
+/* Palettes de couleurs choisies par l'élève (components/ChoixPalette.tsx,
+ * lib/palettes.ts) — demandées d'après une maquette fournie par
+ * l'utilisateur. Chaque palette ne redéfinit que la couleur de marque ;
+ * la teinte pâle se recalcule depuis le fond, donc elle reste correcte
+ * dans les deux modes, et les couleurs de matière ne bougent pas.
+ *
+ * Chaque palette a une variante claire pour le mode sombre : les
+ * teintes foncées (Brutalist, Obsidian…) étaient illisibles sur fond
+ * noir, exactement comme le bleu du site, qui s'éclaircit lui aussi la
+ * nuit. La palette "default" n'a pas de bloc : c'est le bleu défini
+ * plus haut. */
+
+:root[data-palette="glacier"] {
+  --color-primary: #2563eb;
+  --color-primary-vif: #3b82f6;
+  --color-primary-tint: color-mix(in srgb, #2563eb 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="glacier"]:not([data-theme="light"]) {
+    --color-primary: #7dabf8;
+    --color-primary-vif: #a5c6fb;
+    --color-primary-tint: color-mix(in srgb, #7dabf8 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="glacier"][data-theme="dark"] {
+  --color-primary: #7dabf8;
+  --color-primary-vif: #a5c6fb;
+  --color-primary-tint: color-mix(in srgb, #7dabf8 18%, #0b0d12);
+}
+
+:root[data-palette="harvest"] {
+  --color-primary: #c2610c;
+  --color-primary-vif: #ea580c;
+  --color-primary-tint: color-mix(in srgb, #c2610c 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="harvest"]:not([data-theme="light"]) {
+    --color-primary: #f0a35a;
+    --color-primary-vif: #f6c08a;
+    --color-primary-tint: color-mix(in srgb, #f0a35a 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="harvest"][data-theme="dark"] {
+  --color-primary: #f0a35a;
+  --color-primary-vif: #f6c08a;
+  --color-primary-tint: color-mix(in srgb, #f0a35a 18%, #0b0d12);
+}
+
+:root[data-palette="lavender"] {
+  --color-primary: #7c3aed;
+  --color-primary-vif: #8b5cf6;
+  --color-primary-tint: color-mix(in srgb, #7c3aed 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="lavender"]:not([data-theme="light"]) {
+    --color-primary: #a78bfa;
+    --color-primary-vif: #c4b5fd;
+    --color-primary-tint: color-mix(in srgb, #a78bfa 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="lavender"][data-theme="dark"] {
+  --color-primary: #a78bfa;
+  --color-primary-vif: #c4b5fd;
+  --color-primary-tint: color-mix(in srgb, #a78bfa 18%, #0b0d12);
+}
+
+:root[data-palette="brutalist"] {
+  --color-primary: #1f2937;
+  --color-primary-vif: #374151;
+  --color-primary-tint: color-mix(in srgb, #1f2937 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="brutalist"]:not([data-theme="light"]) {
+    --color-primary: #aab4c4;
+    --color-primary-vif: #c7cfdb;
+    --color-primary-tint: color-mix(in srgb, #aab4c4 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="brutalist"][data-theme="dark"] {
+  --color-primary: #aab4c4;
+  --color-primary-vif: #c7cfdb;
+  --color-primary-tint: color-mix(in srgb, #aab4c4 18%, #0b0d12);
+}
+
+:root[data-palette="obsidian"] {
+  --color-primary: #047857;
+  --color-primary-vif: #059669;
+  --color-primary-tint: color-mix(in srgb, #047857 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="obsidian"]:not([data-theme="light"]) {
+    --color-primary: #4fd39a;
+    --color-primary-vif: #86e3bb;
+    --color-primary-tint: color-mix(in srgb, #4fd39a 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="obsidian"][data-theme="dark"] {
+  --color-primary: #4fd39a;
+  --color-primary-vif: #86e3bb;
+  --color-primary-tint: color-mix(in srgb, #4fd39a 18%, #0b0d12);
+}
+
+:root[data-palette="orchid"] {
+  --color-primary: #db2777;
+  --color-primary-vif: #ec4899;
+  --color-primary-tint: color-mix(in srgb, #db2777 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="orchid"]:not([data-theme="light"]) {
+    --color-primary: #f472b6;
+    --color-primary-vif: #f9a8d4;
+    --color-primary-tint: color-mix(in srgb, #f472b6 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="orchid"][data-theme="dark"] {
+  --color-primary: #f472b6;
+  --color-primary-vif: #f9a8d4;
+  --color-primary-tint: color-mix(in srgb, #f472b6 18%, #0b0d12);
+}
+
+:root[data-palette="solar"] {
+  --color-primary: #ea580c;
+  --color-primary-vif: #f97316;
+  --color-primary-tint: color-mix(in srgb, #ea580c 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="solar"]:not([data-theme="light"]) {
+    --color-primary: #fb9a5c;
+    --color-primary-vif: #fdba8c;
+    --color-primary-tint: color-mix(in srgb, #fb9a5c 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="solar"][data-theme="dark"] {
+  --color-primary: #fb9a5c;
+  --color-primary-vif: #fdba8c;
+  --color-primary-tint: color-mix(in srgb, #fb9a5c 18%, #0b0d12);
+}
+
+:root[data-palette="tide"] {
+  --color-primary: #0891b2;
+  --color-primary-vif: #06b6d4;
+  --color-primary-tint: color-mix(in srgb, #0891b2 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="tide"]:not([data-theme="light"]) {
+    --color-primary: #4fd1e5;
+    --color-primary-vif: #8ae3f0;
+    --color-primary-tint: color-mix(in srgb, #4fd1e5 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="tide"][data-theme="dark"] {
+  --color-primary: #4fd1e5;
+  --color-primary-vif: #8ae3f0;
+  --color-primary-tint: color-mix(in srgb, #4fd1e5 18%, #0b0d12);
+}
+
+:root[data-palette="verdant"] {
+  --color-primary: #16a34a;
+  --color-primary-vif: #22c55e;
+  --color-primary-tint: color-mix(in srgb, #16a34a 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="verdant"]:not([data-theme="light"]) {
+    --color-primary: #5fd98a;
+    --color-primary-vif: #93e8b2;
+    --color-primary-tint: color-mix(in srgb, #5fd98a 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="verdant"][data-theme="dark"] {
+  --color-primary: #5fd98a;
+  --color-primary-vif: #93e8b2;
+  --color-primary-tint: color-mix(in srgb, #5fd98a 18%, #0b0d12);
+}
+
+:root[data-palette="crimson"] {
+  --color-primary: #be123c;
+  --color-primary-vif: #e11d48;
+  --color-primary-tint: color-mix(in srgb, #be123c 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="crimson"]:not([data-theme="light"]) {
+    --color-primary: #fb7185;
+    --color-primary-vif: #fda4af;
+    --color-primary-tint: color-mix(in srgb, #fb7185 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="crimson"][data-theme="dark"] {
+  --color-primary: #fb7185;
+  --color-primary-vif: #fda4af;
+  --color-primary-tint: color-mix(in srgb, #fb7185 18%, #0b0d12);
+}
+
+:root[data-palette="indigo"] {
+  --color-primary: #4338ca;
+  --color-primary-vif: #4f46e5;
+  --color-primary-tint: color-mix(in srgb, #4338ca 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="indigo"]:not([data-theme="light"]) {
+    --color-primary: #a5b4fc;
+    --color-primary-vif: #c7d2fe;
+    --color-primary-tint: color-mix(in srgb, #a5b4fc 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="indigo"][data-theme="dark"] {
+  --color-primary: #a5b4fc;
+  --color-primary-vif: #c7d2fe;
+  --color-primary-tint: color-mix(in srgb, #a5b4fc 18%, #0b0d12);
+}
+
+:root[data-palette="mocha"] {
+  --color-primary: #78350f;
+  --color-primary-vif: #92400e;
+  --color-primary-tint: color-mix(in srgb, #78350f 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="mocha"]:not([data-theme="light"]) {
+    --color-primary: #d6b48c;
+    --color-primary-vif: #e7cfb4;
+    --color-primary-tint: color-mix(in srgb, #d6b48c 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="mocha"][data-theme="dark"] {
+  --color-primary: #d6b48c;
+  --color-primary-vif: #e7cfb4;
+  --color-primary-tint: color-mix(in srgb, #d6b48c 18%, #0b0d12);
+}
+
+:root[data-palette="plum"] {
+  --color-primary: #86198f;
+  --color-primary-vif: #a21caf;
+  --color-primary-tint: color-mix(in srgb, #86198f 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="plum"]:not([data-theme="light"]) {
+    --color-primary: #e879f9;
+    --color-primary-vif: #f0abfc;
+    --color-primary-tint: color-mix(in srgb, #e879f9 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="plum"][data-theme="dark"] {
+  --color-primary: #e879f9;
+  --color-primary-vif: #f0abfc;
+  --color-primary-tint: color-mix(in srgb, #e879f9 18%, #0b0d12);
+}
+
+:root[data-palette="mint"] {
+  --color-primary: #0f766e;
+  --color-primary-vif: #14b8a6;
+  --color-primary-tint: color-mix(in srgb, #0f766e 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="mint"]:not([data-theme="light"]) {
+    --color-primary: #5eead4;
+    --color-primary-vif: #99f6e4;
+    --color-primary-tint: color-mix(in srgb, #5eead4 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="mint"][data-theme="dark"] {
+  --color-primary: #5eead4;
+  --color-primary-vif: #99f6e4;
+  --color-primary-tint: color-mix(in srgb, #5eead4 18%, #0b0d12);
+}
+
+:root[data-palette="midnight"] {
+  --color-primary: #1e3a8a;
+  --color-primary-vif: #1d4ed8;
+  --color-primary-tint: color-mix(in srgb, #1e3a8a 14%, var(--color-background));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="midnight"]:not([data-theme="light"]) {
+    --color-primary: #93b4fd;
+    --color-primary-vif: #bfd3fe;
+    --color-primary-tint: color-mix(in srgb, #93b4fd 18%, #0b0d12);
+  }
+}
+
+:root[data-palette="midnight"][data-theme="dark"] {
+  --color-primary: #93b4fd;
+  --color-primary-vif: #bfd3fe;
+  --color-primary-tint: color-mix(in srgb, #93b4fd 18%, #0b0d12);
+}

@@ -14,7 +14,15 @@ import { NextResponse, type NextRequest } from "next/server";
  * jamais `(admin)`. Il faut donc lister ici, à la main, chaque chemin
  * créé dans ces deux groupes pour qu'il reste protégé.
  */
-const CHEMINS_PROTEGES = ["/tableau-de-bord", "/redaction", "/activite", "/messages", "/progres"];
+const CHEMINS_PROTEGES = [
+  "/tableau-de-bord",
+  "/redaction",
+  "/activite",
+  "/messages",
+  "/progres",
+  "/communaute",
+  "/parametres",
+];
 const CHEMINS_ADMIN = ["/administration"];
 
 function cheminCorrespond(chemin: string, liste: string[]) {

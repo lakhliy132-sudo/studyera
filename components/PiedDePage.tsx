@@ -46,28 +46,36 @@ const COLONNES: ColonnePied[] = [
 export default function PiedDePage() {
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-10 px-6 py-12 sm:px-9">
-        <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
-          <div className="flex max-w-xs flex-col gap-3">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 px-6 py-7 sm:px-9">
+        <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
+          <div className="flex max-w-xs flex-col gap-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <Image src="/logo-studyera.png" alt="Studyera" width={868} height={568} className="h-9 w-auto" />
+              <Image
+                src="/logo-studyera.png"
+                alt="Studyera"
+                width={868}
+                height={568}
+                className="h-7 w-auto"
+              />
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Révise le français du bac marocain : œuvres au programme, langue, production écrite et bientôt
-              d&apos;autres matières.
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              Révise le français du bac marocain : œuvres au programme, langue,
+              production écrite et bientôt d&apos;autres matières.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
             {COLONNES.map((colonne) => (
-              <div key={colonne.titre} className="flex flex-col gap-3">
-                <p className="text-sm font-semibold text-ink">{colonne.titre}</p>
+              <div key={colonne.titre} className="flex flex-col gap-2">
+                <p className="text-[13px] font-semibold text-ink">
+                  {colonne.titre}
+                </p>
                 <ul className="flex flex-col gap-2">
                   {colonne.liens.map((lien) => (
                     <li key={lien.href}>
                       <Link
                         href={lien.href}
-                        className="text-sm text-muted-foreground hover:text-primary"
+                        className="text-[13px] text-muted-foreground hover:text-primary"
                       >
                         {lien.libelle}
                       </Link>
@@ -79,7 +87,7 @@ export default function PiedDePage() {
           </div>
         </div>
 
-        <p className="border-t border-border pt-6 text-xs text-subtle-foreground">
+        <p className="border-t border-border pt-4 text-[11.5px] text-subtle-foreground">
           © {new Date().getFullYear()} Studyera. Tous droits réservés.
         </p>
       </div>

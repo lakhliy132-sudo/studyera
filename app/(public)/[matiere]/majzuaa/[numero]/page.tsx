@@ -29,17 +29,17 @@ export default async function PageModuleArabe({
   const { matiere: slugMatiere, numero } = await params;
   if (slugMatiere !== "arabe") notFound();
 
-  const module = recupererModuleArabe(numero);
-  if (!module) notFound();
+  const majzuaa = recupererModuleArabe(numero);
+  if (!majzuaa) notFound();
 
   const lecons = (
     await recupererCoursParCategorie("arabe", FILIERE_ACTUELLE)
-  ).filter((cours) => cours.slug.startsWith(prefixeSlugModule(module.numero)));
+  ).filter((cours) => cours.slug.startsWith(prefixeSlugModule(majzuaa.numero)));
   if (lecons.length === 0) notFound();
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
+      <div className="flex w-full flex-col gap-9 px-6 pt-9 pb-16 sm:px-9">
         <Link
           href="/arabe"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -50,24 +50,24 @@ export default async function PageModuleArabe({
 
         <div className="flex items-center gap-4">
           <span
-            style={{ backgroundColor: module.couleur }}
+            style={{ backgroundColor: majzuaa.couleur }}
             className="flex size-[58px] shrink-0 items-center justify-center rounded-full text-2xl font-bold text-white"
           >
-            {module.numero}
+            {majzuaa.numero}
           </span>
           <div className="flex flex-col gap-1">
             <h1
               dir="rtl"
               className="font-arabe text-3xl leading-snug font-bold text-ink"
             >
-              {module.titre}
+              {majzuaa.titre}
             </h1>
-            {module.sousTitre && (
+            {majzuaa.sousTitre && (
               <p
                 dir="rtl"
                 className="font-arabe text-base leading-snug text-muted-foreground"
               >
-                {module.sousTitre}
+                {majzuaa.sousTitre}
               </p>
             )}
             <p className="text-sm text-muted-foreground">
@@ -86,7 +86,7 @@ export default async function PageModuleArabe({
               >
                 <div
                   aria-hidden="true"
-                  style={{ backgroundColor: module.couleur }}
+                  style={{ backgroundColor: majzuaa.couleur }}
                   className="h-1.5 w-full"
                 />
                 <div className="flex flex-1 flex-col p-[26px]">

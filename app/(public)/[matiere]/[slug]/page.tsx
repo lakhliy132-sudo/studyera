@@ -6,7 +6,13 @@ import { notFound } from "next/navigation";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import CorrectionRepliable from "@/components/CorrectionRepliable";
 import FlashcardsHistoireGeo from "@/components/FlashcardsHistoireGeo";
-import { IconeCartes, IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
+import {
+  IconeCartes,
+  IconeCroissant,
+  IconeFleche,
+  IconeGlobe,
+  IconeHorloge,
+} from "@/components/icones";
 import SommaireHistoireGeo from "@/components/SommaireHistoireGeo";
 import { extraireFlashcards } from "@/lib/flashcards";
 import { recupererMatiereParSlug } from "@/lib/matieres";
@@ -23,11 +29,16 @@ interface PagePropsCoursMatiere {
  * la correction ou pas"). Le titre `##` lui-même est retiré : c'est le
  * bouton qui en tient lieu. Sans section de ce type, le cours est
  * renvoyé tel quel. */
-function separerCorrection(contenuMdx: string | null): { cours: string; correction: string | null } {
+function separerCorrection(contenuMdx: string | null): {
+  cours: string;
+  correction: string | null;
+} {
   if (!contenuMdx) return { cours: "", correction: null };
 
   const lignes = contenuMdx.split("\n");
-  const debut = lignes.findIndex((ligne) => ligne.startsWith("## ") && ligne.includes("التصحيح"));
+  const debut = lignes.findIndex(
+    (ligne) => ligne.startsWith("## ") && ligne.includes("التصحيح"),
+  );
   if (debut === -1) return { cours: contenuMdx, correction: null };
 
   return {
@@ -87,7 +98,9 @@ function extraireTitresSections(contenuMdx: string | null): string[] {
  * lib/flashcards.ts), section masquée si la leçon n'en produit
  * aucune.
  */
-export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere) {
+export default async function PageCoursMatiere({
+  params,
+}: PagePropsCoursMatiere) {
   const { matiere: slugMatiere, slug } = await params;
   const matiere = recupererMatiereParSlug(slugMatiere);
   if (!matiere) notFound();
@@ -96,13 +109,32 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
   if (!cours || cours.categorie !== matiere.slug) notFound();
 
   const estHistoireGeo = matiere.slug === "histoire-geo";
+  const estIslamique = matiere.slug === "education-islamique";
+  /** Mise en page "feuille" : histoire-géo et éducation islamique. */
+  const estFeuille = estHistoireGeo || estIslamique;
   const estHistoire = cours.slug.startsWith("histoire-");
-  const IconeSection = estHistoire ? IconeHorloge : IconeGlobe;
-  const { cours: contenuCours, correction } = separerCorrection(cours.contenu_mdx);
-  const titresSections = estHistoireGeo ? extraireTitresSections(contenuCours) : [];
+  const IconeSection = estIslamique
+    ? IconeCroissant
+    : estHistoire
+      ? IconeHorloge
+      : IconeGlobe;
+  const couleurMatiere = estIslamique
+    ? "var(--color-matiere-islamique)"
+    : "var(--color-matiere-histoire-geo)";
+  const kicker = estIslamique
+    ? "التربية الإسلامية"
+    : estHistoire
+      ? "Histoire"
+      : "Géographie";
+  const { cours: contenuCours, correction } = separerCorrection(
+    cours.contenu_mdx,
+  );
+  const titresSections = estFeuille ? extraireTitresSections(contenuCours) : [];
   // Fiches tirées du cours seul, corrigé exclu : une correction est un
   // modèle de rédaction, pas des notions à réviser en flashcards.
-  const flashcards = estHistoireGeo ? extraireFlashcards(contenuCours, cours.titre, cours.slug) : [];
+  const flashcards = estHistoireGeo
+    ? extraireFlashcards(contenuCours, cours.titre, cours.slug)
+    : [];
 
   return (
     <main className="flex flex-col">
@@ -116,27 +148,33 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
           {matiere.titreAccent.toLowerCase()}
         </Link>
 
-        {estHistoireGeo ? (
+        {estFeuille ? (
           <>
             <span
-              style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
+              style={{ backgroundColor: couleurMatiere }}
               className="flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white"
             >
               <IconeSection className="size-3.5" />
-              {estHistoire ? "Histoire" : "Géographie"}
+              {kicker}
             </span>
-            <h1 className="font-serif text-[38px] leading-tight font-bold tracking-tight text-ink">{cours.titre}</h1>
+            <h1 className="font-serif text-[38px] leading-tight font-bold tracking-tight text-ink">
+              {cours.titre}
+            </h1>
 
             <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_270px]">
               <div className="relative overflow-hidden rounded-[22px] border border-border bg-feuille shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
-                <div aria-hidden="true" style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }} className="h-2 w-full" />
+                <div
+                  aria-hidden="true"
+                  style={{ backgroundColor: couleurMatiere }}
+                  className="h-2 w-full"
+                />
                 {/* Pastille en filigrane, purement décorative — même
                  * technique que les taches de couleur de l'accueil.
                  * `IconeProps` ne prend pas de `style` : la couleur passe
                  * par un `<span>` englobant (`currentColor` du SVG). */}
                 <span
                   aria-hidden="true"
-                  style={{ color: "var(--color-matiere-histoire-geo)" } as CSSProperties}
+                  style={{ color: couleurMatiere } as CSSProperties}
                   className="pointer-events-none absolute -top-6 -right-6 opacity-[0.05]"
                 >
                   <IconeSection className="size-40" />
@@ -151,7 +189,7 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                     texte={contenuCours}
                     styleFeuille
                     grandeTaille
-                    couleurAccent="var(--color-matiere-histoire-geo)"
+                    couleurAccent={couleurMatiere}
                   />
                 </div>
               </div>
@@ -159,7 +197,9 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
               <SommaireHistoireGeo titresSections={titresSections} />
             </div>
 
-            {correction && <CorrectionRepliable contenu={correction} grandeTaille />}
+            {correction && (
+              <CorrectionRepliable contenu={correction} grandeTaille />
+            )}
 
             {flashcards.length > 0 && (
               <section className="mt-6 flex flex-col gap-6 rounded-[22px] border border-border bg-surface p-6 shadow-sm sm:p-8">
@@ -172,7 +212,8 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
                       Flash<span className="text-primary italic">cards</span>
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      {flashcards.length} fiche{flashcards.length > 1 ? "s" : ""} tirée
+                      {flashcards.length} fiche
+                      {flashcards.length > 1 ? "s" : ""} tirée
                       {flashcards.length > 1 ? "s" : ""} de cette leçon.
                     </p>
                   </div>
@@ -189,7 +230,9 @@ export default async function PageCoursMatiere({ params }: PagePropsCoursMatiere
               <span className="flex size-11 items-center justify-center rounded-[13px] bg-primary-tint">
                 <matiere.Icone className="size-5" />
               </span>
-              <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
+              <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+                {cours.titre}
+              </h1>
             </div>
 
             {/* Pour l'arabe : texte plus grand ("je veux l ecriture

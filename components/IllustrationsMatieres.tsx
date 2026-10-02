@@ -4,7 +4,7 @@ interface IllustrationProps {
 
 /** Contour commun à toutes les illustrations : le bleu nuit des
  * titres de la maquette. */
-const TRAIT = "#1e2a6b";
+const TRAIT = "var(--color-ink)";
 
 /**
  * Petites illustrations plates des cartes de /matieres, dessinées

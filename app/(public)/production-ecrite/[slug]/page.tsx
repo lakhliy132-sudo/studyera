@@ -218,15 +218,108 @@ function GrillePlans() {
   );
 }
 
+/** Découpe le contenu "aide-expression" (markdown "## catégorie" suivi
+ * de lignes "- expression") en [{ titre, phrases }]. */
+function parseExpressions(contenu: string): { titre: string; phrases: string[] }[] {
+  const categories: { titre: string; phrases: string[] }[] = [];
+  let courante: { titre: string; phrases: string[] } | null = null;
+  for (const ligne of contenu.split("\n")) {
+    const titre = ligne.match(/^##\s+(.+)$/);
+    if (titre) {
+      courante = { titre: titre[1].trim(), phrases: [] };
+      categories.push(courante);
+    } else if (courante) {
+      const phrase = ligne.match(/^\s*[-*]\s+(.+)$/);
+      if (phrase) courante.phrases.push(phrase[1].trim());
+    }
+  }
+  return categories;
+}
+
+/** Une catégorie d'expressions = un encadré arrondi : titre + pastilles
+ * — demandé explicitement par l'utilisateur ("entoure ses expressions
+ * arrondis"). */
+function GrilleExpressions({ contenu }: { contenu: string }) {
+  const categories = parseExpressions(contenu);
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {categories.map((cat) => (
+        <div key={cat.titre} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5 shadow-sm">
+          <h3 className="font-serif text-base font-bold text-primary">{cat.titre}</h3>
+          <ul className="flex flex-wrap gap-2">
+            {cat.phrases.map((phrase) => (
+              <li key={phrase} className="rounded-full border border-border bg-surface-muted px-3.5 py-1.5 font-lecture text-[15px] leading-relaxed text-foreground">
+                {phrase}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Découpe le contenu "grille-auto-evaluation" (paragraphe d'intro puis
+ * sections "## titre" avec lignes "- critère") en { intro, sections }. */
+function parseGrille(contenu: string): { intro: string; sections: { titre: string; criteres: string[] }[] } {
+  const sections: { titre: string; criteres: string[] }[] = [];
+  let courante: { titre: string; criteres: string[] } | null = null;
+  const introLignes: string[] = [];
+  for (const ligne of contenu.split("\n")) {
+    const titre = ligne.match(/^##\s+(.+)$/);
+    if (titre) {
+      courante = { titre: titre[1].trim(), criteres: [] };
+      sections.push(courante);
+    } else if (courante) {
+      const critere = ligne.match(/^\s*[-*]\s+(.+)$/);
+      if (critere) courante.criteres.push(critere[1].trim());
+    } else if (ligne.trim()) {
+      introLignes.push(ligne.trim());
+    }
+  }
+  return { intro: introLignes.join("\n"), sections };
+}
+
+/** Chaque rubrique de la grille d'auto-évaluation = un encadré arrondi
+ * (comme les rédactions modèles) : titre + critères à cocher — demandé
+ * explicitement par l'utilisateur ("fais comme les modèles dans les
+ * cases"). */
+function GrilleAutoEvaluation({ contenu }: { contenu: string }) {
+  const { intro, sections } = parseGrille(contenu);
+  return (
+    <div className="flex flex-col gap-4">
+      {intro ? (
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
+          {intro}
+        </ReactMarkdown>
+      ) : null}
+      {sections.map((section) => (
+        <div key={section.titre} className="rounded-lg border border-border bg-surface p-6 shadow-sm">
+          <h3 className="mb-3 font-serif text-lg font-bold text-primary">{section.titre}</h3>
+          <ul className="flex flex-col gap-2">
+            {section.criteres.map((critere) => (
+              <li key={critere} className="flex items-start gap-2.5 font-lecture text-[16px] leading-relaxed text-foreground">
+                <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                <span>{critere}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function PageProductionEcriteDetail({ params }: PageProps) {
   const { slug } = await params;
   const cours = await recupererCoursParSlug(slug);
   if (!cours || cours.categorie !== "production-ecrite" || !cours.contenu_mdx) notFound();
 
   const segments = segmenter(cours.contenu_mdx);
+  const largeur = cours.slug === "aide-expression" ? "max-w-5xl" : "max-w-3xl";
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10">
+    <main className={`mx-auto w-full ${largeur} px-6 py-10`}>
       <Link href="/production-ecrite" className="text-sm text-muted-foreground hover:text-primary">
         ← Production écrite
       </Link>
@@ -235,17 +328,23 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
       </p>
       <h1 className="mb-8 font-serif text-3xl font-bold text-ink">{cours.titre}</h1>
 
-      <div className="flex flex-col gap-4">
-        {segments.map((segment, index) => {
-          if (segment.type === "plans") return <GrillePlans key={index} />;
-          if (segment.type === "redaction") return <BlocRedaction key={index} texte={segment.texte} />;
-          return (
-            <ReactMarkdown key={index} remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
-              {segment.texte}
-            </ReactMarkdown>
-          );
-        })}
-      </div>
+      {cours.slug === "aide-expression" ? (
+        <GrilleExpressions contenu={cours.contenu_mdx} />
+      ) : cours.slug === "grille-auto-evaluation" ? (
+        <GrilleAutoEvaluation contenu={cours.contenu_mdx} />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {segments.map((segment, index) => {
+            if (segment.type === "plans") return <GrillePlans key={index} />;
+            if (segment.type === "redaction") return <BlocRedaction key={index} texte={segment.texte} />;
+            return (
+              <ReactMarkdown key={index} remarkPlugins={[remarkGfm]} components={COMPOSANTS_MARKDOWN}>
+                {segment.texte}
+              </ReactMarkdown>
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

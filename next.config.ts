@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Un package-lock.json traîne dans le dossier personnel de
+  // l'utilisateur (C:Usershp), et Next le prenait pour la racine de
+  // l'espace de travail — d'où un avertissement à chaque build. On
+  // désigne explicitement ce dossier-ci.
+  outputFileTracingRoot: __dirname,
+
   images: {
     // Autorise next/image à afficher les couvertures d'œuvres,
     // typiquement hébergées sur Supabase Storage (bucket public).

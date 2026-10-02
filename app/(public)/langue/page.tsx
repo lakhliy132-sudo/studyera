@@ -78,10 +78,13 @@ export default async function PageLangue() {
     <main className="flex flex-col">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-9 px-6 pt-9 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-1.5 text-xs font-bold tracking-wide text-white uppercase">
-            <IconeLivreOuvert className="size-3.5" />
-            Français – 1ère Bac
-          </span>
+          <div className="flex items-center justify-center gap-3">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
+            <span className="flex size-8 items-center justify-center rounded-full border border-primary/20 bg-primary-tint text-primary">
+              <IconeLivreOuvert className="size-4" />
+            </span>
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
+          </div>
           <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
             Cours de <span className="text-primary italic">langue</span>
           </h1>

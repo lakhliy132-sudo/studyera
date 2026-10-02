@@ -420,3 +420,66 @@ export async function recupererQuotaRestant(userId: string | null): Promise<numb
   const utilisees = data?.corrections_utilisees ?? 0;
   return Math.max(0, QUOTA_QUOTIDIEN_MAX - utilisees);
 }
+
+/** Notes des copies corrigées, de la plus ancienne à la plus récente,
+ * avec le détail forme/fond — alimente la courbe et les barres par
+ * critère de la page /progres. */
+export async function recupererHistoriqueCopies(
+  userId: string | null,
+): Promise<{ note: number; forme: number | null; fond: number | null; date: string }[]> {
+  if (!userId) return [];
+
+  const supabase = await creerClientServeur();
+  const { data, error } = await supabase
+    .from("copies")
+    .select("note_total, note_forme, note_fond, created_at")
+    .eq("user_id", userId)
+    .not("note_total", "is", null)
+    .order("created_at");
+
+  if (error) {
+    console.error("recupererHistoriqueCopies:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((ligne) => ({
+    note: ligne.note_total as number,
+    forme: (ligne.note_forme as number | null) ?? null,
+    fond: (ligne.note_fond as number | null) ?? null,
+    date: ligne.created_at as string,
+  }));
+}
+
+/** Nombre d'entrées dans `activite` par jour sur les `jours` derniers
+ * jours — carte de régularité de /progres. La base n'enregistre pas de
+ * durée de révision : c'est donc un nombre d'activités, pas des
+ * minutes. */
+export async function recupererActiviteParJour(
+  userId: string | null,
+  jours: number,
+): Promise<Record<string, number>> {
+  if (!userId) return {};
+
+  const supabase = await creerClientServeur();
+  const depuis = new Date();
+  depuis.setDate(depuis.getDate() - jours);
+
+  const { data, error } = await supabase
+    .from("activite")
+    .select("created_at")
+    .eq("user_id", userId)
+    .gte("created_at", depuis.toISOString());
+
+  if (error) {
+    console.error("recupererActiviteParJour:", error.message);
+    return {};
+  }
+
+  const comptes: Record<string, number> = {};
+  for (const ligne of data ?? []) {
+    const date = new Date(ligne.created_at as string);
+    const cle = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    comptes[cle] = (comptes[cle] ?? 0) + 1;
+  }
+  return comptes;
+}

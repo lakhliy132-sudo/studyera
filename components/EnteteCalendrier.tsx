@@ -16,10 +16,10 @@ import { IconeCalendrier } from "@/components/icones";
  */
 export default function EnteteCalendrier() {
   return (
-    <div className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary-tint/70 via-primary-tint/25 to-transparent">
+    <div className="relative mx-6 mt-6 overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm sm:mx-9">
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.35]"
+        className="absolute inset-0 opacity-[0.12]"
         style={{
           backgroundImage:
             "repeating-linear-gradient(-45deg, var(--color-primary) 0, var(--color-primary) 1px, transparent 1px, transparent 34px)",
@@ -27,38 +27,40 @@ export default function EnteteCalendrier() {
         }}
       />
 
-      <div className="relative flex w-full max-w-5xl flex-col gap-2.5 px-6 py-7 sm:px-9">
-        <span className="flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-surface/80 px-3.5 py-1.5 text-xs font-semibold text-primary">
+      {/* Taches de couleur très diffuses, purement décoratives. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-16 right-10 size-44 rounded-full opacity-[0.16] blur-3xl"
+        style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-10 -bottom-20 size-52 rounded-full opacity-[0.14] blur-3xl"
+        style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
+      />
+
+      <div className="relative flex w-full flex-col gap-2 px-6 py-5 sm:px-9">
+        <span className="flex w-fit items-center gap-2 rounded-full bg-primary-tint px-3.5 py-1.5 text-xs font-semibold text-primary">
           <IconeCalendrier className="size-3.5" />
           Mon calendrier
         </span>
 
-        <h1 className="max-w-lg font-serif text-2xl leading-[1.2] font-bold text-ink sm:text-[28px]">
+        <h1 className="max-w-2xl font-serif text-3xl leading-[1.15] font-bold text-ink sm:text-[34px]">
           Gère tes examens et tes rappels{" "}
-          <span className="text-primary">en un seul endroit.</span>
+          <span
+            className="bg-clip-text text-transparent"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, var(--color-primary) 0%, var(--color-matiere-arabe) 60%, var(--color-matiere-histoire-geo) 100%)",
+            }}
+          >
+            en un seul endroit.
+          </span>
         </h1>
 
         <p className="max-w-md text-sm text-muted-foreground">
           Ne manque plus aucune échéance et organise ton temps efficacement.
         </p>
-      </div>
-
-      {/* Sœur du conteneur `max-w-5xl` ci-dessus, pas son enfant : ancrée
-       * au coin droit de la bannière pleine largeur (l'ancêtre `relative`
-       * le plus proche est le conteneur externe), pas au bord droit du
-       * contenu maintenant borné à `max-w-5xl`. */}
-      <div className="pointer-events-none absolute top-6 right-9 hidden max-w-[220px] rotate-[-4deg] text-right lg:block">
-        <p className="font-manuscrit text-xl leading-snug text-primary-vif">
-          Un petit effort chaque jour fait une grande différence.
-        </p>
-        <svg viewBox="0 0 90 18" className="ml-auto mt-1 h-4 w-20 text-primary-vif/60" fill="none" aria-hidden="true">
-          <path
-            d="M2 10c8-9 16-9 22 0s16 9 22 0 16-9 22 0 16 9 20 2"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
       </div>
     </div>
   );

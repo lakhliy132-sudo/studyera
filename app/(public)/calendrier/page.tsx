@@ -1,8 +1,10 @@
-import CalendrierMois from "@/components/CalendrierMois";
 import CarteExamenRegional from "@/components/CarteExamenRegional";
-import CompteARebours from "@/components/CompteARebours";
 import EnteteCalendrier from "@/components/EnteteCalendrier";
+import PlanningAgenda from "@/components/PlanningAgenda";
 import { IconeCoche } from "@/components/icones";
+import { prochaineSession } from "@/lib/calendrier";
+import { recupererEvenementsEleve } from "@/lib/supabase/evenements";
+import { creerClientServeur } from "@/lib/supabase/server";
 
 /**
  * /calendrier — demandé explicitement par l'utilisateur comme nouveau
@@ -38,16 +40,56 @@ import { IconeCoche } from "@/components/icones";
  * calendrier") : jours restants avant la prochaine session de
  * l'examen régional, calculé (pas inventé) — voir son commentaire.
  */
-export default function PageCalendrier() {
+export default async function PageCalendrier() {
+  const supabase = await creerClientServeur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const evenements = await recupererEvenementsEleve();
+
+  // Date de la prochaine session d'examen et début de l'année
+  // scolaire, passés au planning : il ne les écrit pas en dur.
+  const session = prochaineSession();
+  const versCle = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const dateExamen = session ? versCle(session.debut) : null;
+  const anneeRentree = session
+    ? session.debut.getFullYear() - 1
+    : new Date().getFullYear();
+  const debutAnnee = `${anneeRentree}-09-01`;
+
   return (
-    <main className="flex flex-col">
-      <EnteteCalendrier />
+    <main className="relative flex flex-col">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-background) 0%, color-mix(in srgb, var(--color-primary) 6%, var(--color-background)) 100%)",
+        }}
+      />
 
-      <div className="flex w-full max-w-5xl flex-col gap-10 px-6 py-12 sm:px-9">
-        <CompteARebours />
+      <div className="animate-entree-carte">
+        <EnteteCalendrier />
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
-          <CalendrierMois />
+      <div className="flex w-full flex-col gap-4 px-6 py-6 sm:px-9">
+        <div
+          className="animate-entree-carte"
+          style={{ animationDelay: "80ms" }}
+        >
+          <PlanningAgenda
+            evenements={evenements}
+            connecte={Boolean(user)}
+            dateExamen={dateExamen}
+            debutAnnee={debutAnnee}
+          />
+        </div>
+
+        <div
+          className="animate-entree-carte"
+          style={{ animationDelay: "240ms" }}
+        >
           <CarteExamenRegional />
         </div>
 

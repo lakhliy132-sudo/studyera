@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
 import BoutonAnimations from "@/components/BoutonAnimations";
+import MenuLateral from "@/components/MenuLateral";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
 import {
   IconeChevronBas,
@@ -110,36 +111,7 @@ export default function BarreNavigation({
   // page"), qui montre une recherche et une cloche de notifications en
   // plus de ce qui existait déjà (avatar, mode nuit, déconnexion).
   if (connecte) {
-    return (
-      <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
-        <div className="grid h-[76px] w-full grid-cols-[auto_1fr_auto] items-center gap-6 px-7">
-          {logo}
-
-          <nav
-            aria-label="Navigation principale"
-            className="hidden items-center justify-center gap-1 xl:flex"
-          >
-            <LiensNavigation connecte={connecte} />
-          </nav>
-
-          <div className="hidden items-center justify-end gap-3 xl:flex">
-            <Link
-              href="/recherche"
-              aria-label="Rechercher"
-              title="Rechercher"
-              className="flex size-9 shrink-0 items-center justify-center rounded-full text-subtle-foreground transition-colors hover:bg-surface-muted hover:text-primary"
-            >
-              <IconeRecherche className="size-[18px]" />
-            </Link>
-            <BoutonAnimations />
-            <BoutonModeNuit />
-            <EtatConnexion connecte={connecte} email={email} prenom={prenom} />
-          </div>
-
-          {menuMobile}
-        </div>
-      </header>
-    );
+    return <MenuLateral prenom={prenom} email={email} />;
   }
 
   return (

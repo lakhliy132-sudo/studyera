@@ -785,3 +785,25 @@ export function IconeEclair({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
     </svg>
   );
 }
+
+/** Palette de peintre — page /parametres (choix du thème de couleurs). */
+export function IconePalette({ className = TAILLE_PAR_DEFAUT }: IconeProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.6-1.4-.3-.4-.4-.8-.4-1.1 0-.8.7-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Z"
+        strokeLinejoin="round"
+      />
+      <circle cx="7.5" cy="11.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="10.5" cy="7.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="8.5" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}

@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Caveat, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Inter, Lora, Playfair_Display } from "next/font/google";
+import {
+  Caveat,
+  IBM_Plex_Mono,
+  IBM_Plex_Sans_Arabic,
+  Inter,
+  Lora,
+  Playfair_Display,
+} from "next/font/google";
 import "./globals.css";
 
 import BarreNavigation from "@/components/BarreNavigation";
@@ -127,7 +134,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // connecté, comme AccueilConnecte le fait déjà pour la même donnée.
   let prenom: string | null = null;
   if (user) {
-    const { data: profil } = await supabase.from("profils").select("nom_complet").eq("id", user.id).maybeSingle();
+    const { data: profil } = await supabase
+      .from("profils")
+      .select("nom_complet")
+      .eq("id", user.id)
+      .maybeSingle();
     prenom = deriverPrenom(profil?.nom_complet ?? null, user.email ?? null);
   }
 
@@ -136,9 +147,30 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="fr"
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
     >
-      <body className="font-sans">
-        <BarreNavigation connecte={Boolean(user)} email={user?.email ?? null} prenom={prenom} />
-        {children}
+      {/* `flex` : la colonne de navigation (BarreNavigation, verticale
+       * pour un élève connecté) occupe la gauche, le contenu prend le
+       * reste. En dessous de 1280px, la nav redevient une barre en haut
+       * et ce conteneur se comporte comme une simple colonne. */}
+      <head>
+        {/* Applique la palette choisie (localStorage) avant le premier
+         * rendu : sans ça, la page s'afficherait en bleu puis
+         * basculerait sur la couleur de l'élève. Le thème clair/sombre,
+         * lui, est déjà géré en CSS par prefers-color-scheme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=localStorage.getItem("studyera-palette");if(p&&p!=="default"){document.documentElement.dataset.palette=p;}var t=localStorage.getItem("studyera-theme");if(t){document.documentElement.dataset.theme=t;}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="flex min-h-screen flex-col font-sans">
+        <BarreNavigation
+          connecte={Boolean(user)}
+          email={user?.email ?? null}
+          prenom={prenom}
+        />
+        <div className="flex min-w-0 flex-1 flex-col xl:ps-[var(--largeur-menu,18rem)]">
+          {children}
+        </div>
       </body>
     </html>
   );

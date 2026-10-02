@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-import { IconeDocument, IconeFleche, IconeInfo, IconeLivre } from "@/components/icones";
+import {
+  IconeDocument,
+  IconeFleche,
+  IconeInfo,
+  IconeLivre,
+} from "@/components/icones";
 import { EXAMEN_REGIONAL_1BAC, sessionAVenir } from "@/lib/calendrier";
 import { MATIERES } from "@/lib/matieres";
 
@@ -26,8 +31,18 @@ const MATIERES_EXAMEN = [
 ];
 
 const NOM_MOIS = [
-  "janvier", "février", "mars", "avril", "mai", "juin",
-  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre",
 ];
 
 function formaterPeriode(debut: Date, fin: Date) {
@@ -49,25 +64,28 @@ function formaterPeriode(debut: Date, fin: Date) {
  */
 export default function CarteExamenRegional() {
   return (
-    <div className="flex h-fit flex-col gap-6 rounded-[24px] border border-border bg-surface p-7 shadow-sm sm:p-8">
-      <div className="flex items-center gap-3.5">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
+    <div className="flex h-fit flex-col gap-4 rounded-[20px] border border-border bg-surface p-4 shadow-[0_14px_34px_-26px_rgba(20,30,60,0.45)] sm:p-5 lg:flex-row lg:items-center lg:gap-6">
+      <div className="flex shrink-0 items-center gap-3.5">
+        <span
+          className="flex size-10 shrink-0 items-center justify-center rounded-full text-white"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--color-matiere-histoire-geo) 0%, var(--color-erreur) 100%)",
+          }}
+        >
           <IconeDocument className="size-5" />
         </span>
-        <div>
-          <p className="font-serif text-xl font-bold text-ink">Examens</p>
-          <p className="text-[13px] text-muted-foreground">Retrouve ici toutes tes épreuves et leurs rappels.</p>
-        </div>
+        <p className="font-serif text-lg font-bold text-ink">Examens</p>
       </div>
 
-      <ul className="flex flex-col gap-3.5">
+      <ul className="flex flex-1 flex-wrap gap-3">
         {EXAMEN_REGIONAL_1BAC.map((session, index) => {
           const aVenir = sessionAVenir(session);
 
           return (
-            <li key={session.titre}>
+            <li key={session.titre} className="min-w-[240px] flex-1">
               <div
-                className={`flex items-center gap-3 rounded-[14px] border-l-4 bg-background px-4 py-3.5 ${
+                className={`flex items-center gap-3 rounded-[12px] border-l-4 bg-background px-3.5 py-2.5 ${
                   index === 0 ? "border-l-primary" : "border-l-primary-vif"
                 }`}
               >
@@ -79,13 +97,17 @@ export default function CarteExamenRegional() {
                     </p>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        aVenir ? "bg-primary-tint text-primary" : "bg-surface-muted text-subtle-foreground"
+                        aVenir
+                          ? "bg-primary-tint text-primary"
+                          : "bg-surface-muted text-subtle-foreground"
                       }`}
                     >
                       {aVenir ? "À venir" : "Passé"}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">{formaterPeriode(session.debut, session.fin)}</p>
+                  <p className="mt-0.5 text-[13px] text-muted-foreground">
+                    {formaterPeriode(session.debut, session.fin)}
+                  </p>
                 </div>
                 <IconeFleche className="size-4 shrink-0 text-subtle-foreground" />
               </div>
@@ -94,17 +116,16 @@ export default function CarteExamenRegional() {
         })}
       </ul>
 
-      <div className="border-t border-border pt-5">
-        <p className="mb-1 text-xs font-semibold text-ink">Matières concernées</p>
-        <p className="mb-3 text-xs text-muted-foreground">
-          Communes à toutes les filières — d&apos;autres s&apos;ajoutent selon la tienne.
+      <div className="border-t border-border pt-4 lg:w-[280px] lg:shrink-0 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+        <p className="mb-2 text-xs font-semibold text-ink">
+          Matières concernées
         </p>
         <div className="flex flex-wrap gap-2">
           {MATIERES_EXAMEN.map((matiere) => (
             <Link
               key={matiere.slug}
               href={matiere.href}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-background px-2.5 py-1 text-[11.5px] font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
             >
               <matiere.Icone className="size-3.5 text-primary" />
               {matiere.nom}
@@ -113,7 +134,7 @@ export default function CarteExamenRegional() {
         </div>
       </div>
 
-      <p className="flex items-start gap-2 border-t border-border pt-5 text-xs text-muted-foreground">
+      <p className="flex items-start gap-2 pt-3 text-[11px] text-muted-foreground">
         <IconeInfo className="mt-px size-3.5 shrink-0" />
         <a
           href="https://www.men.gov.ma/index.php/fr/notes"

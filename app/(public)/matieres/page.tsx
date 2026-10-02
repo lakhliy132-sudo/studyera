@@ -4,9 +4,10 @@ import Link from "next/link";
 
 import { IconeFleche, IconeLivre } from "@/components/icones";
 import {
-  ENCRE_MATIERE,
-  ENCRE_MATIERE_DOUCE,
-  PALETTE_MATIERES,
+  accentMatiere,
+  bordureMatiere,
+  fondMatiere,
+  pastilleMatiere,
 } from "@/lib/palette-matieres";
 import {
   IllustrationGlobe,
@@ -21,16 +22,10 @@ interface CarteMatierePage {
   titre: string;
   titreItalique?: string;
   description: string;
-  /** Couleurs relevées sur la maquette : fond et bordure de la
-   * carte, pastille pâle derrière l'icône, et bouton "Découvrir".
-   * Valeurs fixes et non des tokens `--color-matiere-*` : la maquette
-   * donne un français rose et une histoire-géo jaune, là où le site
-   * les traite en bleu et en orange. La carte reste donc claire même
-   * en mode sombre — ses textes sont fixés en conséquence. */
-  fond: string;
-  bordure: string;
-  pastille: string;
-  bouton: string;
+  /** Slug de la matière : l'accent et les teintes qui en découlent
+   * sont calculés au rendu (lib/palette-matieres.ts), pour suivre le
+   * mode clair ou sombre. */
+  slug: string;
   Illustration: (props: { className?: string }) => ReactElement;
 }
 
@@ -57,7 +52,7 @@ const CARTES: CarteMatierePage[] = [
     titre: "Français",
     description:
       "Étudie la langue française, la littérature, la production écrite et la correction.",
-    ...PALETTE_MATIERES.francais,
+    slug: "francais",
     Illustration: IllustrationLivre,
   },
   {
@@ -65,7 +60,7 @@ const CARTES: CarteMatierePage[] = [
     titre: "Arabe",
     description:
       "Textes, grammaire et expression pour renforcer tes compétences en langue arabe.",
-    ...PALETTE_MATIERES.arabe,
+    slug: "arabe",
     Illustration: IllustrationLivreOuvert,
   },
   {
@@ -74,7 +69,7 @@ const CARTES: CarteMatierePage[] = [
     titreItalique: "Géographie",
     description:
       "Comprends le passé, explore le monde et analyse les sociétés.",
-    ...PALETTE_MATIERES["histoire-geo"],
+    slug: "histoire-geo",
     Illustration: IllustrationGlobe,
   },
   {
@@ -83,7 +78,7 @@ const CARTES: CarteMatierePage[] = [
     titreItalique: "islamique",
     description:
       "Cours, notions clés et repères pour l'examen d'éducation islamique.",
-    ...PALETTE_MATIERES["education-islamique"],
+    slug: "education-islamique",
     Illustration: IllustrationMosquee,
   },
 ];
@@ -121,20 +116,20 @@ export default function PageMatieres() {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "linear-gradient(180deg, #ffffff 0%, #fbf9ff 45%, #f6f1fd 100%)",
+            "linear-gradient(180deg, var(--color-background) 0%, color-mix(in srgb, var(--color-matiere-arabe) 7%, var(--color-background)) 100%)",
         }}
       >
         <div
-          className="absolute -top-28 -left-32 size-[420px] rounded-full opacity-70 blur-3xl"
-          style={{ backgroundColor: "#e8defc" }}
+          className="absolute -top-28 -left-32 size-[420px] rounded-full opacity-[0.14] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-arabe)" }}
         />
         <div
-          className="absolute top-24 -right-36 size-[460px] rounded-full opacity-60 blur-3xl"
-          style={{ backgroundColor: "#fde4ef" }}
+          className="absolute top-24 -right-36 size-[460px] rounded-full opacity-[0.12] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-francais)" }}
         />
         <div
-          className="absolute -bottom-32 left-1/3 size-[420px] rounded-full opacity-50 blur-3xl"
-          style={{ backgroundColor: "#fdf3d9" }}
+          className="absolute -bottom-32 left-1/3 size-[420px] rounded-full opacity-[0.10] blur-3xl"
+          style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
         />
       </div>
 
@@ -145,14 +140,13 @@ export default function PageMatieres() {
           </span>
           <h1
             className="mt-4 font-serif text-[42px] leading-tight font-bold tracking-tight"
-            style={{ color: ENCRE_MATIERE }}
+            style={{ color: "var(--color-ink)" }}
           >
-            Les{" "}
-            <span className="text-primary italic">matières</span>
+            Les <span className="text-primary italic">matières</span>
           </h1>
           <p
             className="mt-3 max-w-xl text-[15px]"
-            style={{ color: ENCRE_MATIERE_DOUCE }}
+            style={{ color: "var(--color-muted-foreground)" }}
           >
             Explore toutes les matières de ton parcours et progresse à ton
             rythme.
@@ -164,74 +158,77 @@ export default function PageMatieres() {
         </section>
 
         <ul className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-x-10 md:gap-y-9">
-          {CARTES.map((carte) => (
-            <li key={carte.href}>
-              <Link
-                href={carte.href}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border p-7 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                style={{
-                  backgroundColor: carte.fond,
-                  borderColor: carte.bordure,
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-6 -bottom-8 size-32 rounded-full opacity-60"
-                  style={{ backgroundColor: carte.pastille }}
-                />
-                <div className="relative flex items-start gap-5">
-                  <span className="relative shrink-0">
-                    <span
-                      className="flex size-[72px] items-center justify-center rounded-full"
-                      style={{ backgroundColor: carte.pastille }}
-                    >
-                      <carte.Illustration className="size-11" />
-                    </span>
-                    {/* Les trois petits traits d'éclat de la maquette. */}
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 20 22"
-                      className="absolute -top-1 -right-2 h-6 w-5"
-                      style={{ color: carte.bouton }}
-                    >
-                      <path
-                        d="M3 6 8 2M9 11h6M5 17l6-3"
-                        stroke="currentColor"
-                        strokeWidth="2.4"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-                    </svg>
-                  </span>
-                  <div className="min-w-0">
-                    <h2
-                      className="font-serif text-[22px] leading-snug font-bold"
-                      style={{ color: ENCRE_MATIERE }}
-                    >
-                      {carte.titre}
-                      {carte.titreItalique && (
-                        <span className="italic">{carte.titreItalique}</span>
-                      )}
-                    </h2>
-                    <p
-                      className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
-                      style={{ color: ENCRE_MATIERE_DOUCE }}
-                    >
-                      {carte.description}
-                    </p>
-                  </div>
-                </div>
-
-                <span
-                  className="relative mt-6 flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-sm"
-                  style={{ backgroundColor: carte.bouton }}
+          {CARTES.map((carte) => {
+            const accent = accentMatiere(carte.slug);
+            return (
+              <li key={carte.href}>
+                <Link
+                  href={carte.href}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border p-7 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  style={{
+                    backgroundColor: fondMatiere(accent),
+                    borderColor: bordureMatiere(accent),
+                  }}
                 >
-                  Découvrir
-                  <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
-            </li>
-          ))}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-6 -bottom-8 size-32 rounded-full opacity-60"
+                    style={{ backgroundColor: pastilleMatiere(accent) }}
+                  />
+                  <div className="relative flex items-start gap-5">
+                    <span className="relative shrink-0">
+                      <span
+                        className="flex size-[72px] items-center justify-center rounded-full"
+                        style={{ backgroundColor: pastilleMatiere(accent) }}
+                      >
+                        <carte.Illustration className="size-11" />
+                      </span>
+                      {/* Les trois petits traits d'éclat de la maquette. */}
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 22"
+                        className="absolute -top-1 -right-2 h-6 w-5"
+                        style={{ color: accent }}
+                      >
+                        <path
+                          d="M3 6 8 2M9 11h6M5 17l6-3"
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          fill="none"
+                        />
+                      </svg>
+                    </span>
+                    <div className="min-w-0">
+                      <h2
+                        className="font-serif text-[22px] leading-snug font-bold"
+                        style={{ color: "var(--color-ink)" }}
+                      >
+                        {carte.titre}
+                        {carte.titreItalique && (
+                          <span className="italic">{carte.titreItalique}</span>
+                        )}
+                      </h2>
+                      <p
+                        className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
+                        style={{ color: "var(--color-muted-foreground)" }}
+                      >
+                        {carte.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className="relative mt-6 flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-sm"
+                    style={{ backgroundColor: accent }}
+                  >
+                    Découvrir
+                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </main>
