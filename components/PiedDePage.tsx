@@ -51,7 +51,7 @@ export default function PiedDePage() {
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
           <div className="flex max-w-xs flex-col gap-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <LogoStudyera className="h-7 text-primary" />
+              <LogoStudyera className="h-8 text-primary" />
             </Link>
             {/* Texte mis à jour quand l'arabe, l'histoire-géographie et
              * l'éducation islamique ont rejoint le français : il

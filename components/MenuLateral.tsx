@@ -229,7 +229,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         >
           <Link href="/" className="flex items-center gap-2.5">
             <LogoStudyera
-              className={`text-primary ${reduit ? "h-8" : "h-9"}`}
+              className={`text-primary ${reduit ? "h-9" : "h-10"}`}
             />
           </Link>
           <button

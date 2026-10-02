@@ -20,18 +20,25 @@ interface LogoStudyeraProps {
  * remplit. Le logo suit dès lors la palette et le mode sombre comme
  * n'importe quel texte, sans seconde image ni filtre.
  *
- * `aspectRatio` reprend les dimensions du fichier (868 × 568) pour que
+ * Seul le symbole est affiché, sans le mot "Studyera" — demandé par
+ * l'utilisateur ("enleve studyera laisse juste le symbole et fais le un
+ * peu plus grand"). Le symbole a été découpé du fichier d'origine dans
+ * `public/logo-symbole-studyera.png` plutôt que masqué par un cadrage :
+ * un fichier à ses propres dimensions se dimensionne simplement par sa
+ * hauteur, sans calcul de décalage.
+ *
+ * `aspectRatio` reprend les dimensions du fichier (318 × 362) pour que
  * seule la hauteur ait besoin d'être donnée par l'appelant.
  */
 export default function LogoStudyera({ className = "" }: LogoStudyeraProps) {
   const masque: CSSProperties = {
-    aspectRatio: "868 / 568",
+    aspectRatio: "318 / 362",
     backgroundColor: "currentColor",
-    maskImage: "url(/logo-studyera.png)",
+    maskImage: "url(/logo-symbole-studyera.png)",
     maskRepeat: "no-repeat",
     maskPosition: "center",
     maskSize: "contain",
-    WebkitMaskImage: "url(/logo-studyera.png)",
+    WebkitMaskImage: "url(/logo-symbole-studyera.png)",
     WebkitMaskRepeat: "no-repeat",
     WebkitMaskPosition: "center",
     WebkitMaskSize: "contain",
