@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
 import { IconeFleche } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
-import { couleurMatiere } from "@/lib/palette-matieres";
 import {
   leconsDeSection,
   recupererSectionIslamique,
@@ -42,7 +41,9 @@ export default async function PagePartieIslamique({
   );
   if (lecons.length === 0) notFound();
 
-  const couleur = couleurMatiere(slugMatiere);
+  // Couleur du site, comme le reste de l'interface (voir la page de
+  // la matière pour le détail).
+  const couleur = "var(--color-primary)";
 
   return (
     <main className="flex flex-col">

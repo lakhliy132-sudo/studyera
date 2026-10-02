@@ -5,7 +5,6 @@ import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
-import { couleurMatiere } from "@/lib/palette-matieres";
 import {
   leconsDeSection,
   SECTIONS_ISLAMIQUE,
@@ -225,9 +224,13 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
     matiere.slug,
     FILIERE_ACTUELLE,
   );
-  // Même teinte que les pages de cours de la matière, pour que la
-  // couleur ne change pas d'un clic à l'autre.
-  const couleur = couleurMatiere(matiere.slug);
+  // Couleur du site, pas une couleur par matière — demandé
+  // explicitement par l'utilisateur, qui trouvait incohérent que la
+  // section d'éducation islamique vire au vert alors que celle de
+  // français reste sur la couleur courante ("quand je suis en default
+  // couleur laisse tout comme ca"). Elle suit donc la palette choisie,
+  // comme le reste de l'interface.
+  const couleur = "var(--color-primary)";
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estArabe = matiere.slug === "arabe";
   const estIslamique = matiere.slug === "education-islamique";

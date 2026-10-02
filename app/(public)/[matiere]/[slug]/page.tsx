@@ -118,9 +118,12 @@ export default async function PageCoursMatiere({
     : estHistoire
       ? IconeHorloge
       : IconeGlobe;
-  const couleurMatiere = estIslamique
-    ? "var(--color-matiere-islamique)"
-    : "var(--color-matiere-histoire-geo)";
+  // Couleur du site plutôt qu'une teinte par matière — demandé
+  // explicitement par l'utilisateur ("partie de francais est bien mais
+  // partie d education islam autre couleur pourquoi") : la feuille, ses
+  // titres de section, ses tableaux et son sommaire suivent la palette
+  // choisie, exactement comme les pages de français.
+  const couleurMatiere = "var(--color-primary)";
   const kicker = estIslamique
     ? "التربية الإسلامية"
     : estHistoire
