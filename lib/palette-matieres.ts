@@ -35,3 +35,19 @@ export function bordureMatiere(accent: string): string {
 export function pastilleMatiere(accent: string): string {
   return `color-mix(in srgb, ${accent} 22%, var(--color-surface))`;
 }
+
+/** Couleur de matière utilisée hors de /matieres : les tokens
+ * `--color-matiere-*` d'app/globals.css, c'est-à-dire la teinte que
+ * porte déjà la page d'un cours (bandeau, titres de section,
+ * sommaire). Une page de liste de matière et les cours qu'elle ouvre
+ * partagent ainsi la même couleur, au lieu de passer du bleu générique
+ * à la couleur de la matière d'un clic à l'autre. */
+export function couleurMatiere(slug: string): string {
+  const tokens: Record<string, string> = {
+    francais: "var(--color-matiere-francais)",
+    arabe: "var(--color-matiere-arabe)",
+    "histoire-geo": "var(--color-matiere-histoire-geo)",
+    "education-islamique": "var(--color-matiere-islamique)",
+  };
+  return tokens[slug] ?? "var(--color-primary)";
+}

@@ -10,14 +10,11 @@ interface SommaireHistoireGeoProps {
    * `ContenuMarkdown` (`styleFeuille`), reliées ici par ancre
    * (`#section-N`, posé sur chaque `h2` par ContenuMarkdown). */
   titresSections: string[];
+  /** Couleur de la matiere (token `--color-matiere-*`) — la meme que
+   * celle des pastilles numerotees des sections pointees, pour que le
+   * lien visuel avec le contenu soit immediat. */
+  couleur: string;
 }
-
-/** Même rouge que les pastilles numérotées des `h2` dans
- * ContenuMarkdown (`COULEUR_GRAND_TITRE`) — pas exporté de là (module
- * dédié au rendu Markdown), redéfini ici à l'identique pour que les
- * numéros du sommaire soient visuellement la même couleur que les
- * numéros des sections qu'ils pointent. */
-const COULEUR_GRAND_TITRE = "#dc2626";
 
 /**
  * Sommaire du cours affiché — habillage aligné sur la "feuille" du
@@ -38,7 +35,10 @@ const COULEUR_GRAND_TITRE = "#dc2626";
  * client (nécessaire pour l'observer) — le reste du cours autour
  * (page, ContenuMarkdown) reste rendu côté serveur.
  */
-export default function SommaireHistoireGeo({ titresSections }: SommaireHistoireGeoProps) {
+export default function SommaireHistoireGeo({
+  titresSections,
+  couleur,
+}: SommaireHistoireGeoProps) {
   const [sectionActive, setSectionActive] = useState(1);
 
   useEffect(() => {
@@ -69,11 +69,11 @@ export default function SommaireHistoireGeo({ titresSections }: SommaireHistoire
 
   return (
     <aside className="sticky top-24 w-full overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_24px_50px_-20px_rgba(20,30,60,0.25)]">
-      <div aria-hidden="true" style={{ backgroundColor: COULEUR_GRAND_TITRE }} className="h-1.5 w-full" />
+      <div aria-hidden="true" style={{ backgroundColor: couleur }} className="h-1.5 w-full" />
       <div className="flex flex-col gap-4 p-5">
         <div className="flex items-center gap-2">
           <span
-            style={{ backgroundColor: `color-mix(in srgb, ${COULEUR_GRAND_TITRE} 12%, transparent)`, color: COULEUR_GRAND_TITRE }}
+            style={{ backgroundColor: `color-mix(in srgb, ${couleur} 12%, transparent)`, color: couleur }}
             className="flex size-7 shrink-0 items-center justify-center rounded-full"
           >
             <IconeTexte className="size-3.5" />
@@ -87,7 +87,7 @@ export default function SommaireHistoireGeo({ titresSections }: SommaireHistoire
            * largeur, size-6 → 12px). */}
           <span
             aria-hidden="true"
-            style={{ backgroundColor: `color-mix(in srgb, ${COULEUR_GRAND_TITRE} 20%, transparent)` }}
+            style={{ backgroundColor: `color-mix(in srgb, ${couleur} 20%, transparent)` }}
             className="absolute top-3 bottom-3 left-3 w-px"
           />
           {titresSections.map((titre, index) => {
@@ -98,13 +98,13 @@ export default function SommaireHistoireGeo({ titresSections }: SommaireHistoire
                 <a
                   href={`#section-${numero}`}
                   aria-current={actif ? "location" : undefined}
-                  style={actif ? { backgroundColor: `color-mix(in srgb, ${COULEUR_GRAND_TITRE} 10%, transparent)` } : undefined}
+                  style={actif ? { backgroundColor: `color-mix(in srgb, ${couleur} 10%, transparent)` } : undefined}
                   className={`group flex items-start gap-3 rounded-[10px] px-2 py-2 text-[13px] leading-snug transition-colors ${
                     actif ? "text-ink" : "text-muted-foreground hover:bg-surface-muted hover:text-ink"
                   }`}
                 >
                   <span
-                    style={{ backgroundColor: COULEUR_GRAND_TITRE }}
+                    style={{ backgroundColor: couleur }}
                     className={`relative z-[1] flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white shadow-sm transition-transform ${
                       actif ? "scale-[1.2]" : "group-hover:scale-110"
                     }`}

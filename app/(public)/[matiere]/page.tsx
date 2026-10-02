@@ -5,6 +5,7 @@ import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
+import { couleurMatiere } from "@/lib/palette-matieres";
 import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 import type { Cours } from "@/types/base-de-donnees";
@@ -131,6 +132,9 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
     matiere.slug,
     FILIERE_ACTUELLE,
   );
+  // Même teinte que les pages de cours de la matière, pour que la
+  // couleur ne change pas d'un clic à l'autre.
+  const couleur = couleurMatiere(matiere.slug);
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estArabe = matiere.slug === "arabe";
   const leconsHistoire = estHistoireGeo
@@ -153,15 +157,30 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
 
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
-            <span className="flex size-8 items-center justify-center rounded-full border border-primary/20 bg-primary-tint text-primary">
+            <span
+              style={{ backgroundImage: `linear-gradient(to right, transparent, color-mix(in srgb, ${couleur} 40%, transparent))` }}
+              className="h-px w-16"
+            />
+            <span
+              style={{
+                backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
+                borderColor: `color-mix(in srgb, ${couleur} 24%, transparent)`,
+                color: couleur,
+              }}
+              className="flex size-8 items-center justify-center rounded-full border"
+            >
               <matiere.Icone className="size-4" />
             </span>
-            <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
+            <span
+              style={{ backgroundImage: `linear-gradient(to left, transparent, color-mix(in srgb, ${couleur} 40%, transparent))` }}
+              className="h-px w-16"
+            />
           </div>
           <h1 className="mt-5 font-serif text-4xl font-bold tracking-tight text-ink">
             {matiere.titreAvantAccent}
-            <span className="text-primary italic">{matiere.titreAccent}</span>
+            <span style={{ color: couleur }} className="italic">
+              {matiere.titreAccent}
+            </span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
             {matiere.description}
@@ -182,10 +201,12 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
                   icone={<IconeHorloge className="size-5" />}
                   titre="Histoire"
                   nombre={leconsHistoire.length}
+                  couleur={couleur}
                 />
                 <GrilleLecons
                   matiereSlug={matiere.slug}
                   lecons={leconsHistoire}
+                  couleur={couleur}
                 />
               </section>
             )}
@@ -195,17 +216,23 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
                   icone={<IconeGlobe className="size-5" />}
                   titre="Géographie"
                   nombre={leconsGeographie.length}
+                  couleur={couleur}
                 />
                 <GrilleLecons
                   matiereSlug={matiere.slug}
                   lecons={leconsGeographie}
                   numeroDepart={leconsHistoire.length + 1}
+                  couleur={couleur}
                 />
               </section>
             )}
           </div>
         ) : (
-          <GrilleLecons matiereSlug={matiere.slug} lecons={lecons} />
+          <GrilleLecons
+            matiereSlug={matiere.slug}
+            lecons={lecons}
+            couleur={couleur}
+          />
         )}
       </div>
     </main>

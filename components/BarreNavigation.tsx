@@ -70,7 +70,12 @@ export default function BarreNavigation({
         width={868}
         height={568}
         priority
-        className="h-[52px] w-auto"
+        /* `logo-nuit` (app/globals.css) : le logo est un bleu nuit sur
+         * fond transparent, lisible en clair mais presque invisible sur
+         * le fond sombre. La classe l'éclaircit en mode nuit — pas un
+         * variant `dark:` de Tailwind, ce projet gère le thème par
+         * `prefers-color-scheme` + `[data-theme]`. */
+        className="logo-nuit h-[52px] w-auto"
       />
       <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground uppercase xl:block">
         Révisez · Comprenez · Progressez

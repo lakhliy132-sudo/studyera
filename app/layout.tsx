@@ -143,8 +143,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   }
 
   return (
+    // `suppressHydrationWarning` : le script ci-dessous pose
+    // `data-theme`/`data-palette` sur <html> avant l'hydratation, donc
+    // l'attribut diffère forcément du HTML rendu côté serveur. C'est
+    // voulu (évite le clignotement de couleur), React doit l'ignorer.
     <html
       lang="fr"
+      suppressHydrationWarning
       className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
     >
       {/* `flex` : la colonne de navigation (BarreNavigation, verticale
@@ -168,7 +173,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           email={user?.email ?? null}
           prenom={prenom}
         />
-        <div className="flex min-w-0 flex-1 flex-col xl:ps-[var(--largeur-menu,18rem)]">
+        {/* Le décalage n'est réservé que pour un élève connecté : c'est
+         * lui seul qui voit la colonne de navigation (MenuLateral, qui
+         * publie `--largeur-menu`). Pour un visiteur, cette variable
+         * n'est jamais posée et la valeur de repli laissait une bande
+         * vide de 18rem à gauche de toutes les pages publiques. */}
+        <div
+          className={`flex min-w-0 flex-1 flex-col ${
+            user ? "xl:ps-[var(--largeur-menu,18rem)]" : ""
+          }`}
+        >
           {children}
         </div>
       </body>

@@ -593,3 +593,17 @@ body {
   --color-primary-vif: #bfd3fe;
   --color-primary-tint: color-mix(in srgb, #93b4fd 18%, #0b0d12);
 }
+
+/* Logo de la barre de navigation et du pied de page : bleu nuit sur
+ * fond transparent, il se confondait avec le fond en mode sombre.
+ * Mêmes deux conditions que les thèmes ci-dessus (préférence système
+ * sauf forçage en clair, ou `data-theme="dark"` explicite). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-nuit {
+    filter: brightness(2.2) saturate(1.3);
+  }
+}
+
+:root[data-theme="dark"] .logo-nuit {
+  filter: brightness(2.2) saturate(1.3);
+}

@@ -12,9 +12,13 @@ interface ContenuMarkdownProps {
    * source plutôt qu'un style générique. `false` par défaut : /langue
    * (déjà en place) garde le liseré simple, inchangé. */
   styleFeuille?: boolean;
-  /** Couleur des titres (`h3`), du bandeau/filigrane posés par la page
-   * appelante — un token `--color-matiere-*` (app/globals.css). Sans
-   * effet si `styleFeuille` est `false`. */
+  /** Couleur de la matière, posée par la page appelante — un token
+   * `--color-matiere-*` (app/globals.css). En mise en page "feuille",
+   * elle colore aussi les titres de section (`h2`) et leur pastille
+   * numérotée, pour que la page entière (bandeau, filigrane, sommaire,
+   * sections) tienne sur une seule couleur au lieu de mélanger le
+   * rouge des titres avec la couleur de la matière. Sans effet si
+   * `styleFeuille` est `false`. */
   couleurAccent?: string;
   /** Texte nettement plus grand (paragraphes, listes, titres) —
    * demandé explicitement par l'utilisateur pour les cours d'arabe
@@ -135,11 +139,11 @@ export default function ContenuMarkdown({
             return (
               <h2
                 id={`section-${compteurSection}`}
-                style={{ color: COULEUR_GRAND_TITRE, scrollMarginTop: "6rem" }}
+                style={{ color: couleurAccent, scrollMarginTop: "6rem" }}
                 className={`mt-11 mb-5 flex items-center gap-3.5 font-serif font-bold first:mt-0 ${grandeTaille ? "text-[28px]" : "text-[22px]"}`}
               >
                 <span
-                  style={{ backgroundColor: COULEUR_GRAND_TITRE }}
+                  style={{ backgroundColor: couleurAccent }}
                   className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white shadow-sm ${grandeTaille ? "size-11 text-[17px]" : "size-9 text-[14px]"}`}
                 >
                   {compteurSection}
@@ -249,9 +253,20 @@ export default function ContenuMarkdown({
               <table className="w-full border-collapse text-start" {...props} />
             </div>
           ),
+          // En mise en page "feuille", l'en-tête prend un voile de la
+          // couleur de la matière plutôt que le bleu primaire, pour ne
+          // pas introduire une deuxième couleur au milieu d'un cours
+          // déjà entièrement teinté (bandeau, titres, sommaire).
           th: (props) => (
             <th
-              className={`border-b border-border bg-primary-tint px-4 py-2.5 text-start font-semibold text-ink ${grandeTaille ? "text-[17px]" : "text-sm"}`}
+              style={
+                styleFeuille
+                  ? {
+                      backgroundColor: `color-mix(in srgb, ${couleurAccent} 12%, var(--color-surface))`,
+                    }
+                  : undefined
+              }
+              className={`border-b border-border px-4 py-2.5 text-start font-semibold text-ink ${styleFeuille ? "" : "bg-primary-tint"} ${grandeTaille ? "text-[17px]" : "text-sm"}`}
               {...props}
             />
           ),

@@ -55,12 +55,15 @@ export default function PiedDePage() {
                 alt="Studyera"
                 width={868}
                 height={568}
-                className="h-7 w-auto"
+                className="logo-nuit h-7 w-auto"
               />
             </Link>
+            {/* Texte mis à jour quand l'arabe, l'histoire-géographie et
+             * l'éducation islamique ont rejoint le français : il
+             * annonçait encore un site de français seul. */}
             <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Révise le français du bac marocain : œuvres au programme, langue,
-              production écrite et bientôt d&apos;autres matières.
+              Révise le bac marocain : français, arabe, histoire-géographie et
+              éducation islamique — cours, langue et production écrite.
             </p>
           </div>
 

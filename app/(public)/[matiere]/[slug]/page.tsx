@@ -194,7 +194,10 @@ export default async function PageCoursMatiere({
                 </div>
               </div>
 
-              <SommaireHistoireGeo titresSections={titresSections} />
+              <SommaireHistoireGeo
+                titresSections={titresSections}
+                couleur={couleurMatiere}
+              />
             </div>
 
             {correction && (
