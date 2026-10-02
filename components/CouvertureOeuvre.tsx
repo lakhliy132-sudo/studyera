@@ -14,7 +14,21 @@ interface CouvertureOeuvreProps {
  */
 export default function CouvertureOeuvre({ url, titre }: CouvertureOeuvreProps) {
   if (url) {
-    return <Image src={url} alt={titre} fill className="object-cover" />;
+    // `sizes` : sans lui, `fill` fait supposer à Next que l'image
+    // occupe toute la largeur de l'écran, et il sert la plus grande
+    // variante disponible — près de 2 Mo par couverture, pour une
+    // vignette qui n'en occupe qu'un quart. Les valeurs suivent la
+    // grille de /oeuvres : une colonne sur téléphone, deux à partir de
+    // `sm`, trois à partir de `lg`.
+    return (
+      <Image
+        src={url}
+        alt={titre}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className="object-cover"
+      />
+    );
   }
 
   return (
