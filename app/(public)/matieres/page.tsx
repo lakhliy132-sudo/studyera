@@ -2,11 +2,7 @@ import type { ReactElement } from "react";
 
 import Link from "next/link";
 
-import BandeauProgrammeMatieres from "@/components/BandeauProgrammeMatieres";
 import { IconeFleche, IconeLivre } from "@/components/icones";
-import { joursAvant, prochaineSession } from "@/lib/calendrier";
-import { creerClientServeur } from "@/lib/supabase/server";
-import { recupererProgressionParOeuvre } from "@/lib/supabase/tableauDeBord";
 import {
   accentMatiere,
   bordureMatiere,
@@ -106,17 +102,7 @@ const CARTES: CarteMatierePage[] = [
  * matière plutôt que par des couleurs pastel fixes : en mode sombre,
  * un pastel figé deviendrait illisible.
  */
-export default async function PageMatieres() {
-  // Le bandeau d'avancement n'a de sens que pour un élève connecté : un
-  // visiteur n'a ni progression ni planning. Pour lui, la page reste
-  // exactement celle d'avant.
-  const supabase = await creerClientServeur();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const progression = user ? await recupererProgressionParOeuvre(user.id) : null;
-  const session = prochaineSession();
-
+export default function PageMatieres() {
   return (
     <main className="relative flex flex-col overflow-hidden">
       {/* Fond propre à cette page — repris de la maquette : un blanc
@@ -148,17 +134,6 @@ export default async function PageMatieres() {
       </div>
 
       <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-6 pt-12 pb-16">
-        {progression && (
-          <BandeauProgrammeMatieres
-            joursAvantExamen={session ? joursAvant(session.debut) : null}
-            chapitresLus={progression.totalChapitresLus}
-            totalChapitres={progression.parOeuvre.reduce(
-              (somme, oeuvre) => somme + oeuvre.totalChapitres,
-              0,
-            )}
-          />
-        )}
-
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <span className="text-primary">
             <IconeLivre className="size-10" />
