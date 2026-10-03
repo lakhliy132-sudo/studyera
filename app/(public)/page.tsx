@@ -129,7 +129,12 @@ async function AccueilConnecte({
         >
           <TuilesStatsAccueil
             nombreCours={nombreCours}
-            nombreMatieres={MATIERES.length}
+            // +1 pour le français : `MATIERES` ne contient que les trois
+            // matières ajoutées après coup (arabe, histoire-géographie,
+            // éducation islamique), le français ayant ses propres pages.
+            // La tuile annonçait donc 3 alors que /matieres et la grille
+            // juste en dessous en montrent bien 4.
+            nombreMatieres={MATIERES.length + 1}
             joursAvantExamen={session ? joursAvant(session.debut) : null}
           />
         </div>
