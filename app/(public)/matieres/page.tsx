@@ -2,11 +2,7 @@ import type { ReactElement } from "react";
 
 import Link from "next/link";
 
-import {
-  IconeCalendrier,
-  IconeFleche,
-  IconeLivre,
-} from "@/components/icones";
+import { IconeFleche, IconeLivre } from "@/components/icones";
 import {
   accentMatiere,
   bordureMatiere,
@@ -17,6 +13,7 @@ import {
   IllustrationGlobe,
   IllustrationLivre,
   IllustrationLivreOuvert,
+  IllustrationExamen,
   IllustrationMosquee,
 } from "@/components/IllustrationsMatieres";
 
@@ -84,6 +81,17 @@ const CARTES: CarteMatierePage[] = [
       "Cours, notions clés et repères pour l'examen d'éducation islamique.",
     slug: "education-islamique",
     Illustration: IllustrationMosquee,
+  },
+  {
+    // Cinquième case, demandée vide : son contenu reste à définir,
+    // la page d'arrivée l'annonce plutôt que d'inventer des annales
+    // ou des méthodes qui n'existent pas.
+    href: "/examens-regionaux",
+    titre: "Examens ",
+    titreItalique: "régionaux",
+    description: "",
+    slug: "examens-regionaux",
+    Illustration: IllustrationExamen,
   },
 ];
 
@@ -213,12 +221,14 @@ export default function PageMatieres() {
                           <span className="italic">{carte.titreItalique}</span>
                         )}
                       </h2>
-                      <p
-                        className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
-                        style={{ color: "var(--color-muted-foreground)" }}
-                      >
-                        {carte.description}
-                      </p>
+                      {carte.description && (
+                        <p
+                          className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
+                          style={{ color: "var(--color-muted-foreground)" }}
+                        >
+                          {carte.description}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -235,55 +245,6 @@ export default function PageMatieres() {
           })}
         </ul>
 
-        {/* Cinquième case, en pleine largeur sous la grille — demandée
-         * par l'utilisateur ("fais moi une case qui s'appelle examens
-         * regionaux, c'est la dernière case"). Elle occupe toute la
-         * largeur plutôt qu'une demi-colonne : ce n'est pas une matière
-         * de plus, mais ce qui les traverse toutes, et une cinquième
-         * carte dans une grille à deux colonnes serait restée seule sur
-         * sa ligne. */}
-        <Link
-          href="/examens-regionaux"
-          className="group relative flex flex-col gap-5 overflow-hidden rounded-[22px] border p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-7"
-          style={{
-            backgroundColor: fondMatiere("var(--color-primary)"),
-            borderColor: bordureMatiere("var(--color-primary)"),
-          }}
-        >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-8 -bottom-10 size-36 rounded-full opacity-60"
-            style={{ backgroundColor: pastilleMatiere("var(--color-primary)") }}
-          />
-          <div className="relative flex items-start gap-5">
-            <span
-              className="flex size-[72px] shrink-0 items-center justify-center rounded-full text-primary"
-              style={{ backgroundColor: pastilleMatiere("var(--color-primary)") }}
-            >
-              <IconeCalendrier className="size-9" />
-            </span>
-            <div className="min-w-0">
-              <h2
-                className="font-serif text-[22px] leading-snug font-bold"
-                style={{ color: "var(--color-ink)" }}
-              >
-                Examens <span className="italic">régionaux</span>
-              </h2>
-              <p
-                className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
-                style={{ color: "var(--color-muted-foreground)" }}
-              >
-                Les dates de l&apos;épreuve et les méthodes de chaque matière
-                pour t&apos;y préparer.
-              </p>
-            </div>
-          </div>
-
-          <span className="relative flex w-fit shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm">
-            Découvrir
-            <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-          </span>
-        </Link>
       </div>
     </main>
   );

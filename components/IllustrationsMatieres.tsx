@@ -136,3 +136,37 @@ export function IllustrationMosquee({ className }: IllustrationProps) {
     </svg>
   );
 }
+
+/** Une copie d'examen et son crayon — pour la case « Examens
+ * régionaux » de /matieres. Même trait et même palette que les quatre
+ * illustrations de matière au-dessus, pour que la cinquième case ne
+ * détonne pas dans la grille. */
+export function IllustrationExamen({ className }: IllustrationProps) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+      <rect
+        x="10"
+        y="7"
+        width="24"
+        height="32"
+        rx="3"
+        fill="#f6d98a"
+        stroke={TRAIT}
+        strokeWidth="2.4"
+      />
+      <path
+        d="M16 16h12M16 22h12M16 28h7"
+        stroke={TRAIT}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M33 31l6-13 4 2-6 13-5 2z"
+        fill="#f0a35a"
+        stroke={TRAIT}
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
