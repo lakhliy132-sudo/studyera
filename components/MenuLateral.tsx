@@ -31,6 +31,9 @@ const TRACES = {
   deconnexion: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
   chevron: "m6 9 6 6 6-6",
   menu: "M4 6h16M4 12h16M4 18h16",
+  // Une copie d'examen posée sur un presse-papiers.
+  examen:
+    "M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H9zM9 12h6M9 16h4",
   fermer: "M6 6l12 12M18 6 6 18",
 };
 
@@ -68,6 +71,11 @@ const LIENS = [
     trace: TRACES.tableau,
   },
   { libelle: "Matières", href: "/matieres", trace: TRACES.livre },
+  {
+    libelle: "Examens régionaux",
+    href: "/examens-regionaux",
+    trace: TRACES.examen,
+  },
   { libelle: "Calendrier", href: "/calendrier", trace: TRACES.calendrier },
   { libelle: "Communauté", href: "/communaute", trace: TRACES.communaute },
   { libelle: "Progrès", href: "/progres", trace: TRACES.progres },

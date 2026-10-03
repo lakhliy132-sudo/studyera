@@ -1,10 +1,8 @@
-import Link from "next/link";
-
-import { IconeFleche } from "@/components/icones";
 import { IllustrationExamen } from "@/components/IllustrationsMatieres";
 
 /**
- * /examens-regionaux — la cinquième case de /matieres.
+ * /examens-regionaux — entrée principale du menu, au même rang
+ * qu'Accueil, Tableau de bord et Matières.
  *
  * Volontairement vide : l'utilisateur a demandé la case d'abord et
  * fournira son contenu ensuite ("fais une autre case comme case de
@@ -19,14 +17,6 @@ export default function PageExamensRegionaux() {
   return (
     <main className="flex flex-col">
       <div className="flex w-full flex-col gap-9 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
-        <Link
-          href="/matieres"
-          className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-        >
-          <IconeFleche className="size-4 rotate-180" />
-          Retour aux matières
-        </Link>
-
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <IllustrationExamen className="size-12" />
           <h1 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-tight text-ink sm:text-4xl">

@@ -16,6 +16,7 @@ import { MATIERES } from "@/lib/matieres";
 const LIENS = [
   { href: "/", libelle: "Accueil" },
   { href: "/matieres", libelle: "Matières" },
+  { href: "/examens-regionaux", libelle: "Examens régionaux" },
   { href: "/calendrier", libelle: "Calendrier" },
 ] as const;
 

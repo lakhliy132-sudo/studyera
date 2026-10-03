@@ -13,7 +13,6 @@ import {
   IllustrationGlobe,
   IllustrationLivre,
   IllustrationLivreOuvert,
-  IllustrationExamen,
   IllustrationMosquee,
 } from "@/components/IllustrationsMatieres";
 
@@ -81,17 +80,6 @@ const CARTES: CarteMatierePage[] = [
       "Cours, notions clés et repères pour l'examen d'éducation islamique.",
     slug: "education-islamique",
     Illustration: IllustrationMosquee,
-  },
-  {
-    // Cinquième case, demandée vide : son contenu reste à définir,
-    // la page d'arrivée l'annonce plutôt que d'inventer des annales
-    // ou des méthodes qui n'existent pas.
-    href: "/examens-regionaux",
-    titre: "Examens ",
-    titreItalique: "régionaux",
-    description: "",
-    slug: "examens-regionaux",
-    Illustration: IllustrationExamen,
   },
 ];
 
