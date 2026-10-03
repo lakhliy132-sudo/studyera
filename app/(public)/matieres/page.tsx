@@ -3,20 +3,10 @@ import type { ReactElement } from "react";
 import Link from "next/link";
 
 import BandeauProgrammeMatieres from "@/components/BandeauProgrammeMatieres";
-import CarteMatiereEleve, {
-  type MatiereEleve,
-} from "@/components/CarteMatiereEleve";
-import CarteRepriseMatieres from "@/components/CarteRepriseMatieres";
 import { IconeFleche, IconeLivre } from "@/components/icones";
 import { joursAvant, prochaineSession } from "@/lib/calendrier";
-import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { creerClientServeur } from "@/lib/supabase/server";
-import { compterCoursParCategorie } from "@/lib/supabase/contenu";
-import {
-  recupererActivitesRecentes,
-  recupererProgressionParOeuvre,
-  recupererRepriseLecture,
-} from "@/lib/supabase/tableauDeBord";
+import { recupererProgressionParOeuvre } from "@/lib/supabase/tableauDeBord";
 import {
   accentMatiere,
   bordureMatiere,
@@ -116,126 +106,17 @@ const CARTES: CarteMatierePage[] = [
  * matière plutôt que par des couleurs pastel fixes : en mode sombre,
  * un pastel figé deviendrait illisible.
  */
-/**
- * /matieres pour un élève connecté — d'après la maquette fournie par
- * l'utilisateur ("fais ce changement sur la partie les matieres") :
- * bandeau de compte à rebours, reprise de lecture, puis une carte par
- * matière avec décompte, progression et dernière visite.
- *
- * La version visiteur (plus bas) ne change pas : un bandeau de
- * progression n'aurait aucun sens pour quelqu'un qui n'a pas de compte.
- *
- * Deux blocs de la maquette ne sont pas repris tels quels :
- * - « 4 matières, coefficient total 10 » : les coefficients ne sont pas
- *   en base (voir CarteMatiereEleve).
- * - « À revoir en priorité », qui s'appuie sur « tes dernières copies
- *   corrigées » : la table `copies` est vide et le correcteur n'existe
- *   pas encore. Le bloc est affiché avec un état honnête plutôt que
- *   rempli d'exemples inventés.
- */
-async function VueEleve({ userId }: { userId: string }) {
-  const [progression, reprise, coursParCategorie, activites] =
-    await Promise.all([
-      recupererProgressionParOeuvre(userId),
-      recupererRepriseLecture(userId),
-      compterCoursParCategorie(FILIERE_ACTUELLE),
-      recupererActivitesRecentes(userId, 1),
-    ]);
-
-  const totalChapitres = progression.parOeuvre.reduce(
-    (somme, o) => somme + o.totalChapitres,
-    0,
-  );
+export default async function PageMatieres() {
+  // Le bandeau d'avancement n'a de sens que pour un élève connecté : un
+  // visiteur n'a ni progression ni planning. Pour lui, la page reste
+  // exactement celle d'avant.
+  const supabase = await creerClientServeur();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const progression = user ? await recupererProgressionParOeuvre(user.id) : null;
   const session = prochaineSession();
-  const jours = session ? joursAvant(session.debut) : null;
 
-  // Seul le français a un suivi de lecture (table `progression`) et des
-  // activités enregistrées : les autres matières passent `faits` et
-  // `derniereActivite` à `null`, et la carte le dit explicitement.
-  const matieres: MatiereEleve[] = CARTES.map((carte) => {
-    const estFrancais = carte.slug === "francais";
-    return {
-      href: carte.href,
-      titre: `${carte.titre}${carte.titreItalique ?? ""}`,
-      description: carte.description,
-      slug: carte.slug,
-      Illustration: carte.Illustration,
-      total: estFrancais ? totalChapitres : (coursParCategorie[carte.slug] ?? 0),
-      unite: estFrancais ? "chapitre" : "leçon",
-      faits: estFrancais ? progression.totalChapitresLus : null,
-      derniereActivite: estFrancais ? (activites[0]?.createdAt ?? null) : null,
-    };
-  });
-
-  return (
-    <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            Toutes tes matières de l&apos;examen régional, au même endroit.
-          </h1>
-          <span className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-semibold text-muted-foreground">
-            1<sup>re</sup> année du baccalauréat
-          </span>
-        </div>
-
-        <BandeauProgrammeMatieres
-          joursAvantExamen={jours}
-          chapitresLus={progression.totalChapitresLus}
-          totalChapitres={totalChapitres}
-        />
-
-        {reprise && (
-          <CarteRepriseMatieres
-            reprise={reprise}
-            chapitresLus={
-              progression.parOeuvre.find((o) => o.slug === reprise.oeuvreSlug)
-                ?.chapitresLus ?? 0
-            }
-            totalChapitres={
-              progression.parOeuvre.find((o) => o.slug === reprise.oeuvreSlug)
-                ?.totalChapitres ?? 0
-            }
-          />
-        )}
-
-        <section className="flex flex-col gap-5">
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="font-serif text-xl font-bold text-ink">
-              Mes matières
-            </h2>
-            <span className="shrink-0 text-sm text-muted-foreground">
-              {matieres.length} matières
-            </span>
-          </div>
-          <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] lg:grid-cols-2">
-            {matieres.map((matiere) => (
-              <CarteMatiereEleve
-                key={matiere.href}
-                matiere={matiere}
-                accent={accentMatiere(matiere.slug)}
-              />
-            ))}
-          </ul>
-        </section>
-
-        <section className="flex flex-col gap-3">
-          <h2 className="font-serif text-xl font-bold text-ink">
-            À revoir en priorité
-          </h2>
-          <p className="rounded-[18px] border border-dashed border-border-strong bg-surface p-5 text-sm text-muted-foreground">
-            Cette liste se remplira à partir de tes copies corrigées et de tes
-            résultats aux quiz. Rien n&apos;a encore été corrigé, donc rien à
-            te signaler pour l&apos;instant.
-          </p>
-        </section>
-      </div>
-    </main>
-  );
-}
-
-/** Page vue par un visiteur non connecté — inchangée. */
-function VueVisiteur() {
   return (
     <main className="relative flex flex-col overflow-hidden">
       {/* Fond propre à cette page — repris de la maquette : un blanc
@@ -267,6 +148,17 @@ function VueVisiteur() {
       </div>
 
       <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-6 pt-12 pb-16">
+        {progression && (
+          <BandeauProgrammeMatieres
+            joursAvantExamen={session ? joursAvant(session.debut) : null}
+            chapitresLus={progression.totalChapitresLus}
+            totalChapitres={progression.parOeuvre.reduce(
+              (somme, oeuvre) => somme + oeuvre.totalChapitres,
+              0,
+            )}
+          />
+        )}
+
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <span className="text-primary">
             <IconeLivre className="size-10" />
@@ -366,18 +258,4 @@ function VueVisiteur() {
       </div>
     </main>
   );
-}
-
-/**
- * /matieres — aiguillage entre la vue d'un élève connecté (tableau de
- * ses matières, de sa progression et de son examen) et la vue d'un
- * visiteur (présentation des quatre matières).
- */
-export default async function PageMatieres() {
-  const supabase = await creerClientServeur();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user ? <VueEleve userId={user.id} /> : <VueVisiteur />;
 }
