@@ -19,6 +19,12 @@ export interface Annale {
   duree_minutes: number | null;
   enonce_mdx: string;
   corrige_mdx: string | null;
+  filiere_libelle: string | null;
+  coefficient: number | null;
+  /** Les parties et questions de l'épreuve, relues par `lireEpreuve`
+   * (lib/annales-questions.ts) — `null` pour un sujet dont on n'a que
+   * l'énoncé brut. */
+  questions: unknown;
 }
 
 /** Les champs listés dans la grille, sans les textes : un énoncé fait
@@ -84,7 +90,7 @@ export async function recupererAnnaleParId(
   const { data, error } = await supabase
     .from("annales")
     .select(
-      "id, matiere, annee, session, oeuvre, duree_minutes, enonce_mdx, corrige_mdx",
+      "id, matiere, annee, session, oeuvre, duree_minutes, enonce_mdx, corrige_mdx, filiere_libelle, coefficient, questions",
     )
     .eq("id", id)
     .maybeSingle<Annale>();

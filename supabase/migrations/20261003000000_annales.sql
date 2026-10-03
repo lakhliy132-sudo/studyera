@@ -15,7 +15,7 @@
 -- porter sur une œuvre qui n'est pas au programme de l'année en cours,
 -- et il n'y a pas d'œuvre du tout en arabe ou en histoire-géographie.
 
-create table public.annales (
+create table if not exists public.annales (
   id uuid primary key default gen_random_uuid(),
   matiere text not null,
   annee integer not null,
@@ -34,18 +34,32 @@ create table public.annales (
   unique (matiere, annee, session)
 );
 
-create index idx_annales_matiere on public.annales (matiere);
+-- Ajoutees apres coup, quand la maquette de l epreuve interactive a ete
+-- fournie. Ecrites en "add column if not exists" pour que le fichier
+-- reste applicable tel quel, qu il ait deja ete lance ou non.
+alter table public.annales
+  add column if not exists filiere_libelle text,
+  add column if not exists coefficient numeric,
+  -- Les parties et questions de l epreuve (voir lib/annales-questions.ts).
+  -- Null pour un sujet dont on n a que l enonce brut : la page retombe
+  -- alors sur enonce_mdx.
+  add column if not exists questions jsonb;
+
+create index if not exists idx_annales_matiere on public.annales (matiere);
 -- Sert le tri par défaut de la liste : les sujets les plus récents
 -- d'abord.
-create index idx_annales_matiere_annee on public.annales (matiere, annee desc);
+create index if not exists idx_annales_matiere_annee on public.annales (matiere, annee desc);
 
 alter table public.annales enable row level security;
 
+-- "drop if exists" avant chaque policy : le fichier reste rejouable.
+drop policy if exists "lecture publique des annales" on public.annales;
 create policy "lecture publique des annales"
   on public.annales
   for select
   using (true);
 
+drop policy if exists "ecriture des annales reservee aux admins" on public.annales;
 create policy "ecriture des annales reservee aux admins"
   on public.annales
   for all
