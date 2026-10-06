@@ -35,11 +35,15 @@ const FOND = "color-mix(in srgb, var(--color-primary) 18%, #eef1f6)";
 export default function AvatarPersonnage({
   apparence,
   className,
+  fond = true,
 }: {
   apparence: Apparence;
   className?: string;
+  /** `false` : sans le disque de fond, pour poser le buste sur une
+   * carte déjà teintée (onglet Personnages). */
+  fond?: boolean;
 }) {
-  if (apparence.groupe) return <Groupe className={className} habit={apparence.habit} />;
+  if (apparence.groupe) return <Groupe className={className} habit={apparence.habit} fond={fond} />;
 
   const peau = PEAU[apparence.peau];
   const cheveux = CHEVEUX[apparence.cheveux];
@@ -48,7 +52,7 @@ export default function AvatarPersonnage({
 
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <rect width="100" height="100" fill={FOND} />
+      {fond && <rect width="100" height="100" fill={FOND} />}
 
       {/* Ce qui passe derrière la tête : cheveux longs, foulard. */}
       {coiffe === "foulard" && (
@@ -186,10 +190,10 @@ export default function AvatarPersonnage({
 
 /** Personnage collectif (le Chœur, la foule, les geôliers) : trois
  * silhouettes sans visage, plutôt qu'un individu qui n'existe pas. */
-function Groupe({ className, habit }: { className?: string; habit: string }) {
+function Groupe({ className, habit, fond }: { className?: string; habit: string; fond: boolean }) {
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <rect width="100" height="100" fill={FOND} />
+      {fond && <rect width="100" height="100" fill={FOND} />}
       {[
         { x: 28, y: 50, o: 0.55 },
         { x: 72, y: 50, o: 0.55 },
