@@ -32,7 +32,7 @@ export interface LibelleUniteChapitre {
    * badge "Scène 3" à côté du titre "Scène 1", le numéro d'ordre en
    * base ne correspondant plus au numéro de la scène elle-même à
    * cause du Prologue/Mythe d'Œdipe qui précèdent). Voir
-   * `SommaireChapitres.tsx`, `libelleChapitre` et `libelleChapitreCourt`
+   * `OngletResume.tsx`, `libelleChapitre` et `libelleChapitreCourt`
    * ci-dessous. */
   numeroDejaDansTitre: boolean;
 }
@@ -66,4 +66,20 @@ export function libelleChapitre(chapitre: ChapitreMinimal, unite: LibelleUniteCh
  * mot/lieu. */
 export function libelleChapitreCourt(chapitre: ChapitreMinimal, unite: LibelleUniteChapitre): string {
   return unite.numeroDejaDansTitre ? chapitre.titre_fr.toUpperCase() : `${unite.abrege} ${chapitre.numero}`;
+}
+
+/** Sépare le numéro de scène du titre quand il y est inscrit
+ * ("Scène 19 : Antigone part vers la mort" → 19 et "Antigone part vers
+ * la mort"). Un titre sans numéro (les chapitres, ou le "Mythe
+ * d'Œdipe" qui précède la pièce) garde `numero: null` côté scène :
+ * `numeroAffiche` retombe alors sur le numéro d'ordre en base. */
+export function decouperTitreChapitre(chapitre: ChapitreMinimal): {
+  numeroScene: number | null;
+  numeroAffiche: number;
+  titre: string;
+} {
+  const correspondance = chapitre.titre_fr.match(/^Scène\s+(\d+)\s*:\s*(.+)$/);
+  return correspondance
+    ? { numeroScene: Number(correspondance[1]), numeroAffiche: Number(correspondance[1]), titre: correspondance[2] }
+    : { numeroScene: null, numeroAffiche: chapitre.numero, titre: chapitre.titre_fr };
 }

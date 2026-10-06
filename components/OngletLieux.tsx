@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { IconeLieu } from "@/components/icones";
-import { libelleUniteChapitre } from "@/lib/uniteChapitre";
+import { decouperTitreChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
 interface OngletLieuxProps {
@@ -52,14 +52,9 @@ interface LieuCompte {
   couleur: string;
 }
 
-/** "Scène 19 : Antigone part vers la mort" → 19 et "Antigone part
- * vers la mort". Les titres de chapitre sans numéro gardent le numéro
- * d'ordre en base. */
 function decouperTitre(chapitre: Chapitre): { numero: number; titre: string } {
-  const correspondance = chapitre.titre_fr.match(/^Scène\s+(\d+)\s*:\s*(.+)$/);
-  return correspondance
-    ? { numero: Number(correspondance[1]), titre: correspondance[2] }
-    : { numero: chapitre.numero, titre: chapitre.titre_fr };
+  const { numeroAffiche, titre } = decouperTitreChapitre(chapitre);
+  return { numero: numeroAffiche, titre };
 }
 
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
