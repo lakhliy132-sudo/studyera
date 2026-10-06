@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { initiales } from "@/components/OngletPersonnages";
 import { IconeAuteur, IconeInfo, IconeLivre, IconeLivreOuvert } from "@/components/icones";
 import type { BiographieAuteur, FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
@@ -132,6 +134,10 @@ function BlocIdentite({
  * qu'une image fabriquée ou une photo non vérifiée. Si une vraie photo
  * est fournie plus tard, la remplacer par une image dans `public/`
  * (même logique que `public/couvertures/`) via `next/image`.
+ *
+ * C'est fait pour Jean Anouilh (photo fournie par l'utilisateur) : le
+ * champ `photo` de la biographie remplace les initiales dans le même
+ * cercle, avec le même liseré doré.
  */
 function BlocBiographie({ auteur, bio }: { auteur: string | null; bio: BiographieAuteur }) {
   const nom = auteur ?? bio.nomComplet;
@@ -141,12 +147,24 @@ function BlocBiographie({ auteur, bio }: { auteur: string | null; bio: Biographi
       <EnteteBloc Icone={IconeAuteur} titre="Biographie de l'auteur" />
       <div className="flex flex-col items-center gap-6 px-6 pt-5 pb-6 sm:flex-row sm:items-start">
         <div className="flex shrink-0 flex-col items-center gap-2.5">
-          <span
-            aria-hidden="true"
-            className="flex size-[120px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-3xl sm:text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
-          >
-            {initiales(nom)}
-          </span>
+          {bio.photo ? (
+            <span className="relative size-[120px] overflow-hidden rounded-full border-2 border-[#E8D5AC]">
+              <Image
+                src={bio.photo}
+                alt={`Portrait de ${nom}`}
+                fill
+                sizes="120px"
+                className="object-cover object-top"
+              />
+            </span>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="flex size-[120px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-3xl sm:text-4xl font-bold text-ink shadow-[inset_0_0_0_6px_var(--color-surface)]"
+            >
+              {initiales(nom)}
+            </span>
+          )}
           <p className="font-serif text-base font-bold text-ink">{nom}</p>
         </div>
 

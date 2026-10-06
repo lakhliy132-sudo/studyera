@@ -34,6 +34,9 @@ export const FICHE_LECTURE_ANTIGONE: FicheLecture = {
       "L'Alouette (1953)",
     ],
     distinction: "L'une des pièces françaises du XXe siècle les plus jouées dans le monde",
+    // Photo fournie par l'utilisateur ("ajouter cette photo de jean
+    // anouil").
+    photo: "/auteurs/jean-anouilh.jpg",
   },
   structureDetail:
     "Écrite et créée en pleine Occupation allemande (1944), la pièce reprend le mythe antique de Sophocle mais l'inscrit dans une mise en scène volontairement intemporelle : costumes de cour antiques et objets modernes (les gardes jouent aux cartes, fument, parlent argot) se côtoient. Sans découpage en actes ni en scènes, l'action se déroule en continu, encadrée par les interventions du Prologue à l'ouverture et du Chœur à plusieurs reprises, qui commentent l'inéluctabilité de la tragédie en train de se jouer.",
