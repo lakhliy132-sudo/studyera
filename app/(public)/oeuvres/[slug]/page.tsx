@@ -12,6 +12,7 @@ import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
 import { FICHE_LECTURE_ANTIGONE } from "@/lib/ficheLectureAntigone";
 import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
 import { FICHE_LECTURE_DERNIER_JOUR_CONDAMNE } from "@/lib/ficheLectureDernierJourCondamne";
+import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
 import { QUIZ_PAR_SCENE_ANTIGONE } from "@/lib/quizAntigone";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
 import { QUIZ_DERNIER_JOUR_CONDAMNE } from "@/lib/quizDernierJourCondamne";
@@ -128,7 +129,25 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
 
         <div className="py-2">
           {ongletActif === "resume" && (
-            <OngletResume slug={slug} chapitres={chapitres} chapitresLusIds={chapitresLusIds} />
+            <OngletResume
+              slug={slug}
+              chapitres={chapitres}
+              chapitresLusIds={chapitresLusIds}
+              connecte={Boolean(user)}
+              questionsParChapitre={Object.fromEntries(
+                Object.entries(questionsParChapitreQuiz).map(([numero, questions]) => [numero, questions.length]),
+              )}
+              personnagesParChapitre={
+                slug === "boite-a-merveilles"
+                  ? Object.fromEntries(
+                      Object.entries(PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES).map(([numero, noms]) => [
+                        numero,
+                        noms.length,
+                      ]),
+                    )
+                  : undefined
+              }
+            />
           )}
           {ongletActif === "fiche" && (
             <OngletFicheLecture oeuvre={oeuvre} fiche={ficheLecture} />
