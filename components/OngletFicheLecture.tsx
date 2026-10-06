@@ -135,9 +135,10 @@ function BlocIdentite({
  * est fournie plus tard, la remplacer par une image dans `public/`
  * (même logique que `public/couvertures/`) via `next/image`.
  *
- * C'est fait pour Jean Anouilh (photo fournie par l'utilisateur) : le
- * champ `photo` de la biographie remplace les initiales dans le même
- * cercle, avec le même liseré doré.
+ * C'est fait pour les trois auteurs (Anouilh et Sefrioui : photos
+ * fournies par l'utilisateur ; Hugo : portrait de Carjat, domaine
+ * public) : le champ `photo` de la biographie remplace les initiales
+ * dans le même cercle, avec le même liseré doré.
  */
 function BlocBiographie({ auteur, bio }: { auteur: string | null; bio: BiographieAuteur }) {
   const nom = auteur ?? bio.nomComplet;
