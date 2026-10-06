@@ -53,7 +53,11 @@ const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
  */
 export default function OngletFicheLecture({ oeuvre, fiche }: OngletFicheLectureProps) {
   return (
-    <section className="flex flex-col gap-5 sm:gap-6">
+    // Fond blanc derrière toute la fiche, comme les autres onglets —
+    // demandé par l'utilisateur ("MET DERRIERE TOUT CES ELEMENT COMME UN
+    // BACK GROUND EN BLANC"). Les blocs, blancs eux aussi, s'en
+    // détachent par leur bordure et leur ombre.
+    <section className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-4 pb-8 shadow-sm sm:gap-6 sm:p-9 sm:pb-10">
       <header className="flex flex-col items-center px-4 pt-2 text-center">
         <span
           className="flex size-14 items-center justify-center rounded-[16px] text-white shadow-md"
@@ -90,7 +94,7 @@ export default function OngletFicheLecture({ oeuvre, fiche }: OngletFicheLecture
 function Carte({ children, accent = false }: { children: React.ReactNode; accent?: boolean }) {
   return (
     <div
-      className={`overflow-hidden rounded-[20px] bg-surface shadow-sm ${
+      className={`overflow-hidden rounded-[20px] bg-surface shadow-[0_4px_20px_-6px_rgba(27,58,143,0.14)] ${
         accent ? "border-2 border-primary/35" : "border border-border"
       }`}
     >
