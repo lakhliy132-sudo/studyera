@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { IconeLieu } from "@/components/icones";
+import LieuxParFamilles from "@/components/LieuxParFamilles";
+import { FAMILLES_LIEUX } from "@/lib/famillesLieux";
 import { decouperTitreChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre } from "@/types/base-de-donnees";
 
@@ -29,11 +31,10 @@ interface OngletLieuxProps {
  * la pièce) ne comptent pas dans le total.
  *
  * Couleurs : la plus présente prend la couleur du site (assombrie), les suivantes
- * des couleurs fixes, comme le doré des cartes personnages. Une œuvre
- * aux lieux très nombreux (La Boîte à merveilles en compte près de
- * vingt) ne colore que ceux qui reviennent au moins deux fois, au plus
- * quatre : les autres sont regroupés en gris sous "Autres lieux", une
- * vingtaine de couleurs ne se distinguant plus les unes des autres.
+ * des couleurs fixes, comme le doré des cartes personnages. Au-delà de
+ * quatre lieux qui reviennent, les autres sont regroupés en gris sous
+ * "Autres lieux". La Boîte à merveilles (19 lieux) a sa propre vue, par
+ * grands endroits : LieuxParFamilles.tsx.
  */
 // La première suit la palette, assombrie avec une valeur fixe : en mode
 // sombre, la couleur du site devient pâle et les numéros blancs du
@@ -58,6 +59,12 @@ function decouperTitre(chapitre: Chapitre): { numero: number; titre: string } {
 }
 
 export default function OngletLieux({ slug, chapitres }: OngletLieuxProps) {
+  // Œuvre aux lieux trop nombreux pour un bandeau à une couleur par lieu
+  // (La Boîte à merveilles) : vue par grands endroits, voir
+  // LieuxParFamilles.tsx.
+  const familles = FAMILLES_LIEUX[slug];
+  if (familles) return <LieuxParFamilles slug={slug} chapitres={chapitres} familles={familles} />;
+
   const unite = libelleUniteChapitre(slug);
   const unitePluriel = unite.pluriel.toLowerCase();
   const uniteSingulier = unite.singulier.toLowerCase();
