@@ -62,6 +62,32 @@ export function initiales(nom: string): string {
 const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
 const JAUNE = "#f7c948";
 
+/** Étiquettes sous la description d'un personnage principal, comme sur
+ * la maquette — demandé par l'utilisateur ("ajoute qlq chose perso en
+ * bas de le condamné a mort"). Chacune reprend ce que la fiche du
+ * personnage ou la fiche de lecture dit déjà : homme "sans nom",
+ * narrateur "à la première personne", "père d'une fille prénommée
+ * Marie". */
+const ETIQUETTES_PRINCIPAUX: Record<string, Record<string, string[]>> = {
+  "dernier-jour-condamne": {
+    "Le condamné à mort": ["Anonyme", "Raconte en « je »", "Père de Marie"],
+  },
+};
+
+/** Les secondaires liés au personnage principal, montrés sous sa carte
+ * ("Autour de lui") : reconnus à leur rôle en base, qui les définit par
+ * rapport à lui ("Fille du condamné", "Premier amour du narrateur",
+ * "Codétenu"…). */
+const LIES_AU_PRINCIPAL: Record<string, RegExp> = {
+  "dernier-jour-condamne": /condamné|narrateur/i,
+};
+
+/** Au-delà de cette longueur, la description d'une carte secondaire est
+ * repliée sur cinq lignes, derrière "Lire la suite" : celle des
+ * "représentants de la société" faisait une carte trois fois plus
+ * haute que ses voisines. */
+const DESCRIPTION_LONGUE = 280;
+
 /**
  * Contenu de l'onglet "Personnages" de /oeuvres/[slug], refait d'après
  * une maquette fournie par l'utilisateur ("POUR les personnage je veux
@@ -141,6 +167,12 @@ export default function OngletPersonnages({ slug, personnages, chapitreParId }: 
                   />
                 ))}
               </ul>
+              {seul && LIES_AU_PRINCIPAL[slug] && (
+                <AutourDuPrincipal
+                  slug={slug}
+                  personnages={secondaires.filter((p) => p.role && LIES_AU_PRINCIPAL[slug].test(p.role))}
+                />
+              )}
             </div>
           )}
           {secondaires.length > 0 && (
@@ -214,9 +246,49 @@ function CartePrincipale({
         {personnage.description_fr && (
           <p className="mt-4 font-lecture text-[16.5px] leading-relaxed text-white/85">{personnage.description_fr}</p>
         )}
+        {(ETIQUETTES_PRINCIPAUX[slug]?.[personnage.nom] ?? []).length > 0 && (
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {ETIQUETTES_PRINCIPAUX[slug][personnage.nom].map((etiquette) => (
+              <li key={etiquette} className="rounded-full border border-white/35 px-3.5 py-1.5 text-sm text-white">
+                {etiquette}
+              </li>
+            ))}
+          </ul>
+        )}
         {apparition && <p className="mt-5 text-[13px] text-white/60">{apparition}</p>}
       </div>
     </li>
+  );
+}
+
+function AutourDuPrincipal({ slug, personnages }: { slug: string; personnages: Personnage[] }) {
+  if (personnages.length === 0) return null;
+  return (
+    <div className="mt-5 rounded-[22px] border border-border bg-background p-5">
+      <h4 className="font-serif text-lg font-bold text-ink">Autour de lui</h4>
+      <ul className="mt-3 flex flex-col gap-3">
+        {personnages.map((personnage) => {
+          const apparence = apparencePersonnage(slug, personnage.nom);
+          return (
+            <li key={personnage.id} className="flex items-center gap-3">
+              <span className="size-11 shrink-0 overflow-hidden rounded-full border border-border">
+                {apparence ? (
+                  <AvatarPersonnage apparence={apparence} className="size-full" />
+                ) : (
+                  <span className="flex size-full items-center justify-center bg-primary-tint text-sm font-bold text-ink">
+                    {initiales(personnage.nom)}
+                  </span>
+                )}
+              </span>
+              <span className="min-w-0">
+                <span className="block font-semibold text-ink">{personnage.nom}</span>
+                <span className="block text-[13.5px] leading-snug text-muted-foreground">{personnage.role}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -255,9 +327,23 @@ function CarteSecondaire({
           </p>
         )}
         {personnage.description_fr && (
-          <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-[15px]">
-            {personnage.description_fr}
-          </p>
+          personnage.description_fr.length > DESCRIPTION_LONGUE ? (
+            <details className="group mt-2 sm:mt-3">
+              <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <span className="line-clamp-5 text-[14.5px] leading-relaxed text-muted-foreground group-open:line-clamp-none sm:text-[15px]">
+                  {personnage.description_fr}
+                </span>
+                <span className="mt-1.5 inline-block text-sm font-semibold text-primary">
+                  <span className="group-open:hidden">Lire la suite</span>
+                  <span className="hidden group-open:inline">Réduire</span>
+                </span>
+              </summary>
+            </details>
+          ) : (
+            <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-[15px]">
+              {personnage.description_fr}
+            </p>
+          )
         )}
         {apparition && (
           <div className="mt-auto pt-4">
