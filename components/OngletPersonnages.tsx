@@ -55,56 +55,111 @@ export function initiales(nom: string): string {
     .join("");
 }
 
+/** Fond sombre de la carte du personnage principal : la couleur du
+ * site assombrie avec une valeur fixe, pour rester foncée en mode
+ * sombre où la couleur du site pâlit (même valeur que la fiche de
+ * lecture et la carte du parcours de chapitres). */
+const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
+const JAUNE = "#f7c948";
+
 /**
- * Contenu de l'onglet "Personnages" de /oeuvres/[slug] et de
- * /oeuvres/[slug]/[numero] : fiche complète des personnages du roman
- * (tous, pas seulement ceux d'un chapitre — voir PersonnagesChapitre
- * pour la version compacte en aperçu). Personnages principaux
- * d'abord, puis secondaires, chaque groupe trié par nom.
+ * Contenu de l'onglet "Personnages" de /oeuvres/[slug], refait d'après
+ * une maquette fournie par l'utilisateur ("POUR les personnage je veux
+ * qlq chose comme ca") : le personnage principal dans une grande carte
+ * sombre, les secondaires en cartes à buste dessiné, rôle, nom, nom
+ * arabe et description.
  *
- * Design repris du fichier de référence fourni par l'utilisateur
- * ("Rubriques — Le Dernier Jour d'un Condamné") : médaillon d'initiales,
- * nom en Playfair, nom arabe, pastille de rôle dorée, description en
- * Lora, pied de carte avec le chapitre de première apparition. Réutilise
- * un accent doré (`--or`) dédié à cet onglet — volontairement en
- * couleurs arbitraires locales plutôt qu'un token global : la palette
- * v2 du reste du site n'a pas d'accent doré (retiré lors de la refonte),
- * seule cette maquette-ci en demande un.
+ * Un seul personnage principal (Le Dernier Jour) : il occupe la colonne
+ * de gauche, comme sur la maquette. Plusieurs (La Boîte à merveilles,
+ * Antigone) : ils passent en rangée au-dessus des secondaires, une
+ * colonne de quatre cartes sombres serait bien plus haute que la grille
+ * d'en face.
+ *
+ * Écart avec la maquette : pas d'étiquettes sous la description du
+ * principal ("Anonyme", "Père de Marie") ; elles n'existent pas en
+ * base. Le chapitre de première apparition, lui, reste en pied de
+ * carte.
  */
 export default function OngletPersonnages({ slug, personnages, chapitreParId }: OngletPersonnagesProps) {
   const principaux = personnages.filter((p) => p.role && ROLES_PRINCIPAUX.has(p.role));
   const secondaires = personnages.filter((p) => !p.role || !ROLES_PRINCIPAUX.has(p.role));
+  const unite = libelleUniteChapitre(slug);
+  const apparition = (personnage: Personnage) => {
+    const chapitre = personnage.chapitre_apparition_id
+      ? chapitreParId.get(personnage.chapitre_apparition_id)
+      : undefined;
+    return chapitre ? `Apparition : ${libelleChapitre(chapitre, unite)}` : null;
+  };
+  const seul = principaux.length === 1;
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-5 sm:p-9 pb-10 shadow-sm">
-      <div className="mb-2 flex items-center justify-center gap-3.5 text-primary">
-        <IconePersonne className="size-[30px]" />
-        <h2 className="font-serif text-[31px] font-bold tracking-tight text-ink">
+    <section className="rounded-lg border border-border bg-surface p-4 pb-8 shadow-sm sm:p-9 sm:pb-10">
+      <header className="mb-8 flex flex-col items-center text-center sm:mb-10">
+        <span
+          className="flex size-14 items-center justify-center rounded-[16px] text-white shadow-md"
+          style={{ background: FONCE }}
+        >
+          <IconePersonne className="size-7" />
+        </span>
+        <h2 className="mt-4 font-serif text-[30px] font-bold tracking-tight text-ink sm:text-[36px]">
           Les personnages de l&apos;œuvre
         </h2>
-      </div>
-      <p className="mb-[30px] text-center text-base text-muted-foreground">
-        Qui traverse le récit — le trombinoscope complet de l&apos;œuvre.
-      </p>
+        <p className="mt-1 text-[15px] text-muted-foreground">
+          Qui traverse le récit : le trombinoscope complet de l&apos;œuvre.
+        </p>
+        <span className="mt-4 h-[3px] w-16 rounded-full" style={{ background: FONCE }} />
+      </header>
 
       {personnages.length === 0 ? (
         <p className="text-center text-muted-foreground">Bientôt disponible.</p>
       ) : (
-        <div className="flex flex-col gap-6 sm:gap-9">
+        <div
+          className={
+            seul && secondaires.length > 0
+              ? "grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
+              : "flex flex-col gap-8 sm:gap-10"
+          }
+        >
           {principaux.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <p className="text-sm font-bold tracking-wide text-primary uppercase">
-                Personnages principaux
-              </p>
-              <GrillePersonnages slug={slug} personnages={principaux} chapitreParId={chapitreParId} />
+            <div>
+              <h3 className="mb-4 font-serif text-xl font-bold text-ink sm:text-2xl">
+                {seul ? "Personnage principal" : "Personnages principaux"}
+              </h3>
+              <ul
+                className={
+                  seul
+                    ? "grid grid-cols-1"
+                    : "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-[repeat(auto-fit,minmax(260px,1fr))]"
+                }
+              >
+                {principaux.map((personnage) => (
+                  <CartePrincipale
+                    key={personnage.id}
+                    slug={slug}
+                    personnage={personnage}
+                    apparition={apparition(personnage)}
+                  />
+                ))}
+              </ul>
             </div>
           )}
           {secondaires.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <p className="text-sm font-bold tracking-wide text-primary uppercase">
-                Personnages secondaires
-              </p>
-              <GrillePersonnages slug={slug} personnages={secondaires} chapitreParId={chapitreParId} />
+            <div>
+              <h3 className="mb-4 font-serif text-xl font-bold text-ink sm:text-2xl">Personnages secondaires</h3>
+              <ul
+                className={`grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 ${
+                  seul ? "2xl:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
+                }`}
+              >
+                {secondaires.map((personnage) => (
+                  <CarteSecondaire
+                    key={personnage.id}
+                    slug={slug}
+                    personnage={personnage}
+                    apparition={apparition(personnage)}
+                  />
+                ))}
+              </ul>
             </div>
           )}
         </div>
@@ -113,76 +168,105 @@ export default function OngletPersonnages({ slug, personnages, chapitreParId }: 
   );
 }
 
-function GrillePersonnages({
+function CartePrincipale({
   slug,
-  personnages,
-  chapitreParId,
+  personnage,
+  apparition,
 }: {
   slug: string;
-  personnages: Personnage[];
-  chapitreParId: Map<string, Chapitre>;
+  personnage: Personnage;
+  apparition: string | null;
 }) {
-  // "Apparition : Scène N" pour Antigone plutôt que "Chapitre N" —
-  // voir lib/uniteChapitre.ts.
-  const unite = libelleUniteChapitre(slug);
+  const apparence = apparencePersonnage(slug, personnage.nom);
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
-      {personnages.map((personnage) => {
-        const apparence = apparencePersonnage(slug, personnage.nom);
-        const chapitreDApparition = personnage.chapitre_apparition_id
-          ? chapitreParId.get(personnage.chapitre_apparition_id)
-          : undefined;
-
-        return (
-          <li
-            key={personnage.id}
-            className="relative overflow-hidden rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] pt-[30px] text-center shadow-sm transition-all hover:-translate-y-1 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+    <li
+      className="flex flex-col overflow-hidden rounded-[26px] text-white shadow-[0_20px_50px_-20px_rgba(10,16,32,0.55)]"
+      style={{ background: FONCE }}
+    >
+      <div className="relative flex h-[250px] items-end justify-center overflow-hidden px-6 pt-6 sm:h-[300px]">
+        {personnage.role && (
+          <span
+            className="absolute top-5 left-5 z-10 max-w-[80%] rounded-full px-3.5 py-1 text-[13px] font-bold text-[#1d2340]"
+            style={{ background: JAUNE }}
           >
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-primary),#B08636)]"
-            />
-            {apparence ? (
-              // Illustration (lib/avatarsPersonnages.ts) dans le même
-              // cercle à liseré doré que le médaillon aux initiales.
-              <span
-                aria-hidden="true"
-                className="mx-auto mb-4 block size-[82px] overflow-hidden rounded-full border-2 border-[#E8D5AC]"
-              >
-                <AvatarPersonnage apparence={apparence} className="size-full" />
-              </span>
-            ) : (
-              <span
-                aria-hidden="true"
-                className="mx-auto mb-4 flex size-[82px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-[27px] font-bold text-ink shadow-[inset_0_0_0_5px_var(--color-surface)]"
-              >
-                {initiales(personnage.nom)}
-              </span>
-            )}
-            <p className="font-serif text-xl font-bold text-ink">{personnage.nom}</p>
-            {personnage.nom_ar && (
-              <p dir="rtl" lang="ar" className="mt-1 font-arabe text-[17px] font-medium text-primary-vif">
-                {personnage.nom_ar}
-              </p>
-            )}
-            {personnage.role && (
-              <span className="my-3.5 inline-block rounded-full border border-[#E8D5AC] bg-[#FAF3E4] px-3.5 py-1.5 text-xs font-bold tracking-wide text-[#B08636] uppercase">
-                {personnage.role}
-              </span>
-            )}
-            {personnage.description_fr && (
-              <p className="font-lecture text-[15.5px] leading-[1.75] text-muted-foreground">
-                {personnage.description_fr}
-              </p>
-            )}
-            {chapitreDApparition !== undefined && (
-              <p className="mt-[18px] border-t border-dashed border-border-strong pt-[15px] text-xs text-subtle-foreground">
-                Apparition : {libelleChapitre(chapitreDApparition, unite)}
-              </p>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+            {personnage.role}
+          </span>
+        )}
+        <span aria-hidden="true" className="absolute top-12 size-[210px] rounded-full border border-white/15 sm:size-[250px]" />
+        {apparence ? (
+          <AvatarPersonnage apparence={apparence} fond={false} className="relative size-[210px] sm:size-[250px]" />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="relative mb-10 flex size-[130px] items-center justify-center rounded-full bg-white/10 font-serif text-5xl font-bold"
+          >
+            {initiales(personnage.nom)}
+          </span>
+        )}
+      </div>
+      <div className="flex-1 bg-black/15 px-6 pt-6 pb-7 sm:px-8">
+        <p className="font-serif text-[28px] leading-tight font-bold sm:text-[32px]">{personnage.nom}</p>
+        {personnage.nom_ar && (
+          <p dir="rtl" lang="ar" className="mt-1.5 w-fit font-arabe text-xl text-white/70">
+            {personnage.nom_ar}
+          </p>
+        )}
+        {personnage.description_fr && (
+          <p className="mt-4 font-lecture text-[16.5px] leading-relaxed text-white/85">{personnage.description_fr}</p>
+        )}
+        {apparition && <p className="mt-5 text-[13px] text-white/60">{apparition}</p>}
+      </div>
+    </li>
+  );
+}
+
+function CarteSecondaire({
+  slug,
+  personnage,
+  apparition,
+}: {
+  slug: string;
+  personnage: Personnage;
+  apparition: string | null;
+}) {
+  const apparence = apparencePersonnage(slug, personnage.nom);
+  return (
+    // Sur téléphone, carte en ligne (buste à gauche) : 27 cartes en
+    // colonne pleine hauteur faisaient une page interminable.
+    <li className="flex overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_6px_24px_-10px_rgba(27,58,143,0.18)] transition-transform hover:-translate-y-1 sm:flex-col">
+      <div className="flex w-[92px] shrink-0 items-start justify-center bg-primary-tint pt-3 sm:h-[150px] sm:w-auto sm:items-end sm:pt-0">
+        {apparence ? (
+          <AvatarPersonnage apparence={apparence} fond={false} className="size-[92px] sm:size-[150px]" />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="mb-4 flex size-[60px] items-center justify-center rounded-full bg-surface font-serif text-xl font-bold text-ink sm:mb-6 sm:size-[90px] sm:text-3xl"
+          >
+            {initiales(personnage.nom)}
+          </span>
+        )}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6">
+        {personnage.role && <p className="text-[13px] font-bold text-muted-foreground">{personnage.role}</p>}
+        <p className="mt-1 font-serif text-xl font-bold text-ink">{personnage.nom}</p>
+        {personnage.nom_ar && (
+          <p dir="rtl" lang="ar" className="mt-0.5 w-fit font-arabe text-[17px] text-muted-foreground">
+            {personnage.nom_ar}
+          </p>
+        )}
+        {personnage.description_fr && (
+          <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground sm:mt-3 sm:text-[15px]">
+            {personnage.description_fr}
+          </p>
+        )}
+        {apparition && (
+          <div className="mt-auto pt-4">
+            <p className="border-t border-dashed border-border-strong pt-3 text-xs text-subtle-foreground">
+              {apparition}
+            </p>
+          </div>
+        )}
+      </div>
+    </li>
   );
 }
