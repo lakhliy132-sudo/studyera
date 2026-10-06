@@ -118,21 +118,22 @@
    * répéter une durée explicite sur chaque transition du site. */
   --default-transition-duration: 220ms;
 
-  /* --font-inter, --font-lora, --font-playfair et --font-ibm-plex-arabic
+  /* --font-inter, --font-lora, --font-arimo et --font-ibm-plex-arabic
    * sont fournies par next/font/google dans app/layout.tsx (variables
    * CSS injectées sur <html>).
    * - `--font-sans` (Inter) : police par défaut de tout le site
    *   (utilitaire Tailwind `font-sans`, hérité par `body` sans classe à
    *   poser nulle part) — interface, navigation, listes.
-   * - `--font-serif` (Playfair Display) : grands titres uniquement
-   *   (titre d'une œuvre, d'un chapitre), posé explicitement.
+   * - `--font-serif` (Arial, repli Arimo) : grands titres uniquement
+   *   (titre d'une œuvre, d'un chapitre), posé explicitement. Le nom
+   *   est historique : ce n'est plus une police à empattements.
    * - `--font-lecture` (Lora) : texte de lecture longue (résumés) —
    *   posé explicitement sur ce contenu-là seulement, pas hérité.
    * - `--font-arabe` (IBM Plex Sans Arabic) : tout texte arabe.
    * - `--font-mono` (IBM Plex Mono) : petites étiquettes en capitales
    *   (tableau de bord), jamais de texte de lecture. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-serif: Arial, var(--font-arimo), "Helvetica Neue", Helvetica, sans-serif;
   --font-lecture: var(--font-lora), Georgia, serif;
   --font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;

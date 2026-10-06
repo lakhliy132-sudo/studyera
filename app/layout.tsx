@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import {
+  Arimo,
   Caveat,
   IBM_Plex_Mono,
   IBM_Plex_Sans_Arabic,
   Inter,
   Lora,
-  Playfair_Display,
 } from "next/font/google";
 import "./globals.css";
 
@@ -32,15 +32,22 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 /**
- * Police serif des grands titres (titre d'une œuvre, d'un chapitre),
- * reprise de la maquette de référence. Exposée comme `--font-playfair`,
- * reprise par le token `font-serif` dans app/globals.css.
+ * Police des titres : Arial en gras, demandé par l'utilisateur ("change
+ * le font utilise Arial Bold"), à la place de Playfair Display.
+ *
+ * Arial n'est pas installée sur Android, où la plupart des élèves
+ * ouvrent le site : sans repli, leurs titres retomberaient sur la police
+ * système. Arimo a les mêmes dessins et les mêmes métriques qu'Arial ;
+ * chargée ici, elle prend le relais là où Arial manque, et les titres
+ * gardent la même largeur partout. Le token `font-serif` (app/globals.css)
+ * met Arial en premier, Arimo derrière. Le nom du token reste
+ * `font-serif` pour ne pas toucher aux 160 titres qui l'utilisent.
  */
-const playfair = Playfair_Display({
+const arimo = Arimo({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
-  variable: "--font-playfair",
+  variable: "--font-arimo",
 });
 
 /**
@@ -150,7 +157,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${ibmPlexArabic.variable} ${playfair.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
+      className={`${ibmPlexArabic.variable} ${arimo.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
     >
       {/* `flex` : la colonne de navigation (BarreNavigation, verticale
        * pour un élève connecté) occupe la gauche, le contenu prend le
