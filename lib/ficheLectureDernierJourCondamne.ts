@@ -38,6 +38,9 @@ export const FICHE_LECTURE_DERNIER_JOUR_CONDAMNE: FicheLecture = {
       "Les Misérables (1862)",
     ],
     distinction: "Figure majeure du XIXᵉ siècle littéraire et politique français ; funérailles nationales, inhumé au Panthéon",
+    // Portrait par Étienne Carjat (1876), domaine public, pris sur
+    // Wikimedia Commons et recadré sur le visage.
+    photo: "/auteurs/victor-hugo.jpg",
   },
   structureDetail:
     "Le roman adopte la forme d'un journal intime fictif tenu par un condamné à mort anonyme, depuis sa condamnation jusqu'à ses derniers instants avant l'exécution. Le récit ne suit pas une intrigue à rebondissements mais un compte à rebours psychologique : chaque chapitre correspond à une étape de l'attente (le procès, le transfert à la Conciergerie, la visite de sa fille, l'approche de l'exécution), rythmée par un temps qui s'écoule inexorablement et de plus en plus vite à mesure que l'échéance approche. Cette construction fragmentée plonge le lecteur dans la durée subjective et angoissée du condamné plutôt que dans un enchaînement d'événements extérieurs. Le roman s'achève brutalement, sans jamais montrer l'exécution elle-même.",
