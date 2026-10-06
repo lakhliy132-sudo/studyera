@@ -118,22 +118,30 @@
    * répéter une durée explicite sur chaque transition du site. */
   --default-transition-duration: 220ms;
 
-  /* --font-inter, --font-lora, --font-playfair et --font-ibm-plex-arabic
+  /* --font-arimo, --font-unbounded et --font-ibm-plex-arabic
    * sont fournies par next/font/google dans app/layout.tsx (variables
    * CSS injectées sur <html>).
-   * - `--font-sans` (Inter) : police par défaut de tout le site
+   * - `--font-sans` (Arial, repli Arimo) : police par défaut de tout le site
    *   (utilitaire Tailwind `font-sans`, hérité par `body` sans classe à
    *   poser nulle part) — interface, navigation, listes.
-   * - `--font-serif` (Playfair Display) : grands titres uniquement
-   *   (titre d'une œuvre, d'un chapitre), posé explicitement.
-   * - `--font-lecture` (Lora) : texte de lecture longue (résumés) —
+   * - `--font-serif` (Arial, repli Arimo) : grands titres uniquement
+   *   (titre d'une œuvre, d'un chapitre), posé explicitement. Le nom
+   *   est historique : ce n'est plus une police à empattements.
+   * - `--font-titre` (Unbounded) : le grand titre (h1) de chaque page,
+   *   jamais un texte de plusieurs lignes. Unbounded n'a pas de lettres
+   *   arabes : le titre d'une leçon d'arabe passe à IBM Plex Sans
+   *   Arabic, placée juste derrière (son sous-ensemble ne couvre que
+   *   l'arabe, elle ne prend donc pas la main sur le latin).
+   * - `--font-lecture` (Arial, comme le reste du texte depuis la demande
+   *   "Arial" de l'utilisateur ; c'était Lora) : texte de lecture longue —
    *   posé explicitement sur ce contenu-là seulement, pas hérité.
    * - `--font-arabe` (IBM Plex Sans Arabic) : tout texte arabe.
    * - `--font-mono` (IBM Plex Mono) : petites étiquettes en capitales
    *   (tableau de bord), jamais de texte de lecture. */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
-  --font-lecture: var(--font-lora), Georgia, serif;
+  --font-sans: Arial, var(--font-arimo), "Helvetica Neue", Helvetica, sans-serif;
+  --font-titre: var(--font-unbounded), var(--font-ibm-plex-arabic), Arial, var(--font-arimo), sans-serif;
+  --font-serif: Arial, var(--font-arimo), "Helvetica Neue", Helvetica, sans-serif;
+  --font-lecture: Arial, var(--font-arimo), "Helvetica Neue", Helvetica, sans-serif;
   --font-arabe: var(--font-ibm-plex-arabic), "Traditional Arabic", sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", monospace;
   /* Manuscrite (Caveat) : réservée à la note décorative de la bannière

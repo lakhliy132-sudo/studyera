@@ -139,7 +139,7 @@ export default function PageMatieres() {
             <IconeLivre className="size-10" />
           </span>
           <h1
-            className="mt-4 font-serif text-[42px] leading-tight font-bold tracking-tight"
+            className="mt-4 font-titre text-[42px] leading-tight font-bold"
             style={{ color: "var(--color-ink)" }}
           >
             Les <span className="text-primary italic">matières</span>

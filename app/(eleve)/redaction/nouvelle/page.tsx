@@ -72,7 +72,7 @@ export default async function PageNouvelleRedaction() {
             <IconePlume className="size-5" />
           </span>
           <div>
-            <h1 className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            <h1 className="font-titre text-2xl font-bold text-ink sm:text-3xl">
               Correcteur <span className="text-primary italic">IA</span>
             </h1>
             <p className="text-sm text-muted-foreground">

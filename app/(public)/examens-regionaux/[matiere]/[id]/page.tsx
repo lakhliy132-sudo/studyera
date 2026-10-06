@@ -85,7 +85,7 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
               <p className="text-[13px] text-white/60">
                 Examen régional, session {annale.session}
               </p>
-              <h1 className="font-serif text-2xl font-bold text-white sm:text-[28px]">
+              <h1 className="font-titre text-2xl font-bold text-white sm:text-[28px]">
                 {titreMatiere} {annale.annee}
               </h1>
             </div>

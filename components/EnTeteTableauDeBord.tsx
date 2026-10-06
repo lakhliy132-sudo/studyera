@@ -46,7 +46,7 @@ export default function EnTeteTableauDeBord({ prenom, serie }: EnTeteTableauDeBo
 
       <div className="relative">
         <p className="text-[11px] font-bold tracking-[0.16em] text-primary uppercase">{dateDuJour()}</p>
-        <h1 className="mt-2 font-serif text-[34px] leading-tight font-bold text-ink">Bonjour {prenom}</h1>
+        <h1 className="mt-2 font-titre text-[34px] leading-tight font-bold text-ink">Bonjour {prenom}</h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">Voici où tu en es dans ton programme.</p>
       </div>
 

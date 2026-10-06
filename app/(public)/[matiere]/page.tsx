@@ -273,7 +273,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
               className="h-px w-16"
             />
           </div>
-          <h1 className="mt-5 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-5 font-titre text-3xl sm:text-4xl font-bold text-ink">
             {matiere.titreAvantAccent}
             <span style={{ color: couleur }} className="italic">
               {matiere.titreAccent}

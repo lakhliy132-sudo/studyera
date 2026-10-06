@@ -172,7 +172,7 @@ export default async function PageProgres() {
           <IconeFleche className="size-4 rotate-180" />
           Retour au tableau de bord
         </Link>
-        <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink">
+        <h1 className="mt-2 font-titre text-3xl font-bold text-ink">
           Ma progression
         </h1>
       </div>

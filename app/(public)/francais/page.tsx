@@ -31,7 +31,7 @@ export default function PageFrancais() {
             </span>
             <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
           </div>
-          <h1 className="mt-5 font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+          <h1 className="mt-5 font-titre text-3xl sm:text-4xl font-bold text-ink">
             Le <span className="text-primary italic">français</span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">

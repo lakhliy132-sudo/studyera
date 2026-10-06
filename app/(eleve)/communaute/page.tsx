@@ -137,7 +137,7 @@ export default async function PageCommunaute({
           <p className="text-[11px] font-bold tracking-[0.18em] text-white/75 uppercase">
             Communauté StudyEra
           </p>
-          <h1 className="mt-2 font-serif text-[34px] leading-tight font-bold">
+          <h1 className="mt-2 font-titre text-[34px] leading-tight font-bold">
             Ensemble, on va plus loin
           </h1>
           <p className="mt-2 max-w-xl text-sm text-white/85">
