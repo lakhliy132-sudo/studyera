@@ -1,4 +1,6 @@
+import AvatarPersonnage from "@/components/AvatarPersonnage";
 import { IconePersonne } from "@/components/icones";
+import { apparencePersonnage } from "@/lib/avatarsPersonnages";
 import { libelleChapitre, libelleUniteChapitre } from "@/lib/uniteChapitre";
 import type { Chapitre, Personnage } from "@/types/base-de-donnees";
 
@@ -126,6 +128,7 @@ function GrillePersonnages({
   return (
     <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
       {personnages.map((personnage) => {
+        const apparence = apparencePersonnage(slug, personnage.nom);
         const chapitreDApparition = personnage.chapitre_apparition_id
           ? chapitreParId.get(personnage.chapitre_apparition_id)
           : undefined;
@@ -139,12 +142,23 @@ function GrillePersonnages({
               aria-hidden="true"
               className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--color-primary),#B08636)]"
             />
-            <span
-              aria-hidden="true"
-              className="mx-auto mb-4 flex size-[82px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-[27px] font-bold text-ink shadow-[inset_0_0_0_5px_var(--color-surface)]"
-            >
-              {initiales(personnage.nom)}
-            </span>
+            {apparence ? (
+              // Illustration (lib/avatarsPersonnages.ts) dans le même
+              // cercle à liseré doré que le médaillon aux initiales.
+              <span
+                aria-hidden="true"
+                className="mx-auto mb-4 block size-[82px] overflow-hidden rounded-full border-2 border-[#E8D5AC]"
+              >
+                <AvatarPersonnage apparence={apparence} className="size-full" />
+              </span>
+            ) : (
+              <span
+                aria-hidden="true"
+                className="mx-auto mb-4 flex size-[82px] items-center justify-center rounded-full border-2 border-[#E8D5AC] bg-[linear-gradient(150deg,var(--color-primary-tint),#F4F8FF)] font-serif text-[27px] font-bold text-ink shadow-[inset_0_0_0_5px_var(--color-surface)]"
+              >
+                {initiales(personnage.nom)}
+              </span>
+            )}
             <p className="font-serif text-xl font-bold text-ink">{personnage.nom}</p>
             {personnage.nom_ar && (
               <p dir="rtl" lang="ar" className="mt-1 font-arabe text-[17px] font-medium text-primary-vif">

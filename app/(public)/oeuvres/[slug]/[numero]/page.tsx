@@ -219,6 +219,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
                 <>
                   <FicheChapitre fiche={fiche} lexique={lexique} />
                   <FicheChapitreApercu
+                    slugOeuvre={slug}
                     chapitre={chapitre}
                     libelleUniteDu={unite.duUnite}
                     personnages={personnages}

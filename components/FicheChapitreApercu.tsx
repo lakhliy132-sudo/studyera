@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import AvatarPersonnage from "@/components/AvatarPersonnage";
 import { initiales } from "@/components/OngletPersonnages";
+import { apparencePersonnage } from "@/lib/avatarsPersonnages";
 import {
   IconeDocument,
   IconeFleche,
@@ -15,6 +17,9 @@ import {
 import type { Chapitre, EntreeLexique, Personnage, Sujet } from "@/types/base-de-donnees";
 
 interface FicheChapitreApercuProps {
+  /** Slug de l'œuvre, pour retrouver l'illustration de chaque
+   * personnage (lib/avatarsPersonnages.ts). */
+  slugOeuvre: string;
   chapitre: Chapitre;
   /** "du chapitre" ou "de la scène" (Antigone) — déjà accordé en genre,
    * voir `LibelleUniteChapitre.duUnite` dans lib/uniteChapitre.ts,
@@ -57,6 +62,7 @@ interface FicheChapitreApercuProps {
  * visuellement.
  */
 export default function FicheChapitreApercu({
+  slugOeuvre,
   chapitre,
   libelleUniteDu,
   personnages,
@@ -82,7 +88,7 @@ export default function FicheChapitreApercu({
       </div>
 
       <div className="flex flex-col gap-[22px]">
-        <BlocPersonnages chapitreId={chapitre.id} personnages={personnages} />
+        <BlocPersonnages slugOeuvre={slugOeuvre} chapitreId={chapitre.id} personnages={personnages} />
 
         <div className="grid grid-cols-1 items-start gap-[22px] md:grid-cols-3">
           <BlocLexique entrees={lexique} />
@@ -117,9 +123,11 @@ function EnteteBloc({
 }
 
 function BlocPersonnages({
+  slugOeuvre,
   chapitreId,
   personnages,
 }: {
+  slugOeuvre: string;
   chapitreId: string;
   personnages: Personnage[];
 }) {
@@ -157,22 +165,39 @@ function BlocPersonnages({
           <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtres.map((personnage) => {
               const introduitIci = personnage.chapitre_apparition_id === chapitreId;
+              const apparence = apparencePersonnage(slugOeuvre, personnage.nom);
 
               return (
                 <li
                   key={personnage.id}
                   className="flex items-center gap-3 rounded-[10px] border border-transparent px-3.5 py-3 transition-colors hover:border-border hover:bg-surface"
                 >
-                  <span
-                    aria-hidden="true"
-                    className={
-                      introduitIci
-                        ? "flex size-[38px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary font-serif text-sm font-bold text-white"
-                        : "flex size-[38px] shrink-0 items-center justify-center rounded-full border border-border bg-surface-muted font-serif text-sm font-bold text-primary"
-                    }
-                  >
-                    {initiales(personnage.nom)}
-                  </span>
+                  {apparence ? (
+                    // Illustration du personnage ; celui qui est introduit
+                    // dans ce chapitre garde sa mise en avant par un
+                    // anneau de la couleur du site.
+                    <span
+                      aria-hidden="true"
+                      className={
+                        introduitIci
+                          ? "size-[38px] shrink-0 overflow-hidden rounded-full border-2 border-primary"
+                          : "size-[38px] shrink-0 overflow-hidden rounded-full border border-border"
+                      }
+                    >
+                      <AvatarPersonnage apparence={apparence} className="size-full" />
+                    </span>
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className={
+                        introduitIci
+                          ? "flex size-[38px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary font-serif text-sm font-bold text-white"
+                          : "flex size-[38px] shrink-0 items-center justify-center rounded-full border border-border bg-surface-muted font-serif text-sm font-bold text-primary"
+                      }
+                    >
+                      {initiales(personnage.nom)}
+                    </span>
+                  )}
                   <span className="min-w-0">
                     <p className="truncate text-[15.5px] font-semibold text-ink">
                       {personnage.nom}
