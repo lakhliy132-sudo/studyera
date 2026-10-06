@@ -6,11 +6,16 @@
  *
  * Table explicite plutôt qu'un chemin déduit du slug : une œuvre sans
  * fichier retombe ainsi sur une icône, au lieu d'afficher une image
- * cassée. */
+ * cassée.
+ *
+ * Les chemins doivent suivre les fichiers réels : passés de PNG à WebP
+ * par le commit "Allege les images du site", ils pointaient encore vers
+ * les anciens .png supprimés, d'où des couvertures vides sur le
+ * tableau de bord. */
 export const COUVERTURES_OEUVRES: Record<string, string> = {
-  antigone: "/couvertures/antigone.png",
-  "boite-a-merveilles": "/couvertures/boite-a-merveilles.png",
-  "dernier-jour-condamne": "/couvertures/dernier-jour-condamne.png",
+  antigone: "/couvertures/antigone.webp",
+  "boite-a-merveilles": "/couvertures/boite-a-merveilles.webp",
+  "dernier-jour-condamne": "/couvertures/dernier-jour-condamne.webp",
 };
 
 /** Couleur d'accent de chaque œuvre — filet de la carte, barre de

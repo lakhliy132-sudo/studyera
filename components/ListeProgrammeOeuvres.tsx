@@ -19,7 +19,7 @@ interface ListeProgrammeOeuvresProps {
  * avec un numéro, un filet de progression très fin et un "0/22" en
  * petit — froide, et rien n'y donnait envie d'ouvrir une œuvre.
  *
- * Les couvertures sont les fichiers `public/couvertures/<slug>.png`,
+ * Les couvertures sont les fichiers `public/couvertures/<slug>.webp`,
  * dont le nom correspond au slug de l'œuvre. Une œuvre sans fichier
  * affiche une pastille d'icône à la place : on ne suppose pas
  * l'existence d'une image.
