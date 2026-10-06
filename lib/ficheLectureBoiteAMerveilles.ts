@@ -48,6 +48,10 @@ export interface BiographieAuteur {
   mouvement: string;
   oeuvresPrincipales: string[];
   distinction: string;
+  /** Portrait de l'auteur dans `public/auteurs/`, seulement quand une
+   * vraie photo a été fournie. Absent, le médaillon aux initiales prend
+   * la place : on ne met jamais un visage qui ne serait pas le sien. */
+  photo?: string;
 }
 
 export interface FicheLecture {
