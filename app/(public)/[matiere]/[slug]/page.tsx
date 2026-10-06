@@ -160,7 +160,7 @@ export default async function PageCoursMatiere({
               <IconeSection className="size-3.5" />
               {kicker}
             </span>
-            <h1 className="font-serif text-[28px] sm:text-[38px] leading-tight font-bold tracking-tight text-ink">
+            <h1 className="font-titre text-[28px] sm:text-[38px] leading-tight font-bold text-ink">
               {cours.titre}
             </h1>
 
@@ -236,7 +236,7 @@ export default async function PageCoursMatiere({
               <span className="flex size-11 items-center justify-center rounded-[13px] bg-primary-tint">
                 <matiere.Icone className="size-5" />
               </span>
-              <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+              <h1 className="font-titre text-3xl font-bold text-ink">
                 {cours.titre}
               </h1>
             </div>

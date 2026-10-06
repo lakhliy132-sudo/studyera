@@ -45,7 +45,7 @@ export default function EnteteCalendrier() {
           Mon calendrier
         </span>
 
-        <h1 className="max-w-2xl font-serif text-3xl leading-[1.15] font-bold text-ink sm:text-[34px]">
+        <h1 className="max-w-2xl font-titre text-3xl leading-[1.15] font-bold text-ink sm:text-[34px]">
           Gère tes examens et tes rappels{" "}
           <span
             className="bg-clip-text text-transparent"

@@ -190,7 +190,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
               {unite.singulier} {chapitre.numero}
             </p>
           )}
-          <h1 className="mt-2 font-serif text-2xl font-semibold text-ink md:text-4xl">
+          <h1 className="mt-2 font-titre text-2xl font-semibold text-ink md:text-4xl">
             {chapitre.titre_fr}
           </h1>
           {chapitre.titre_ar && (

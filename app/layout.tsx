@@ -4,8 +4,7 @@ import {
   Caveat,
   IBM_Plex_Mono,
   IBM_Plex_Sans_Arabic,
-  Inter,
-  Lora,
+  Unbounded,
 } from "next/font/google";
 import "./globals.css";
 
@@ -32,47 +31,38 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 /**
- * Police des titres : Arial en gras, demandé par l'utilisateur ("change
- * le font utilise Arial Bold"), à la place de Playfair Display.
+ * Arial : police du texte courant et des titres de section, demandée
+ * par l'utilisateur ("change le font utilise Arial Bold"), à la place
+ * d'Inter (texte) et de Playfair Display (titres). Les grands titres de
+ * page ont leur propre police, Unbounded, plus bas.
  *
  * Arial n'est pas installée sur Android, où la plupart des élèves
- * ouvrent le site : sans repli, leurs titres retomberaient sur la police
+ * ouvrent le site : sans repli, leur texte retomberait sur la police
  * système. Arimo a les mêmes dessins et les mêmes métriques qu'Arial ;
- * chargée ici, elle prend le relais là où Arial manque, et les titres
- * gardent la même largeur partout. Le token `font-serif` (app/globals.css)
- * met Arial en premier, Arimo derrière. Le nom du token reste
- * `font-serif` pour ne pas toucher aux 160 titres qui l'utilisent.
+ * chargée ici, elle prend le relais là où Arial manque, et le texte
+ * garde la même largeur partout. Les tokens `font-sans` et `font-serif`
+ * (app/globals.css) mettent Arial en premier, Arimo derrière. Le nom
+ * `font-serif` reste pour ne pas toucher aux 160 titres qui l'utilisent.
  */
 const arimo = Arimo({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-arimo",
 });
 
 /**
- * Police du texte de lecture longue (résumés bilingues) — distincte de
- * la police d'interface : un serif de labeur (Lora), plus confortable
- * à lire sur plusieurs paragraphes qu'un sans-serif d'interface. Exposée
- * comme `--font-lora`, reprise par le token `font-lecture`.
+ * Police des grands titres de page (h1) : Unbounded, large et très
+ * grasse. L'utilisateur voulait "Epic Pro", une police payante dont on
+ * n'a pas les fichiers ; sur un exemple qu'il a fourni ("HERO CROWN"),
+ * cinq polices gratuites lui ont été montrées côte à côte et il a choisi
+ * celle-ci ("le premier"). Réservée aux h1 (token `font-titre`) : une
+ * police aussi large fatigue l'œil sur plusieurs lignes de texte.
  */
-const lora = Lora({
+const unbounded = Unbounded({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
-  variable: "--font-lora",
-});
-
-/**
- * Police de tout le texte d'interface (nav, boutons, listes, labels).
- * Exposée comme `--font-inter`, reprise par le token `--font-sans`
- * (l'utilitaire Tailwind par défaut, donc aussi le corps de page, sans
- * classe à ajouter nulle part).
- */
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
+  weight: ["600", "700", "800"],
+  variable: "--font-unbounded",
 });
 
 /**
@@ -157,7 +147,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${ibmPlexArabic.variable} ${arimo.variable} ${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
+      className={`${ibmPlexArabic.variable} ${arimo.variable} ${unbounded.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
     >
       {/* `flex` : la colonne de navigation (BarreNavigation, verticale
        * pour un élève connecté) occupe la gauche, le contenu prend le

@@ -108,7 +108,7 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
           <span className="flex size-11 items-center justify-center rounded-[13px] bg-primary-tint">
             <IconeLivreOuvert className="size-5" />
           </span>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">{cours.titre}</h1>
+          <h1 className="font-titre text-3xl font-bold text-ink">{cours.titre}</h1>
         </div>
 
         <OngletsLecon slug={slug} ongletActif={ongletActif} />

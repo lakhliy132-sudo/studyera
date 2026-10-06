@@ -46,7 +46,7 @@ export default async function PageExamensRegionaux() {
       <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-9 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <IllustrationExamen className="size-12" />
-          <h1 className="mt-4 font-serif text-3xl leading-tight font-bold tracking-tight text-ink sm:text-4xl">
+          <h1 className="mt-4 font-titre text-3xl leading-tight font-bold text-ink sm:text-4xl">
             Examens <span className="text-primary italic">régionaux</span>
           </h1>
           <p className="mt-3 text-base text-muted-foreground">

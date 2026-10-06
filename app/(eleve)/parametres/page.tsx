@@ -20,7 +20,7 @@ export default function PageParametres() {
           <IconePalette className="size-5" />
         </span>
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-titre text-3xl font-bold text-ink">
             Apparence
           </h1>
           <p className="text-sm text-muted-foreground">

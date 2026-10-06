@@ -326,7 +326,7 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
       <p className="mt-4 mb-1.5 inline-flex items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
         Production écrite
       </p>
-      <h1 className="mb-8 font-serif text-3xl font-bold text-ink">{cours.titre}</h1>
+      <h1 className="mb-8 font-titre text-3xl font-bold text-ink">{cours.titre}</h1>
 
       {cours.slug === "aide-expression" ? (
         <GrilleExpressions contenu={cours.contenu_mdx} />

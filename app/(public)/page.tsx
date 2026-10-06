@@ -301,7 +301,7 @@ export default async function PageAccueil() {
           <span className="rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             1<sup>ère</sup> année du baccalauréat · Maroc
           </span>
-          <h1 className="max-w-3xl font-serif text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-ink sm:text-[46px]">
+          <h1 className="max-w-3xl font-titre text-3xl sm:text-4xl leading-tight font-bold text-ink sm:text-[46px]">
             Révise tout ton programme,{" "}
             <span className="text-primary italic">chapitre par chapitre</span>.
           </h1>

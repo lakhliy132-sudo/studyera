@@ -78,7 +78,7 @@ export default async function PageAnnalesMatiere({
             <span style={{ color: accent }} className="text-sm font-semibold">
               1<sup>re</sup> année bac · {titre}
             </span>
-            <h1 className="font-serif text-3xl leading-tight font-bold sm:text-[38px]">
+            <h1 className="font-titre text-3xl leading-tight font-bold sm:text-[38px]">
               Examens régionaux
             </h1>
             <p className="max-w-xl text-sm leading-relaxed text-white/70">

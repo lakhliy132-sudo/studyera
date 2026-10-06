@@ -136,7 +136,7 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
       )}
 
       <div className="relative max-w-[660px] px-7 py-6 sm:px-[30px] sm:py-0 md:px-[46px]">
-        <h1 className="font-serif text-[27px] leading-[1.06] font-bold tracking-tight text-ink sm:text-4xl md:text-[52px]">
+        <h1 className="font-titre text-[27px] leading-[1.06] font-bold text-ink sm:text-4xl md:text-[52px]">
           {oeuvre.titre_fr}
         </h1>
         {oeuvre.titre_ar && (

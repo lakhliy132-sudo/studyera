@@ -57,7 +57,7 @@ export default async function PageRecherche({ searchParams }: PagePropsRecherche
             <IconeRecherche className="size-5" />
           </span>
           <div>
-            <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">Recherche</h1>
+            <h1 className="font-titre text-3xl font-bold text-ink">Recherche</h1>
             <p className="text-sm text-muted-foreground">
               {terme.length < 2
                 ? "Tape au moins deux lettres dans la barre de recherche."

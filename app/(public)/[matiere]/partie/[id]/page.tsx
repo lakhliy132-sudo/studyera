@@ -67,7 +67,7 @@ export default async function PagePartieIslamique({
           >
             {section.titreArabe}
           </p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-titre text-3xl font-bold text-ink">
             {section.titre}
           </h1>
           <p className="max-w-xl text-base text-muted-foreground">

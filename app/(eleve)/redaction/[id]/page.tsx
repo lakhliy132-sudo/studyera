@@ -121,7 +121,7 @@ export default async function PageCorrection({
           <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             Correction · {copie.sujets?.type ?? "rédaction"}
           </p>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <h1 className="mt-1 font-titre text-2xl font-bold text-ink sm:text-3xl">
             {copie.sujets?.titre ?? "Ta rédaction"}
           </h1>
         </div>
