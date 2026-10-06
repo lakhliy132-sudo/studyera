@@ -54,4 +54,10 @@ export const FICHE_LECTURE_DERNIER_JOUR_CONDAMNE: FicheLecture = {
   ],
   styleEcriture:
     "L'écriture de Victor Hugo dans ce texte de jeunesse (il a vingt-sept ans lors de la publication) est déjà marquée par l'éloquence et le pathétique qui caractériseront son œuvre : phrases courtes et hachées pour traduire l'urgence et l'angoisse, apostrophes au lecteur, procédés de la plaidoirie (répétitions, questions rhétoriques, gradations). Le choix du « je » et du présent installe une proximité immédiate avec la conscience du condamné, sans jamais nommer ni son crime ni son identité — un parti pris délibéré pour empêcher le lecteur de se rassurer en jugeant un coupable plutôt qu'en compatissant à un homme. Le texte est en réalité un réquisitoire déguisé en fiction : dans sa préface de 1832, Hugo revendiquera ouvertement son intention abolitionniste.",
+  aRetenir: [
+    "Le condamné reste **anonyme** : on ne juge pas un coupable, on compatit avec un homme.",
+    "La structure est un **compte à rebours** : le temps s'accélère jusqu'à la fin.",
+    "Le roman est un **réquisitoire déguisé en fiction** contre la peine de mort.",
+    "Registres **pathétique et polémique** ; procédés de la plaidoirie.",
+  ],
 };

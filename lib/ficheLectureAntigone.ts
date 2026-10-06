@@ -49,4 +49,10 @@ export const FICHE_LECTURE_ANTIGONE: FicheLecture = {
   ],
   styleEcriture:
     "Anouilh mêle le grandiose du mythe antique à un langage résolument moderne et parfois familier (les gardes échangent des propos triviaux), créant un contraste qui accentue la dimension intemporelle de la tragédie. Les dialogues, vifs et incisifs, alternent avec les interventions plus lyriques du Chœur, dans un style dépouillé qui va à l'essentiel de l'affrontement entre Antigone et Créon.",
+  aRetenir: [
+    "Une **réécriture moderne** du mythe de Sophocle, créée en pleine Occupation (1944).",
+    "Une pièce **en un seul acte**, encadrée par le Prologue et le Chœur qui la commentent.",
+    "Un **contraste** voulu : le mythe grandiose, dit dans une langue moderne et parfois familière.",
+    "Registre **tragique**, teinté d'ironie ; au cœur, l'affrontement entre Antigone et Créon.",
+  ],
 };

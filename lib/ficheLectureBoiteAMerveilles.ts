@@ -64,6 +64,13 @@ export interface FicheLecture {
    * Gardé ici au cas où ce serait réutilisé ailleurs plus tard. */
   themesPrincipaux: string[];
   styleEcriture: string;
+  /** Les quatre points de l'encadré "À retenir pour l'examen", ajouté
+   * d'après une maquette de l'utilisateur ("TU PEUX ME FAIRE COMME
+   * CA"). Chaque point reprend ce que la fiche dit déjà (identité,
+   * structure, style), sans fait nouveau ; les mots entre `**` sont
+   * mis en gras. Même réserve que le reste de la fiche : à faire
+   * relire par un enseignant. */
+  aRetenir: string[];
 }
 
 export const FICHE_LECTURE_BOITE_A_MERVEILLES: FicheLecture = {
@@ -105,4 +112,10 @@ export const FICHE_LECTURE_BOITE_A_MERVEILLES: FicheLecture = {
   ],
   styleEcriture:
     "L'écriture de Sefrioui se distingue par sa dimension sensorielle : couleurs, odeurs et bruits de la médina de Fès sont omniprésents, restitués à hauteur d'un regard d'enfant. Le français, langue d'écriture, s'enrichit de mots et d'expressions arabes conservés tels quels (Msid, fqih, haïk, Achoura...), donnant au texte sa couleur locale. Le ton, tour à tour tendre, mélancolique et empreint d'une nostalgie assumée, fait de ce roman un texte autant sensoriel que narratif.",
+  aRetenir: [
+    "Un **récit autobiographique** : le narrateur adulte se souvient de son enfance à Fès.",
+    "Une **construction épisodique** : des tableaux et des souvenirs plutôt qu'une intrigue continue.",
+    "Une écriture **sensorielle** : couleurs, odeurs et bruits de la médina, vus à hauteur d'enfant.",
+    "Registre **lyrique et nostalgique** ; des mots arabes gardés tels quels (Msid, fqih, Achoura).",
+  ],
 };
