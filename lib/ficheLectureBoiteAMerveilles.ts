@@ -89,6 +89,9 @@ export const FICHE_LECTURE_BOITE_A_MERVEILLES: FicheLecture = {
       "Le Jardin des sortilèges (1989)",
     ],
     distinction: "Grand Prix littéraire du Maroc (1954), pour La Boîte à Merveilles",
+    // Photo fournie par l'utilisateur ("voila ajoute le"), recadrée
+    // sur le visage.
+    photo: "/auteurs/ahmed-sefrioui.jpg",
   },
   structureDetail:
     "Le roman ne suit pas une intrigue linéaire à proprement parler : il s'organise en une succession de tableaux et de souvenirs d'enfance, souvent rythmés par les événements du quotidien (une dispute, une maladie, une fête religieuse comme l'Achoura, une visite) plutôt que par une action continue. Cette construction épisodique, très proche de la mémoire elle-même, renforce l'impression d'un album de souvenirs feuilleté par le narrateur adulte plutôt que d'une histoire racontée d'un seul tenant.",
