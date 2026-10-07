@@ -51,7 +51,7 @@ export default async function PageRecherche({ searchParams }: PagePropsRecherche
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-7 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <div className="flex items-center gap-3.5">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
             <IconeRecherche className="size-5" />

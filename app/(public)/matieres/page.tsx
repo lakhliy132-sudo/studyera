@@ -133,7 +133,7 @@ export default function PageMatieres() {
         />
       </div>
 
-      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-10 px-6 pt-12 pb-16">
+      <div className="flex w-full flex-col gap-10 px-6 sm:px-9 pt-12 pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <span className="text-primary">
             <IconeLivre className="size-10" />

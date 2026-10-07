@@ -243,7 +243,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <Link
           href="/matieres"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"

@@ -76,7 +76,7 @@ export default async function PageLangue() {
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />

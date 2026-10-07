@@ -33,7 +33,7 @@ export default function BarreProgression({ slug, lus, total }: BarreProgressionP
   const pourcentage = Math.round((lus / total) * 100);
 
   return (
-    <div className="w-full max-w-[420px] rounded-[14px] border border-border bg-surface p-5 shadow-sm">
+    <div className="w-full rounded-[14px] border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-semibold text-ink">Ta progression</span>
         <span className="font-serif text-2xl font-bold text-primary">{pourcentage}%</span>
