@@ -9,9 +9,8 @@ import OngletQuiz from "@/components/OngletQuiz";
 import OngletResume from "@/components/OngletResume";
 import OngletSujets from "@/components/OngletSujets";
 import OngletsOeuvre, { versCleOnglet } from "@/components/OngletsOeuvre";
-import { FICHE_LECTURE_ANTIGONE } from "@/lib/ficheLectureAntigone";
-import { FICHE_LECTURE_BOITE_A_MERVEILLES, type FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
-import { FICHE_LECTURE_DERNIER_JOUR_CONDAMNE } from "@/lib/ficheLectureDernierJourCondamne";
+import type { FicheLecture } from "@/lib/ficheLectureBoiteAMerveilles";
+import { FICHES_LECTURE_PAR_SLUG } from "@/lib/fichesLecture";
 import { PERSONNAGES_PAR_CHAPITRE_BOITE_A_MERVEILLES } from "@/lib/personnagesParChapitre";
 import { QUIZ_PAR_SCENE_ANTIGONE } from "@/lib/quizAntigone";
 import { QUIZ_PAR_CHAPITRE, type QuestionQuiz } from "@/lib/quizBoiteAMerveilles";
@@ -98,13 +97,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   };
   const questionsParChapitreQuiz: Record<number, QuestionQuiz[]> = QUIZ_PAR_SLUG[slug] ?? {};
 
-  // Fiches de lecture saisies à la main, une par œuvre (voir
-  // lib/ficheLecture*.ts).
-  const FICHES_LECTURE_PAR_SLUG: Record<string, FicheLecture> = {
-    "boite-a-merveilles": FICHE_LECTURE_BOITE_A_MERVEILLES,
-    antigone: FICHE_LECTURE_ANTIGONE,
-    "dernier-jour-condamne": FICHE_LECTURE_DERNIER_JOUR_CONDAMNE,
-  };
+  // Fiches de lecture saisies à la main (lib/fichesLecture.ts).
   const ficheLecture: FicheLecture | null = FICHES_LECTURE_PAR_SLUG[slug] ?? null;
 
   return (
