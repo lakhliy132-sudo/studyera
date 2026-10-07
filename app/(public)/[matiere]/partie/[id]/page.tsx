@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
-import { IconeFleche } from "@/components/icones";
+import CarteListeLecons from "@/components/CarteListeLecons";
+import EnTeteMatiere from "@/components/EnTeteMatiere";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import {
   leconsDeSection,
@@ -41,53 +40,23 @@ export default async function PagePartieIslamique({
   );
   if (lecons.length === 0) notFound();
 
-  // Couleur du site, comme le reste de l'interface (voir la page de
-  // la matière pour le détail).
-  const couleur = "var(--color-primary)";
-
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 pt-6 pb-10 sm:pt-9 sm:pb-16 sm:px-9">
-        <Link
-          href={`/${slugMatiere}`}
-          className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-        >
-          <IconeFleche className="size-4 rotate-180" />
-          Retour éducation islamique
-        </Link>
-
-        <div className="flex flex-col gap-2">
-          {/* `w-fit` : sans ça, le bloc en `dir="rtl"` occupe toute la
-           * largeur et son texte part se coller à droite, loin du titre
-           * français juste en dessous. */}
-          <p
-            dir="rtl"
-            className="font-arabe w-fit text-2xl leading-snug font-bold"
-            style={{ color: couleur }}
-          >
-            {section.titreArabe}
-          </p>
-          <h1 className="font-titre text-3xl font-bold text-ink">
-            {section.titre}
-          </h1>
-          <p className="max-w-xl text-base text-muted-foreground">
-            {section.description}
-          </p>
-        </div>
-
-        <section className="flex flex-col gap-6">
-          <EnTeteSection
-            icone={<section.Icone className="size-5" />}
-            titre="Les leçons"
-            nombre={lecons.length}
-            couleur={couleur}
-          />
-          <GrilleLecons
-            matiereSlug={slugMatiere}
-            lecons={lecons}
-            couleur={couleur}
-          />
-        </section>
+      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+        <EnTeteMatiere
+          retour={{ href: `/${slugMatiere}`, libelle: "Retour à l'éducation islamique" }}
+          surTitre="Éducation islamique"
+          titreAccent={section.titre}
+          description={section.description}
+          filigrane={section.titreArabe}
+        />
+        <CarteListeLecons
+          Icone={section.Icone}
+          titre="Les leçons"
+          titreArabe={section.titreArabe}
+          lecons={lecons}
+          hrefLecon={(cours) => `/${slugMatiere}/${cours.slug}`}
+        />
       </div>
     </main>
   );

@@ -364,3 +364,14 @@ export async function compterCoursParCategorie(filiere: string): Promise<Record<
   }
   return comptes;
 }
+
+/** Nombre de sujets d'analyse en base (toutes œuvres) — chiffre de
+ * l'en-tête de /francais. `head: true` : seul le compte est demandé. */
+export async function compterSujets(): Promise<number> {
+  const supabase = await creerClientServeur();
+
+  const { count, error } = await supabase.from("sujets").select("*", { count: "exact", head: true });
+
+  if (error) throw error;
+  return count ?? 0;
+}

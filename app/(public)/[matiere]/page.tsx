@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { EnTeteSection, GrilleLecons } from "@/components/GrilleLeconsMatiere";
+import CarteListeLecons from "@/components/CarteListeLecons";
+import EnTeteMatiere from "@/components/EnTeteMatiere";
+import { GrilleLecons } from "@/components/GrilleLeconsMatiere";
 import { IconeFleche, IconeGlobe, IconeHorloge } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererMatiereParSlug } from "@/lib/matieres";
-import {
-  leconsDeSection,
-  SECTIONS_ISLAMIQUE,
-} from "@/lib/sections-islamique";
 import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
+import { leconsDeSection, SECTIONS_ISLAMIQUE, type SectionIslamique } from "@/lib/sections-islamique";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
 import type { Cours } from "@/types/base-de-donnees";
 
@@ -17,76 +16,112 @@ interface PagePropsMatiere {
   params: Promise<{ matiere: string }>;
 }
 
-/** Les 4 cases des modules d'arabe. Aucune leçon n'est listée ici —
- * demandé explicitement par l'utilisateur ("je veux que les lecons du
- * المجزوءة ne s affiche pas au debut jusqu au je clique sur المجزوءة
- * concerné", puis "quand on clique on voit chaque cours dans une
- * case") : cliquer sur un module ouvre sa page
- * /arabe/majzuaa/[numero], où chaque leçon a sa propre case. Un
- * premier essai dépliait la liste sur place, écarté par l'utilisateur.
+/** Fond sombre des cartes mises en avant et jaune de leur pastille,
+ * comme sur les maquettes de l'utilisateur. Le fond est la couleur du
+ * site assombrie avec une valeur fixe, pour rester foncé en mode sombre. */
+const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
+const JAUNE = "#f7c948";
+
+/** Nom arabe de chaque matière, posé en filigrane dans l'en-tête. */
+const FILIGRANES: Record<string, string> = {
+  arabe: "اللغة العربية",
+  "histoire-geo": "التاريخ والجغرافيا",
+  "education-islamique": "التربية الإسلامية",
+};
+
+const ORDINAUX_ARABES = ["الأولى", "الثانية", "الثالثة", "الرابعة"];
+const CHIFFRES_ARABES = ["١", "٢", "٣", "٤"];
+
+function nombreLecons(n: number) {
+  return n === 0 ? "Bientôt disponible" : `${n} leçon${n > 1 ? "s" : ""}`;
+}
+
+/**
+ * Les 4 modules d'arabe, d'après la maquette de l'utilisateur : grand
+ * chiffre arabe en filigrane, "Module N", nom du module, nombre de
+ * leçons. Aucune leçon n'est listée ici — demandé explicitement ("je
+ * veux que les lecons du المجزوءة ne s affiche pas au debut jusqu au je
+ * clique sur المجزوءة concerné") : un module ouvre sa page
+ * /arabe/majzuaa/[numero].
  *
- * Un module sans leçon reste une case inerte marquée "Bientôt
- * disponible", plutôt qu'un lien qui mènerait à une page vide. */
+ * Le premier module est la carte sombre, "par défaut le truc bleu pour
+ * la première partie et après ça dépend" : sans suivi de lecture en
+ * arabe, rien ne permet encore de savoir où en est l'élève, la carte
+ * reste donc sur le premier module, marquée "Pour commencer" (et non
+ * "En cours", qui supposerait un suivi). Pas de barre de progression,
+ * pour la même raison.
+ *
+ * Un module sans leçon reste une case inerte "Bientôt disponible".
+ */
 function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
-      {MODULES_ARABE.map((module) => {
-        const nombre = lecons.filter((c) =>
-          c.slug.startsWith(prefixeSlugModule(module.numero)),
-        ).length;
+    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+      {MODULES_ARABE.map((module, i) => {
+        const nombre = lecons.filter((c) => c.slug.startsWith(prefixeSlugModule(module.numero))).length;
+        const sombre = i === 0;
 
         const interieur = (
           <>
-            <div
+            <span
               aria-hidden="true"
-              style={{ backgroundColor: module.couleur }}
-              className="h-1.5 w-full"
-            />
-            <div className="flex flex-1 flex-col p-5 sm:p-[26px]">
-              <span className="flex items-center justify-between gap-3">
-                <span
-                  style={{ backgroundColor: module.couleur }}
-                  className="flex size-[52px] shrink-0 items-center justify-center rounded-full text-xl font-bold text-white"
-                >
-                  {module.numero}
+              className={`pointer-events-none absolute top-16 left-6 font-arabe text-[110px] leading-none font-bold select-none ${
+                sombre ? "text-white/10" : "text-primary/10"
+              }`}
+            >
+              {CHIFFRES_ARABES[i]}
+            </span>
+            <div className="relative flex items-center justify-between gap-3">
+              {sombre ? (
+                <span className="rounded-full px-3.5 py-1 text-sm font-bold text-[#1d2340]" style={{ background: JAUNE }}>
+                  Pour commencer
                 </span>
-                {nombre > 0 && (
-                  <IconeFleche className="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
-                )}
+              ) : (
+                <span />
+              )}
+              <span className={`text-sm font-bold ${sombre ? "text-white/80" : "text-muted-foreground"}`}>
+                Module {module.numero}
               </span>
-              <span
-                dir="rtl"
-                className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink"
-              >
-                {module.titre}
-              </span>
-              {module.sousTitre && (
+            </div>
+            <p
+              dir="rtl"
+              lang="ar"
+              className={`relative mt-16 font-arabe text-[34px] leading-tight font-bold sm:text-[38px] ${
+                sombre ? "text-white" : "text-ink"
+              }`}
+            >
+              المجزوءة {ORDINAUX_ARABES[i]}
+            </p>
+            <div className={`relative mt-6 h-px ${sombre ? "bg-white/20" : "bg-border"}`} />
+            <div className="relative mt-5 flex items-center justify-between">
+              <span className={sombre ? "text-white/80" : "text-muted-foreground"}>{nombreLecons(nombre)}</span>
+              {nombre > 0 && (
                 <span
-                  dir="rtl"
-                  className="font-arabe mt-1.5 block text-sm leading-snug text-muted-foreground"
+                  className={`flex size-11 items-center justify-center rounded-full transition-transform group-hover:translate-x-0.5 ${
+                    sombre ? "text-[#1d2340]" : "border border-border text-ink"
+                  }`}
+                  style={sombre ? { background: JAUNE } : undefined}
                 >
-                  {module.sousTitre}
+                  <IconeFleche className="size-5" />
                 </span>
               )}
-              <span className="mt-3 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
-                {nombre === 0
-                  ? "Bientôt disponible"
-                  : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
-              </span>
             </div>
           </>
         );
 
+        const classes = `group relative flex h-full flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${
+          sombre ? "text-white shadow-[0_20px_50px_-20px_rgba(10,16,32,0.55)]" : "border border-border bg-surface shadow-sm"
+        }`;
         return (
           <li key={module.numero}>
             {nombre === 0 ? (
-              <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
+              <div className={classes} style={sombre ? { background: FONCE } : undefined}>
                 {interieur}
               </div>
             ) : (
               <Link
                 href={`/arabe/majzuaa/${module.numero}`}
-                className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm transition-shadow hover:shadow-md"
+                className={`${classes} transition-transform hover:-translate-y-1`}
+                style={sombre ? { background: FONCE } : undefined}
               >
                 {interieur}
               </Link>
@@ -98,240 +133,226 @@ function CartesModulesArabe({ lecons }: { lecons: Cours[] }) {
   );
 }
 
-/** Les 4 cases de l'éducation islamique. Aucune leçon n'est listée ici
- * — demandé explicitement par l'utilisateur ("au debut ne l affiche pas
- * juste apres quon click comme francais") : cliquer sur une partie
- * ouvre sa page /education-islamique/partie/[id], où chaque leçon a sa
- * propre case. Même principe que les modules d'arabe au-dessus.
- *
- * Une partie sans leçon reste une case inerte marquée "Bientôt
- * disponible", plutôt qu'un lien qui mènerait à une page vide. */
-function CartesPartiesIslamique({
-  lecons,
-  couleur,
-}: {
-  lecons: Cours[];
-  couleur: string;
-}) {
+/** Motif d'étoiles à huit branches, très pâle, en fond de la grande
+ * carte d'éducation islamique (la maquette en a un). Décoratif. */
+const MOTIF = `url("data:image/svg+xml,${encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><g fill='none' stroke='#ffffff' stroke-opacity='0.07' stroke-width='1.4'><rect x='34' y='34' width='28' height='28'/><rect x='34' y='34' width='28' height='28' transform='rotate(45 48 48)'/></g></svg>",
+)}")`;
+
+/**
+ * Les parties d'éducation islamique, d'après la maquette de
+ * l'utilisateur : Sourate Youssef dans la grande carte sombre, ses six
+ * parties en segments ; les deux périodes de cours côte à côte ; la
+ * révision en bandeau. Aucune leçon listée ici (voir
+ * /education-islamique/partie/[id]). Pas de "2 / 6 parties" lues : pas
+ * de suivi de lecture pour cette matière.
+ */
+function CartesPartiesIslamique({ lecons }: { lecons: Cours[] }) {
+  const [youssef, ...autres] = SECTIONS_ISLAMIQUE;
+  const revision = autres.find((s) => s.prefixe === null);
+  const periodes = autres.filter((s) => s.prefixe !== null);
+  const nombre = (section: SectionIslamique) => leconsDeSection(lecons, section).length;
+  const lien = (section: SectionIslamique) => `/education-islamique/partie/${section.id}`;
+
+  const nbYoussef = nombre(youssef);
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
-      {SECTIONS_ISLAMIQUE.map((section) => {
-        const nombre = leconsDeSection(lecons, section).length;
+    <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <CarteOuInerte
+        href={nbYoussef > 0 ? lien(youssef) : null}
+        className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-[26px] p-7 text-white shadow-[0_20px_50px_-20px_rgba(10,16,32,0.55)] sm:p-9"
+        style={{ backgroundColor: FONCE, backgroundImage: MOTIF }}
+      >
+        <span className="w-fit rounded-full px-3.5 py-1 text-sm font-bold text-[#1d2340]" style={{ background: JAUNE }}>
+          Au programme
+        </span>
+        <p dir="rtl" lang="ar" className="mt-10 font-arabe text-[56px] leading-tight font-bold sm:text-[68px]">
+          {youssef.titreArabe}
+        </p>
+        <p className="mt-2 text-end font-serif text-2xl font-bold sm:text-[28px]">{youssef.titre}</p>
+        <p className="mt-2 text-end text-base leading-relaxed text-white/80">{youssef.description}</p>
+        {nbYoussef > 0 && (
+          <div className="mt-8 flex gap-2" aria-hidden="true">
+            {Array.from({ length: nbYoussef }, (_, i) => (
+              <span key={i} className="h-1.5 flex-1 rounded-full bg-white/25" />
+            ))}
+          </div>
+        )}
+        <div className="mt-auto flex items-center justify-between pt-8">
+          <span className="text-white/80">
+            {nbYoussef === 0 ? "Bientôt disponible" : `${nbYoussef} partie${nbYoussef > 1 ? "s" : ""}`}
+          </span>
+          {nbYoussef > 0 && (
+            <span className="flex size-12 items-center justify-center rounded-full text-[#1d2340]" style={{ background: JAUNE }}>
+              <IconeFleche className="size-5" />
+            </span>
+          )}
+        </div>
+      </CarteOuInerte>
 
-        const interieur = (
-          <>
-            <div
-              aria-hidden="true"
-              style={{ backgroundColor: couleur }}
-              className="h-1.5 w-full"
-            />
-            <div className="flex flex-1 flex-col p-5 sm:p-[26px]">
-              <span className="flex items-center justify-between gap-3">
-                <span
-                  style={{
-                    backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
-                    color: couleur,
-                  }}
-                  className="flex size-[52px] shrink-0 items-center justify-center rounded-full"
-                >
-                  <section.Icone className="size-6" />
-                </span>
-                {nombre > 0 && (
-                  <span
-                    style={{ color: couleur }}
-                    className="shrink-0 transition-transform group-hover:translate-x-1"
-                  >
-                    <IconeFleche className="size-5" />
+      <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+          {periodes.map((section, i) => {
+            const n = nombre(section);
+            return (
+              <CarteOuInerte
+                key={section.id}
+                href={n > 0 ? lien(section) : null}
+                className="group flex flex-col rounded-[26px] border border-border bg-surface p-6 shadow-sm sm:p-8"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="flex size-12 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
+                    <section.Icone className="size-6" />
                   </span>
-                )}
-              </span>
-              <span
-                dir="rtl"
-                className="font-arabe mt-4 block text-2xl leading-snug font-bold text-ink"
-              >
-                {section.titreArabe}
-              </span>
-              <span className="mt-1.5 block font-serif text-base font-bold text-ink">
-                {section.titre}
-              </span>
-              <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
-                {section.description}
-              </span>
-              <span className="mt-3 w-fit rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-subtle-foreground">
-                {nombre === 0
-                  ? "Bientôt disponible"
-                  : `${nombre} leçon${nombre > 1 ? "s" : ""}`}
-              </span>
-            </div>
-          </>
-        );
+                  <span className="rounded-full bg-primary-tint px-3.5 py-1 text-sm font-bold text-primary">
+                    {i + 1}
+                    <sup>{i === 0 ? "re" : "e"}</sup> période
+                  </span>
+                </div>
+                <p dir="rtl" lang="ar" className="mt-6 font-arabe text-[30px] leading-tight font-bold text-ink">
+                  {section.titreArabe}
+                </p>
+                <p className="mt-1 font-serif text-xl font-bold text-ink">{section.titre}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{section.description}</p>
+                <div className="mt-auto flex items-center justify-between pt-6">
+                  <span className="text-muted-foreground">{nombreLecons(n)}</span>
+                  {n > 0 && (
+                    <span className="flex size-11 items-center justify-center rounded-full border border-border text-ink">
+                      <IconeFleche className="size-5" />
+                    </span>
+                  )}
+                </div>
+              </CarteOuInerte>
+            );
+          })}
+        </div>
 
-        return (
-          <li key={section.id}>
-            {nombre === 0 ? (
-              <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm">
-                {interieur}
-              </div>
-            ) : (
-              <Link
-                href={`/education-islamique/partie/${section.id}`}
-                className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface shadow-sm transition-shadow hover:shadow-md"
-              >
-                {interieur}
-              </Link>
+        {revision && (
+          <CarteOuInerte
+            href={nombre(revision) > 0 ? lien(revision) : null}
+            className="group flex flex-col gap-4 rounded-[26px] border border-border bg-surface p-6 shadow-sm sm:flex-row sm:items-center sm:gap-6 sm:p-8"
+          >
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
+              <revision.Icone className="size-6" />
+            </span>
+            <div className="flex-1">
+              <p className="font-serif text-xl font-bold text-ink">{revision.titre}</p>
+              <p className="mt-1 text-[15px] leading-relaxed text-muted-foreground">{revision.description}</p>
+            </div>
+            <div className="sm:text-end">
+              <p dir="rtl" lang="ar" className="font-arabe text-[28px] leading-tight font-bold text-ink">
+                {revision.titreArabe}
+              </p>
+              <p className="text-muted-foreground">{nombreLecons(nombre(revision))}</p>
+            </div>
+            {nombre(revision) > 0 && (
+              <span className="hidden size-11 shrink-0 items-center justify-center rounded-full border border-border text-ink sm:flex">
+                <IconeFleche className="size-5" />
+              </span>
             )}
-          </li>
-        );
-      })}
-    </ul>
+          </CarteOuInerte>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Un lien quand la partie a des leçons, une case inerte sinon. */
+function CarteOuInerte({
+  href,
+  className,
+  style,
+  children,
+}: {
+  href: string | null;
+  className: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  return href ? (
+    <Link href={href} className={`${className} transition-transform hover:-translate-y-1`} style={style}>
+      {children}
+    </Link>
+  ) : (
+    <div className={className} style={style}>
+      {children}
+    </div>
   );
 }
 
 /**
- * /[matiere] — page de liste d'une matière ajoutée à la demande de
- * l'utilisateur (éducation islamique, arabe, histoire-géographie —
- * voir lib/matieres.ts). Générique et paramétrée par `matiere.slug`
- * plutôt qu'un dossier par matière : même principe que /langue et
- * /production-ecrite (une catégorie de la table `cours` chacune), mais
- * sans dupliquer la page pour chaque nouvelle matière.
+ * /[matiere] — page d'une matière (éducation islamique, arabe,
+ * histoire-géographie, voir lib/matieres.ts), refaite d'après les
+ * maquettes de l'utilisateur ("fait moi ca a la place de francais […]
+ * et touche aussi au sous partie") : en-tête à gauche avec le nom arabe
+ * en filigrane, puis une mise en page propre à chaque matière.
  *
- * `notFound()` si le segment d'URL ne correspond à aucune matière
- * connue (`MATIERES`) — évite qu'une route générique n'avale n'importe
- * quelle URL au premier niveau du site.
+ * Générique et paramétrée par `matiere.slug` ; `notFound()` si le
+ * segment d'URL ne correspond à aucune matière connue. Rien n'est
+ * inventé : la page affiche ce qui existe dans `cours`.
  *
- * Contrairement à /langue (12 leçons listées en dur, la plupart
- * "Bientôt disponible"), rien n'est inventé ici : aucun plan de cours
- * ne nous a été fourni pour ces 3 matières, donc la page affiche
- * directement ce qui existe dans `cours` — un message "Bientôt
- * disponible" tant que rien n'a été importé, comme /oeuvres avant
- * son premier contenu.
- *
- * Histoire-géographie : deux grilles séparées ("Histoire" /
- * "Géographie"), distinguées par le préfixe du `slug` (`histoire-*` /
- * `geographie-*`) plutôt qu'une colonne dédiée en base. Un hub à 2
- * cases ("Cours"/"Flash cards", à la manière de /francais) a existé
- * entretemps, retiré quand les flashcards sont passées dans chaque
- * page de cours ("enleve cette partie de flash cards et ajoute la
- * dans chaque cours") : avec une seule case restante, l'étape
- * intermédiaire n'apportait plus qu'un clic de plus.
+ * Histoire-géographie : deux listes côte à côte, "Histoire" et
+ * "Géographie", distinguées par le préfixe du `slug` (`histoire-*` /
+ * `geographie-*`). Les flashcards sont dans chaque page de cours ("enleve
+ * cette partie de flash cards et ajoute la dans chaque cours").
  */
 export default async function PageMatiereListe({ params }: PagePropsMatiere) {
   const { matiere: slugMatiere } = await params;
   const matiere = recupererMatiereParSlug(slugMatiere);
   if (!matiere) notFound();
 
-  const lecons = await recupererCoursParCategorie(
-    matiere.slug,
-    FILIERE_ACTUELLE,
-  );
-  // Couleur du site, pas une couleur par matière — demandé
-  // explicitement par l'utilisateur, qui trouvait incohérent que la
-  // section d'éducation islamique vire au vert alors que celle de
-  // français reste sur la couleur courante ("quand je suis en default
-  // couleur laisse tout comme ca"). Elle suit donc la palette choisie,
-  // comme le reste de l'interface.
-  const couleur = "var(--color-primary)";
-  const estHistoireGeo = matiere.slug === "histoire-geo";
-  const estArabe = matiere.slug === "arabe";
-  const estIslamique = matiere.slug === "education-islamique";
-  const leconsHistoire = estHistoireGeo
-    ? lecons.filter((c) => c.slug.startsWith("histoire-"))
-    : [];
-  const leconsGeographie = estHistoireGeo
-    ? lecons.filter((c) => c.slug.startsWith("geographie-"))
-    : [];
+  const lecons = await recupererCoursParCategorie(matiere.slug, FILIERE_ACTUELLE);
+  const leconsHistoire = lecons.filter((c) => c.slug.startsWith("histoire-"));
+  const leconsGeographie = lecons.filter((c) => c.slug.startsWith("geographie-"));
+
+  const description =
+    matiere.slug === "histoire-geo" && lecons.length > 0
+      ? `Les ${lecons.length} leçons d'histoire et de géographie au programme du bac.`
+      : matiere.description;
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
-        <Link
-          href="/matieres"
-          className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-        >
-          <IconeFleche className="size-4 rotate-180" />
-          Retour aux matières
-        </Link>
+      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+        <EnTeteMatiere
+          retour={{ href: "/matieres", libelle: "Retour aux matières" }}
+          surTitre="1ʳᵉ année bac · Examen régional"
+          titreAvant={matiere.titreAvantAccent}
+          titreAccent={matiere.titreAccent}
+          description={description}
+          filigrane={FILIGRANES[matiere.slug]}
+        />
 
-        <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <div className="flex items-center justify-center gap-3">
-            <span
-              style={{ backgroundImage: `linear-gradient(to right, transparent, color-mix(in srgb, ${couleur} 40%, transparent))` }}
-              className="h-px w-16"
-            />
-            <span
-              style={{
-                backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
-                borderColor: `color-mix(in srgb, ${couleur} 24%, transparent)`,
-                color: couleur,
-              }}
-              className="flex size-8 items-center justify-center rounded-full border"
-            >
-              <matiere.Icone className="size-4" />
-            </span>
-            <span
-              style={{ backgroundImage: `linear-gradient(to left, transparent, color-mix(in srgb, ${couleur} 40%, transparent))` }}
-              className="h-px w-16"
-            />
-          </div>
-          <h1 className="mt-5 font-titre text-3xl sm:text-4xl font-bold text-ink">
-            {matiere.titreAvantAccent}
-            <span style={{ color: couleur }} className="italic">
-              {matiere.titreAccent}
-            </span>
-          </h1>
-          <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            {matiere.description}
-          </p>
-        </section>
-
-        {estArabe ? (
+        {matiere.slug === "arabe" ? (
           <CartesModulesArabe lecons={lecons} />
         ) : lecons.length === 0 ? (
           <p className="rounded-md border border-dashed border-border-strong bg-background p-12 text-center text-muted-foreground">
             Bientôt disponible.
           </p>
-        ) : estIslamique ? (
-          <CartesPartiesIslamique lecons={lecons} couleur={couleur} />
-        ) : estHistoireGeo ? (
-          <div className="flex flex-col gap-8 sm:gap-12">
+        ) : matiere.slug === "education-islamique" ? (
+          <CartesPartiesIslamique lecons={lecons} />
+        ) : matiere.slug === "histoire-geo" ? (
+          <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 xl:grid-cols-2">
             {leconsHistoire.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeHorloge className="size-5" />}
-                  titre="Histoire"
-                  nombre={leconsHistoire.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsHistoire}
-                  couleur={couleur}
-                />
-              </section>
+              <CarteListeLecons
+                Icone={IconeHorloge}
+                titre="Histoire"
+                titreArabe="التاريخ"
+                lecons={leconsHistoire}
+                hrefLecon={(c) => `/${matiere.slug}/${c.slug}`}
+              />
             )}
             {leconsGeographie.length > 0 && (
-              <section className="flex flex-col gap-6">
-                <EnTeteSection
-                  icone={<IconeGlobe className="size-5" />}
-                  titre="Géographie"
-                  nombre={leconsGeographie.length}
-                  couleur={couleur}
-                />
-                <GrilleLecons
-                  matiereSlug={matiere.slug}
-                  lecons={leconsGeographie}
-                  numeroDepart={leconsHistoire.length + 1}
-                  couleur={couleur}
-                />
-              </section>
+              <CarteListeLecons
+                Icone={IconeGlobe}
+                titre="Géographie"
+                titreArabe="الجغرافيا"
+                lecons={leconsGeographie}
+                hrefLecon={(c) => `/${matiere.slug}/${c.slug}`}
+                numeroDepart={leconsHistoire.length + 1}
+              />
             )}
           </div>
         ) : (
-          <GrilleLecons
-            matiereSlug={matiere.slug}
-            lecons={lecons}
-            couleur={couleur}
-          />
+          <GrilleLecons matiereSlug={matiere.slug} lecons={lecons} couleur="var(--color-primary)" />
         )}
       </div>
     </main>

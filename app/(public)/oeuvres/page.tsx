@@ -1,4 +1,5 @@
 import CarteOeuvre from "@/components/CarteOeuvre";
+import EnTeteMatiere from "@/components/EnTeteMatiere";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererOeuvresParFiliere } from "@/lib/supabase/contenu";
 
@@ -10,10 +11,14 @@ export default async function PageOeuvres() {
   const oeuvres = await recupererOeuvresParFiliere(FILIERE_ACTUELLE);
 
   return (
-    <main className="w-full px-6 py-10 sm:px-9">
-      <h1 className="mb-6 text-2xl font-semibold text-foreground">
-        Œuvres au programme
-      </h1>
+    <main className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+      <EnTeteMatiere
+        retour={{ href: "/francais", libelle: "Retour au français" }}
+        surTitre="Français · 1ʳᵉ année bac"
+        titreAccent="Œuvres"
+        titreApres=" au programme"
+        description="Résumés, personnages, lexique et sujets pour chaque œuvre."
+      />
 
       {oeuvres.length === 0 ? (
         <p className="text-muted-foreground">Bientôt disponible.</p>
