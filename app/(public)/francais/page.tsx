@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import ChiffresEnTete from "@/components/ChiffresEnTete";
 import EnTeteMatiere from "@/components/EnTeteMatiere";
 import { IconeEclair, IconeFleche, IconeLivre, IconePlume, IconeTexte } from "@/components/icones";
 import { cleCorrecteurPresente } from "@/lib/correcteur";
@@ -62,7 +63,7 @@ export default async function PageFrancais() {
     { valeur: oeuvres.length, libelle: oeuvres.length > 1 ? "œuvres" : "œuvre" },
     { valeur: leconsLangue.length, libelle: "notions de langue" },
     { valeur: nombreSujets, libelle: "sujets d'analyse" },
-  ].filter((c) => c.valeur > 0);
+  ];
 
   const totalChapitres = oeuvres.reduce((n, o) => n + o.nombreChapitres, 0);
   const notionsVisibles = leconsLangue.slice(0, 3);
@@ -77,21 +78,7 @@ export default async function PageFrancais() {
           titreAvant="Le "
           titreAccent="français"
           description="Œuvres au programme, cours de langue, production écrite et correction IA : tout pour arriver serein le jour J."
-          aside={
-            chiffres.length > 0 && (
-              <dl className="flex divide-x divide-border overflow-hidden rounded-[22px] border border-border bg-surface shadow-sm">
-                {chiffres.map(({ valeur, libelle }) => (
-                  <div key={libelle} className="px-5 py-4 sm:px-7 sm:py-5">
-                    <dt className="sr-only">{libelle}</dt>
-                    <dd>
-                      <span className="block font-serif text-3xl font-bold text-ink sm:text-[34px]">{valeur}</span>
-                      <span className="block text-sm text-muted-foreground">{libelle}</span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )
-          }
+          aside={<ChiffresEnTete chiffres={chiffres} />}
         />
 
         <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.8fr)]">

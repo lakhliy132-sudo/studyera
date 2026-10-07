@@ -25,7 +25,8 @@ export default function EnTeteMatiere({
   filigrane,
   aside,
 }: {
-  retour: { href: string; libelle: string };
+  /** Absent sur /matieres, qui est elle-même le point de départ. */
+  retour?: { href: string; libelle: string };
   surTitre: string;
   titreAvant?: string;
   titreAccent: string;
@@ -38,6 +39,7 @@ export default function EnTeteMatiere({
 }) {
   return (
     <header className="flex flex-col gap-6">
+      {retour && (
       <Link
         href={retour.href}
         className="flex w-fit items-center gap-2 text-sm font-semibold text-primary hover:underline sm:text-base"
@@ -45,6 +47,7 @@ export default function EnTeteMatiere({
         <IconeFleche className="size-4 rotate-180" />
         {retour.libelle}
       </Link>
+      )}
 
       <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="relative z-10 max-w-3xl">

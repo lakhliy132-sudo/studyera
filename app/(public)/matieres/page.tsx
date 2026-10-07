@@ -2,237 +2,193 @@ import type { ReactElement } from "react";
 
 import Link from "next/link";
 
-import { IconeFleche, IconeLivre } from "@/components/icones";
-import {
-  accentMatiere,
-  bordureMatiere,
-  fondMatiere,
-  pastilleMatiere,
-} from "@/lib/palette-matieres";
-import {
-  IllustrationGlobe,
-  IllustrationLivre,
-  IllustrationLivreOuvert,
-  IllustrationMosquee,
-} from "@/components/IllustrationsMatieres";
+import ChiffresEnTete from "@/components/ChiffresEnTete";
+import EnTeteMatiere from "@/components/EnTeteMatiere";
+import { IconeCroissant, IconeFleche, IconeGlobe, IconeLivre, IconeLivreOuvert } from "@/components/icones";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
+import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
+import { leconsDeSection, SECTIONS_ISLAMIQUE } from "@/lib/sections-islamique";
+import { recupererCoursParCategorie, recupererOeuvresParFiliere } from "@/lib/supabase/contenu";
+
+/** Fond sombre des pastilles et des boutons : la couleur du site
+ * assombrie avec une valeur fixe, pour rester foncée en mode sombre. */
+const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
 
 interface CarteMatierePage {
   href: string;
-  /** Début du titre, en gras — la partie en italique suit. */
-  titre: string;
-  titreItalique?: string;
+  titreAvant: string;
+  titreAccent: string;
+  titreArabe: string;
   description: string;
-  /** Slug de la matière : l'accent et les teintes qui en découlent
-   * sont calculés au rendu (lib/palette-matieres.ts), pour suivre le
-   * mode clair ou sombre. */
-  slug: string;
-  Illustration: (props: { className?: string }) => ReactElement;
+  Icone: (props: { className?: string }) => ReactElement;
+  /** Ce que contient la matière, compté en base ; vide = "Bientôt
+   * disponible". */
+  contenu: string[];
+}
+
+function pluriel(n: number, mot: string) {
+  return `${n} ${mot}${n > 1 ? "s" : ""}`;
 }
 
 /**
- * Les 4 cartes de /matieres, dans l'ordre de la maquette fournie par
- * l'utilisateur ("Fais ca dans partie de matiere") : Français, Arabe,
- * Histoire-Géographie, Éducation islamique.
+ * /matieres — les quatre matières, y compris le français ("NON FAIS LA
+ * DANS LA PARTIE DE MATIERE" : /francais s'ouvre depuis une carte ici).
  *
- * Titres et descriptions repris mot pour mot de cette maquette
- * (l'ancienne page disait par exemple "Cours d'arabe" et "Œuvres au
- * programme, cours de langue..."). Les libellés de `lib/matieres.ts`
- * ne sont pas touchés : ils servent ailleurs, notamment au lien
- * "Retour cours d'arabe" des pages de leçon.
+ * Refaite d'après une maquette de l'utilisateur ("CHANGE MOI CETTE
+ * PARTIE AUSSI"), dans la suite des pages de matière : en-tête à gauche
+ * avec chiffres à droite, puis 2 × 2 cartes blanches — pastille d'icône
+ * foncée, nom arabe en filigrane, titre avec un mot en accent,
+ * description, et en pied ce que contient la matière avec "Découvrir".
  *
- * Les couleurs sont celles déjà attribuées à chaque matière sur le
- * site (`--color-matiere-*`), pas celles de la maquette : la maquette
- * montre un français rose, mais le français est bleu partout ailleurs
- * (accueil, barres de progression) — le changer ici seulement aurait
- * désaccordé les deux pages.
+ * Toutes les cartes suivent la palette, comme sur la maquette : les
+ * couleurs propres à chaque matière (bleu, violet, orange, vert) ne
+ * restent que sur la grille de l'accueil.
+ *
+ * Écarts avec la maquette, faute de donnée (CLAUDE.md) :
+ * - pas de pastille "Coef. N" ni de "coefficient total" : aucun
+ *   coefficient n'est connu en base. Le second chiffre de l'en-tête est
+ *   le nombre de leçons, compté ;
+ * - les pieds de carte ("3 œuvres, 12 notions", "4 modules"…) sont
+ *   comptés sur la table `cours` et les œuvres, pas recopiés.
  */
-const CARTES: CarteMatierePage[] = [
-  {
-    href: "/francais",
-    titre: "Français",
-    description:
-      "Étudie la langue française, la littérature, la production écrite et la correction.",
-    slug: "francais",
-    Illustration: IllustrationLivre,
-  },
-  {
-    href: "/arabe",
-    titre: "Arabe",
-    description:
-      "Textes, grammaire et expression pour renforcer tes compétences en langue arabe.",
-    slug: "arabe",
-    Illustration: IllustrationLivreOuvert,
-  },
-  {
-    href: "/histoire-geo",
-    titre: "Histoire - ",
-    titreItalique: "Géographie",
-    description:
-      "Comprends le passé, explore le monde et analyse les sociétés.",
-    slug: "histoire-geo",
-    Illustration: IllustrationGlobe,
-  },
-  {
-    href: "/education-islamique",
-    titre: "Éducation ",
-    titreItalique: "islamique",
-    description:
-      "Cours, notions clés et repères pour l'examen d'éducation islamique.",
-    slug: "education-islamique",
-    Illustration: IllustrationMosquee,
-  },
-];
+export default async function PageMatieres() {
+  const [oeuvres, langue, production, arabe, histoireGeo, islamique] = await Promise.all([
+    recupererOeuvresParFiliere(FILIERE_ACTUELLE),
+    recupererCoursParCategorie("langue", FILIERE_ACTUELLE),
+    recupererCoursParCategorie("production-ecrite", FILIERE_ACTUELLE),
+    recupererCoursParCategorie("arabe", FILIERE_ACTUELLE),
+    recupererCoursParCategorie("histoire-geo", FILIERE_ACTUELLE),
+    recupererCoursParCategorie("education-islamique", FILIERE_ACTUELLE),
+  ]);
 
-/**
- * /matieres — page d'accueil de toutes les matières, y compris le
- * français. Le français avait d'abord sa propre page hub (/francais)
- * et son propre lien de nav, séparé de "Matières" — corrigé à la
- * demande explicite de l'utilisateur ("NON FAIS LA DANS LA PARTIE DE
- * MATIERE") : /francais existe toujours, mais on y accède par une
- * carte ici.
- *
- * Mise en page refaite d'après une maquette fournie par l'utilisateur
- * ("Fais ca dans partie de matiere") : titre centré sous un livre,
- * grille de 2 colonnes de cartes larges, chacune teintée de la
- * couleur de sa matière, avec pastille d'icône ronde et bouton plein
- * "Découvrir". Auparavant : 3 colonnes de cartes carrées, toutes
- * bleues.
- *
- * Les teintes de fond passent par `color-mix` sur le token de la
- * matière plutôt que par des couleurs pastel fixes : en mode sombre,
- * un pastel figé deviendrait illisible.
- */
-export default function PageMatieres() {
+  const modulesArabe = MODULES_ARABE.filter((m) => arabe.some((c) => c.slug.startsWith(prefixeSlugModule(m.numero))));
+  const sourate = SECTIONS_ISLAMIQUE.find((s) => s.id === "sourate-youssef");
+  const avecSourate = sourate && leconsDeSection(islamique, sourate).length > 0;
+
+  const cartes: CarteMatierePage[] = [
+    {
+      href: "/francais",
+      titreAvant: "Le ",
+      titreAccent: "français",
+      titreArabe: "الفرنسية",
+      description: "Étudie la langue française, la littérature, la production écrite et la correction.",
+      Icone: IconeLivre,
+      contenu: [
+        oeuvres.length > 0 ? pluriel(oeuvres.length, "œuvre") : "",
+        langue.length > 0 ? pluriel(langue.length, "notion") : "",
+      ],
+    },
+    {
+      href: "/arabe",
+      titreAvant: "L'",
+      titreAccent: "arabe",
+      titreArabe: "العربية",
+      description: "Textes, grammaire et expression pour renforcer tes compétences en langue arabe.",
+      Icone: IconeLivreOuvert,
+      contenu: [
+        modulesArabe.length > 0 ? pluriel(modulesArabe.length, "module") : "",
+        arabe.length > 0 ? pluriel(arabe.length, "leçon") : "",
+      ],
+    },
+    {
+      href: "/histoire-geo",
+      titreAvant: "Histoire-",
+      titreAccent: "Géographie",
+      titreArabe: "التاريخ والجغرافيا",
+      description: "Comprends le passé, explore le monde et analyse les sociétés.",
+      Icone: IconeGlobe,
+      contenu: [histoireGeo.length > 0 ? pluriel(histoireGeo.length, "leçon") : ""],
+    },
+    {
+      href: "/education-islamique",
+      titreAvant: "Éducation ",
+      titreAccent: "islamique",
+      titreArabe: "التربية الإسلامية",
+      description: "Cours, notions clés et repères pour l'examen d'éducation islamique.",
+      Icone: IconeCroissant,
+      contenu: [avecSourate ? sourate.titre : "", islamique.length > 0 ? pluriel(islamique.length, "leçon") : ""],
+    },
+  ];
+
+  const totalLecons = langue.length + production.length + arabe.length + histoireGeo.length + islamique.length;
+
   return (
     <main className="relative flex flex-col overflow-hidden">
-      {/* Fond propre à cette page — repris de la maquette : un blanc
-       * très légèrement lavande, avec de grandes taches pastel floues
-       * dans les coins. Valeurs fixes plutôt que les tokens du site :
-       * les cartes de la page sont elles aussi en couleurs fixes
-       * (voir CARTES), un fond qui basculerait en sombre les
-       * laisserait flotter sur du noir. */}
-      <div
+      <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-background) 0%, color-mix(in srgb, var(--color-matiere-arabe) 7%, var(--color-background)) 100%)",
-        }}
-      >
-        <div
-          className="absolute -top-28 -left-32 size-[420px] rounded-full opacity-[0.14] blur-3xl"
-          style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+        className="pointer-events-none absolute -top-40 left-1/3 -z-10 size-[520px] rounded-full bg-primary/10 blur-3xl"
+      />
+      <div className="flex w-full flex-col gap-8 px-6 pt-8 pb-12 sm:gap-10 sm:px-9 sm:pt-12 sm:pb-16">
+        <EnTeteMatiere
+          surTitre="1ʳᵉ année bac · Examen régional"
+          titreAvant="Les "
+          titreAccent="matières"
+          description="Explore toutes les matières de ton parcours et progresse à ton rythme."
+          aside={
+            <ChiffresEnTete
+              chiffres={[
+                { valeur: cartes.length, libelle: "matières" },
+                { valeur: totalLecons, libelle: "leçons en ligne" },
+              ]}
+            />
+          }
         />
-        <div
-          className="absolute top-24 -right-36 size-[460px] rounded-full opacity-[0.12] blur-3xl"
-          style={{ backgroundColor: "var(--color-matiere-francais)" }}
-        />
-        <div
-          className="absolute -bottom-32 left-1/3 size-[420px] rounded-full opacity-[0.10] blur-3xl"
-          style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
-        />
-      </div>
 
-      <div className="flex w-full flex-col gap-10 px-6 sm:px-9 pt-12 pb-16">
-        <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <span className="text-primary">
-            <IconeLivre className="size-10" />
-          </span>
-          <h1
-            className="mt-4 font-titre text-[42px] leading-tight font-bold"
-            style={{ color: "var(--color-ink)" }}
-          >
-            Les <span className="text-primary italic">matières</span>
-          </h1>
-          <p
-            className="mt-3 max-w-xl text-[15px]"
-            style={{ color: "var(--color-muted-foreground)" }}
-          >
-            Explore toutes les matières de ton parcours et progresse à ton
-            rythme.
-          </p>
-          <span
-            aria-hidden="true"
-            className="mt-5 block h-1 w-20 rounded-full bg-primary"
-          />
-        </section>
-
-        <ul className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-x-10 md:gap-y-9">
-          {CARTES.map((carte) => {
-            const accent = accentMatiere(carte.slug);
+        <ul className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-2">
+          {cartes.map((carte) => {
+            const contenu = carte.contenu.filter(Boolean);
             return (
               <li key={carte.href}>
                 <Link
                   href={carte.href}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border p-5 sm:p-7 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                  style={{
-                    backgroundColor: fondMatiere(accent),
-                    borderColor: bordureMatiere(accent),
-                  }}
+                  className="group flex h-full flex-col rounded-[28px] border border-border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg sm:p-9"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -right-6 -bottom-8 size-32 rounded-full opacity-60"
-                    style={{ backgroundColor: pastilleMatiere(accent) }}
-                  />
-                  <div className="relative flex items-start gap-5">
-                    <span className="relative shrink-0">
-                      <span
-                        className="flex size-[72px] items-center justify-center rounded-full"
-                        style={{ backgroundColor: pastilleMatiere(accent) }}
-                      >
-                        <carte.Illustration className="size-11" />
-                      </span>
-                      {/* Les trois petits traits d'éclat de la maquette. */}
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 20 22"
-                        className="absolute -top-1 -right-2 h-6 w-5"
-                        style={{ color: accent }}
-                      >
-                        <path
-                          d="M3 6 8 2M9 11h6M5 17l6-3"
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          fill="none"
-                        />
-                      </svg>
+                  <div className="flex items-start justify-between gap-4">
+                    <span
+                      className="flex size-14 shrink-0 items-center justify-center rounded-[16px] text-white sm:size-16"
+                      style={{ background: FONCE }}
+                    >
+                      <carte.Icone className="size-6 sm:size-7" />
                     </span>
-                    <div className="min-w-0">
-                      <h2
-                        className="font-serif text-[22px] leading-snug font-bold"
-                        style={{ color: "var(--color-ink)" }}
-                      >
-                        {carte.titre}
-                        {carte.titreItalique && (
-                          <span className="italic">{carte.titreItalique}</span>
-                        )}
-                      </h2>
-                      {carte.description && (
-                        <p
-                          className="mt-1.5 font-lecture text-[14.5px] leading-relaxed"
-                          style={{ color: "var(--color-muted-foreground)" }}
-                        >
-                          {carte.description}
-                        </p>
-                      )}
-                    </div>
+                    <span
+                      aria-hidden="true"
+                      dir="rtl"
+                      lang="ar"
+                      className="font-arabe text-[26px] leading-none font-bold text-primary/15 select-none sm:text-[40px]"
+                    >
+                      {carte.titreArabe}
+                    </span>
                   </div>
 
-                  <span
-                    className="relative mt-6 flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-sm"
-                    style={{ backgroundColor: accent }}
-                  >
-                    Découvrir
-                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-                  </span>
+                  <h2 className="mt-7 font-serif text-[28px] leading-tight font-bold text-ink sm:mt-9 sm:text-[34px]">
+                    {carte.titreAvant}
+                    <span className="text-primary italic">{carte.titreAccent}</span>
+                  </h2>
+                  <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                    {carte.description}
+                  </p>
+
+                  <div className="mt-auto pt-7 sm:pt-9">
+                    <div className="flex items-center justify-between gap-4 border-t border-border pt-5 sm:pt-6">
+                      <span className="text-sm text-muted-foreground sm:text-base">
+                        {contenu.length > 0 ? contenu.join(" · ") : "Bientôt disponible"}
+                      </span>
+                      <span className="flex shrink-0 items-center gap-3 font-bold text-ink">
+                        Découvrir
+                        <span
+                          className="flex size-11 items-center justify-center rounded-full text-white transition-transform group-hover:translate-x-1 sm:size-12"
+                          style={{ background: FONCE }}
+                        >
+                          <IconeFleche className="size-5" />
+                        </span>
+                      </span>
+                    </div>
+                  </div>
                 </Link>
               </li>
             );
           })}
         </ul>
-
       </div>
     </main>
   );
