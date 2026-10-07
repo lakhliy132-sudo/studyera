@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import EnTeteMatiere from "@/components/EnTeteMatiere";
+
 import {
   IconeBulles,
   IconeCible,
@@ -77,22 +79,13 @@ export default async function PageLangue() {
   return (
     <main className="flex flex-col">
       <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
-        <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
-            <span className="flex size-8 items-center justify-center rounded-full border border-primary/20 bg-primary-tint text-primary">
-              <IconeLivreOuvert className="size-4" />
-            </span>
-            <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
-          </div>
-          <h1 className="mt-5 font-titre text-3xl sm:text-4xl font-bold text-ink">
-            Cours de <span className="text-primary italic">langue</span>
-          </h1>
-          <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Maîtrise les notions essentielles de la langue française pour enrichir ton
-            expression et réussir tes examens.
-          </p>
-        </section>
+        <EnTeteMatiere
+          retour={{ href: "/francais", libelle: "Retour au français" }}
+          surTitre="Français · 1ʳᵉ année bac"
+          titreAvant="Cours de "
+          titreAccent="langue"
+          description="Maîtrise les notions essentielles de la langue française pour enrichir ton expression et réussir tes examens."
+        />
 
         <div className="flex items-center gap-3 border-b border-border pb-3">
           <IconeLivreOuvert className="size-5 text-primary" />

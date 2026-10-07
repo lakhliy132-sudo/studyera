@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import EnTeteMatiere from "@/components/EnTeteMatiere";
+
 import { IconeCoche, IconeDocument, IconeFleche, IconeIdee, IconeLivreOuvert, IconePlume } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { recupererCoursParCategorie } from "@/lib/supabase/contenu";
@@ -70,21 +72,13 @@ export default async function PageProductionEcrite() {
   return (
     <main className="flex flex-col">
       <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
-        <section className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-16 bg-gradient-to-r from-transparent to-primary/40" />
-            <span className="flex size-8 items-center justify-center rounded-full border border-primary/20 bg-primary-tint text-primary">
-              <IconePlume className="size-4" />
-            </span>
-            <span className="h-px w-16 bg-gradient-to-l from-transparent to-primary/40" />
-          </div>
-          <h1 className="mt-5 font-titre text-3xl sm:text-4xl font-bold text-ink">
-            Production <span className="text-primary italic">écrite</span>
-          </h1>
-          <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Méthode, sujets et outils pour réussir tes rédactions à l&apos;examen.
-          </p>
-        </section>
+        <EnTeteMatiere
+          retour={{ href: "/francais", libelle: "Retour au français" }}
+          surTitre="Français · 1ʳᵉ année bac"
+          titreAvant="Production "
+          titreAccent="écrite"
+          description="Méthode, sujets et outils pour réussir tes rédactions à l'examen."
+        />
 
         <div className="flex items-center gap-3 border-b border-border pb-3">
           <IconeLivreOuvert className="size-5 text-primary" />
