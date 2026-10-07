@@ -64,7 +64,7 @@ export default async function PageAnnalesMatiere({
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
         <Link
           href="/examens-regionaux"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"

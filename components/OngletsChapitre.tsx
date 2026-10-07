@@ -46,7 +46,7 @@ export default function OngletsChapitre({ slug, numero, ongletActif }: OngletsCh
   return (
     <nav
       aria-label="Sections du chapitre"
-      className="mx-auto w-full max-w-3xl overflow-x-auto rounded-md bg-surface-muted p-1"
+      className="w-full overflow-x-auto rounded-md bg-surface-muted p-1"
     >
       <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {

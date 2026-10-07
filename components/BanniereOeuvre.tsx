@@ -77,7 +77,7 @@ export default function BanniereOeuvre({
       )}
 
       {progression && (
-        <div className="mt-[22px] flex justify-center">
+        <div className="mt-[22px]">
           <BarreProgression slug={slug} lus={progression.lus} total={progression.total} />
         </div>
       )}

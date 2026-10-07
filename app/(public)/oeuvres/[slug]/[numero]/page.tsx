@@ -57,8 +57,9 @@ const MOTS_CLES_MYTHE_OEDIPE: MotCle[] = [
 /**
  * /oeuvres/[slug]/[numero] — fil d'Ariane, en-tête, puis directement le
  * contenu de l'onglet Résumé (fiche de synthèse, texte intégral, la
- * "Fiche du chapitre"). Même système visuel que /oeuvres/[slug], même
- * largeur maximale (`max-w-[1240px]`, alignée sur cette page à la
+ * "Fiche du chapitre"). Même système visuel que /oeuvres/[slug] et,
+ * comme elle, pleine largeur ("je veux les etendre plus dans la page") ;
+ * auparavant `max-w-[1240px]`, alignée sur cette page à la
  * demande explicite de l'utilisateur — cette page n'est de toute façon
  * pas couverte par la maquette de référence, qui ne montre que la page
  * œuvre). Un choix précédent de largeur plus étroite (`max-w-3xl`, pour
@@ -169,7 +170,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
   return (
     <main className="flex flex-col">
-      <div className="mx-auto w-full max-w-[1240px] px-6 pt-6 text-sm text-muted-foreground">
+      <div className="w-full px-6 pt-6 text-sm sm:px-9 text-muted-foreground">
         <Link href={`/oeuvres/${slug}`} className="hover:text-ink">
           ← {oeuvre.titre_fr}
         </Link>
@@ -179,7 +180,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </span>
       </div>
 
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-16">
+      <div className="flex w-full flex-col gap-4 px-6 pb-16 sm:px-9">
         <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-5 sm:p-7 shadow-sm">
           {/* Pastille "Chapitre N" masquée quand le titre contient déjà
            * l'ordinal (Antigone : "Scène 1"...) — sinon doublon

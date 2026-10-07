@@ -65,7 +65,7 @@ export default function OngletsOeuvre({ slug, ongletActif }: OngletsOeuvreProps)
   return (
     <nav
       aria-label="Sections de l'œuvre"
-      className="mx-auto mt-6 w-full max-w-[1240px] overflow-x-auto rounded-md bg-surface-muted p-1.5"
+      className="mt-6 w-full overflow-x-auto rounded-md bg-surface-muted p-1.5"
     >
       <ul className="flex min-w-max justify-center gap-0.5">
         {ONGLETS.map(({ cle, libelle, Icone }) => {

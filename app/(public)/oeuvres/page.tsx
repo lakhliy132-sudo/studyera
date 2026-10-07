@@ -10,7 +10,7 @@ export default async function PageOeuvres() {
   const oeuvres = await recupererOeuvresParFiliere(FILIERE_ACTUELLE);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <main className="w-full px-6 py-10 sm:px-9">
       <h1 className="mb-6 text-2xl font-semibold text-foreground">
         Œuvres au programme
       </h1>
