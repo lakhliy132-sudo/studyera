@@ -126,8 +126,9 @@ clair et en sombre**, avant d'annoncer que c'est fait.
 français #1769e5   arabe #7546e9   histoire-géo #ec8214   islamique #0da58a
 ```
 
-Elles ne servent plus qu'aux **grilles de matières** (page `/matieres`,
-accueil). Partout ailleurs — pages de matière, feuilles de cours,
+Elles ne servent plus qu'à la **grille de matières de l'accueil**
+(`/matieres` suit la palette depuis sa refonte d'après maquette, à la
+demande de l'utilisateur). Partout ailleurs — pages de matière, feuilles de cours,
 sommaires, tableaux — tout suit la palette courante. Une tentative de
 teinter chaque page selon sa matière a été faite puis **annulée à la
 demande de l'utilisateur** : l'incohérence entre la section française
