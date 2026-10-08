@@ -65,7 +65,7 @@ export default function BarreNavigation({
   const logo = (
     <Link href="/" className="flex shrink-0 items-center gap-3">
       <LogoStudyera className="h-[46px] text-primary" />
-      <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground uppercase xl:block">
+      <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground whitespace-nowrap uppercase 2xl:block">
         Révisez · Comprenez · Progressez
       </span>
     </Link>

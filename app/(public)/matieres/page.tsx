@@ -1,26 +1,21 @@
-import type { ReactElement } from "react";
-
 import Link from "next/link";
 
-import ChiffresEnTete from "@/components/ChiffresEnTete";
-import EnTeteMatiere from "@/components/EnTeteMatiere";
-import { IconeCroissant, IconeFleche, IconeGlobe, IconeLivre, IconeLivreOuvert } from "@/components/icones";
+import { IconeFleche } from "@/components/icones";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { MODULES_ARABE, prefixeSlugModule } from "@/lib/modules-arabe";
 import { leconsDeSection, SECTIONS_ISLAMIQUE } from "@/lib/sections-islamique";
 import { recupererCoursParCategorie, recupererOeuvresParFiliere } from "@/lib/supabase/contenu";
 
-/** Fond sombre des pastilles et des boutons : la couleur du site
- * assombrie avec une valeur fixe, pour rester foncée en mode sombre. */
-const FONCE = "color-mix(in srgb, var(--color-primary) 55%, #0a1020)";
+/** Dégradé du haut des cartes : la couleur du site assombrie avec une
+ * valeur fixe, pour rester foncée (et le texte blanc lisible) en mode
+ * sombre comme en clair. */
+const DEGRADE =
+  "linear-gradient(160deg, color-mix(in srgb, var(--color-primary) 68%, #0a1020) 0%, color-mix(in srgb, var(--color-primary) 46%, #0a1020) 100%)";
 
 interface CarteMatierePage {
   href: string;
-  titreAvant: string;
-  titreAccent: string;
+  titre: string;
   titreArabe: string;
-  description: string;
-  Icone: (props: { className?: string }) => ReactElement;
   /** Ce que contient la matière, compté en base ; vide = "Bientôt
    * disponible". */
   contenu: string[];
@@ -34,28 +29,27 @@ function pluriel(n: number, mot: string) {
  * /matieres — les quatre matières, y compris le français ("NON FAIS LA
  * DANS LA PARTIE DE MATIERE" : /francais s'ouvre depuis une carte ici).
  *
- * Refaite d'après une maquette de l'utilisateur ("CHANGE MOI CETTE
- * PARTIE AUSSI"), dans la suite des pages de matière : en-tête à gauche
- * avec chiffres à droite, puis 2 × 2 cartes blanches — pastille d'icône
- * foncée, nom arabe en filigrane, titre avec un mot en accent,
- * description, et en pied ce que contient la matière avec "Découvrir".
+ * Refaite d'après une seconde maquette de l'utilisateur : titre centré,
+ * puis quatre cartes côte à côte, chacune avec un haut foncé portant le
+ * nom arabe de la matière en grand, et en bas son nom français, ce
+ * qu'elle contient et une flèche. Le nom français est écrit en entier et
+ * d'une seule police ("met moi le titre en francais en entier dans le
+ * meme font") : "Histoire-Géographie" et non "Histoire-Géo", sans mot en
+ * italique.
  *
  * Toutes les cartes suivent la palette, comme sur la maquette : les
- * couleurs propres à chaque matière (bleu, violet, orange, vert) ne
- * restent que sur la grille de l'accueil.
+ * couleurs propres à chaque matière ne restent que sur la grille de
+ * l'accueil.
  *
  * Écarts avec la maquette, faute de donnée (CLAUDE.md) :
- * - pas de pastille "Coef. N" ni de "coefficient total" : aucun
- *   coefficient n'est connu en base. Le second chiffre de l'en-tête est
- *   le nombre de leçons, compté ;
- * - les pieds de carte ("3 œuvres, 12 notions", "4 modules"…) sont
+ * - pas de pastille "Coef. N" : aucun coefficient n'est connu en base ;
+ * - les pieds de carte ("3 œuvres · 12 notions", "4 modules"…) sont
  *   comptés sur la table `cours` et les œuvres, pas recopiés.
  */
 export default async function PageMatieres() {
-  const [oeuvres, langue, production, arabe, histoireGeo, islamique] = await Promise.all([
+  const [oeuvres, langue, arabe, histoireGeo, islamique] = await Promise.all([
     recupererOeuvresParFiliere(FILIERE_ACTUELLE),
     recupererCoursParCategorie("langue", FILIERE_ACTUELLE),
-    recupererCoursParCategorie("production-ecrite", FILIERE_ACTUELLE),
     recupererCoursParCategorie("arabe", FILIERE_ACTUELLE),
     recupererCoursParCategorie("histoire-geo", FILIERE_ACTUELLE),
     recupererCoursParCategorie("education-islamique", FILIERE_ACTUELLE),
@@ -68,11 +62,8 @@ export default async function PageMatieres() {
   const cartes: CarteMatierePage[] = [
     {
       href: "/francais",
-      titreAvant: "Le ",
-      titreAccent: "français",
+      titre: "Le français",
       titreArabe: "الفرنسية",
-      description: "Étudie la langue française, la littérature, la production écrite et la correction.",
-      Icone: IconeLivre,
       contenu: [
         oeuvres.length > 0 ? pluriel(oeuvres.length, "œuvre") : "",
         langue.length > 0 ? pluriel(langue.length, "notion") : "",
@@ -80,11 +71,8 @@ export default async function PageMatieres() {
     },
     {
       href: "/arabe",
-      titreAvant: "L'",
-      titreAccent: "arabe",
+      titre: "L'arabe",
       titreArabe: "العربية",
-      description: "Textes, grammaire et expression pour renforcer tes compétences en langue arabe.",
-      Icone: IconeLivreOuvert,
       contenu: [
         modulesArabe.length > 0 ? pluriel(modulesArabe.length, "module") : "",
         arabe.length > 0 ? pluriel(arabe.length, "leçon") : "",
@@ -92,95 +80,71 @@ export default async function PageMatieres() {
     },
     {
       href: "/histoire-geo",
-      titreAvant: "Histoire-",
-      titreAccent: "Géographie",
+      titre: "Histoire-Géographie",
       titreArabe: "التاريخ والجغرافيا",
-      description: "Comprends le passé, explore le monde et analyse les sociétés.",
-      Icone: IconeGlobe,
       contenu: [histoireGeo.length > 0 ? pluriel(histoireGeo.length, "leçon") : ""],
     },
     {
       href: "/education-islamique",
-      titreAvant: "Éducation ",
-      titreAccent: "islamique",
+      titre: "Éducation islamique",
       titreArabe: "التربية الإسلامية",
-      description: "Cours, notions clés et repères pour l'examen d'éducation islamique.",
-      Icone: IconeCroissant,
       contenu: [avecSourate ? sourate.titre : "", islamique.length > 0 ? pluriel(islamique.length, "leçon") : ""],
     },
   ];
-
-  const totalLecons = langue.length + production.length + arabe.length + histoireGeo.length + islamique.length;
 
   return (
     <main className="relative flex flex-col overflow-hidden">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/3 -z-10 size-[520px] rounded-full bg-primary/10 blur-3xl"
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 size-[520px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
       />
-      <div className="flex w-full flex-col gap-8 px-6 pt-8 pb-12 sm:gap-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-12 sm:pb-16">
-        <EnTeteMatiere
-          surTitre="1ʳᵉ année bac · Examen régional"
-          titreAvant="Les "
-          titreAccent="matières"
-          description="Explore toutes les matières de ton parcours et progresse à ton rythme."
-          aside={
-            <ChiffresEnTete
-              chiffres={[
-                { valeur: cartes.length, libelle: "matières" },
-                { valeur: totalLecons, libelle: "leçons en ligne" },
-              ]}
-            />
-          }
-        />
+      <div className="flex w-full flex-col gap-8 px-6 pt-10 pb-12 sm:gap-12 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-16 sm:pb-20">
+        <header className="flex flex-col items-center text-center">
+          <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase sm:text-[13px]">
+            1ʳᵉ année bac · Examen régional
+          </p>
+          <h1 className="mt-3 font-titre text-[38px] leading-[1.05] font-bold text-ink sm:text-5xl lg:text-[64px]">
+            Les <span className="text-primary italic">matières</span>
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Explore toutes les matières de ton parcours et progresse à ton rythme.
+          </p>
+        </header>
 
-        <ul className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 min-[1400px]:grid-cols-4">
           {cartes.map((carte) => {
             const contenu = carte.contenu.filter(Boolean);
             return (
               <li key={carte.href}>
                 <Link
                   href={carte.href}
-                  className="group flex h-full flex-col rounded-[28px] border border-border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg sm:p-9"
+                  className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-border bg-surface shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <span
-                      className="flex size-14 shrink-0 items-center justify-center rounded-[16px] text-white sm:size-16"
-                      style={{ background: FONCE }}
-                    >
-                      <carte.Icone className="size-6 sm:size-7" />
-                    </span>
-                    <span
-                      aria-hidden="true"
+                  <div
+                    className="relative flex h-[170px] items-center justify-center overflow-hidden px-5 sm:h-[230px]"
+                    style={{ background: DEGRADE }}
+                  >
+                    {/* Halo et cercle décoratifs, pour que le haut ne soit
+                        pas un aplat. */}
+                    <span aria-hidden="true" className="pointer-events-none absolute -top-16 -left-10 size-48 rounded-full bg-white/10 blur-2xl" />
+                    <span aria-hidden="true" className="pointer-events-none absolute -right-12 -bottom-16 size-44 rounded-full border-[18px] border-white/[0.06]" />
+                    <p
                       dir="rtl"
                       lang="ar"
-                      className="font-arabe text-[26px] leading-none font-bold text-primary/15 select-none sm:text-[40px]"
+                      className="relative text-center font-arabe text-[40px] leading-tight font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:text-[42px] min-[1400px]:text-[34px] 2xl:text-[46px]"
                     >
                       {carte.titreArabe}
-                    </span>
+                    </p>
                   </div>
 
-                  <h2 className="mt-7 font-serif text-[28px] leading-tight font-bold text-ink sm:mt-9 sm:text-[34px]">
-                    {carte.titreAvant}
-                    <span className="text-primary italic">{carte.titreAccent}</span>
-                  </h2>
-                  <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                    {carte.description}
-                  </p>
-
-                  <div className="mt-auto pt-7 sm:pt-9">
-                    <div className="flex items-center justify-between gap-4 border-t border-border pt-5 sm:pt-6">
-                      <span className="text-sm text-muted-foreground sm:text-base">
+                  <div className="flex flex-1 flex-col p-6 sm:p-7">
+                    <h2 className="font-serif text-2xl leading-tight font-bold text-ink sm:text-[26px] min-[1400px]:text-[21px] 2xl:text-[26px]">{carte.titre}</h2>
+                    <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+                      <span className="text-sm text-muted-foreground sm:text-[15px]">
                         {contenu.length > 0 ? contenu.join(" · ") : "Bientôt disponible"}
                       </span>
-                      <span className="flex shrink-0 items-center gap-3 font-bold text-ink">
-                        Découvrir
-                        <span
-                          className="flex size-11 items-center justify-center rounded-full text-white transition-transform group-hover:translate-x-1 sm:size-12"
-                          style={{ background: FONCE }}
-                        >
-                          <IconeFleche className="size-5" />
-                        </span>
+                      <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-ink transition-colors group-hover:border-transparent group-hover:bg-primary group-hover:text-white">
+                        <IconeFleche className="size-4" />
                       </span>
                     </div>
                   </div>
