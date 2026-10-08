@@ -118,7 +118,7 @@ export default async function PageMatieres() {
         aria-hidden="true"
         className="pointer-events-none absolute -top-40 left-1/3 -z-10 size-[520px] rounded-full bg-primary/10 blur-3xl"
       />
-      <div className="flex w-full flex-col gap-8 px-6 pt-8 pb-12 sm:gap-10 sm:px-9 sm:pt-12 sm:pb-16">
+      <div className="flex w-full flex-col gap-8 px-6 pt-8 pb-12 sm:gap-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-12 sm:pb-16">
         <EnTeteMatiere
           surTitre="1ʳᵉ année bac · Examen régional"
           titreAvant="Les "

@@ -126,7 +126,7 @@ export default async function PageCommunaute({
         />
       </div>
 
-      <main className="flex w-full flex-col gap-6 px-6 py-8 sm:px-9">
+      <main className="flex w-full flex-col gap-6 px-6 py-8 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <section
           className="relative overflow-hidden rounded-[24px] p-5 sm:p-8 text-white shadow-sm sm:p-9"
           style={{

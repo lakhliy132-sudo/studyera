@@ -102,7 +102,7 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-4 px-6 pt-6 pb-16 sm:px-9">
+      <div className="flex w-full flex-col gap-4 px-6 pt-6 pb-16 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <BanniereOeuvre
           slug={slug}
           oeuvre={oeuvre}

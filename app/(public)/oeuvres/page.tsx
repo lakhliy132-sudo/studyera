@@ -11,7 +11,7 @@ export default async function PageOeuvres() {
   const oeuvres = await recupererOeuvresParFiliere(FILIERE_ACTUELLE);
 
   return (
-    <main className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+    <main className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
       <EnTeteMatiere
         retour={{ href: "/francais", libelle: "Retour au français" }}
         surTitre="Français · 1ʳᵉ année bac"

@@ -71,7 +71,7 @@ export default async function PageFrancais() {
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
         <EnTeteMatiere
           retour={{ href: "/matieres", libelle: "Retour aux matières" }}
           surTitre="1ʳᵉ année bac · Examen régional"
@@ -145,12 +145,12 @@ export default async function PageFrancais() {
               progression. Rien n'y est écrit à la main : une œuvre sans
               couverture, sans fiche ou sans photo perd seulement l'élément
               manquant. */}
-          <section className="relative flex flex-col gap-6 overflow-hidden rounded-[28px] border border-border bg-surface p-6 shadow-sm sm:p-9 xl:flex-row xl:items-stretch xl:gap-8">
+          <section className="relative flex flex-col gap-6 overflow-hidden rounded-[28px] border border-border bg-surface p-6 shadow-sm sm:p-9 2xl:flex-row 2xl:items-stretch 2xl:gap-8">
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="relative flex flex-col xl:w-[34%] xl:shrink-0">
+            <div className="relative flex flex-col 2xl:w-[34%] 2xl:shrink-0">
               <span className="flex size-14 items-center justify-center rounded-[16px] bg-primary-tint text-primary">
                 <IconeLivre className="size-6" />
               </span>
@@ -165,7 +165,7 @@ export default async function PageFrancais() {
                   {oeuvres.length} {oeuvres.length > 1 ? "œuvres" : "œuvre"} · {totalChapitres} chapitres à découvrir
                 </p>
               )}
-              <Link href="/oeuvres" className="group mt-6 flex items-center justify-between font-bold text-ink xl:mt-auto">
+              <Link href="/oeuvres" className="group mt-6 flex items-center justify-between font-bold text-ink 2xl:mt-auto">
                 Voir les œuvres
                 <span
                   className="flex size-12 items-center justify-center rounded-full text-white transition-transform group-hover:translate-x-1"
@@ -219,7 +219,7 @@ export default async function PageFrancais() {
                           <span className="mt-0.5 font-serif text-lg leading-snug font-bold text-ink group-hover:text-primary sm:text-[21px]">
                             {oeuvre.titre_fr}
                           </span>
-                          {details && <span className="mt-0.5 text-sm text-muted-foreground sm:truncate">{details}</span>}
+                          {details && <span className="mt-0.5 text-sm text-muted-foreground">{details}</span>}
                           <span className="mt-2 flex items-center gap-3">
                             {oeuvre.nombreChapitres > 0 && (
                               <span className="shrink-0 rounded-full bg-primary-tint px-2.5 py-0.5 text-xs font-semibold text-primary">

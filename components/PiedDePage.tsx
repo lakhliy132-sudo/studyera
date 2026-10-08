@@ -47,7 +47,7 @@ const COLONNES: ColonnePied[] = [
 export default function PiedDePage() {
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="flex w-full flex-col gap-6 px-6 py-7 sm:px-9">
+      <div className="flex w-full flex-col gap-6 px-6 py-7 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
           <div className="flex max-w-xs flex-col gap-2">
             <Link href="/" className="flex items-center gap-2.5">

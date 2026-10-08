@@ -110,7 +110,7 @@ async function AccueilConnecte({
         />
       </div>
 
-      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
+      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         {/* Entrée échelonnée des blocs au chargement — demandé par
          * l'utilisateur parmi plusieurs propositions d'élégance. Même
          * animation que les cartes de /oeuvres
@@ -296,7 +296,7 @@ export default async function PageAccueil() {
         </svg>
       </div>
 
-      <main className="flex w-full flex-col px-6 pb-20 sm:px-9">
+      <main className="flex w-full flex-col px-6 pb-20 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <section className="flex flex-col items-center gap-6 py-12 sm:py-20 text-center">
           <span className="rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             1<sup>ère</sup> année du baccalauréat · Maroc

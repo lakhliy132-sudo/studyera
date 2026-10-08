@@ -170,7 +170,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
   return (
     <main className="flex flex-col">
-      <div className="w-full px-6 pt-6 text-sm sm:px-9 text-muted-foreground">
+      <div className="w-full px-6 pt-6 text-sm sm:px-9 lg:px-16 xl:px-24 2xl:px-40 text-muted-foreground">
         <Link href={`/oeuvres/${slug}`} className="hover:text-ink">
           ← {oeuvre.titre_fr}
         </Link>
@@ -180,7 +180,7 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
         </span>
       </div>
 
-      <div className="flex w-full flex-col gap-4 px-6 pb-16 sm:px-9">
+      <div className="flex w-full flex-col gap-4 px-6 pb-16 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-5 sm:p-7 shadow-sm">
           {/* Pastille "Chapitre N" masquée quand le titre contient déjà
            * l'ordinal (Antigone : "Scène 1"...) — sinon doublon

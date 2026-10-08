@@ -108,7 +108,7 @@ export default async function PageCorrection({
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full max-w-[900px] flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 sm:pt-9 sm:pb-16">
+      <div className="flex w-full max-w-[900px] flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
         <Link
           href="/redaction/nouvelle"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
