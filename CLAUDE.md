@@ -147,11 +147,15 @@ demande de l'utilisateur** : l'incohérence entre la section française
 
 ## 4. Mise en page
 
-- **Pleine largeur.** Les pages se construisent avec
-  `flex w-full flex-col … px-6 sm:px-9`, jamais `mx-auto max-w-*`.
-  L'utilisateur y tient : « je veux la forme d'un site, pas la forme
-  d'une application ». Seule exception admise : un texte long destiné à
-  la lecture — et encore, en demandant.
+- **Pleine largeur, avec des marges.** Les pages se construisent avec
+  `flex w-full flex-col … px-6 sm:px-9 lg:px-16 xl:px-24 2xl:px-40`,
+  jamais `mx-auto max-w-*`. L'utilisateur y tient : « je veux la forme
+  d'un site, pas la forme d'une application ». Les marges grandissent
+  avec l'écran (« avoir de la marge dans les côtés ») ; la barre du haut
+  et le pied de page prennent les mêmes, pour rester alignés. Toute
+  nouvelle page reprend cette suite de classes telle quelle. Seule
+  exception admise au `max-w` : un texte long destiné à la lecture — et
+  encore, en demandant.
 - **Téléphone d'abord pour les espacements.** Les marges et les tailles
   de titre sont resserrées en dessous de `sm` (640 px), les valeurs de
   bureau restant au-dessus. Les cartes de leçon deviennent des lignes

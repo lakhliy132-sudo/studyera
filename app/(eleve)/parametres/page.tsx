@@ -14,7 +14,7 @@ import { IconePalette } from "@/components/icones";
  */
 export default function PageParametres() {
   return (
-    <main className="flex w-full flex-col gap-6 px-6 py-8 sm:px-9">
+    <main className="flex w-full flex-col gap-6 px-6 py-8 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
       <div className="flex items-center gap-3.5">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
           <IconePalette className="size-5" />

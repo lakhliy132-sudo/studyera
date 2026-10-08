@@ -311,7 +311,7 @@ export default async function PageMatiereListe({ params }: PagePropsMatiere) {
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-8 px-6 pt-6 pb-10 sm:gap-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
         <EnTeteMatiere
           retour={{ href: "/matieres", libelle: "Retour aux matières" }}
           surTitre="1ʳᵉ année bac · Examen régional"

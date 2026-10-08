@@ -109,7 +109,7 @@ export default function BarreNavigation({
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
-      <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
+      <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7 lg:px-16 xl:px-24 2xl:px-40">
         {logo}
 
         <nav

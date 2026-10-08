@@ -125,7 +125,7 @@ export default async function PageTableauDeBord() {
 
       {/* Pleine largeur, comme l accueil : une colonne centree laissait
        * de larges bandes vides sur les cotes. */}
-      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9">
+      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
         <EnTeteTableauDeBord prenom={prenom} serie={serie} />
 
         {reprise && <CarteReprise reprise={reprise} />}

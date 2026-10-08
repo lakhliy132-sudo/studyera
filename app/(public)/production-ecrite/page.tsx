@@ -71,7 +71,7 @@ export default async function PageProductionEcrite() {
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 pt-6 pb-10 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-6 sm:gap-9 px-6 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 pt-6 pb-10 sm:pt-9 sm:pb-16">
         <EnTeteMatiere
           retour={{ href: "/francais", libelle: "Retour au français" }}
           surTitre="Français · 1ʳᵉ année bac"

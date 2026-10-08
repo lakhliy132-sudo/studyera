@@ -163,7 +163,7 @@ export default async function PageProgres() {
     copies.length > 1 ? copies[copies.length - 1].note - copies[0].note : null;
 
   return (
-    <main className="flex w-full flex-col gap-5 px-6 py-8 sm:px-9">
+    <main className="flex w-full flex-col gap-5 px-6 py-8 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
       <div>
         <Link
           href="/tableau-de-bord"

@@ -321,7 +321,7 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
     // Pleine largeur, comme le reste du site — demandé par l'utilisateur
     // ("TOUT LES ELEMENT DE LA PAGE CENTRAL SONT TOUJOUR COMME CA
     // SURTOUT EN FRANCAIS, centré et petit, je veux les etendre").
-    <main className="w-full px-6 py-10 sm:px-9">
+    <main className="w-full px-6 py-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
       <Link href="/production-ecrite" className="text-sm text-muted-foreground hover:text-primary">
         ← Production écrite
       </Link>
