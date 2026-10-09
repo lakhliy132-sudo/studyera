@@ -1,3 +1,4 @@
+import { lireEpreuve } from "@/lib/annales-questions";
 import { creerClientServeur } from "@/lib/supabase/server";
 
 /** La table est créée par supabase/migrations/20261003000000_annales.sql,
@@ -38,6 +39,10 @@ export interface AnnaleResumee {
   oeuvre: string | null;
   duree_minutes: number | null;
   aCorrige: boolean;
+  /** Vrai si le sujet est découpé en questions (colonne `questions`
+   * lisible) : c'est ce qui ouvre le mode entraînement. Un sujet dont on
+   * n'a que l'énoncé brut s'affiche, mais sans entraînement. */
+  aEntrainement: boolean;
 }
 
 /** Les sujets d'une matière, les plus récents d'abord. */
@@ -47,7 +52,7 @@ export async function recupererAnnalesParMatiere(
   const supabase = await creerClientServeur();
   const { data, error } = await supabase
     .from("annales")
-    .select("id, matiere, annee, session, oeuvre, duree_minutes, corrige_mdx")
+    .select("id, matiere, annee, session, oeuvre, duree_minutes, corrige_mdx, questions")
     .eq("matiere", matiere)
     .order("annee", { ascending: false })
     .order("session");
@@ -63,6 +68,7 @@ export async function recupererAnnalesParMatiere(
     oeuvre: ligne.oeuvre,
     duree_minutes: ligne.duree_minutes,
     aCorrige: Boolean(ligne.corrige_mdx),
+    aEntrainement: lireEpreuve(ligne.questions) !== null,
   }));
 }
 

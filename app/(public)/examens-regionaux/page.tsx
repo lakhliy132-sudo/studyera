@@ -8,7 +8,6 @@ import {
   IllustrationLivreOuvert,
   IllustrationMosquee,
 } from "@/components/IllustrationsMatieres";
-import { accentMatiere } from "@/lib/palette-matieres";
 import { compterAnnalesParMatiere } from "@/lib/supabase/annales";
 
 const MATIERES_EXAMEN = [
@@ -57,17 +56,11 @@ export default async function PageExamensRegionaux() {
 
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-[18px]">
           {MATIERES_EXAMEN.map((matiere) => {
-            const accent = accentMatiere(matiere.slug);
             const nombre = comptes[matiere.slug] ?? 0;
 
             const interieur = (
               <>
-                <span
-                  style={{
-                    backgroundColor: `color-mix(in srgb, ${accent} 16%, var(--color-surface))`,
-                  }}
-                  className="flex size-[60px] shrink-0 items-center justify-center rounded-full"
-                >
+                <span className="flex size-[60px] shrink-0 items-center justify-center rounded-full bg-primary-tint">
                   <matiere.Illustration className="size-9" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -81,7 +74,7 @@ export default async function PageExamensRegionaux() {
                   </span>
                 </span>
                 {nombre > 0 && (
-                  <span style={{ color: accent }} className="shrink-0">
+                  <span className="shrink-0 text-primary">
                     <IconeFleche className="size-5 transition-transform group-hover:translate-x-1" />
                   </span>
                 )}

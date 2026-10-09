@@ -47,11 +47,11 @@ function Etat({ actif, libelle }: { actif: boolean; libelle: string }) {
 export default function ListeAnnales({
   annales,
   matiereSlug,
-  accent,
+  titreMatiere,
 }: {
   annales: AnnaleResumee[];
   matiereSlug: string;
-  accent: string;
+  titreMatiere: string;
 }) {
   const [recherche, setRecherche] = useState("");
   const [session, setSession] = useState<CleSession>("toutes");
@@ -150,16 +150,10 @@ export default function ListeAnnales({
                   <span className="font-serif text-[32px] leading-none font-bold text-ink">
                     {annale.annee}
                   </span>
-                  <span
-                    style={{
-                      backgroundColor: `color-mix(in srgb, ${accent} 14%, var(--color-surface))`,
-                      color: accent,
-                    }}
-                    className="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                  >
-                    {annale.duree_minutes
-                      ? `${Math.round(annale.duree_minutes / 60)} h`
-                      : "Sujet"}
+                  {/* La matière, comme sur la maquette (« Français »),
+                   * et non plus la durée, déjà donnée dans le bandeau. */}
+                  <span className="shrink-0 rounded-full bg-primary-tint px-2.5 py-1 text-xs font-bold text-primary">
+                    {titreMatiere}
                   </span>
                 </div>
 
@@ -176,12 +170,9 @@ export default function ListeAnnales({
                 <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
                   <span className="flex items-center gap-3">
                     <Etat actif={annale.aCorrige} libelle="Corrigé" />
-                    <Etat actif libelle="Entraînement" />
+                    <Etat actif={annale.aEntrainement} libelle="Entraînement" />
                   </span>
-                  <span
-                    style={{ color: accent }}
-                    className="flex items-center gap-1 text-sm font-semibold"
-                  >
+                  <span className="flex items-center gap-1 text-sm font-bold text-primary">
                     Ouvrir
                     <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
                   </span>
