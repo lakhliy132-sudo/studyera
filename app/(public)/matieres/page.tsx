@@ -12,6 +12,13 @@ import { recupererCoursParCategorie, recupererOeuvresParFiliere } from "@/lib/su
 const DEGRADE =
   "linear-gradient(160deg, color-mix(in srgb, var(--color-primary) 68%, #0a1020) 0%, color-mix(in srgb, var(--color-primary) 46%, #0a1020) 100%)";
 
+/** Motif d'arrière-plan : une étoile à huit branches (deux carrés, dont
+ * un tourné de 45°) reliée à ses voisines, en tuile de 72 px. Sert de
+ * masque, la couleur vient de la feuille de style. */
+const MOTIF_ZELLIGE = `url("data:image/svg+xml,${encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72' fill='none' stroke='black' stroke-width='1.3'><rect x='24' y='24' width='24' height='24'/><rect x='24' y='24' width='24' height='24' transform='rotate(45 36 36)'/><circle cx='36' cy='36' r='5'/><path d='M36 0v19M36 53v19M0 36h19M53 36h19M0 0l11 11M72 0 61 11M0 72l11-11M72 72 61 61'/></svg>",
+)}")`;
+
 interface CarteMatierePage {
   href: string;
   titre: string;
@@ -94,10 +101,45 @@ export default async function PageMatieres() {
 
   return (
     <main className="relative flex flex-col overflow-hidden">
-      <span
+      {/* Arrière-plan de la page ("fais un arrière-plan") : un dégradé
+       * doux en haut, un motif d'étoiles à huit branches façon zellige
+       * qui s'efface vers le bas, et deux halos. Le motif est un masque
+       * rempli avec la couleur du site : il suit la palette et le mode
+       * sombre, sans couleur en dur. Le tout s'efface en bas, sinon les
+       * halos s'arrêtaient net au-dessus du pied de page. */}
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 -z-10 size-[520px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
-      />
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+        style={{
+          maskImage: "linear-gradient(to bottom, black 70%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent)",
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 90% 65% at 50% 0%, var(--color-primary-tint) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.09]"
+          style={{
+            backgroundColor: "var(--color-primary)",
+            maskImage: `${MOTIF_ZELLIGE}, linear-gradient(to bottom, black 0%, black 35%, transparent 85%)`,
+            maskSize: "72px 72px, 100% 100%",
+            maskRepeat: "repeat, no-repeat",
+            maskComposite: "intersect",
+            WebkitMaskImage: `${MOTIF_ZELLIGE}, linear-gradient(to bottom, black 0%, black 35%, transparent 85%)`,
+            WebkitMaskSize: "72px 72px, 100% 100%",
+            WebkitMaskRepeat: "repeat, no-repeat",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
+        <span className="absolute -top-40 left-1/2 size-[560px] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
+        <span className="absolute top-1/2 -right-40 size-[420px] rounded-full bg-[#f472b6]/10 blur-3xl" />
+        <span className="absolute -bottom-40 -left-32 size-[420px] rounded-full bg-primary/10 blur-3xl" />
+      </div>
       <div className="flex w-full flex-col gap-8 px-6 pt-10 pb-12 sm:gap-12 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-16 sm:pb-20">
         <header className="flex flex-col items-center text-center">
           <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase sm:text-[13px]">
@@ -134,14 +176,14 @@ export default async function PageMatieres() {
                     <p
                       dir="rtl"
                       lang="ar"
-                      className="relative text-center font-arabe text-[40px] leading-tight font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:max-[1399px]:text-[42px] min-[1400px]:max-[1535px]:text-[34px] 2xl:text-[46px]"
+                      className="relative text-center font-arabe text-[40px] leading-tight font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:max-[1399px]:text-[42px] min-[1400px]:max-[1535px]:text-[34px] 2xl:text-[38px]"
                     >
                       {carte.titreArabe}
                     </p>
                   </div>
 
                   <div className="flex flex-1 flex-col p-6 sm:p-7">
-                    <h2 className="font-serif text-2xl leading-tight font-bold text-ink sm:max-[1399px]:text-[26px] min-[1400px]:max-[1535px]:text-[21px] 2xl:text-[26px]">{carte.titre}</h2>
+                    <h2 className="font-serif text-2xl leading-tight font-bold text-ink sm:max-[1399px]:text-[26px] min-[1400px]:max-[1535px]:text-[21px] 2xl:text-[22px]">{carte.titre}</h2>
                     <div className="mt-auto flex items-center justify-between gap-3 pt-5">
                       <span className="text-sm text-muted-foreground sm:text-[15px]">
                         {contenu.length > 0 ? contenu.join(" · ") : "Bientôt disponible"}
