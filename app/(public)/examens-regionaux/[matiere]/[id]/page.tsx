@@ -84,6 +84,7 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             <div className="min-w-0">
               <p className="text-[13px] text-white/60">
                 Examen régional, session {annale.session}
+                {annale.academie && ` · ${annale.academie}`}
               </p>
               <h1 className="font-titre text-2xl font-bold text-white sm:text-[28px]">
                 {titreMatiere} {annale.annee}
@@ -95,6 +96,7 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
           </div>
 
           <dl className="flex flex-wrap gap-x-10 gap-y-4 border-t border-white/10 pt-4">
+            <Repere libelle="Académie" valeur={annale.academie} />
             <Repere libelle="Œuvre" valeur={annale.oeuvre} />
             <Repere libelle="Filière" valeur={annale.filiere_libelle} />
             <Repere

@@ -30,8 +30,7 @@ create table if not exists public.annales (
   -- alors la pastille "Corrigé" éteinte, plutôt que de promettre un
   -- corrigé inexistant.
   corrige_mdx text,
-  created_at timestamptz not null default now(),
-  unique (matiere, annee, session)
+  created_at timestamptz not null default now()
 );
 
 -- Ajoutees apres coup, quand la maquette de l epreuve interactive a ete
@@ -44,6 +43,22 @@ alter table public.annales
   -- Null pour un sujet dont on n a que l enonce brut : la page retombe
   -- alors sur enonce_mdx.
   add column if not exists questions jsonb;
+
+-- L'examen régional change d'une académie à l'autre : la liste fournie
+-- par l'utilisateur donne, pour le français, « Examen 2025 CASA » et
+-- « Examen 2025 RABAT », deux sujets différents la même année. Libellé
+-- libre ("Casablanca-Settat", "Rabat-Salé-Kénitra"), null si inconnu.
+alter table public.annales
+  add column if not exists academie text;
+
+-- Un sujet par matière, année, session et académie. L'ancienne
+-- contrainte (sans académie) est retirée si le fichier avait déjà été
+-- lancé dans sa première version ; coalesce pour que deux sujets sans
+-- académie restent en conflit.
+alter table public.annales
+  drop constraint if exists annales_matiere_annee_session_key;
+create unique index if not exists annales_sujet_unique
+  on public.annales (matiere, annee, session, coalesce(academie, ''));
 
 create index if not exists idx_annales_matiere on public.annales (matiere);
 -- Sert le tri par défaut de la liste : les sujets les plus récents
