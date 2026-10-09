@@ -3,22 +3,29 @@
 -- fournies par l'utilisateur ; aucune réponse n'est saisie, le sujet a
 -- été fourni sans corrigé.
 --
--- Durée, coefficient et filière ne figurent pas sur les pages reçues
--- (l'en-tête de la première page n'y est pas) : laissés vides plutôt
--- que supposés. La session n'y figure pas non plus ; "normale" d'après
--- la demande de l'utilisateur (« Examen 2023 CASA »).
+-- L'en-tête de la première page, absent du premier envoi, a été fourni
+-- ensuite : « Examen régional du baccalauréat – Session normale : 2023 »,
+-- « SERIE : scientifiques, techno, éco, arts appliqués... »,
+-- « Coef 04 / 03 », « Durée : 2 heures ». D'où la session, la filière et
+-- la durée ci-dessous.
+--
+-- Le coefficient reste vide : la feuille en donne deux (« 04 / 03 »),
+-- sans dire lequel va à quelle série, et la colonne `coefficient` n'en
+-- tient qu'un. En choisir un serait inventer.
 --
 -- À lancer après 20261003000000_annales.sql. Rejouable : le sujet est
 -- remplacé s'il existe déjà.
 
 insert into public.annales
-  (matiere, annee, session, academie, oeuvre, enonce_mdx, questions)
+  (matiere, annee, session, academie, oeuvre, filiere_libelle, duree_minutes, enonce_mdx, questions)
 values (
   $sujet$francais$sujet$,
   2023,
   $sujet$normale$sujet$,
   $sujet$Casablanca-Settat$sujet$,
   $sujet$Le Dernier Jour d'un condamné$sujet$,
+  $sujet$Scientifiques, techno, éco, arts appliqués...$sujet$,
+  120,
   $sujet$## Texte
 
 Certes, la matière est riche ; et, si abrégée que soit ma vie, il y aura bien encore dans les angoisses, dans les terreurs, dans les tortures qui la rempliront, de cette heure à la dernière, de quoi user cette plume et tarir cet encrier. -- D'ailleurs, ces angoisses, le seul moyen d'en moins souffrir, c'est de les observer, et les peindre m'en distraira.
@@ -90,5 +97,7 @@ Croyez-vous vraiment que l'écriture comme moyen d'expression (romans, journaux 
 on conflict (matiere, annee, session, coalesce(academie, ''))
 do update set
   oeuvre = excluded.oeuvre,
+  filiere_libelle = excluded.filiere_libelle,
+  duree_minutes = excluded.duree_minutes,
   enonce_mdx = excluded.enonce_mdx,
   questions = excluded.questions;
