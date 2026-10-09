@@ -32,7 +32,10 @@ interface LigneSujet {
  * (`ANTHROPIC_API_KEY` dans `.env.local`), elle le dit et n'offre pas
  * un formulaire qui échouerait à l'envoi.
  */
-export default async function PageNouvelleRedaction() {
+export default async function PageNouvelleRedaction({ searchParams }: { searchParams: Promise<{ sujet?: string }> }) {
+  // "Réécrire ma copie", depuis une correction : le même sujet est
+  // présélectionné.
+  const { sujet: sujetDemande } = await searchParams;
   const supabase = await creerClientServeur();
   const {
     data: { user },
@@ -122,7 +125,12 @@ export default async function PageNouvelleRedaction() {
             d&apos;abord si tu réponds à la consigne.
           </p>
         ) : (
-          <FormulaireCopie sujets={sujets} quotaRestant={quotaRestant} correcteurPret={correcteurPret} />
+          <FormulaireCopie
+            sujets={sujets}
+            sujetInitial={sujets.some((s) => s.id === sujetDemande) ? sujetDemande : undefined}
+            quotaRestant={quotaRestant}
+            correcteurPret={correcteurPret}
+          />
         )}
 
         <p className="text-xs leading-relaxed text-subtle-foreground">

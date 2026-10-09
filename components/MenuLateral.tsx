@@ -214,7 +214,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         type="button"
         onClick={() => setOuvert(true)}
         aria-label="Ouvrir le menu"
-        className="fixed top-4 left-4 z-40 rounded-[12px] border border-border bg-surface p-2 text-foreground shadow-sm xl:hidden"
+        className="fixed top-4 left-4 z-40 rounded-[12px] border border-border bg-surface p-2 text-foreground shadow-sm xl:hidden print:hidden"
       >
         <Icone trace={TRACES.menu} />
       </button>
@@ -237,7 +237,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           background:
             "linear-gradient(180deg, var(--fond-sombre-haut) 0%, var(--fond-sombre-bas) 100%)",
         }}
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col text-white transition-all duration-200 xl:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col text-white transition-all duration-200 xl:translate-x-0 print:hidden ${
           reduit ? "w-[76px]" : "w-72"
         } ${ouvert ? "translate-x-0" : "-translate-x-full"}`}
       >
