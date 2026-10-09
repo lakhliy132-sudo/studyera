@@ -248,8 +248,20 @@ Tables principales : `cours`, `oeuvres`, `chapitres`, `sujets`,
   base** : notes bornées à leur barème, listes nettoyées.
 - Quota et longueur sont revalidés **dans l'action serveur**, pas
   seulement à l'affichage : un formulaire peut être rejoué.
-- Texte uniquement pour l'instant. Pas de photo de copie : il faudrait
-  un stockage d'images et une transcription.
+- **Copie en photo** (« quand l'étudiant envoie son expression écrite
+  par photo… ») : `transcrirePhotos` fait lire les pages au modèle
+  (`transcrireCopie`), **sans rien corriger** — les fautes doivent
+  rester, la note porte dessus. Les mots incertains reviennent entre
+  `⟦ ⟧`, les illisibles en `[?]`. L'élève relit à côté de ses photos,
+  corrige la lecture, puis « Valider et corriger » passe par la même
+  action que le texte tapé. Les photos sont réduites dans le navigateur
+  (1800 px, JPEG) et **jamais enregistrées** : seul le texte validé
+  l'est. `next.config.ts` porte la limite d'envoi à 4 Mo (Vercel
+  refuse au-delà de 4,5 Mo).
+- **Quota** : `quota_jour` est augmenté après chaque correction
+  enregistrée (clé de service, l'élève n'a pas le droit d'y écrire).
+  La lecture d'une photo ne consomme pas de correction mais n'est
+  permise que s'il en reste une.
 
 ---
 

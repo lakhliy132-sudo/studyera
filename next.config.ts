@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
   // désigne explicitement ce dossier-ci.
   outputFileTracingRoot: __dirname,
 
+  experimental: {
+    serverActions: {
+      // Photos d'une copie envoyées au correcteur (jusqu'à 4 pages,
+      // réduites dans le navigateur à ~0,5 Mo chacune). La limite par
+      // défaut est de 1 Mo ; on reste sous les 4,5 Mo qu'accepte une
+      // fonction Vercel.
+      bodySizeLimit: "4mb",
+    },
+  },
+
   images: {
     // Autorise next/image à afficher les couvertures d'œuvres,
     // typiquement hébergées sur Supabase Storage (bucket public).

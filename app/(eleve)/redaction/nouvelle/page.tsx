@@ -22,7 +22,8 @@ interface LigneSujet {
 /**
  * /redaction/nouvelle — le « Correcteur IA ».
  *
- * L'élève choisit un des sujets du programme, écrit ou colle sa
+ * L'élève choisit un des sujets du programme, photographie sa copie
+ * (le modèle la lit, l'élève vérifie la lecture) ou écrit/colle sa
  * rédaction, et reçoit une correction : une note sur 20 détaillée en
  * forme et fond, la liste des erreurs avec leur explication, ce qu'il a
  * réussi et ce qu'il doit travailler.
@@ -58,7 +59,7 @@ export default async function PageNouvelleRedaction() {
 
   return (
     <main className="flex flex-col">
-      <div className="flex w-full max-w-[860px] flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
+      <div className="flex w-full flex-col gap-6 px-6 pt-6 pb-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40 sm:pt-9 sm:pb-16">
         <Link
           href="/tableau-de-bord"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
@@ -76,8 +77,8 @@ export default async function PageNouvelleRedaction() {
               Correcteur <span className="text-primary italic">IA</span>
             </h1>
             <p className="text-sm text-muted-foreground">
-              Une note sur 20, tes erreurs expliquées et ce qu&apos;il faut
-              retravailler.
+              Envoie ta copie en photo ou en texte : une note sur 20, tes
+              erreurs expliquées et ce qu&apos;il faut retravailler.
             </p>
           </div>
         </div>
