@@ -1,44 +1,31 @@
-import CarteExamenRegional from "@/components/CarteExamenRegional";
+import CarteDecompteCalendrier from "@/components/CarteDecompteCalendrier";
+import CarteExamensOfficiels from "@/components/CarteExamensOfficiels";
 import EnteteCalendrier from "@/components/EnteteCalendrier";
 import PlanningAgenda from "@/components/PlanningAgenda";
-import { IconeCoche } from "@/components/icones";
-import { prochaineSession } from "@/lib/calendrier";
+import { EXAMEN_REGIONAL_1BAC, prochaineSession } from "@/lib/calendrier";
 import { recupererEvenementsEleve } from "@/lib/supabase/evenements";
 import { creerClientServeur } from "@/lib/supabase/server";
 
+const versCle = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
 /**
- * /calendrier — demandé explicitement par l'utilisateur comme nouveau
- * lien de nav ("Ajoute a cote de l acceuil tableau de bord matiere
- * calendrier aussi progres"), enrichie du switch de mois et de la date
- * de l'examen régional, réagencée en 2 colonnes, puis agrandie (voir
- * l'historique dans ETAT.md) — et enfin reprise sur une maquette
- * complète fournie par l'utilisateur ("regarde la photo que je mis
- * dans le fichier fais la comme ca") : bannière d'en-tête
- * (EnteteCalendrier.tsx), carte "Mois" avec liste d'événements
- * (CalendrierMois.tsx), carte "Examens" (CarteExamenRegional.tsx),
- * signature en pied de page — mise en page propre à cette page, pas
- * le gabarit centré/pastille utilisé par /matieres, /francais, etc.
+ * /calendrier — demandé par l'utilisateur comme lien de navigation, puis
+ * repris sur plusieurs maquettes successives (voir l'historique git).
+ * Dernière refonte ("FAIT MOI CA DEJA") :
+ * - en haut, l'en-tête avec la légende des catégories, et à droite la
+ *   carte bleue des jours restants avant l'examen régional ;
+ * - la barre de saisie d'un événement ;
+ * - la grille du mois, et à droite "À venir" puis "Examens officiels".
  *
- * Cartes "Mois"/"Examens" collées au bord gauche, pas centrées —
- * demandé explicitement par l'utilisateur ("Je veux que les sections
- * « Mois » et « Examens » soient placées au début de la ligne,
- * complètement à gauche, et non au centre de la page... aucun
- * centrage horizontal"). `mx-auto` retiré (`w-full` seul) sur ce
- * conteneur : plus de centrage. `max-w-5xl` remis juste après (sans
- * `mx-auto`, donc toujours collé à gauche) — un essai sans aucune
- * limite de largeur avait rendu les cartes bien trop grandes sur les
- * grands écrans ("la forme du mois et examens est trop grande") ;
- * un 2ᵉ essai (`max-w-4xl`) rétrécissait trop la carte "Mois", au
- * point de tasser sa grille interne (colonne "Événements à venir" à
- * largeur fixe, voir CalendrierMois.tsx) — `max-w-5xl` retrouve
- * l'équilibre déjà validé lors de la reprise de la maquette.
- * Même changement sur EnteteCalendrier.tsx pour que le texte de la
- * bannière reste aligné au même bord gauche que les cartes en dessous.
+ * Rien d'inventé : les événements sont ceux que l'élève a ajoutés
+ * (table `evenements_eleve`), les dates d'examen viennent de
+ * lib/calendrier.ts. Un visiteur voit le calendrier et les examens, et
+ * une invitation à se connecter à la place de la saisie.
  *
- * Bandeau CompteARebours ajouté au-dessus du reste, à la demande
- * explicite de l'utilisateur ("ajoute autre chose dans la partie de
- * calendrier") : jours restants avant la prochaine session de
- * l'examen régional, calculé (pas inventé) — voir son commentaire.
+ * Marges d'origine (px-6 sm:px-9), sans les marges larges du reste du
+ * site : "pour accueil tableau de bord et calendrier laisse les tailles
+ * comme avant cad sans marge" (voir components/ConteneurMarges.tsx).
  */
 export default async function PageCalendrier() {
   const supabase = await creerClientServeur();
@@ -46,59 +33,29 @@ export default async function PageCalendrier() {
     data: { user },
   } = await supabase.auth.getUser();
   const evenements = await recupererEvenementsEleve();
-
-  // Date de la prochaine session d'examen et début de l'année
-  // scolaire, passés au planning : il ne les écrit pas en dur.
   const session = prochaineSession();
-  const versCle = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  const dateExamen = session ? versCle(session.debut) : null;
-  const anneeRentree = session
-    ? session.debut.getFullYear() - 1
-    : new Date().getFullYear();
-  const debutAnnee = `${anneeRentree}-09-01`;
 
+  const examens = EXAMEN_REGIONAL_1BAC.map((s) => ({ titre: s.titre, debut: versCle(s.debut), fin: versCle(s.fin) }));
+
+  // Un élève connecté a le bouton du menu en haut à gauche sous
+  // 1280 px : on lui laisse la place au-dessus de l'en-tête.
   return (
-    <main className="relative flex flex-col">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-background) 0%, color-mix(in srgb, var(--color-primary) 6%, var(--color-background)) 100%)",
-        }}
-      />
-
-      <div className="animate-entree-carte">
-        <EnteteCalendrier />
+    <main className={`flex w-full flex-col gap-6 px-6 pb-6 sm:px-9 sm:pb-8 ${user ? "pt-16 xl:pt-8" : "pt-6 sm:pt-8"}`}>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <div className="animate-entree-carte">
+          <EnteteCalendrier />
+        </div>
+        {session && (
+          <div className="animate-entree-carte" style={{ animationDelay: "60ms" }}>
+            <CarteDecompteCalendrier session={session} />
+          </div>
+        )}
       </div>
 
-      <div className="flex w-full flex-col gap-4 px-6 py-6 sm:px-9">
-        <div
-          className="animate-entree-carte"
-          style={{ animationDelay: "80ms" }}
-        >
-          <PlanningAgenda
-            evenements={evenements}
-            connecte={Boolean(user)}
-            dateExamen={dateExamen}
-            debutAnnee={debutAnnee}
-          />
-        </div>
-
-        <div
-          className="animate-entree-carte"
-          style={{ animationDelay: "240ms" }}
-        >
-          <CarteExamenRegional />
-        </div>
-
-        <p className="flex items-center justify-center gap-2.5 text-sm text-muted-foreground">
-          <span aria-hidden="true" className="h-px w-10 bg-border" />
-          <IconeCoche className="size-4 text-primary" />
-          Studyera, ton espace pour progresser.
-          <span aria-hidden="true" className="h-px w-10 bg-border" />
-        </p>
+      <div className="animate-entree-carte" style={{ animationDelay: "120ms" }}>
+        <PlanningAgenda evenements={evenements} connecte={Boolean(user)} examens={examens}>
+          <CarteExamensOfficiels />
+        </PlanningAgenda>
       </div>
     </main>
   );
