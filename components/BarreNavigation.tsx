@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import ConteneurMarges from "@/components/ConteneurMarges";
 import BoutonDeconnexion from "@/components/BoutonDeconnexion";
 import LogoStudyera from "@/components/LogoStudyera";
 import BoutonAnimations from "@/components/BoutonAnimations";
@@ -109,7 +110,7 @@ export default function BarreNavigation({
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
-      <div className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7 lg:px-16 xl:px-24 2xl:px-40">
+      <ConteneurMarges className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
         {logo}
 
         <nav
@@ -124,7 +125,7 @@ export default function BarreNavigation({
         </div>
 
         {menuMobile}
-      </div>
+      </ConteneurMarges>
     </header>
   );
 }

@@ -39,7 +39,7 @@ export default function EnteteCalendrier() {
         style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
       />
 
-      <div className="relative flex w-full flex-col gap-2 px-6 py-5 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
+      <div className="relative flex w-full flex-col gap-2 px-6 py-5 sm:px-9">
         <span className="flex w-fit items-center gap-2 rounded-full bg-primary-tint px-3.5 py-1.5 text-xs font-semibold text-primary">
           <IconeCalendrier className="size-3.5" />
           Mon calendrier

@@ -2,29 +2,38 @@ import Link from "next/link";
 
 import { IconeCible, IconeFleche } from "@/components/icones";
 
+/** Fond sombre du bandeau : jetons `--fond-sombre-*` (app/globals.css),
+ * qui suivent la palette et restent foncés dans les deux modes. */
+const FONCE = "linear-gradient(100deg, var(--fond-sombre-bas) 0%, var(--fond-sombre-haut) 100%)";
+
 /**
- * Bandeau "Objectif : Réussir le Bac !" de l'accueil connecté —
- * reprend la maquette complète envoyée par l'utilisateur ("tu peux
- * faire juste ce qui est sur cette page"). Texte générique (aucune
- * donnée d'élève, contrairement au planning "Aujourd'hui" — voir
- * CarteAujourdhuiAccueil.tsx), donc rien à vérifier côté base de
- * données pour ce bloc.
+ * Bandeau d'encouragement en bas de l'accueil connecté, d'après la
+ * dernière maquette ("Petit à petit, tu avances."), en version étroite
+ * comme demandé ("etroit la quote en bas") : une seule ligne de hauteur
+ * sur ordinateur au lieu du grand bandeau photo de la maquette.
+ *
+ * Texte générique, aucune donnée d'élève. Le bouton de la maquette
+ * ("Voir mes objectifs") mène à /progres : il n'existe pas de page
+ * d'objectifs, et un lien vers rien serait trompeur.
  */
 export default function BarreObjectifAccueil() {
   return (
-    <div className="transition hover:-translate-y-0.5 hover:shadow-md flex flex-col items-start justify-between gap-4 rounded-[24px] border border-border bg-surface p-6 shadow-sm sm:flex-row sm:items-center">
-      <div className="flex items-center gap-3.5">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-          <IconeCible className="size-5" />
+    <div
+      className="flex flex-col items-start gap-3 rounded-[18px] px-5 py-3.5 text-white shadow-sm sm:flex-row sm:items-center sm:justify-between"
+      style={{ background: FONCE }}
+    >
+      <div className="flex items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/12 ring-1 ring-white/25">
+          <IconeCible className="size-[18px]" />
         </span>
-        <div>
-          <p className="font-serif text-base font-bold text-ink">Objectif : Réussir le Bac !</p>
-          <p className="text-sm text-muted-foreground">Chaque effort compte. Continue, tu es sur la bonne voie.</p>
-        </div>
+        <p className="text-sm">
+          <span className="font-bold">Petit à petit, tu avances.</span>{" "}
+          <span className="text-white/70">La régularité est la clé de la réussite.</span>
+        </p>
       </div>
       <Link
-        href="/tableau-de-bord"
-        className="flex shrink-0 items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary-tint"
+        href="/progres"
+        className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/40 px-4 py-1.5 text-[13px] font-semibold transition-colors hover:bg-white/10"
       >
         Voir ma progression
         <IconeFleche className="size-3.5" />

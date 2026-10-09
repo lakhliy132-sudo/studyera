@@ -1,76 +1,61 @@
+import Image from "next/image";
+
 interface BandeauBienvenueAccueilProps {
   prenom: string;
 }
 
-/** Date du jour en toutes lettres ("mardi 20 septembre"), calculée au
- * rendu côté serveur — le composant n'est pas un composant client, le
- * navigateur ne la recalcule donc pas et il n'y a pas de risque de
+/** Date du jour en toutes lettres ("Vendredi 9 octobre 2026"), calculée
+ * au rendu côté serveur — le composant n'est pas un composant client,
+ * le navigateur ne la recalcule donc pas et il n'y a pas de risque de
  * décalage d'hydratation. */
 function dateDuJour(): string {
-  return new Intl.DateTimeFormat("fr-FR", {
+  const texte = new Intl.DateTimeFormat("fr-FR", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    year: "numeric",
   }).format(new Date());
+  return texte.charAt(0).toUpperCase() + texte.slice(1);
 }
 
 /**
- * Bandeau de bienvenue de l'accueil (élève connecté). Il a d'abord
- * repris une maquette fournie par l'utilisateur (prénom, citation
- * motivante, photo de bureau recadrée depuis l'image qu'il avait
- * déposée), puis a été allégé à sa demande, en deux temps : l'emoji
- * du bonjour ("enleve l emogie a coté"), puis la citation et la photo
- * ("enleve aussi la phrase et la photo"). Il ne reste que la date du
- * jour, le bonjour et le sous-titre, posés sur un fond dégradé avec
- * deux halos de couleur très diffus — tout sur les tokens du site
- * (`--color-primary`, `--color-matiere-arabe`), donc lisible aussi en
- * mode sombre.
+ * Bandeau de bienvenue de l'accueil (élève connecté).
  *
- * public/accueil-bureau.jpg n'est plus utilisée ici, mais reste dans
- * le dépôt : c'est une image fournie par l'utilisateur, pas à nous de
- * la supprimer.
+ * Historique : il a repris une première maquette (prénom, citation,
+ * photo de bureau), puis a été allégé à la demande de l'utilisateur
+ * ("enleve l emogie a coté", puis "enleve aussi la phrase et la
+ * photo"). Une nouvelle maquette complète de l'accueil ("on va essayer
+ * ca maintenant") remet la photo et la phrase d'encouragement : c'est
+ * la demande la plus récente qui fait foi.
+ *
+ * Photo : public/accueil-bandeau.jpg, recadrée sur la zone strictement
+ * photographique du bandeau de cette maquette (sans texte), agrandie ×2.
+ * Elle occupe la moitié droite et se fond vers la gauche dans la
+ * couleur de la carte, pour que le texte reste lisible en clair comme
+ * en sombre.
  */
-export default function BandeauBienvenueAccueil({
-  prenom,
-}: BandeauBienvenueAccueilProps) {
+export default function BandeauBienvenueAccueil({ prenom }: BandeauBienvenueAccueilProps) {
   return (
-    <div
-      className="relative overflow-hidden rounded-[28px] border border-border p-5 sm:p-8 shadow-[0_18px_40px_-28px_rgba(20,30,60,0.45)] sm:p-9"
-      style={{
-        background:
-          "linear-gradient(105deg, var(--color-primary-tint) 0%, color-mix(in srgb, var(--color-primary-tint) 55%, transparent) 45%, color-mix(in srgb, var(--color-matiere-arabe) 16%, transparent) 100%)",
-      }}
-    >
-      {/* Halos diffus, purement décoratifs — même technique que les
-       * taches de couleur du fond de l'accueil. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
+    <div className="relative overflow-hidden rounded-[24px] border border-border bg-surface shadow-[0_18px_40px_-28px_rgba(20,30,60,0.45)]">
+      <div aria-hidden="true" className="absolute inset-y-0 right-0 hidden w-[62%] sm:block">
+        <Image src="/accueil-bandeau.jpg" alt="" fill priority sizes="(min-width: 640px) 60vw, 0px" className="object-cover" />
         <div
-          className="absolute -top-20 -left-10 size-56 rounded-full opacity-[0.18] blur-3xl"
-          style={{ backgroundColor: "var(--color-primary)" }}
-        />
-        <div
-          className="absolute -right-10 -bottom-24 size-64 rounded-full opacity-[0.12] blur-3xl"
-          style={{ backgroundColor: "var(--color-matiere-arabe)" }}
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 70%, transparent) 30%, transparent 70%)",
+          }}
         />
       </div>
 
-      <div className="relative shrink-0">
-        <p className="text-[11px] font-bold tracking-[0.16em] text-primary uppercase">
-          {dateDuJour()}
-        </p>
-        <h1 className="mt-2 font-titre text-[34px] leading-tight font-bold text-ink">
-          Bonjour, {prenom} !
+      <div className="relative px-6 py-7 sm:px-8 sm:py-9">
+        <p className="text-sm text-muted-foreground">{dateDuJour()}</p>
+        <h1 className="mt-2 font-titre text-[32px] leading-tight font-bold text-ink sm:text-[44px]">
+          Bonjour, <span className="text-primary">{prenom}</span> !
         </h1>
-        <p className="mt-1.5 text-[15px] text-muted-foreground">
-          Prête à faire un pas de plus vers tes objectifs ?
-        </p>
-        <span
-          aria-hidden="true"
-          className="mt-4 block h-[3px] w-14 rounded-full bg-primary/40"
-        />
+        <p className="mt-3 text-base font-medium text-ink sm:text-lg">Prêt à faire un pas de plus vers tes objectifs ?</p>
+        <p className="mt-1.5 text-sm text-muted-foreground sm:text-[15px]">Chaque effort compte. Tu es sur la bonne voie !</p>
+        <span aria-hidden="true" className="mt-5 block h-[3px] w-16 rounded-full bg-primary" />
       </div>
     </div>
   );

@@ -2,7 +2,8 @@ import Link from "next/link";
 
 import BandeauBienvenueAccueil from "@/components/BandeauBienvenueAccueil";
 import BarreObjectifAccueil from "@/components/BarreObjectifAccueil";
-import CarteAujourdhuiAccueil from "@/components/CarteAujourdhuiAccueil";
+import BoutonModeNuit from "@/components/BoutonModeNuit";
+import CarteAVenirAccueil from "@/components/CarteAVenirAccueil";
 import CarteMotivationAccueil from "@/components/CarteMotivationAccueil";
 import TuilesStatsAccueil from "@/components/TuilesStatsAccueil";
 import CompteARebourExamenLive from "@/components/CompteARebourExamenLive";
@@ -16,6 +17,7 @@ import {
 } from "@/components/icones";
 import { deriverPrenom } from "@/lib/prenom";
 import { creerClientServeur } from "@/lib/supabase/server";
+import { recupererEvenementsEleve } from "@/lib/supabase/evenements";
 import { recupererProgressionParOeuvre } from "@/lib/supabase/tableauDeBord";
 import { compterCours, compterCoursParCategorie } from "@/lib/supabase/contenu";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
@@ -24,7 +26,15 @@ import { couleurMatiere } from "@/lib/palette-matieres";
 import { joursAvant, prochaineSession } from "@/lib/calendrier";
 
 /**
- * Accueil d'un élève connecté — reprend une maquette complète fournie
+ * Accueil d'un élève connecté. Dernière refonte d'après une nouvelle
+ * maquette complète ("on va essayer ca maintenant") : bandeau de
+ * bienvenue avec photo, quatre chiffres, "Mes matières" en cartes à
+ * photo, bandeau étroit d'encouragement ; à droite, compte à rebours,
+ * citation et "À venir". Deux consignes jointes à la maquette : pas de
+ * citation dans le menu de gauche ("enleve la quote de menu a gauche"),
+ * et le bandeau du bas en version étroite ("etroit la quote en bas").
+ *
+ * Avant cela, l'accueil reprenait une maquette complète fournie
  * par l'utilisateur ("j ai ajouté une photo dans le fichier fais la
  * comme ca dans l acuueil") : bandeau de bienvenue, carte "En cours",
  * "Mes matières", compte à rebours avant l'examen régional.
@@ -39,7 +49,8 @@ import { joursAvant, prochaineSession } from "@/lib/calendrier";
  * horodatées de la maquette ("Lire le chapitre 2 — 08:00"...) : aucune
  * table de rappels/tâches personnelles n'existe en base, ces tâches
  * sont des exemples de mise en page dans la maquette, pas de vraies
- * données à reproduire (voir le composant pour le détail).
+ * données à reproduire. La carte "Aujourd'hui" a depuis été remplacée
+ * par "À venir" (CarteAVenirAccueil), qui lit de vraies échéances.
  *
  * Écarts encore assumés par rapport à la maquette, pour ne rien
  * inventer :
@@ -49,9 +60,11 @@ import { joursAvant, prochaineSession } from "@/lib/calendrier";
  *   côté serveur — les ajouter purement visuels, sans rien derrière,
  *   induirait l'élève en erreur (bouton qui ne fait rien).
  * - "Mes matières" : seul le français a un vrai pourcentage
- *   (chapitres lus/total) — les 3 autres matières n'ont encore aucun
- *   contenu, "Bientôt disponible" plutôt qu'un chiffre inventé (la
- *   maquette illustrait 68/54/72/49%, aucun n'est réel).
+ *   (chapitres lus/total) — les 3 autres matières n'ont pas de suivi,
+ *   "Pas encore de suivi" plutôt qu'un chiffre inventé (les maquettes
+ *   successives illustraient des pourcentages, aucun n'est réel).
+ * - Pas de "Taux de progression" global : remplacé par le nombre de
+ *   chapitres lus (TuilesStatsAccueil).
  * - Compte à rebours : cible la vraie date de l'examen régional déjà
  *   sourcée pour /calendrier, pas une date inventée.
  *
@@ -79,9 +92,10 @@ async function AccueilConnecte({
   prenom: string;
   userId: string;
 }) {
-  const [progression, nombreCours] = await Promise.all([
+  const [progression, nombreCours, evenements] = await Promise.all([
     recupererProgressionParOeuvre(userId),
     compterCours(FILIERE_ACTUELLE),
+    recupererEvenementsEleve(),
   ]);
   const session = prochaineSession();
 
@@ -110,72 +124,56 @@ async function AccueilConnecte({
         />
       </div>
 
-      <main className="flex w-full flex-col gap-6 px-6 py-10 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
-        {/* Entrée échelonnée des blocs au chargement — demandé par
-         * l'utilisateur parmi plusieurs propositions d'élégance. Même
-         * animation que les cartes de /oeuvres
-         * (`animate-entree-carte`, app/globals.css), avec un décalage
-         * croissant : les blocs apparaissent de haut en bas, colonne
-         * de gauche puis colonne de droite. Le délai est en style
-         * inline parce qu'il change d'un bloc à l'autre — une classe
-         * Tailwind construite à l'exécution ne serait pas générée. */}
-        <div className="animate-entree-carte">
-          <BandeauBienvenueAccueil prenom={prenom} />
-        </div>
-
-        <div
-          className="animate-entree-carte"
-          style={{ animationDelay: "60ms" }}
-        >
-          <TuilesStatsAccueil
-            nombreCours={nombreCours}
-            // +1 pour le français : `MATIERES` ne contient que les trois
-            // matières ajoutées après coup (arabe, histoire-géographie,
-            // éducation islamique), le français ayant ses propres pages.
-            // La tuile annonçait donc 3 alors que /matieres et la grille
-            // juste en dessous en montrent bien 4.
-            nombreMatieres={MATIERES.length + 1}
-            joursAvantExamen={session ? joursAvant(session.debut) : null}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
-          <div className="flex flex-col gap-6">
-            <div
-              className="animate-entree-carte"
-              style={{ animationDelay: "90ms" }}
-            >
-              <GrilleMatieresAccueil
+      {/* Marges d'origine (px-6 sm:px-9), sans les marges larges du
+       * reste du site : demandé pour l'accueil, le tableau de bord et le
+       * calendrier ("laisse les tailles comme avant cad sans marge"). */}
+      <main className="flex w-full flex-col px-6 pt-16 pb-6 sm:px-9 sm:pb-8 xl:pt-8">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="flex min-w-0 flex-col gap-6">
+            {/* Entrée échelonnée des blocs au chargement — demandé par
+             * l'utilisateur parmi plusieurs propositions d'élégance. Même
+             * animation que les cartes de /oeuvres
+             * (`animate-entree-carte`, app/globals.css), avec un décalage
+             * croissant. Le délai est en style inline parce qu'il change
+             * d'un bloc à l'autre — une classe Tailwind construite à
+             * l'exécution ne serait pas générée. */}
+            <div className="animate-entree-carte">
+              <BandeauBienvenueAccueil prenom={prenom} />
+            </div>
+            <div className="animate-entree-carte" style={{ animationDelay: "60ms" }}>
+              <TuilesStatsAccueil
+                nombreCours={nombreCours}
+                // +1 pour le français : `MATIERES` ne contient que les trois
+                // matières ajoutées après coup (arabe, histoire-géographie,
+                // éducation islamique), le français ayant ses propres pages.
+                nombreMatieres={MATIERES.length + 1}
+                joursAvantExamen={session ? joursAvant(session.debut) : null}
                 chapitresLus={progression.totalChapitresLus}
                 totalChapitres={totalChapitres}
               />
             </div>
-            <div
-              className="animate-entree-carte"
-              style={{ animationDelay: "180ms" }}
-            >
+            <div className="animate-entree-carte" style={{ animationDelay: "120ms" }}>
+              <GrilleMatieresAccueil chapitresLus={progression.totalChapitresLus} totalChapitres={totalChapitres} />
+            </div>
+            <div className="animate-entree-carte" style={{ animationDelay: "180ms" }}>
               <BarreObjectifAccueil />
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            <div
-              className="animate-entree-carte"
-              style={{ animationDelay: "150ms" }}
-            >
+            {/* Pas de cloche de notifications (voir plus haut) : seul le
+             * bouton jour/nuit de la maquette est repris. */}
+            <div className="hidden justify-end xl:flex">
+              <BoutonModeNuit />
+            </div>
+            <div className="animate-entree-carte" style={{ animationDelay: "150ms" }}>
               <CompteARebourExamenLive />
             </div>
-            <div
-              className="animate-entree-carte"
-              style={{ animationDelay: "240ms" }}
-            >
-              <CarteAujourdhuiAccueil />
-            </div>
-            <div
-              className="animate-entree-carte"
-              style={{ animationDelay: "330ms" }}
-            >
+            <div className="animate-entree-carte" style={{ animationDelay: "210ms" }}>
               <CarteMotivationAccueil />
+            </div>
+            <div className="animate-entree-carte" style={{ animationDelay: "270ms" }}>
+              <CarteAVenirAccueil evenements={evenements} />
             </div>
           </div>
         </div>
@@ -296,7 +294,7 @@ export default async function PageAccueil() {
         </svg>
       </div>
 
-      <main className="flex w-full flex-col px-6 pb-20 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
+      <main className="flex w-full flex-col px-6 pb-20 sm:px-9">
         <section className="flex flex-col items-center gap-6 py-12 sm:py-20 text-center">
           <span className="rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
             1<sup>ère</sup> année du baccalauréat · Maroc

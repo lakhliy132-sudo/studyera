@@ -116,6 +116,13 @@ pas la palette. Elle est maintenant **dérivée** de la couleur active :
 }
 ```
 
+Les fonds sombres sous du texte blanc (menu de gauche d'un élève
+connecté, bandeau du bas de l'accueil) passent par `--fond-sombre-haut`,
+`--fond-sombre-bas` et `--fond-sombre-actif` : en mode sombre,
+`--color-primary` devient clair, et un mélange unique donnait un fond
+mauve où le blanc ne se lisait plus. Ces jetons ont donc une valeur par
+mode.
+
 Toute nouvelle variable qui dépend visuellement de l'accent doit être
 traitée pareil, et **vérifiée à l'écran dans au moins deux palettes, en
 clair et en sombre**, avant d'annoncer que c'est fait.
@@ -153,7 +160,15 @@ demande de l'utilisateur** : l'incohérence entre la section française
   d'un site, pas la forme d'une application ». Les marges grandissent
   avec l'écran (« avoir de la marge dans les côtés ») ; la barre du haut
   et le pied de page prennent les mêmes, pour rester alignés. Toute
-  nouvelle page reprend cette suite de classes telle quelle. Seule
+  nouvelle page reprend cette suite de classes telle quelle.
+  **Exception** : l'accueil, le tableau de bord et le calendrier gardent
+  `px-6 sm:px-9` (« laisse les tailles comme avant cad sans marge »).
+  La liste est dans `components/ConteneurMarges.tsx`
+  (`PAGES_SANS_MARGES`), qui aligne la barre et le pied sur la page.
+- **Breakpoints arbitraires** : une variante `min-[1400px]:` est placée
+  *avant* `sm:` dans la CSS générée, donc `sm:grid-cols-2` l'emporte.
+  Borner les plages (`sm:max-[1399px]:… min-[1400px]:…`), et vérifier
+  à l'écran. Seule
   exception admise au `max-w` : un texte long destiné à la lecture — et
   encore, en demandant.
 - **Téléphone d'abord pour les espacements.** Les marges et les tailles

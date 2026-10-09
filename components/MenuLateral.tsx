@@ -227,8 +227,17 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         />
       )}
 
+      {/* Colonne sombre, d'après la dernière maquette de l'accueil ("on
+       * va essayer ca maintenant") : jetons `--fond-sombre-*`
+       * (app/globals.css), qui suivent la palette et restent foncés
+       * dans les deux modes. La citation de la maquette sous le menu
+       * n'est pas reprise ("enleve la quote de menu a gauche"). */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-surface transition-all duration-200 xl:translate-x-0 ${
+        style={{
+          background:
+            "linear-gradient(180deg, var(--fond-sombre-haut) 0%, var(--fond-sombre-bas) 100%)",
+        }}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col text-white transition-all duration-200 xl:translate-x-0 ${
           reduit ? "w-[76px]" : "w-72"
         } ${ouvert ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -237,14 +246,14 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         >
           <Link href="/" className="flex items-center gap-2.5">
             <LogoStudyera
-              className={`text-primary ${reduit ? "h-9" : "h-10"}`}
+              className={`text-white ${reduit ? "h-9" : "h-10"}`}
             />
           </Link>
           <button
             type="button"
             onClick={() => setOuvert(false)}
             aria-label="Fermer le menu"
-            className="rounded-[10px] p-1.5 text-subtle-foreground hover:bg-surface-muted xl:hidden"
+            className="rounded-[10px] p-1.5 text-white/70 hover:bg-white/10 xl:hidden"
           >
             <Icone trace={TRACES.fermer} />
           </button>
@@ -256,7 +265,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
               href="/recherche"
               aria-label="Rechercher"
               title="Rechercher (Ctrl K)"
-              className="flex size-11 items-center justify-center rounded-[12px] text-subtle-foreground transition-colors hover:bg-surface-muted hover:text-primary"
+              className="flex size-11 items-center justify-center rounded-[12px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
             >
               <Icone trace={TRACES.recherche} className="size-[22px]" />
             </Link>
@@ -265,11 +274,11 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           <div className="px-3 pb-2">
             <Link
               href="/recherche"
-              className="flex w-full items-center gap-3 rounded-[12px] border border-border bg-background px-3 py-2 text-sm text-muted-foreground transition hover:border-border-strong hover:bg-surface"
+              className="flex w-full items-center gap-3 rounded-[12px] border border-white/10 bg-white/[0.07] px-3 py-2.5 text-sm text-white/70 transition hover:border-white/20 hover:bg-white/10"
             >
               <Icone trace={TRACES.recherche} className="size-4" />
               <span className="flex-1 text-left">Rechercher</span>
-              <kbd className="rounded-[6px] border border-border bg-surface px-1.5 py-0.5 text-[11px] font-medium text-subtle-foreground">
+              <kbd className="rounded-[6px] border border-white/15 bg-white/10 px-1.5 py-0.5 text-[11px] font-medium text-white/70">
                 Ctrl K
               </kbd>
             </Link>
@@ -295,19 +304,13 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
                         : "gap-3.5 px-3.5 py-3"
                     } ${
                       actif
-                        ? "bg-primary-tint text-primary"
-                        : "text-muted-foreground hover:bg-surface-muted hover:text-ink"
+                        ? "bg-[var(--fond-sombre-actif)] text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.6)]"
+                        : "text-white/75 hover:bg-white/[0.08] hover:text-white"
                     }`}
                   >
-                    {actif && (
-                      <span
-                        aria-hidden="true"
-                        className="absolute top-2 bottom-2 left-0 w-1 rounded-r-full bg-primary"
-                      />
-                    )}
                     <Icone
                       trace={lien.trace}
-                      className={`size-[22px] ${actif ? "text-primary" : "text-subtle-foreground group-hover:text-ink"}`}
+                      className={`size-[22px] ${actif ? "text-white" : "text-white/60 group-hover:text-white"}`}
                     />
                     {!reduit && lien.libelle}
                   </Link>
@@ -322,7 +325,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           onClick={() => setReduitManuel(!reduit)}
           aria-label={reduit ? "Déplier le menu" : "Réduire le menu"}
           title={reduit ? "Déplier le menu" : "Réduire le menu"}
-          className={`mx-3 mb-2 hidden items-center gap-2 rounded-[10px] px-2 py-2 text-xs font-semibold text-subtle-foreground transition-colors hover:bg-surface-muted hover:text-primary xl:flex ${
+          className={`mx-3 mb-2 hidden items-center gap-2 rounded-[10px] px-2 py-2 text-xs font-semibold text-white/55 transition-colors hover:bg-white/10 hover:text-white xl:flex ${
             reduit ? "justify-center" : ""
           }`}
         >
@@ -333,7 +336,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           {!reduit && "Réduire le menu"}
         </button>
 
-        <div ref={refMenu} className="relative border-t border-border p-3">
+        <div ref={refMenu} className="relative border-t border-white/10 p-3">
           {menuCompte && (
             <div className="absolute right-3 bottom-full left-3 mb-2 overflow-hidden rounded-[12px] border border-border bg-surface py-1 shadow-lg">
               <Link
@@ -386,20 +389,20 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
             type="button"
             onClick={() => setMenuCompte(!menuCompte)}
             aria-expanded={menuCompte}
-            className={`flex w-full items-center rounded-[12px] p-2 text-left transition hover:bg-surface-muted ${
+            className={`flex w-full items-center rounded-[12px] p-2 text-left transition hover:bg-white/10 ${
               reduit ? "justify-center" : "gap-3"
             }`}
           >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white ring-2 ring-white/25">
               {(prenom ?? email ?? "?").charAt(0).toUpperCase()}
             </span>
             {!reduit && (
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px] font-semibold text-ink">
+                <span className="block truncate text-[15px] font-semibold text-white">
                   {prenom ?? "Mon compte"}
                 </span>
                 {email && (
-                  <span className="block truncate text-xs text-muted-foreground">
+                  <span className="block truncate text-xs text-white/60">
                     {email}
                   </span>
                 )}
@@ -408,7 +411,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
             {!reduit && (
               <Icone
                 trace={TRACES.chevron}
-                className={`size-4 text-subtle-foreground transition-transform ${menuCompte ? "rotate-180" : ""}`}
+                className={`size-4 text-white/60 transition-transform ${menuCompte ? "rotate-180" : ""}`}
               />
             )}
           </button>
