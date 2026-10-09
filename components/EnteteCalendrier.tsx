@@ -1,66 +1,54 @@
-import { IconeCalendrier } from "@/components/icones";
+import { CATEGORIES_EVENEMENT, CATEGORIES_SAISIE } from "@/lib/categoriesEvenement";
 
 /**
- * Bannière d'en-tête de /calendrier — reprend une maquette fournie par
- * l'utilisateur ("regarde la photo que je mis dans le fichier fais la
- * comme ca") : pastille "Mon calendrier", titre sur 2 lignes (2ᵉ ligne
- * en bleu), sous-titre, note manuscrite décorative en haut à droite
- * (masquée sur mobile, pas la place). Propre à cette page (comme la
- * vague de l'accueil, voir app/(public)/page.tsx) : dégradé léger +
- * fin quadrillage diagonal en fond, sans toucher au layout global.
+ * Bannière d'en-tête de /calendrier, refaite d'après la dernière
+ * maquette de l'utilisateur ("FAIT MOI CA DEJA") : sur-titre "Mon
+ * calendrier", titre sur deux lignes (la seconde en italique dans la
+ * couleur du site), sous-titre, puis la légende des trois catégories
+ * d'événement, avec les couleurs qu'elles ont dans le calendrier.
  *
- * Hauteur réduite (`py-12` → `py-7`, titre plus petit, espacements
- * resserrés) — demandé explicitement par l'utilisateur ("la partie de
- * gere tes examens... elle est trop long") : la bannière prenait trop
- * de place en hauteur avant d'arriver au contenu utile en dessous.
+ * Historique : une première maquette (pastille, quadrillage diagonal,
+ * titre en dégradé) avait été raccourcie à la demande de l'utilisateur
+ * ("elle est trop long") ; celle-ci la remplace.
  */
 export default function EnteteCalendrier() {
+  const legende = CATEGORIES_EVENEMENT.filter((c) => CATEGORIES_SAISIE.includes(c.cle));
+
   return (
-    <div className="relative mx-6 mt-6 overflow-hidden rounded-[24px] border border-border bg-surface shadow-sm sm:mx-9">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-[0.12]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(-45deg, var(--color-primary) 0, var(--color-primary) 1px, transparent 1px, transparent 34px)",
-          maskImage: "linear-gradient(to bottom right, black, transparent 70%)",
-        }}
-      />
-
-      {/* Taches de couleur très diffuses, purement décoratives. */}
+    <div
+      className="relative h-full overflow-hidden rounded-[28px] border border-border p-6 shadow-sm sm:p-10"
+      style={{
+        background:
+          "linear-gradient(120deg, var(--color-primary-tint) 0%, var(--color-surface) 55%, color-mix(in srgb, #f472b6 10%, var(--color-surface)) 100%)",
+      }}
+    >
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-16 right-10 size-44 rounded-full opacity-[0.16] blur-3xl"
-        style={{ backgroundColor: "var(--color-matiere-arabe)" }}
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-10 -bottom-20 size-52 rounded-full opacity-[0.14] blur-3xl"
-        style={{ backgroundColor: "var(--color-matiere-histoire-geo)" }}
+        className="pointer-events-none absolute -top-16 right-16 size-56 rounded-full bg-primary/20 blur-3xl"
       />
 
-      <div className="relative flex w-full flex-col gap-2 px-6 py-5 sm:px-9">
-        <span className="flex w-fit items-center gap-2 rounded-full bg-primary-tint px-3.5 py-1.5 text-xs font-semibold text-primary">
-          <IconeCalendrier className="size-3.5" />
-          Mon calendrier
-        </span>
-
-        <h1 className="max-w-2xl font-titre text-3xl leading-[1.15] font-bold text-ink sm:text-[34px]">
-          Gère tes examens et tes rappels{" "}
-          <span
-            className="bg-clip-text text-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, var(--color-primary) 0%, var(--color-matiere-arabe) 60%, var(--color-matiere-histoire-geo) 100%)",
-            }}
-          >
-            en un seul endroit.
-          </span>
+      <div className="relative">
+        <p className="text-sm font-bold text-primary">Mon calendrier</p>
+        <h1 className="mt-4 font-titre text-[30px] leading-[1.1] font-bold text-ink sm:text-[44px]">
+          Tes examens et rappels,
+          <br />
+          <span className="text-primary italic">en un seul endroit.</span>
         </h1>
-
-        <p className="max-w-md text-sm text-muted-foreground">
-          Ne manque plus aucune échéance et organise ton temps efficacement.
+        <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+          Ne manque plus aucune échéance et organise ton temps.
         </p>
+
+        <ul className="mt-6 flex flex-wrap gap-2.5" aria-label="Catégories d'événements">
+          {legende.map((categorie) => (
+            <li
+              key={categorie.cle}
+              className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-ink shadow-sm"
+            >
+              <span aria-hidden="true" className="size-2.5 rounded-full" style={{ backgroundColor: categorie.couleur }} />
+              {categorie.libelle}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -1,17 +1,10 @@
 import { creerClientServeur } from "@/lib/supabase/server";
 
-/** Catégories d'événement proposées à l'élève. Le `cle` doit rester
- * aligné sur la contrainte CHECK de la table (migration
- * 20260929000000_evenements_eleve.sql). */
-export const CATEGORIES_EVENEMENT = [
-  { cle: "controle", libelle: "Contrôle", couleur: "var(--color-erreur)" },
-  { cle: "devoir", libelle: "Devoir", couleur: "var(--color-matiere-francais)" },
-  { cle: "revision", libelle: "Révision", couleur: "var(--color-matiere-arabe)" },
-  { cle: "rappel", libelle: "Rappel", couleur: "var(--color-matiere-histoire-geo)" },
-  { cle: "autre", libelle: "Autre", couleur: "var(--color-matiere-islamique)" },
-] as const;
+import type { CategorieEvenement } from "@/lib/categoriesEvenement";
 
-export type CategorieEvenement = (typeof CATEGORIES_EVENEMENT)[number]["cle"];
+// Catégories et couleurs : lib/categoriesEvenement.ts, sans dépendance
+// serveur, pour servir aussi au planning client du calendrier.
+export { CATEGORIES_EVENEMENT, couleurCategorie, libelleCategorie, type CategorieEvenement } from "@/lib/categoriesEvenement";
 
 export interface EvenementEleve {
   id: string;
@@ -22,14 +15,6 @@ export interface EvenementEleve {
   date: string;
   categorie: CategorieEvenement;
   note: string | null;
-}
-
-export function couleurCategorie(categorie: string): string {
-  return CATEGORIES_EVENEMENT.find((c) => c.cle === categorie)?.couleur ?? "var(--color-primary)";
-}
-
-export function libelleCategorie(categorie: string): string {
-  return CATEGORIES_EVENEMENT.find((c) => c.cle === categorie)?.libelle ?? "Autre";
 }
 
 /**
