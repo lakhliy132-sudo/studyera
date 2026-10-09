@@ -177,7 +177,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
          * vide de 18rem à gauche de toutes les pages publiques. */}
         <div
           className={`flex min-w-0 flex-1 flex-col ${
-            user ? "xl:ps-[var(--largeur-menu,18rem)]" : ""
+            user ? "xl:ps-[var(--largeur-menu,18rem)] print:ps-0" : ""
           }`}
         >
           {children}

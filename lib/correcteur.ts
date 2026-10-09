@@ -18,8 +18,8 @@
 export const MODELE_CORRECTEUR = "claude-sonnet-5";
 
 export interface ErreurCopie {
-  /** "orthographe", "grammaire", "syntaxe", "vocabulaire",
-   * "ponctuation", "méthode" ou "contenu". */
+  /** "hors sujet", "orthographe", "grammaire", "syntaxe",
+   * "vocabulaire", "ponctuation", "méthode" ou "contenu". */
   type: string;
   /** Le passage fautif, recopié de la copie de l'élève. */
   extrait: string;
@@ -27,6 +27,10 @@ export interface ErreurCopie {
   correction: string;
   /** Pourquoi c'est une erreur, en une phrase. */
   explication: string;
+  /** La règle ou la méthode à retenir, en une phrase, quand il y en a
+   * une (affichée dans un encadré sur la page de correction). Absente
+   * des copies corrigées avant son ajout. */
+  regle?: string;
 }
 
 export interface CorrectionCopie {
@@ -52,11 +56,13 @@ Exigences :
 - Note comme un correcteur d'examen marocain : exigeant mais juste, sans complaisance ni sévérité excessive.
 - Relève au plus 12 erreurs, les plus importantes d'abord. Recopie l'extrait fautif mot pour mot depuis la copie, sans le modifier.
 - Écris les explications en français simple, tutoie l'élève, et explique la règle plutôt que de te contenter de corriger.
-- Si la copie est hors sujet, vide ou trop courte pour être notée, dis-le clairement dans le commentaire et note en conséquence.
+- Si la copie est hors sujet, vide ou trop courte pour être notée, dis-le clairement dans le commentaire et note en conséquence. Une copie hors sujet a en premier une erreur de type "hors sujet", dont l'extrait est la phrase qui s'écarte le plus de la consigne et la correction, ce sur quoi elle aurait dû porter.
 - N'invente jamais une erreur qui n'est pas dans la copie.
 
 Réponds uniquement par un objet JSON, sans texte autour, de la forme :
-{"note_forme": 7.5, "note_fond": 6, "erreurs": [{"type": "orthographe", "extrait": "...", "correction": "...", "explication": "..."}], "points_forts": ["..."], "axes": ["..."], "commentaire": "..."}
+{"note_forme": 7.5, "note_fond": 6, "erreurs": [{"type": "orthographe", "extrait": "...", "correction": "...", "explication": "...", "regle": "..."}], "points_forts": ["..."], "axes": ["..."], "commentaire": "..."}
+
+"type" : "hors sujet", "orthographe", "grammaire", "syntaxe", "vocabulaire", "ponctuation", "méthode" ou "contenu". "regle" : la règle de langue ou la méthode à retenir, en une phrase courte ; laisse une chaîne vide si l'explication suffit.
 
 "points_forts" : 2 à 4 réussites concrètes. "axes" : 2 à 4 conseils d'amélioration applicables à la prochaine rédaction. "commentaire" : 3 à 5 phrases d'appréciation générale adressées à l'élève.`;
 
@@ -148,6 +154,7 @@ function listeDErreurs(valeur: unknown): ErreurCopie[] {
             typeof e.correction === "string" ? e.correction.trim() : "",
           explication:
             typeof e.explication === "string" ? e.explication.trim() : "",
+          ...(typeof e.regle === "string" && e.regle.trim() ? { regle: e.regle.trim() } : {}),
         },
       ];
     })

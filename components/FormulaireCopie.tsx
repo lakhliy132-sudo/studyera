@@ -156,15 +156,18 @@ function Etapes({ actuelle }: { actuelle: 1 | 2 }) {
  */
 export default function FormulaireCopie({
   sujets,
+  sujetInitial,
   quotaRestant,
   correcteurPret,
 }: {
   sujets: SujetChoisissable[];
+  /** Sujet présélectionné ("Réécrire ma copie" depuis une correction). */
+  sujetInitial?: string;
   quotaRestant: number;
   correcteurPret: boolean;
 }) {
   const [etat, action] = useActionState<EtatCorrection, FormData>(corrigerEtEnregistrer, { erreur: null });
-  const [sujetId, setSujetId] = useState(sujets[0]?.id ?? "");
+  const [sujetId, setSujetId] = useState(sujetInitial ?? sujets[0]?.id ?? "");
   const [mode, setMode] = useState<Mode>("photo");
   const [texte, setTexte] = useState("");
   const [photos, setPhotos] = useState<Photo[]>([]);
