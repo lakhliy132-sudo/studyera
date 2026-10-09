@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { IconeFleche } from "@/components/icones";
 import ListeAnnales from "@/components/ListeAnnales";
-import { accentMatiere } from "@/lib/palette-matieres";
 import { recupererAnnalesParMatiere } from "@/lib/supabase/annales";
 
 interface PagePropsAnnalesMatiere {
@@ -52,7 +51,6 @@ export default async function PageAnnalesMatiere({
   if (!titre) notFound();
 
   const annales = await recupererAnnalesParMatiere(matiere);
-  const accent = accentMatiere(matiere);
   const corriges = annales.filter((a) => a.aCorrige).length;
   const duree = dureeDominante(annales.map((a) => a.duree_minutes));
 
@@ -75,7 +73,11 @@ export default async function PageAnnalesMatiere({
 
         <section className="flex flex-col gap-5 rounded-[22px] bg-[#10172c] p-6 text-white sm:p-9">
           <div className="flex flex-col gap-2">
-            <span style={{ color: accent }} className="text-sm font-semibold">
+            {/* Bleu clair tiré de la palette, lisible sur le fond sombre. */}
+            <span
+              style={{ color: "color-mix(in srgb, var(--color-primary) 55%, white)" }}
+              className="text-sm font-semibold"
+            >
               1<sup>re</sup> année bac · {titre}
             </span>
             <h1 className="font-titre text-3xl leading-tight font-bold sm:text-[38px]">
@@ -112,7 +114,7 @@ export default async function PageAnnalesMatiere({
           <ListeAnnales
             annales={annales}
             matiereSlug={matiere}
-            accent={accent}
+            titreMatiere={titre}
           />
         )}
       </div>
