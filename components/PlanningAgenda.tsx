@@ -242,74 +242,56 @@ export default function PlanningAgenda({ evenements, connecte, examens, children
       </section>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
-        {/* Grille du mois. Deux essais refusés ("j'ai pas aimé ça") :
-         * grandes cases bleu pâle, puis feuille à filets. Demande :
-         * "un peu plus petite et stylée, et entre aussi la couleur
-         * bleue". D'où l'en-tête bleu (même dégradé que la carte des
-         * jours restants, jetons à valeur par mode), des cases plus
-         * basses et arrondies, aujourd'hui plein bleu. */}
-        <section className="h-fit overflow-hidden rounded-[28px] border border-border bg-surface shadow-sm">
-          <div
-            className="relative overflow-hidden px-2.5 pt-5 pb-3 text-white sm:px-4 sm:pt-6"
-            style={{ background: "linear-gradient(135deg, var(--fond-sombre-actif) 0%, var(--fond-sombre-haut) 100%)" }}
-          >
-            <span aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 size-48 rounded-full bg-white/10 blur-2xl" />
-                        <div className="relative flex flex-wrap items-center justify-between gap-3 px-1.5 sm:px-2">
-              <h2 className="font-serif text-2xl font-bold sm:text-[28px]">
-                <span className="capitalize">{nomMois}</span>{" "}
-                <span className="font-normal text-white/65">{mois.getFullYear()}</span>
-              </h2>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setMois(new Date(mois.getFullYear(), mois.getMonth() - 1, 1))}
-                  aria-label="Mois précédent"
-                  className="flex size-9 items-center justify-center rounded-full bg-white/12 transition-colors hover:bg-white/25"
-                >
-                  <IconeChevronBas className="size-4 rotate-90" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMois(new Date(aujourdHui.getFullYear(), aujourdHui.getMonth(), 1));
-                    setJourChoisi(null);
-                    setDate(cleAujourdHui);
-                  }}
-                  className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-primary transition-transform hover:-translate-y-px"
-                >
-                  Aujourd&apos;hui
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMois(new Date(mois.getFullYear(), mois.getMonth() + 1, 1))}
-                  aria-label="Mois suivant"
-                  className="flex size-9 items-center justify-center rounded-full bg-white/12 transition-colors hover:bg-white/25"
-                >
-                  <IconeChevronBas className="size-4 -rotate-90" />
-                </button>
-              </div>
-            </div>
-            <div className="relative mt-4 grid grid-cols-7 gap-1 sm:gap-1.5">
-              {ENTETES.map((jour, i) => (
-                <p
-                  key={jour}
-                  className={`text-center text-[11px] font-bold tracking-[0.08em] uppercase ${i >= 5 ? "text-white" : "text-white/60"}`}
-                >
-                  {jour}
-                </p>
-              ))}
+        {/* Grille du mois */}
+        <section className="rounded-[28px] border border-border bg-surface p-4 shadow-sm sm:p-7">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-serif text-2xl font-bold text-ink sm:text-[30px]">
+              <span className="capitalize">{nomMois}</span>{" "}
+              <span className="font-normal text-muted-foreground">{mois.getFullYear()}</span>
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMois(new Date(mois.getFullYear(), mois.getMonth() - 1, 1))}
+                aria-label="Mois précédent"
+                className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-surface-muted hover:text-ink"
+              >
+                <IconeChevronBas className="size-4 rotate-90" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMois(new Date(aujourdHui.getFullYear(), aujourdHui.getMonth(), 1));
+                  setJourChoisi(null);
+                  setDate(cleAujourdHui);
+                }}
+                className="rounded-full bg-primary-tint px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-white"
+              >
+                Aujourd&apos;hui
+              </button>
+              <button
+                type="button"
+                onClick={() => setMois(new Date(mois.getFullYear(), mois.getMonth() + 1, 1))}
+                aria-label="Mois suivant"
+                className="flex size-10 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-surface-muted hover:text-ink"
+              >
+                <IconeChevronBas className="size-4 -rotate-90" />
+              </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 p-2.5 sm:gap-1.5 sm:p-4">
+          <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5">
+            {ENTETES.map((jour) => (
+              <p key={jour} className="px-1 pb-1 text-xs text-muted-foreground sm:px-2 sm:text-sm">
+                {jour}
+              </p>
+            ))}
             {semainesDuMois(mois)
               .flat()
-              .map((jour, i) => {
+              .map((jour) => {
                 const cle = versCle(jour);
                 const horsMois = jour.getMonth() !== mois.getMonth();
                 const estAujourdHui = cle === cleAujourdHui;
-                const passe = jour < aujourdHui;
-                const weekEnd = i % 7 >= 5;
                 const choisi = cle === jourChoisi;
                 const duJour = parDate[cle] ?? [];
                 const examen = examenDuJour(cle);
@@ -328,31 +310,17 @@ export default function PlanningAgenda({ evenements, connecte, examens, children
                     }}
                     aria-pressed={choisi}
                     aria-label={jour.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
-                    // Aujourd'hui : fond par le jeton à valeur par mode, car
-                    // en sombre --color-primary devient clair et le chiffre
-                    // blanc ne se lisait plus.
-                    style={estAujourdHui ? { background: "linear-gradient(135deg, var(--fond-sombre-actif), var(--fond-sombre-haut))" } : undefined}
-                    className={`flex min-h-[48px] flex-col items-start gap-1 overflow-hidden rounded-[12px] p-1.5 text-left transition sm:min-h-[76px] sm:rounded-[14px] sm:p-2 ${
-                      estAujourdHui
-                        ? "text-white shadow-[0_10px_22px_-10px_var(--color-primary)]"
+                    className={`flex min-h-[64px] flex-col items-start gap-1 overflow-hidden rounded-[12px] p-1.5 text-left transition sm:min-h-[104px] sm:rounded-[16px] sm:p-2.5 ${
+                      estAujourdHui || choisi
+                        ? "bg-surface shadow-[0_8px_24px_-12px_rgba(20,40,120,0.45)] ring-2 ring-primary"
                         : horsMois
                           ? "bg-transparent"
-                          : weekEnd
-                            ? "bg-primary-tint hover:ring-1 hover:ring-primary/40"
-                            : "bg-surface-muted hover:ring-1 hover:ring-primary/40"
-                    } ${choisi && !estAujourdHui ? "ring-2 ring-primary" : ""} ${choisi && estAujourdHui ? "ring-2 ring-primary ring-offset-2 ring-offset-surface" : ""}`}
+                          : "bg-surface-muted hover:ring-1 hover:ring-border-strong"
+                    }`}
                   >
                     <span
-                      className={`text-xs tabular-nums sm:text-sm ${
-                        estAujourdHui
-                          ? "font-bold"
-                          : horsMois
-                            ? "text-subtle-foreground/50"
-                            : passe
-                              ? "text-subtle-foreground"
-                              : weekEnd
-                                ? "font-bold text-primary"
-                                : "font-semibold text-ink"
+                      className={`flex items-center justify-center text-xs font-bold tabular-nums sm:text-[15px] ${
+                        estAujourdHui ? "size-6 rounded-full bg-primary text-white sm:size-8" : horsMois ? "text-subtle-foreground/60" : "text-ink"
                       }`}
                     >
                       {jour.getDate()}
@@ -361,37 +329,21 @@ export default function PlanningAgenda({ evenements, connecte, examens, children
                      * l'intitulé en pastille, deux au plus. */}
                     <span className="flex gap-1 sm:hidden">
                       {pastilles.slice(0, 3).map((p) => (
-                        <span
-                          key={p.id}
-                          className="size-1.5 rounded-full"
-                          style={{ backgroundColor: estAujourdHui ? "white" : p.couleur }}
-                        />
+                        <span key={p.id} className="size-1.5 rounded-full" style={{ backgroundColor: p.couleur }} />
                       ))}
                     </span>
                     <span className="hidden w-full flex-col gap-1 sm:flex">
                       {pastilles.slice(0, 2).map((p) => (
                         <span
                           key={p.id}
-                          className="flex w-full items-center gap-1.5 truncate rounded-[7px] px-1.5 py-0.5 text-[11px] font-medium"
-                          style={
-                            estAujourdHui
-                              ? { color: "white", backgroundColor: "rgb(255 255 255 / 0.18)" }
-                              : { color: p.couleur, backgroundColor: `color-mix(in srgb, ${p.couleur} 13%, var(--color-surface))` }
-                          }
+                          className="flex w-full items-center gap-1.5 truncate rounded-[8px] px-2 py-1 text-xs font-medium"
+                          style={{ color: p.couleur, backgroundColor: `color-mix(in srgb, ${p.couleur} 13%, var(--color-surface))` }}
                         >
-                          <span
-                            aria-hidden="true"
-                            className="size-1.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: estAujourdHui ? "white" : p.couleur }}
-                          />
+                          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: p.couleur }} />
                           <span className="truncate">{p.titre}</span>
                         </span>
                       ))}
-                      {pastilles.length > 2 && (
-                        <span className={`px-1.5 text-[11px] ${estAujourdHui ? "text-white/80" : "text-muted-foreground"}`}>
-                          +{pastilles.length - 2}
-                        </span>
-                      )}
+                      {pastilles.length > 2 && <span className="px-2 text-[11px] text-muted-foreground">+{pastilles.length - 2}</span>}
                     </span>
                   </button>
                 );
