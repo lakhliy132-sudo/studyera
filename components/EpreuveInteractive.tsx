@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import { IconeFleche } from "@/components/icones";
 import {
+  aUneCorrection,
   compterQuestions,
   type Epreuve,
   type Question,
@@ -72,12 +73,14 @@ function CorpsQuestion({
         {correctionVisible && (
           <Correction>
             <ul className="flex flex-col gap-1">
-              {question.champs.map((champ) => (
-                <li key={champ.libelle}>
-                  <span className="font-semibold">{champ.libelle} :</span>{" "}
-                  {champ.reponse}
-                </li>
-              ))}
+              {question.champs.map((champ) =>
+                champ.reponse ? (
+                  <li key={champ.libelle}>
+                    <span className="font-semibold">{champ.libelle} :</span>{" "}
+                    {champ.reponse}
+                  </li>
+                ) : null,
+              )}
             </ul>
           </Correction>
         )}
@@ -124,15 +127,60 @@ function CorpsQuestion({
         {correctionVisible && (
           <Correction>
             <ul className="flex flex-col gap-1.5">
-              {question.affirmations.map((affirmation, index) => (
-                <li key={affirmation.texte}>
-                  <span className="font-semibold">
-                    {String.fromCharCode(97 + index)}. {affirmation.vrai ? "Vrai" : "Faux"}
-                  </span>
-                  {affirmation.justification && ` — ${affirmation.justification}`}
-                </li>
-              ))}
+              {question.affirmations.map((affirmation, index) =>
+                affirmation.vrai === null ? null : (
+                  <li key={affirmation.texte}>
+                    <span className="font-semibold">
+                      {String.fromCharCode(97 + index)}. {affirmation.vrai ? "Vrai" : "Faux"}
+                    </span>
+                    {affirmation.justification && ` — ${affirmation.justification}`}
+                  </li>
+                ),
+              )}
             </ul>
+          </Correction>
+        )}
+      </>
+    );
+  }
+
+  if (question.type === "choix") {
+    const choisi = typeof reponse === "number" ? reponse : null;
+    return (
+      <>
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {question.options.map((option, index) => {
+            const actif = choisi === index;
+            return (
+              <li key={option}>
+                <button
+                  type="button"
+                  aria-pressed={actif}
+                  onClick={() => surReponse(index)}
+                  className={`flex w-full items-center gap-2.5 rounded-[10px] border px-3 py-2 text-left text-sm transition-colors ${
+                    actif
+                      ? "border-primary bg-primary-tint font-semibold text-ink"
+                      : "border-border text-foreground hover:border-border-strong"
+                  }`}
+                >
+                  <span
+                    className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      actif ? "bg-primary text-primary-foreground" : "bg-surface-muted text-muted-foreground"
+                    }`}
+                  >
+                    {String.fromCharCode(97 + index)}
+                  </span>
+                  {option}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        {correctionVisible && question.bonne !== null && (
+          <Correction>
+            <span className="font-semibold">
+              {String.fromCharCode(97 + question.bonne)}. {question.options[question.bonne]}
+            </span>
           </Correction>
         )}
       </>
@@ -189,6 +237,7 @@ export default function EpreuveInteractive({
     () =>
       Object.values(reponses).filter((valeur) => {
         if (typeof valeur === "string") return valeur.trim().length > 0;
+        if (typeof valeur === "number") return true;
         if (typeof valeur === "object" && valeur !== null) {
           return Object.values(valeur).some(
             (v) => v === true || v === false || String(v).trim().length > 0,
@@ -197,6 +246,13 @@ export default function EpreuveInteractive({
         return false;
       }).length,
     [reponses],
+  );
+
+  const sansCorrige = useMemo(
+    () =>
+      !corrigeMdx &&
+      epreuve.parties.every((p) => p.questions.every((q) => !aUneCorrection(q))),
+    [epreuve, corrigeMdx],
   );
 
   const onglets: { cle: Onglet; libelle: string; disponible: boolean }[] = [
@@ -251,6 +307,15 @@ export default function EpreuveInteractive({
               {traitees}/{total} questions
             </span>
           </div>
+
+          {/* Dit plutôt que laisser chercher un bouton absent : le sujet
+           * est en ligne, son corrigé pas encore. */}
+          {sansCorrige && (
+            <p className="rounded-[14px] border border-dashed border-border-strong bg-surface px-4 py-3 text-sm text-muted-foreground">
+              Le corrigé de ce sujet n&apos;est pas encore disponible : entraîne-toi
+              sur les questions, la correction sera ajoutée dès que possible.
+            </p>
+          )}
 
           {epreuve.parties.map((partie, indexPartie) => (
             <section key={partie.titre} className="flex flex-col gap-3">
@@ -321,15 +386,17 @@ export default function EpreuveInteractive({
                           correctionVisible={visible}
                         />
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setCorrections((etat) => ({ ...etat, [k]: !visible }))
-                          }
-                          className="w-fit text-sm font-semibold text-primary hover:underline"
-                        >
-                          {visible ? "Masquer la correction" : "Voir la correction"}
-                        </button>
+                        {aUneCorrection(question) && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setCorrections((etat) => ({ ...etat, [k]: !visible }))
+                            }
+                            className="w-fit text-sm font-semibold text-primary hover:underline"
+                          >
+                            {visible ? "Masquer la correction" : "Voir la correction"}
+                          </button>
+                        )}
                       </li>
                     );
                   })}
