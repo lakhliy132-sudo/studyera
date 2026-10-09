@@ -56,10 +56,19 @@ export default function ListeAnnales({
   const [recherche, setRecherche] = useState("");
   const [session, setSession] = useState<CleSession>("toutes");
   const [oeuvre, setOeuvre] = useState("toutes");
+  const [academie, setAcademie] = useState("toutes");
 
   const oeuvres = useMemo(
     () =>
       [...new Set(annales.map((a) => a.oeuvre).filter((o): o is string => Boolean(o)))].sort(),
+    [annales],
+  );
+
+  // Même règle que les œuvres : le menu n'apparaît que si des sujets
+  // portent une académie (« Examen 2025 CASA », « Examen 2025 RABAT »).
+  const academies = useMemo(
+    () =>
+      [...new Set(annales.map((a) => a.academie).filter((o): o is string => Boolean(o)))].sort(),
     [annales],
   );
 
@@ -68,12 +77,13 @@ export default function ListeAnnales({
     return annales.filter((annale) => {
       if (session !== "toutes" && annale.session !== session) return false;
       if (oeuvre !== "toutes" && annale.oeuvre !== oeuvre) return false;
+      if (academie !== "toutes" && annale.academie !== academie) return false;
       if (!termes) return true;
       const texte =
-        `${annale.annee} ${annale.session} ${annale.oeuvre ?? ""}`.toLowerCase();
+        `${annale.annee} ${annale.session} ${annale.oeuvre ?? ""} ${annale.academie ?? ""}`.toLowerCase();
       return termes.split(/\s+/).every((mot) => texte.includes(mot));
     });
-  }, [annales, recherche, session, oeuvre]);
+  }, [annales, recherche, session, oeuvre, academie]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -111,6 +121,27 @@ export default function ListeAnnales({
             </button>
           ))}
         </div>
+
+        {academies.length > 0 && (
+          <>
+            <label htmlFor="academie-annales" className="sr-only">
+              Filtrer par académie
+            </label>
+            <select
+              id="academie-annales"
+              value={academie}
+              onChange={(e) => setAcademie(e.target.value)}
+              className="shrink-0 rounded-[12px] border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+            >
+              <option value="toutes">Toutes les académies</option>
+              {academies.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
 
         {oeuvres.length > 0 && (
           <>
@@ -159,6 +190,7 @@ export default function ListeAnnales({
 
                 <span className="text-sm text-muted-foreground">
                   Session {annale.session}
+                  {annale.academie && ` · ${annale.academie}`}
                 </span>
 
                 {annale.oeuvre && (

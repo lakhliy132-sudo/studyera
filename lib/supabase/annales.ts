@@ -17,6 +17,7 @@ export interface Annale {
   annee: number;
   session: "normale" | "rattrapage";
   oeuvre: string | null;
+  academie: string | null;
   duree_minutes: number | null;
   enonce_mdx: string;
   corrige_mdx: string | null;
@@ -37,6 +38,7 @@ export interface AnnaleResumee {
   annee: number;
   session: "normale" | "rattrapage";
   oeuvre: string | null;
+  academie: string | null;
   duree_minutes: number | null;
   aCorrige: boolean;
   /** Vrai si le sujet est découpé en questions (colonne `questions`
@@ -52,10 +54,11 @@ export async function recupererAnnalesParMatiere(
   const supabase = await creerClientServeur();
   const { data, error } = await supabase
     .from("annales")
-    .select("id, matiere, annee, session, oeuvre, duree_minutes, corrige_mdx, questions")
+    .select("id, matiere, annee, session, oeuvre, academie, duree_minutes, corrige_mdx, questions")
     .eq("matiere", matiere)
     .order("annee", { ascending: false })
-    .order("session");
+    .order("session")
+    .order("academie");
 
   if (tableAbsente(error)) return [];
   if (error) throw error;
@@ -66,6 +69,7 @@ export async function recupererAnnalesParMatiere(
     annee: ligne.annee,
     session: ligne.session,
     oeuvre: ligne.oeuvre,
+    academie: ligne.academie,
     duree_minutes: ligne.duree_minutes,
     aCorrige: Boolean(ligne.corrige_mdx),
     aEntrainement: lireEpreuve(ligne.questions) !== null,
@@ -96,7 +100,7 @@ export async function recupererAnnaleParId(
   const { data, error } = await supabase
     .from("annales")
     .select(
-      "id, matiere, annee, session, oeuvre, duree_minutes, enonce_mdx, corrige_mdx, filiere_libelle, coefficient, questions",
+      "id, matiere, annee, session, oeuvre, academie, duree_minutes, enonce_mdx, corrige_mdx, filiere_libelle, coefficient, questions",
     )
     .eq("id", id)
     .maybeSingle<Annale>();
