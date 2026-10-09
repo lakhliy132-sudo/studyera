@@ -85,27 +85,31 @@ export default async function PageFrancais() {
           {/* Correcteur IA */}
           <Link
             href="/redaction/nouvelle"
-            className="group relative flex flex-col overflow-hidden rounded-[28px] p-7 text-white shadow-[0_20px_50px_-20px_rgba(10,16,32,0.55)] transition-transform hover:-translate-y-1 sm:p-9 lg:row-span-2"
+            className="group relative flex flex-col overflow-hidden rounded-[28px] p-6 text-white shadow-[0_20px_50px_-20px_rgba(10,16,32,0.55)] transition-transform hover:-translate-y-1 sm:p-8 lg:row-span-2"
             style={{ background: FONCE }}
           >
             {/* Deux arcs décoratifs, comme sur la maquette. */}
             <span aria-hidden="true" className="pointer-events-none absolute -bottom-40 -left-28 size-[420px] rounded-full border-[48px] border-white/[0.04]" />
             <span aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-24 size-56 rounded-full border-[28px] border-white/[0.05]" />
             <div className="relative flex items-start justify-between">
-              <span className="flex size-14 items-center justify-center rounded-[16px] bg-white/10">
+              <span className="flex size-12 items-center justify-center rounded-[14px] bg-white/10">
                 <IconeEclair className="size-6" />
               </span>
               <span className="rounded-full px-3.5 py-1 text-sm font-bold text-[#1d2340]" style={{ background: JAUNE }}>
                 {correcteurPret ? "Nouveau" : "Bientôt disponible"}
               </span>
             </div>
-            <h2 className="mt-8 font-serif text-[34px] leading-tight font-bold sm:text-[40px]">Correcteur IA</h2>
+            <h2 className="mt-5 font-serif text-[30px] leading-tight font-bold sm:text-[36px]">Correcteur IA</h2>
             <p className="mt-3 text-lg leading-relaxed text-white/80">
               Envoie ta rédaction, reçois une note sur 20 et des conseils précis pour progresser.
             </p>
 
             {/* Une copie dessinée, sans note ni remarque inventée. */}
-            <div aria-hidden="true" className="relative mt-10 mb-8 rotate-[-1.5deg] rounded-[20px] bg-white p-6 shadow-xl">
+            {/* La copie est centrée dans la hauteur libre de la carte, qui
+             * s'étire sur deux rangées : sans ça, tout le vide tombait
+             * sous la copie ("fais-la plus courte"). */}
+            <div className="flex flex-1 items-center py-7">
+            <div aria-hidden="true" className="relative w-full rotate-[-1.5deg] rounded-[20px] bg-white p-5 shadow-xl">
               <span
                 className="absolute -top-7 -right-4 flex size-[88px] flex-col items-center justify-center rounded-full font-serif text-[#1d2340] shadow-lg"
                 style={{ background: JAUNE }}
@@ -131,8 +135,9 @@ export default async function PageFrancais() {
                 ))}
               </div>
             </div>
+            </div>
 
-            <span className="relative mt-auto flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3.5 font-bold text-[#1d2340] transition-transform group-hover:translate-x-0.5">
+            <span className="relative flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3.5 font-bold text-[#1d2340] transition-transform group-hover:translate-x-0.5">
               Corriger ma rédaction
               <IconeFleche className="size-4" />
             </span>
@@ -145,16 +150,16 @@ export default async function PageFrancais() {
               progression. Rien n'y est écrit à la main : une œuvre sans
               couverture, sans fiche ou sans photo perd seulement l'élément
               manquant. */}
-          <section className="relative flex flex-col gap-6 overflow-hidden rounded-[28px] border border-border bg-surface p-6 shadow-sm sm:p-9 2xl:flex-row 2xl:items-stretch 2xl:gap-8">
+          <section className="relative flex flex-col gap-6 overflow-hidden rounded-[28px] border border-border bg-surface p-6 shadow-sm sm:p-8 min-[1400px]:flex-row min-[1400px]:items-stretch min-[1400px]:gap-7">
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-primary/10 blur-3xl"
             />
-            <div className="relative flex flex-col 2xl:w-[34%] 2xl:shrink-0">
-              <span className="flex size-14 items-center justify-center rounded-[16px] bg-primary-tint text-primary">
+            <div className="relative flex flex-col min-[1400px]:w-[32%] min-[1400px]:shrink-0">
+              <span className="flex size-11 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
                 <IconeLivre className="size-6" />
               </span>
-              <h2 className="mt-6 font-serif text-[28px] leading-tight font-bold text-ink sm:text-[32px]">
+              <h2 className="mt-4 font-serif text-[28px] leading-tight font-bold text-ink sm:text-[30px]">
                 <span className="text-primary italic">Œuvres</span> au programme
               </h2>
               <p className="mt-2 text-base leading-relaxed text-muted-foreground">
@@ -165,7 +170,7 @@ export default async function PageFrancais() {
                   {oeuvres.length} {oeuvres.length > 1 ? "œuvres" : "œuvre"} · {totalChapitres} chapitres à découvrir
                 </p>
               )}
-              <Link href="/oeuvres" className="group mt-6 flex items-center justify-between font-bold text-ink 2xl:mt-auto">
+              <Link href="/oeuvres" className="group mt-6 flex items-center justify-between font-bold text-ink min-[1400px]:mt-auto">
                 Voir les œuvres
                 <span
                   className="flex size-12 items-center justify-center rounded-full text-white transition-transform group-hover:translate-x-1"
@@ -202,7 +207,7 @@ export default async function PageFrancais() {
                         </span>
 
                         <span
-                          className="relative h-[92px] w-[64px] shrink-0 overflow-hidden rounded-[8px] shadow-[0_10px_22px_-10px_rgba(10,16,32,0.6)] transition-transform duration-300 group-hover:scale-105 group-hover:rotate-0 sm:h-[104px] sm:w-[72px]"
+                          className="relative h-[92px] w-[64px] shrink-0 overflow-hidden rounded-[8px] shadow-[0_10px_22px_-10px_rgba(10,16,32,0.6)] transition-transform duration-300 group-hover:scale-105 group-hover:rotate-0 sm:h-[92px] sm:w-[64px]"
                           style={{ rotate: `${i % 2 === 0 ? -3 : 3}deg`, background: couverture ? undefined : FONCE }}
                         >
                           {couverture ? (
@@ -259,17 +264,21 @@ export default async function PageFrancais() {
             {/* Cours de langue */}
             <Link
               href="/langue"
-              className="group flex flex-col rounded-[28px] border border-border bg-surface p-7 shadow-sm transition-transform hover:-translate-y-1 sm:p-9"
+              className="group flex flex-col rounded-[28px] border border-border bg-surface p-6 shadow-sm transition-transform hover:-translate-y-1 sm:p-7"
             >
-              <span className="flex size-14 items-center justify-center rounded-[16px] bg-primary-tint text-primary">
-                <IconeTexte className="size-6" />
-              </span>
-              <h2 className="mt-6 font-serif text-[28px] leading-tight font-bold text-ink">
-                Cours de <span className="text-primary italic">langue</span>
-              </h2>
-              <p className="mt-2 text-base text-muted-foreground">Les notions essentielles pour l&apos;examen.</p>
+              {/* Icône à côté du titre plutôt qu'au-dessus : carte plus
+               * courte ("fais-la plus courte"). */}
+              <div className="flex items-center gap-3">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
+                  <IconeTexte className="size-5" />
+                </span>
+                <h2 className="font-serif text-[24px] leading-tight font-bold text-ink">
+                  Cours de <span className="text-primary italic">langue</span>
+                </h2>
+              </div>
+              <p className="mt-3 text-[15px] text-muted-foreground">Les notions essentielles pour l&apos;examen.</p>
               {leconsLangue.length > 0 && (
-                <ul className="mt-5 flex flex-wrap gap-2">
+                <ul className="mt-4 flex flex-wrap gap-2">
                   {notionsVisibles.map((lecon) => (
                     <li key={lecon.id} className="rounded-full border border-border px-3.5 py-1.5 text-sm text-foreground">
                       {lecon.titre}
@@ -282,9 +291,9 @@ export default async function PageFrancais() {
                   )}
                 </ul>
               )}
-              <span className="mt-auto flex items-center justify-between pt-7 font-bold text-ink">
+              <span className="mt-auto flex items-center justify-between pt-4 font-bold text-ink">
                 Découvrir
-                <span className="flex size-12 items-center justify-center rounded-full text-white" style={{ background: FONCE }}>
+                <span className="flex size-11 items-center justify-center rounded-full text-white" style={{ background: FONCE }}>
                   <IconeFleche className="size-5" />
                 </span>
               </span>
@@ -293,28 +302,32 @@ export default async function PageFrancais() {
             {/* Production écrite */}
             <Link
               href="/production-ecrite"
-              className="group flex flex-col rounded-[28px] border border-border bg-surface p-7 shadow-sm transition-transform hover:-translate-y-1 sm:p-9"
+              className="group flex flex-col rounded-[28px] border border-border bg-surface p-6 shadow-sm transition-transform hover:-translate-y-1 sm:p-7"
             >
-              <span className="flex size-14 items-center justify-center rounded-[16px] bg-primary-tint text-primary">
-                <IconePlume className="size-6" />
-              </span>
-              <h2 className="mt-6 font-serif text-[28px] leading-tight font-bold text-ink">
-                Production <span className="text-primary italic">écrite</span>
-              </h2>
-              <p className="mt-2 text-base text-muted-foreground">Méthode, sujets et outils pour réussir tes rédactions.</p>
+              {/* Icône à côté du titre plutôt qu'au-dessus : carte plus
+               * courte ("fais-la plus courte"). */}
+              <div className="flex items-center gap-3">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
+                  <IconePlume className="size-5" />
+                </span>
+                <h2 className="font-serif text-[24px] leading-tight font-bold text-ink">
+                  Production <span className="text-primary italic">écrite</span>
+                </h2>
+              </div>
+              <p className="mt-3 text-[15px] text-muted-foreground">Méthode, sujets et outils pour réussir tes rédactions.</p>
               {partiesProduction.length > 0 && (
-                <ol className="mt-5 grid grid-cols-2 gap-2">
+                <ol className="mt-4 grid grid-cols-2 gap-2">
                   {partiesProduction.map((partie, i) => (
-                    <li key={partie.id} className="flex items-baseline gap-2.5 rounded-[14px] bg-background px-3.5 py-3 text-sm leading-snug text-foreground">
+                    <li key={partie.id} className="flex items-baseline gap-2.5 rounded-[12px] bg-background px-3 py-2 text-[13px] leading-snug text-foreground">
                       <span className="font-serif text-base font-bold text-ink">{i + 1}</span>
                       {partie.titre}
                     </li>
                   ))}
                 </ol>
               )}
-              <span className="mt-auto flex items-center justify-between pt-7 font-bold text-ink">
+              <span className="mt-auto flex items-center justify-between pt-4 font-bold text-ink">
                 Découvrir
-                <span className="flex size-12 items-center justify-center rounded-full text-white" style={{ background: FONCE }}>
+                <span className="flex size-11 items-center justify-center rounded-full text-white" style={{ background: FONCE }}>
                   <IconeFleche className="size-5" />
                 </span>
               </span>
