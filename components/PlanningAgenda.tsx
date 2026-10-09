@@ -280,74 +280,95 @@ export default function PlanningAgenda({ evenements, connecte, examens, children
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5">
-            {ENTETES.map((jour) => (
-              <p key={jour} className="px-1 pb-1 text-xs text-muted-foreground sm:px-2 sm:text-sm">
-                {jour}
-              </p>
-            ))}
-            {semainesDuMois(mois)
-              .flat()
-              .map((jour) => {
-                const cle = versCle(jour);
-                const horsMois = jour.getMonth() !== mois.getMonth();
-                const estAujourdHui = cle === cleAujourdHui;
-                const choisi = cle === jourChoisi;
-                const duJour = parDate[cle] ?? [];
-                const examen = examenDuJour(cle);
-                const pastilles = [
-                  ...(examen ? [{ id: `examen-${cle}`, titre: examen.titre, couleur: "var(--color-primary)" }] : []),
-                  ...duJour.map((e) => ({ id: e.id, titre: e.titre, couleur: couleurCategorie(e.categorie) })),
-                ];
+          {/* Grille en vrai calendrier ("j'ai pas aimé ça" devant les
+           * cases bleues séparées) : une seule feuille, des filets fins
+           * entre les jours (l'écart de 1 px laisse voir le fond de la
+           * bordure), le week-end teinté, les jours passés atténués. */}
+          <div className="overflow-hidden rounded-[18px] border border-border">
+            <div className="grid grid-cols-7 border-b border-border bg-surface-muted">
+              {ENTETES.map((jour, i) => (
+                <p
+                  key={jour}
+                  className={`py-2.5 text-center text-[11px] font-bold tracking-[0.08em] uppercase sm:text-xs ${
+                    i >= 5 ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {jour}
+                </p>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-px bg-border">
+              {semainesDuMois(mois)
+                .flat()
+                .map((jour, i) => {
+                  const cle = versCle(jour);
+                  const horsMois = jour.getMonth() !== mois.getMonth();
+                  const estAujourdHui = cle === cleAujourdHui;
+                  const passe = jour < aujourdHui;
+                  const weekEnd = i % 7 >= 5;
+                  const choisi = cle === jourChoisi;
+                  const duJour = parDate[cle] ?? [];
+                  const examen = examenDuJour(cle);
+                  const pastilles = [
+                    ...(examen ? [{ id: `examen-${cle}`, titre: examen.titre, couleur: "var(--color-primary)" }] : []),
+                    ...duJour.map((e) => ({ id: e.id, titre: e.titre, couleur: couleurCategorie(e.categorie) })),
+                  ];
 
-                return (
-                  <button
-                    key={cle}
-                    type="button"
-                    onClick={() => {
-                      setJourChoisi(choisi ? null : cle);
-                      setDate(cle);
-                    }}
-                    aria-pressed={choisi}
-                    aria-label={jour.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
-                    className={`flex min-h-[64px] flex-col items-start gap-1 overflow-hidden rounded-[12px] p-1.5 text-left transition sm:min-h-[104px] sm:rounded-[16px] sm:p-2.5 ${
-                      estAujourdHui || choisi
-                        ? "bg-surface shadow-[0_8px_24px_-12px_rgba(20,40,120,0.45)] ring-2 ring-primary"
-                        : horsMois
-                          ? "bg-transparent"
-                          : "bg-surface-muted hover:ring-1 hover:ring-border-strong"
-                    }`}
-                  >
-                    <span
-                      className={`flex items-center justify-center text-xs font-bold tabular-nums sm:text-[15px] ${
-                        estAujourdHui ? "size-6 rounded-full bg-primary text-white sm:size-8" : horsMois ? "text-subtle-foreground/60" : "text-ink"
-                      }`}
+                  return (
+                    <button
+                      key={cle}
+                      type="button"
+                      onClick={() => {
+                        setJourChoisi(choisi ? null : cle);
+                        setDate(cle);
+                      }}
+                      aria-pressed={choisi}
+                      aria-label={jour.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+                      className={`relative flex min-h-[60px] flex-col items-start gap-1 overflow-hidden p-1.5 text-left transition-colors sm:min-h-[96px] sm:p-2.5 ${
+                        estAujourdHui
+                          ? "bg-primary-tint"
+                          : weekEnd || horsMois
+                            ? "bg-surface-muted hover:bg-primary-tint/60"
+                            : "bg-surface hover:bg-primary-tint/60"
+                      } ${choisi ? "z-10 ring-2 ring-primary ring-inset" : ""}`}
                     >
-                      {jour.getDate()}
-                    </span>
-                    {/* Téléphone : un point par événement. Ordinateur :
-                     * l'intitulé en pastille, deux au plus. */}
-                    <span className="flex gap-1 sm:hidden">
-                      {pastilles.slice(0, 3).map((p) => (
-                        <span key={p.id} className="size-1.5 rounded-full" style={{ backgroundColor: p.couleur }} />
-                      ))}
-                    </span>
-                    <span className="hidden w-full flex-col gap-1 sm:flex">
-                      {pastilles.slice(0, 2).map((p) => (
-                        <span
-                          key={p.id}
-                          className="flex w-full items-center gap-1.5 truncate rounded-[8px] px-2 py-1 text-xs font-medium"
-                          style={{ color: p.couleur, backgroundColor: `color-mix(in srgb, ${p.couleur} 13%, var(--color-surface))` }}
-                        >
-                          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: p.couleur }} />
-                          <span className="truncate">{p.titre}</span>
-                        </span>
-                      ))}
-                      {pastilles.length > 2 && <span className="px-2 text-[11px] text-muted-foreground">+{pastilles.length - 2}</span>}
-                    </span>
-                  </button>
-                );
-              })}
+                      <span
+                        className={`flex items-center justify-center text-xs tabular-nums sm:text-sm ${
+                          estAujourdHui
+                            ? "size-6 rounded-full bg-primary font-bold text-white sm:size-7"
+                            : horsMois
+                              ? "text-subtle-foreground/50"
+                              : passe
+                                ? "text-subtle-foreground"
+                                : "font-semibold text-ink"
+                        }`}
+                      >
+                        {jour.getDate()}
+                      </span>
+                      {/* Téléphone : un point par événement. Ordinateur :
+                       * l'intitulé en pastille, deux au plus. */}
+                      <span className="flex gap-1 sm:hidden">
+                        {pastilles.slice(0, 3).map((p) => (
+                          <span key={p.id} className="size-1.5 rounded-full" style={{ backgroundColor: p.couleur }} />
+                        ))}
+                      </span>
+                      <span className="hidden w-full flex-col gap-1 sm:flex">
+                        {pastilles.slice(0, 2).map((p) => (
+                          <span
+                            key={p.id}
+                            className="flex w-full items-center gap-1.5 truncate rounded-[8px] px-2 py-1 text-xs font-medium"
+                            style={{ color: p.couleur, backgroundColor: `color-mix(in srgb, ${p.couleur} 13%, var(--color-surface))` }}
+                          >
+                            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: p.couleur }} />
+                            <span className="truncate">{p.titre}</span>
+                          </span>
+                        ))}
+                        {pastilles.length > 2 && <span className="px-2 text-[11px] text-muted-foreground">+{pastilles.length - 2}</span>}
+                      </span>
+                    </button>
+                  );
+                })}
+            </div>
           </div>
         </section>
 
