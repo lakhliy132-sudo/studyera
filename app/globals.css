@@ -633,3 +633,34 @@ body {
 :root[data-palette][data-theme="dark"] {
   --color-ink: #eef1f7;
 }
+
+/* Fonds sombres sur lesquels du texte blanc est posé : la colonne de
+ * navigation d'un élève connecté (MenuLateral) et le bandeau du bas de
+ * l'accueil (BarreObjectifAccueil), refaits d'après la dernière
+ * maquette de l'accueil.
+ *
+ * Ils dérivent de la couleur active pour suivre la palette, mais pas
+ * dans la même proportion selon le mode : en mode sombre,
+ * `--color-primary` devient une couleur claire (violet pâle), et le
+ * mélange du mode clair donnait un fond mauve sur lequel le blanc ne
+ * se lisait plus. D'où une valeur par mode, avec les deux conditions
+ * habituelles (CLAUDE.md §3). */
+:root {
+  --fond-sombre-haut: color-mix(in srgb, var(--color-primary) 34%, #0a1020);
+  --fond-sombre-bas: color-mix(in srgb, var(--color-primary) 16%, #070b17);
+  --fond-sombre-actif: var(--color-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond-sombre-haut: color-mix(in srgb, var(--color-primary) 16%, #0d1020);
+    --fond-sombre-bas: color-mix(in srgb, var(--color-primary) 7%, #090b12);
+    --fond-sombre-actif: color-mix(in srgb, var(--color-primary) 48%, #0a1020);
+  }
+}
+
+:root[data-theme="dark"] {
+  --fond-sombre-haut: color-mix(in srgb, var(--color-primary) 16%, #0d1020);
+  --fond-sombre-bas: color-mix(in srgb, var(--color-primary) 7%, #090b12);
+  --fond-sombre-actif: color-mix(in srgb, var(--color-primary) 48%, #0a1020);
+}

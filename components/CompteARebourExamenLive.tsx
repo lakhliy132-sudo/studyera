@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { IconeEtoile } from "@/components/icones";
+import { IconeCalendrier, IconeCoeur } from "@/components/icones";
 import { prochaineSession } from "@/lib/calendrier";
 
 interface Decompte {
@@ -42,7 +42,9 @@ function pad(n: number) {
  * Disparaît silencieusement si aucune session à venir (comme sur
  * /calendrier) plutôt que d'afficher un décompte négatif absurde.
  *
- * Chaque cellule (jours/heures/min/sec) a un liseré de couleur
+ * Refait d'après la dernière maquette de l'accueil : cellules blanches
+ * à bord fin, et "Tu peux le faire !" en pastille. Auparavant, chaque
+ * cellule (jours/heures/min/sec) avait un liseré de couleur
  * distinct, repris des 4 tokens `--color-matiere-*` (même ordre que
  * "Mes matières" : français/éducation islamique/arabe/histoire-géo) —
  * demandé explicitement par l'utilisateur ("ajoute des couleurs sur
@@ -74,42 +76,41 @@ export default function CompteARebourExamenLive() {
   if (!session || !decompte) return null;
 
   return (
-    <div className="transition hover:-translate-y-0.5 hover:shadow-md rounded-[24px] border border-border bg-surface p-6 shadow-sm">
-      <div className="mb-4 flex items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-primary">
-          <IconeEtoile className="size-5" />
+    <div className="rounded-[24px] border border-border bg-surface p-5 shadow-sm">
+      <div className="mb-4 flex items-start gap-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-primary-tint text-primary">
+          <IconeCalendrier className="size-5" />
         </span>
         <div>
           {/* "1Bac" et pas "Bac" — précisé par l'utilisateur ("c pas bac
            * 2027 C est 1bac 2027") : le compte à rebours vise l'examen
            * régional de 1re année du bac, pas l'examen national de 2e
            * année. */}
-          <p className="font-serif text-lg font-bold text-ink">1Bac {session.debut.getFullYear()}</p>
+          <p className="font-serif text-xl font-bold text-ink">1Bac {session.debut.getFullYear()}</p>
           <p className="text-xs text-muted-foreground">Il te reste encore du temps !</p>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-2 text-center">
         {[
-          { valeur: decompte.jours, libelle: "jours", accent: "var(--color-matiere-francais)" },
-          { valeur: decompte.heures, libelle: "heures", accent: "var(--color-matiere-islamique)" },
-          { valeur: decompte.minutes, libelle: "min", accent: "var(--color-matiere-arabe)" },
-          { valeur: decompte.secondes, libelle: "sec", accent: "var(--color-matiere-histoire-geo)" },
+          { valeur: decompte.jours, libelle: "jours" },
+          { valeur: decompte.heures, libelle: "heures" },
+          { valeur: decompte.minutes, libelle: "min" },
+          { valeur: decompte.secondes, libelle: "sec" },
         ].map((unite) => (
-          <div
-            key={unite.libelle}
-            className="rounded-[12px] border-t-[3px] bg-background py-2.5"
-            style={{ borderTopColor: unite.accent }}
-          >
-            <p className="font-serif text-xl font-bold tabular-nums text-ink">{pad(unite.valeur)}</p>
-            <p className="text-[10px] font-semibold tracking-wide text-subtle-foreground uppercase">
-              {unite.libelle}
+          <div key={unite.libelle} className="rounded-[14px] border border-border bg-background px-1 py-3 shadow-sm">
+            <p className="font-serif text-2xl font-bold tabular-nums text-ink">
+              {unite.libelle === "jours" ? unite.valeur : pad(unite.valeur)}
             </p>
+            <p className="mt-0.5 text-[10px] font-semibold tracking-wide text-subtle-foreground uppercase">{unite.libelle}</p>
           </div>
         ))}
       </div>
 
-      <p className="mt-4 text-center text-xs text-muted-foreground">Tu peux le faire ! 💙</p>
+      <p className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-primary-tint py-2.5 text-sm font-medium text-primary">
+        Tu peux le faire !
+        <IconeCoeur className="size-4" />
+      </p>
     </div>
   );
 }

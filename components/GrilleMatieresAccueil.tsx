@@ -109,37 +109,39 @@ const CARTES_MATIERES: CarteMatiere[] = [
 ];
 
 /**
- * "Mes matières" de l'accueil (élève connecté). Seul le français a
- * une vraie progression (chapitres lus/total, déjà calculée pour le
- * tableau de bord) : les 3 autres matières n'ont encore aucun contenu
- * importé, leur carte affiche "Bientôt disponible" à la place d'un
- * pourcentage inventé — le code fourni illustrait un pourcentage pour
- * les 4, mais seul celui du français correspond à une vraie donnée.
+ * "Mes matières" de l'accueil (élève connecté), refait d'après la
+ * dernière maquette de l'utilisateur ("on va essayer ca maintenant") :
+ * chaque carte porte sa photo en bandeau, coupée en bas par une vague,
+ * la pastille d'icône de la matière posée dessus, puis le titre,
+ * l'étiquette, la progression et une flèche.
+ *
+ * Seul le français a une vraie progression (chapitres lus/total) : les
+ * trois autres matières affichent "Pas encore de suivi" à la place des
+ * pourcentages de la maquette (18 %, 35 %, 50 %), qui seraient inventés
+ * (CLAUDE.md §1 et §9).
  */
 export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: GrilleMatieresAccueilProps) {
   const pourcentageFrancais = totalChapitres > 0 ? Math.round((chapitresLus / totalChapitres) * 100) : 0;
 
   return (
-    <div className="rounded-[24px] border border-border bg-surface p-6 shadow-sm sm:p-7">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <p className="font-serif text-xl font-bold text-ink">Mes matières</p>
-        <Link href="/matieres" className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+    <section className="rounded-[24px] border border-border bg-surface p-5 shadow-sm sm:p-7">
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <span className="mt-1 flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary-tint text-primary">
+            <IconeLivre className="size-5" />
+          </span>
+          <div>
+            <h2 className="font-serif text-2xl font-bold text-ink sm:text-[28px]">Mes matières</h2>
+            <p className="text-sm text-muted-foreground">Accède à tes cours, révise et progresse à ton rythme.</p>
+          </div>
+        </div>
+        <Link href="/matieres" className="mt-1 flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
           Voir tout
           <IconeFleche className="size-3.5" />
         </Link>
       </div>
 
-      {/* Grande carte horizontale, photo en grand format en arrière-plan
-       * (fondu de gauche à droite pour garder le texte lisible) plutôt
-       * qu'une petite photo carrée isolée — demandé explicitement par
-       * l'utilisateur, qui a détaillé précisément ce point après un
-       * essai à petite photo carrée ("Ne mets surtout pas les petites
-       * images carrées minuscules que j'ai actuellement" /
-       * "L'image doit être intégrée dans la carte avec un effet
-       * légèrement transparent/fondu"). 2 cartes par ligne (`sm:grid-
-       * cols-2`), jamais 1 seule par ligne ("Ne mets surtout pas tout
-       * sur une seule colonne"). */}
-      <div className="grid grid-cols-1 gap-[14px] sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {CARTES_MATIERES.map((carte) => (
           <Link
             key={carte.slug}
@@ -150,61 +152,65 @@ export default function GrilleMatieresAccueil({ chapitresLus, totalChapitres }: 
                 "--halo-matiere": `color-mix(in srgb, ${carte.couleur} 26%, transparent)`,
               } as CSSProperties
             }
-            className="group relative flex min-h-[172px] flex-col justify-between overflow-hidden rounded-[16px] border border-border shadow-sm transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_12px_28px_var(--halo-matiere)]"
+            className="group relative flex flex-col overflow-hidden rounded-[18px] border border-border bg-surface shadow-sm transition-all duration-[250ms] ease-in-out hover:-translate-y-[3px] hover:shadow-[0_14px_30px_var(--halo-matiere)]"
           >
-            <Image
-              src={carte.photo}
-              alt=""
-              aria-hidden="true"
-              fill
-              sizes="(min-width: 640px) 50vw, 100vw"
-              className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.05]"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(100deg, color-mix(in srgb, var(--color-surface) 92%, transparent) 0%, color-mix(in srgb, var(--color-surface) 68%, transparent) 48%, color-mix(in srgb, var(--color-surface) 20%, transparent) 100%)",
-              }}
-            />
-
-            <div className="relative z-[2] flex items-start justify-between gap-3 p-5">
-              <div className="flex items-center gap-3">
-                <span
-                  style={{ backgroundColor: carte.couleur }}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-[12px] text-white"
-                >
-                  {carte.icone}
-                </span>
-                <div>
-                  <h3 className="text-[15px] font-bold text-ink">{carte.titre}</h3>
-                  <p className="text-[12px] text-muted-foreground">{carte.etiquette}</p>
-                </div>
-              </div>
-              <IconeFleche className="size-4 shrink-0 text-subtle-foreground" />
+            <div className="relative h-[96px] overflow-hidden sm:h-[108px]">
+              <Image
+                src={carte.photo}
+                alt=""
+                aria-hidden="true"
+                fill
+                sizes="(min-width: 768px) 40vw, 100vw"
+                className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.05]"
+              />
+              {/* Vague qui coupe le bas de la photo, comme sur la maquette. */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 400 40"
+                preserveAspectRatio="none"
+                className="absolute inset-x-0 -bottom-px h-[34px] w-full"
+              >
+                <path d="M0 26 C 70 6, 150 2, 220 16 S 340 34, 400 8 V40 H0 Z" fill="var(--color-surface)" />
+              </svg>
+              <span
+                style={{ backgroundColor: carte.couleur }}
+                className="absolute top-3.5 left-4 flex size-12 items-center justify-center rounded-full text-white shadow-lg ring-4 ring-white/40"
+              >
+                {carte.icone}
+              </span>
             </div>
 
-            <div className="relative z-[2] px-5 pb-5">
+            <div className="flex flex-1 flex-col px-5 pt-1 pb-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="font-serif text-xl leading-snug font-bold text-ink">{carte.titre}</h3>
+                  <p className="text-[13px] text-muted-foreground">{carte.etiquette}</p>
+                </div>
+                <span
+                  className="-mt-5 flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface shadow-md transition-transform group-hover:translate-x-0.5"
+                  style={{ color: carte.couleur }}
+                >
+                  <IconeFleche className="size-4" />
+                </span>
+              </div>
+
               {carte.slug === "francais" ? (
-                <div className="flex items-center gap-2">
+                <div className="mt-3.5 flex items-center gap-3">
                   <div className="h-[6px] flex-1 overflow-hidden rounded-full bg-surface-muted">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${pourcentageFrancais}%`, backgroundColor: carte.couleur }}
                     />
                   </div>
-                  <span className="text-[11px] font-semibold text-muted-foreground">{pourcentageFrancais}%</span>
+                  <span className="text-xs font-semibold text-muted-foreground tabular-nums">{pourcentageFrancais}%</span>
                 </div>
               ) : (
-                <span className="w-fit rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-subtle-foreground">
-                  Bientôt disponible
-                </span>
+                <p className="mt-3.5 text-xs text-subtle-foreground">Pas encore de suivi</p>
               )}
             </div>
           </Link>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -73,7 +73,7 @@ export default async function PageCalendrier() {
         <EnteteCalendrier />
       </div>
 
-      <div className="flex w-full flex-col gap-4 px-6 py-6 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
+      <div className="flex w-full flex-col gap-4 px-6 py-6 sm:px-9">
         <div
           className="animate-entree-carte"
           style={{ animationDelay: "80ms" }}

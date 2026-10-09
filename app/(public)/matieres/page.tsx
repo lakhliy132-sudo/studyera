@@ -111,7 +111,10 @@ export default async function PageMatieres() {
           </p>
         </header>
 
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 min-[1400px]:grid-cols-4">
+        {/* Plages bornées (`sm:max-[1399px]:`) : une variante arbitraire
+         * `min-[1400px]:` est placée avant `sm:` dans la CSS générée, et
+         * `sm:grid-cols-2` l'emportait, d'où deux colonnes à 1440 px. */}
+        <ul className="grid grid-cols-1 gap-5 sm:gap-6 sm:max-[1399px]:grid-cols-2 min-[1400px]:grid-cols-4">
           {cartes.map((carte) => {
             const contenu = carte.contenu.filter(Boolean);
             return (
@@ -131,14 +134,14 @@ export default async function PageMatieres() {
                     <p
                       dir="rtl"
                       lang="ar"
-                      className="relative text-center font-arabe text-[40px] leading-tight font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:text-[42px] min-[1400px]:text-[34px] 2xl:text-[46px]"
+                      className="relative text-center font-arabe text-[40px] leading-tight font-bold text-white transition-transform duration-300 group-hover:scale-105 sm:max-[1399px]:text-[42px] min-[1400px]:max-[1535px]:text-[34px] 2xl:text-[46px]"
                     >
                       {carte.titreArabe}
                     </p>
                   </div>
 
                   <div className="flex flex-1 flex-col p-6 sm:p-7">
-                    <h2 className="font-serif text-2xl leading-tight font-bold text-ink sm:text-[26px] min-[1400px]:text-[21px] 2xl:text-[26px]">{carte.titre}</h2>
+                    <h2 className="font-serif text-2xl leading-tight font-bold text-ink sm:max-[1399px]:text-[26px] min-[1400px]:max-[1535px]:text-[21px] 2xl:text-[26px]">{carte.titre}</h2>
                     <div className="mt-auto flex items-center justify-between gap-3 pt-5">
                       <span className="text-sm text-muted-foreground sm:text-[15px]">
                         {contenu.length > 0 ? contenu.join(" · ") : "Bientôt disponible"}
