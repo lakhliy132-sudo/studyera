@@ -288,9 +288,14 @@ L'utilisateur juge sur ce qu'il voit, pas sur ce que dit le code.
 ## 9. Ce qui reste à faire
 
 - **Annales** : la structure est complète (table `annales`, épreuve
-  interactive avec questions typées, chronomètre), il n'y a **aucun
-  sujet** en base. La migration `20261003000000_annales.sql` doit être
-  lancée.
+  interactive avec questions typées, chronomètre, académie). La
+  migration `20261003000000_annales.sql` doit être lancée. Chaque sujet
+  arrive ensuite par son propre fichier SQL rejouable
+  (`20261010000000_sujet_francais_2023_casablanca.sql` pour le premier),
+  généré par un script `.mjs` à partir des pages fournies, transcrites
+  mot pour mot. Un sujet reçu sans corrigé est mis en ligne sans
+  réponses : les champs de réponse restent vides ou `null`, et le
+  bouton « Voir la correction » disparaît.
 - **Suivi de lecture** limité au français : seule `progression` existe,
   et elle ne suit que les chapitres d'œuvres. Les trois autres matières
   affichent « Pas encore de suivi ».

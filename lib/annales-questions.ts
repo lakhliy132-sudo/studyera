@@ -14,7 +14,15 @@
  * l'affichage au lieu de casser la page.
  */
 
-/** Un tableau à compléter : chaque champ a un libellé et sa réponse. */
+/*
+ * Les réponses attendues sont toutes facultatives : un sujet peut être
+ * mis en ligne sans son corrigé (le sujet 2023 de Casablanca-Settat a
+ * été fourni sans). Une réponse absente n'est jamais devinée : le
+ * bouton « Voir la correction » disparaît simplement pour la question.
+ */
+
+/** Un tableau à compléter : chaque champ a un libellé et sa réponse
+ * (chaîne vide si le corrigé n'est pas connu). */
 export interface QuestionTableau {
   type: "tableau";
   numero: string;
@@ -29,7 +37,19 @@ export interface QuestionVraiFaux {
   numero: string;
   points: number;
   enonce: string;
-  affirmations: { texte: string; vrai: boolean; justification?: string }[];
+  /** `vrai` vaut `null` tant que le corrigé n'est pas connu. */
+  affirmations: { texte: string; vrai: boolean | null; justification?: string }[];
+}
+
+/** Une question à choix : « choisissez la bonne réponse », a, b, c, d.
+ * `bonne` est le rang de la bonne réponse, `null` si inconnu. */
+export interface QuestionChoix {
+  type: "choix";
+  numero: string;
+  points: number;
+  enonce: string;
+  options: string[];
+  bonne: number | null;
 }
 
 /** Une question ouverte : l'élève écrit, puis compare à la correction. */
@@ -38,10 +58,25 @@ export interface QuestionLibre {
   numero: string;
   points: number;
   enonce: string;
+  /** Chaîne vide si le corrigé n'est pas connu. */
   correction: string;
 }
 
-export type Question = QuestionTableau | QuestionVraiFaux | QuestionLibre;
+export type Question = QuestionTableau | QuestionVraiFaux | QuestionChoix | QuestionLibre;
+
+/** Vrai si la question a de quoi afficher une correction. */
+export function aUneCorrection(question: Question): boolean {
+  switch (question.type) {
+    case "tableau":
+      return question.champs.some((c) => c.reponse);
+    case "vrai-faux":
+      return question.affirmations.some((a) => a.vrai !== null);
+    case "choix":
+      return question.bonne !== null;
+    default:
+      return Boolean(question.correction);
+  }
+}
 
 export interface PartieEpreuve {
   titre: string;
@@ -100,7 +135,7 @@ function lireQuestion(brut: unknown): Question | null {
           return [
             {
               texte: t,
-              vrai: aff.vrai === true,
+              vrai: aff.vrai === true ? true : aff.vrai === false ? false : null,
               justification: texte(aff.justification) || undefined,
             },
           ];
@@ -109,6 +144,17 @@ function lireQuestion(brut: unknown): Question | null {
     return affirmations.length > 0
       ? { ...base, type: "vrai-faux", affirmations }
       : null;
+  }
+
+  if (q.type === "choix") {
+    const options = Array.isArray(q.options)
+      ? q.options.map(texte).filter(Boolean)
+      : [];
+    const bonne =
+      typeof q.bonne === "number" && Number.isInteger(q.bonne) && q.bonne >= 0 && q.bonne < options.length
+        ? q.bonne
+        : null;
+    return options.length > 1 ? { ...base, type: "choix", options, bonne } : null;
   }
 
   return { ...base, type: "libre", correction: texte(q.correction) };
