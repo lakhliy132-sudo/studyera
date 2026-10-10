@@ -19,6 +19,29 @@ type Onglet = "entrainement" | "sujet" | "corrige";
  * l'autre. */
 const cle = (partie: number, question: number) => `${partie}-${question}`;
 
+/** Gras (`**…**`) et italique (`*…*`) dans les énoncés, cases de
+ * tableau, affirmations et options. Les sujets les emploient pour ce
+ * que la feuille d'examen met en relief : mots soulignés (« [souligné
+ * sur la feuille, en gras ici] »), titres d'œuvres en italique. Sans
+ * ce rendu, l'onglet « S'entraîner » affichait les astérisques tels
+ * quels. Volontairement limité à ces deux marques : un rendu Markdown
+ * complet ferait d'un libellé commençant par « 1. » ou « - » une
+ * liste, et le numéro disparaîtrait. */
+function EnLigne({ texte }: { texte: string }) {
+  const morceaux = texte.split(/(\*\*[^*]+\*\*|\*[^*\s()][^*]*?[^*\s()]\*|\*[^*\s()]\*)/g);
+  return (
+    <>
+      {morceaux.map((morceau, index) => {
+        if (morceau.length > 4 && morceau.startsWith("**") && morceau.endsWith("**"))
+          return <strong key={index}>{morceau.slice(2, -2)}</strong>;
+        if (morceau.length > 2 && morceau.startsWith("*") && morceau.endsWith("*"))
+          return <em key={index}>{morceau.slice(1, -1)}</em>;
+        return morceau;
+      })}
+    </>
+  );
+}
+
 function Points({ points }: { points: number }) {
   if (!points) return null;
   return (
@@ -57,7 +80,7 @@ function CorpsQuestion({
           {question.champs.map((champ) => (
             <label key={champ.libelle} className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-primary">
-                {champ.libelle}
+                <EnLigne texte={champ.libelle} />
               </span>
               <input
                 type="text"
@@ -76,7 +99,7 @@ function CorpsQuestion({
               {question.champs.map((champ) =>
                 champ.reponse ? (
                   <li key={champ.libelle}>
-                    <span className="font-semibold">{champ.libelle} :</span>{" "}
+                    <span className="font-semibold"><EnLigne texte={champ.libelle} /> :</span>{" "}
                     {champ.reponse}
                   </li>
                 ) : null,
@@ -99,7 +122,7 @@ function CorpsQuestion({
               className="flex flex-wrap items-center justify-between gap-3"
             >
               <span className="min-w-0 flex-1 text-sm leading-relaxed text-foreground">
-                {String.fromCharCode(97 + index)}. {affirmation.texte}
+                {String.fromCharCode(97 + index)}. <EnLigne texte={affirmation.texte} />
               </span>
               <span className="flex shrink-0 gap-1.5">
                 {[true, false].map((valeur) => {
@@ -170,7 +193,7 @@ function CorpsQuestion({
                   >
                     {String.fromCharCode(97 + index)}
                   </span>
-                  {option}
+                  <EnLigne texte={option} />
                 </button>
               </li>
             );
@@ -179,7 +202,7 @@ function CorpsQuestion({
         {correctionVisible && question.bonne !== null && (
           <Correction>
             <span className="font-semibold">
-              {String.fromCharCode(97 + question.bonne)}. {question.options[question.bonne]}
+              {String.fromCharCode(97 + question.bonne)}. <EnLigne texte={question.options[question.bonne]} />
             </span>
           </Correction>
         )}
@@ -372,7 +395,7 @@ export default function EpreuveInteractive({
                         <div className="flex items-start justify-between gap-3">
                           <p className="text-sm leading-relaxed font-semibold text-ink">
                             {question.numero && `${question.numero}. `}
-                            {question.enonce}
+                            <EnLigne texte={question.enonce} />
                           </p>
                           <Points points={question.points} />
                         </div>
