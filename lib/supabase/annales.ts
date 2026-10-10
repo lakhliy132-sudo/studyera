@@ -1,4 +1,4 @@
-import { lireEpreuve } from "@/lib/annales-questions";
+import { compterQuestions, lireEpreuve } from "@/lib/annales-questions";
 import { creerClientServeur } from "@/lib/supabase/server";
 
 /** La table est créée par supabase/migrations/20261003000000_annales.sql,
@@ -76,21 +76,87 @@ export async function recupererAnnalesParMatiere(
   }));
 }
 
-/** Nombre de sujets par matière, pour les cartes de /examens-regionaux.
- * Une seule requête plutôt qu'une par matière. */
-export async function compterAnnalesParMatiere(): Promise<
-  Record<string, number>
+/** Ce que les cartes de /examens-regionaux affichent d'une matière :
+ * son nombre de sujets et les années couvertes, comptés en base. */
+export interface ResumeAnnalesMatiere {
+  nombre: number;
+  /** Années distinctes, de la plus ancienne à la plus récente. */
+  annees: number[];
+}
+
+/** Nombre de sujets et années par matière, en une seule requête plutôt
+ * qu'une par matière. Une matière sans sujet n'a pas d'entrée. */
+export async function resumerAnnalesParMatiere(): Promise<
+  Record<string, ResumeAnnalesMatiere>
 > {
   const supabase = await creerClientServeur();
-  const { data, error } = await supabase.from("annales").select("matiere");
+  const { data, error } = await supabase.from("annales").select("matiere, annee");
   if (tableAbsente(error)) return {};
   if (error) throw error;
 
-  const comptes: Record<string, number> = {};
+  const resumes: Record<string, ResumeAnnalesMatiere> = {};
   for (const ligne of data ?? []) {
-    comptes[ligne.matiere] = (comptes[ligne.matiere] ?? 0) + 1;
+    const r = (resumes[ligne.matiere] ??= { nombre: 0, annees: [] });
+    r.nombre += 1;
+    if (!r.annees.includes(ligne.annee)) r.annees.push(ligne.annee);
   }
-  return comptes;
+  for (const r of Object.values(resumes)) r.annees.sort((x, y) => x - y);
+  return resumes;
+}
+
+/** Une vraie question d'un vrai sujet, pour l'aperçu « Comment ça
+ * marche » de /examens-regionaux : la maquette y montrait une question
+ * inventée, on prend à la place la troisième question (la première si
+ * le sujet en a moins) du sujet le plus récent qui a un mode
+ * entraînement. */
+export interface ApercuEntrainement {
+  id: string;
+  annee: number;
+  session: "normale" | "rattrapage";
+  academie: string | null;
+  duree_minutes: number | null;
+  numero: string;
+  enonce: string;
+  /** Rang de la question dans l'épreuve (à partir de 1) et nombre total
+   * de questions, pour la barre d'avancement. */
+  rang: number;
+  total: number;
+}
+
+export async function recupererApercuEntrainement(
+  matiere: string,
+): Promise<ApercuEntrainement | null> {
+  const supabase = await creerClientServeur();
+  const { data, error } = await supabase
+    .from("annales")
+    .select("id, annee, session, academie, duree_minutes, questions")
+    .eq("matiere", matiere)
+    .order("annee", { ascending: false })
+    .order("session")
+    .order("academie")
+    .limit(5);
+
+  if (tableAbsente(error)) return null;
+  if (error) throw error;
+
+  for (const ligne of data ?? []) {
+    const epreuve = lireEpreuve(ligne.questions);
+    const questions = epreuve?.parties.find((p) => p.questions.length > 0)?.questions;
+    if (!epreuve || !questions) continue;
+    const index = questions.length >= 3 ? 2 : 0;
+    return {
+      id: ligne.id,
+      annee: ligne.annee,
+      session: ligne.session,
+      academie: ligne.academie,
+      duree_minutes: ligne.duree_minutes,
+      numero: questions[index].numero,
+      enonce: questions[index].enonce,
+      rang: index + 1,
+      total: compterQuestions(epreuve),
+    };
+  }
+  return null;
 }
 
 export async function recupererAnnaleParId(
