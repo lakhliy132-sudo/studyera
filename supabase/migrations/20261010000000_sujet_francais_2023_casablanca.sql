@@ -13,11 +13,19 @@
 -- sans dire lequel va à quelle série, et la colonne `coefficient` n'en
 -- tient qu'un. En choisir un serait inventer.
 --
+-- Corrigé : « CORRIGÉ ET BARÈME » officiel, page 3 du PDF de l'académie
+-- publié sur moutamadris.ma (« الامتحان الجهوي في اللغة الفرنسية 2023
+-- جهة الدار البيضاء سطات »). Il a été rédigé pour une version un peu
+-- différente du sujet (réponses 5 et 6 inversées, réponse 7 sans
+-- rapport, 3e affirmation de la question 4 formulée autrement) : ces
+-- réponses-là ne sont pas reportées dans le mode entraînement ; le
+-- corrigé est recopié en entier, avec une note, dans corrige_mdx.
+--
 -- À lancer après 20261003000000_annales.sql. Rejouable : le sujet est
 -- remplacé s'il existe déjà.
 
 insert into public.annales
-  (matiere, annee, session, academie, oeuvre, filiere_libelle, duree_minutes, enonce_mdx, questions)
+  (matiere, annee, session, academie, oeuvre, filiere_libelle, duree_minutes, enonce_mdx, corrige_mdx, questions)
 values (
   $sujet$francais$sujet$,
   2023,
@@ -92,7 +100,59 @@ Croyez-vous vraiment que l'écriture comme moyen d'expression (romans, journaux 
 | Respect de la consigne (traiter le sujet proposé et non un autre). | 1 point. |
 | Produire un texte argumentatif, cohérent et bien structuré. | 4 points. |
 | Langue (vocabulaire, syntaxe, orthographe, conjugaison et ponctuation). | 5 points. |$sujet$,
-  $sujet${"parties":[{"titre":"I. Étude de texte","points":10,"consigne":"Lis attentivement le texte et réponds aux questions.","texte":"Certes, la matière est riche ; et, si abrégée que soit ma vie, il y aura bien encore dans les angoisses, dans les terreurs, dans les tortures qui la rempliront, de cette heure à la dernière, de quoi user cette plume et tarir cet encrier. -- D'ailleurs, ces angoisses, le seul moyen d'en moins souffrir, c'est de les observer, et les peindre m'en distraira.\n\nEt puis, ce que j'écrirai ainsi ne sera peut-être pas inutile. Ce journal de mes souffrances, heure par heure, minute par minute, supplice par supplice, si j'ai la force de le mener jusqu'au moment où il me sera *physiquement* impossible de continuer, cette histoire, nécessairement inachevée, mais aussi complète que possible, de mes sensations, ne portera-t-elle point avec elle un grand et profond enseignement ? N'y aura-il pas dans ce procès-verbal de la pensée agonisante, dans cette progression toujours croissante de douleurs, dans cette espèce d'autopsie intellectuelle d'un condamné, plus d'une leçon pour ceux qui condamnent ? Peut-être cette lecture leur rendra-t-elle la main moins légère, quand il s'agira quelque autre fois de jeter une tête qui pense, une tête d'homme, dans ce qu'ils appellent la balance de la justice ? Peut-être n'ont-ils jamais réfléchi, les malheureux, à cette lente succession de tortures que renferme la formule expéditive d'un arrêt de mort ? Se sont-ils jamais seulement arrêtés à cette idée poignante que dans l'homme qu'ils retranchent il y a une intelligence, une intelligence qui avait compté sur la vie, une âme qui ne s'est point disposée pour la mort ? Non. Ils ne voient dans tout cela que la chute verticale d'un couteau triangulaire, et pensent sans doute que pour le condamné il n'y a rien avant, rien après.\n\nCes feuilles les détromperont. Publiées peut-être un jour, elles arrêteront quelques moments leur esprit sur les souffrances de l'esprit, car ce sont celles-là qu'ils ne soupçonnent pas. Ils sont triomphants de pouvoir tuer sans presque faire souffrir le corps. Hé ! c'est bien de cela qu'il s'agit ! Qu'est-ce que la douleur physique près de la douleur morale ! Horreur et pitié, des lois faites ainsi ! Un jour viendra, et peut-être ces mémoires, derniers confidents d'un misérable, y auront-ils contribué...\n\nÀ moins qu'après ma mort le vent ne joue dans le préau avec ces morceaux de papier souillés de boue, ou qu'ils n'aillent pourrir à la pluie, collés en étoiles à la vitre cassée d'un guichetier.","questions":[{"type":"tableau","numero":"1","points":1,"enonce":"Recopiez et complétez le tableau suivant.","champs":[{"libelle":"Auteur","reponse":""},{"libelle":"Titre de l'œuvre","reponse":""},{"libelle":"Genre littéraire","reponse":""},{"libelle":"Siècle","reponse":""}]},{"type":"choix","numero":"2","points":1,"enonce":"Pour situer le passage, répondez à la question suivante en choisissant la bonne réponse. Où se trouvait le condamné à mort juste avant d'être à Bicêtre ?","options":["au tribunal","à l'hôtel de ville","à la place de grève","chez lui"],"bonne":null},{"type":"libre","numero":"3","points":1,"enonce":"Le narrateur croit-il vraiment en l'utilité de ce qu'il écrit ? Justifiez votre réponse en relevant un indice dans le texte.","correction":""},{"type":"vrai-faux","numero":"4","points":1,"enonce":"Répondez par vrai ou faux. Parmi les thèmes traités dans ce passage, on trouve :","affirmations":[{"texte":"La souffrance morale du condamné à mort.","vrai":null},{"texte":"L'autopsie qu'on fait subir au condamné à mort.","vrai":null},{"texte":"Le projet de lecture pour le condamné à mort.","vrai":null},{"texte":"La force de l'écriture à changer les pratiques judiciaires.","vrai":null}]},{"type":"libre","numero":"5","points":1,"enonce":"Que cherche à exprimer le narrateur par le « peut-être » répété cinq fois dans le texte ?","correction":""},{"type":"libre","numero":"6","points":1,"enonce":"Quel est l'impact attendu par le narrateur à travers son « journal des souffrances » ?","correction":""},{"type":"libre","numero":"7","points":1,"enonce":"Relevez dans le texte 4 mots appartenant au champ lexical de « l'écriture ».","correction":""},{"type":"libre","numero":"8a","points":0.5,"enonce":"Quelle figure de style reconnaissez-vous dans l'énoncé suivant ? « Ces feuilles les détromperont. »","correction":""},{"type":"libre","numero":"8b","points":0.5,"enonce":"Quel en est l'effet recherché ?","correction":""},{"type":"libre","numero":"9","points":1,"enonce":"Ce passage vous amène-t-il à sympathiser avec le condamné à mort ? Justifiez votre réaction par un argument.","correction":""},{"type":"libre","numero":"10","points":1,"enonce":"Partagez-vous la conviction du narrateur que la douleur physique n'est rien à côté de la douleur morale ? Justifiez votre réaction par un argument.","correction":""}]},{"titre":"II. Production écrite","points":10,"texte":"**Sujet :** Dans son œuvre *Le Dernier Jour d'un Condamné*, V. Hugo met en valeur l'écriture comme un moyen pour changer les mentalités sur la question de la peine de mort.\n\nCroyez-vous vraiment que l'écriture comme moyen d'expression (romans, journaux et revues, réseaux sociaux…) est capable de changer les personnes et les sociétés ?\n\n**Dans une production écrite argumentée et avec des exemples à l'appui, développez votre réflexion en vous référant à votre expérience personnelle, à votre entourage et à vos lectures.**\n\n*(Votre copie sera corrigée à la lumière des critères suivants qu'il faut respecter lors de la rédaction)*\n\n| Critères d'évaluation | Note à accorder |\n|---|---|\n| Respect de la consigne (traiter le sujet proposé et non un autre). | 1 point. |\n| Produire un texte argumentatif, cohérent et bien structuré. | 4 points. |\n| Langue (vocabulaire, syntaxe, orthographe, conjugaison et ponctuation). | 5 points. |","questions":[],"redaction":true}]}$sujet$::jsonb
+  $sujet$## Corrigé et barème
+
+*Ce corrigé est donné à titre indicatif. Le professeur jugera de la validité des réponses non prévues.*
+
+> **Note StudyEra :** ce corrigé officiel a été rédigé pour une version légèrement différente du sujet. Ses réponses 5 et 6 sont inversées par rapport aux questions du sujet, sa réponse 7 (« quatre mots à barrer ») répond à une autre question, et la 3e affirmation du tableau de la question 4 y est formulée autrement. Il est recopié tel quel ci-dessous.
+
+### I- Étude de texte (10 points)
+
+**1-** Recopiez et complétez le tableau suivant : **(0.25pt x4)**
+
+| Auteur | Titre de l'œuvre | Genre littéraire | Siècle |
+|---|---|---|---|
+| V.Hugo | Le Dernier Jour d'un Condamné | Roman à thèse | XIX (19ème) |
+
+**2-** Où se trouvait le condamné à mort avant d'être à Bicêtre ? **(1pt)**
+a- **au tribunal**
+
+**3-** Avec cet énoncé « *ce que j'écrirai ainsi ne sera peut-être pas inutile.* » **le narrateur garde espoir**. **(1pt)**
+
+**4-** **(0.25ptx4)**
+
+| | |
+|---|---|
+| La souffrance morale du condamné à mort. | **Vrai** |
+| L'autopsie qu'on fait subir au condamné à mort. | **Faux** |
+| Le projet d'écriture pour condamner à mort. | **Faux** |
+| La force de l'écriture à changer les pratiques judiciaires. | **Vrai** |
+
+**5-** « Horreur et pitié, des lois faites ainsi ! » **(1pt)**
+
+**6-** **Peut-être** exprime **l'éventualité** de la lecture posthume de son écrit et de sa prise en considération pour changer l'appareil judiciaire et pourquoi pas remettre en question la peine de mort.. **(1pt)**
+
+**7-** quatre mots à barrer : limaçon, feuilleter, miroir, journalier. **(0.25ptx4)**
+
+**8-** « *Ces feuilles les détromperont.* ». **(0.5ptx2)**
+**Une personnification** avec comme effet recherché de montrer **la force des mémoires à même de dissuader** ceux qui jugent et leur donner l'occasion de revenir sur leurs convictions.(la force d'agir des mémoires écrits)
+
+**9-** Oui car il nous fait sentir les souffrances surtout morales du condamné à mort/ non car, après son méfait ou crime, le condamné à mort mérite la peine capitale. **(1pt)**
+
+**10-** Oui ou/ non tout dépend de l'argumentation avancée. **(1pt)**
+
+**[Pour chacune des deux questions 9 et 10, justifiez par un argument]**
+
+### II- Production écrite (10 points)
+
+***Chaque copie sera corrigée à la lumière des critères suivants qu'il importe IMPRATIVEMENT de respecter et de détailler sur chaque copie.***
+
+| Critères d'évaluation | Notes à attribuer |
+|---|---|
+| Respect de la consigne (traiter le sujet proposé et non un autre). | 1 point. |
+| Produire un texte argumentatif, cohérent et bien structuré. | 4 points. |
+| Langue (vocabulaire, syntaxe, orthographe, conjugaison et ponctuation). | 5 points. |$sujet$,
+  $sujet${"parties": [{"texte": "Certes, la matière est riche ; et, si abrégée que soit ma vie, il y aura bien encore dans les angoisses, dans les terreurs, dans les tortures qui la rempliront, de cette heure à la dernière, de quoi user cette plume et tarir cet encrier. -- D'ailleurs, ces angoisses, le seul moyen d'en moins souffrir, c'est de les observer, et les peindre m'en distraira.\n\nEt puis, ce que j'écrirai ainsi ne sera peut-être pas inutile. Ce journal de mes souffrances, heure par heure, minute par minute, supplice par supplice, si j'ai la force de le mener jusqu'au moment où il me sera *physiquement* impossible de continuer, cette histoire, nécessairement inachevée, mais aussi complète que possible, de mes sensations, ne portera-t-elle point avec elle un grand et profond enseignement ? N'y aura-il pas dans ce procès-verbal de la pensée agonisante, dans cette progression toujours croissante de douleurs, dans cette espèce d'autopsie intellectuelle d'un condamné, plus d'une leçon pour ceux qui condamnent ? Peut-être cette lecture leur rendra-t-elle la main moins légère, quand il s'agira quelque autre fois de jeter une tête qui pense, une tête d'homme, dans ce qu'ils appellent la balance de la justice ? Peut-être n'ont-ils jamais réfléchi, les malheureux, à cette lente succession de tortures que renferme la formule expéditive d'un arrêt de mort ? Se sont-ils jamais seulement arrêtés à cette idée poignante que dans l'homme qu'ils retranchent il y a une intelligence, une intelligence qui avait compté sur la vie, une âme qui ne s'est point disposée pour la mort ? Non. Ils ne voient dans tout cela que la chute verticale d'un couteau triangulaire, et pensent sans doute que pour le condamné il n'y a rien avant, rien après.\n\nCes feuilles les détromperont. Publiées peut-être un jour, elles arrêteront quelques moments leur esprit sur les souffrances de l'esprit, car ce sont celles-là qu'ils ne soupçonnent pas. Ils sont triomphants de pouvoir tuer sans presque faire souffrir le corps. Hé ! c'est bien de cela qu'il s'agit ! Qu'est-ce que la douleur physique près de la douleur morale ! Horreur et pitié, des lois faites ainsi ! Un jour viendra, et peut-être ces mémoires, derniers confidents d'un misérable, y auront-ils contribué...\n\nÀ moins qu'après ma mort le vent ne joue dans le préau avec ces morceaux de papier souillés de boue, ou qu'ils n'aillent pourrir à la pluie, collés en étoiles à la vitre cassée d'un guichetier.", "titre": "I. Étude de texte", "points": 10, "consigne": "Lis attentivement le texte et réponds aux questions.", "questions": [{"type": "tableau", "champs": [{"libelle": "Auteur", "reponse": "V.Hugo"}, {"libelle": "Titre de l'œuvre", "reponse": "Le Dernier Jour d'un Condamné"}, {"libelle": "Genre littéraire", "reponse": "Roman à thèse"}, {"libelle": "Siècle", "reponse": "XIX (19ème)"}], "enonce": "Recopiez et complétez le tableau suivant.", "numero": "1", "points": 1}, {"type": "choix", "bonne": 0, "enonce": "Pour situer le passage, répondez à la question suivante en choisissant la bonne réponse. Où se trouvait le condamné à mort juste avant d'être à Bicêtre ?", "numero": "2", "points": 1, "options": ["au tribunal", "à l'hôtel de ville", "à la place de grève", "chez lui"]}, {"type": "libre", "enonce": "Le narrateur croit-il vraiment en l'utilité de ce qu'il écrit ? Justifiez votre réponse en relevant un indice dans le texte.", "numero": "3", "points": 1, "correction": "Avec cet énoncé « ce que j'écrirai ainsi ne sera peut-être pas inutile. » le narrateur garde espoir."}, {"type": "vrai-faux", "enonce": "Répondez par vrai ou faux. Parmi les thèmes traités dans ce passage, on trouve :", "numero": "4", "points": 1, "affirmations": [{"vrai": true, "texte": "La souffrance morale du condamné à mort."}, {"vrai": false, "texte": "L'autopsie qu'on fait subir au condamné à mort."}, {"vrai": null, "texte": "Le projet de lecture pour le condamné à mort."}, {"vrai": true, "texte": "La force de l'écriture à changer les pratiques judiciaires."}]}, {"type": "libre", "enonce": "Que cherche à exprimer le narrateur par le « peut-être » répété cinq fois dans le texte ?", "numero": "5", "points": 1, "correction": "Peut-être exprime l'éventualité de la lecture posthume de son écrit et de sa prise en considération pour changer l'appareil judiciaire et pourquoi pas remettre en question la peine de mort."}, {"type": "libre", "enonce": "Quel est l'impact attendu par le narrateur à travers son « journal des souffrances » ?", "numero": "6", "points": 1, "correction": ""}, {"type": "libre", "enonce": "Relevez dans le texte 4 mots appartenant au champ lexical de « l'écriture ».", "numero": "7", "points": 1, "correction": ""}, {"type": "libre", "enonce": "Quelle figure de style reconnaissez-vous dans l'énoncé suivant ? « Ces feuilles les détromperont. »", "numero": "8a", "points": 0.5, "correction": "Une personnification."}, {"type": "libre", "enonce": "Quel en est l'effet recherché ?", "numero": "8b", "points": 0.5, "correction": "Montrer la force des mémoires à même de dissuader ceux qui jugent et leur donner l'occasion de revenir sur leurs convictions (la force d'agir des mémoires écrits)."}, {"type": "libre", "enonce": "Ce passage vous amène-t-il à sympathiser avec le condamné à mort ? Justifiez votre réaction par un argument.", "numero": "9", "points": 1, "correction": "Oui car il nous fait sentir les souffrances surtout morales du condamné à mort / non car, après son méfait ou crime, le condamné à mort mérite la peine capitale. (Justifiez par un argument.)"}, {"type": "libre", "enonce": "Partagez-vous la conviction du narrateur que la douleur physique n'est rien à côté de la douleur morale ? Justifiez votre réaction par un argument.", "numero": "10", "points": 1, "correction": "Oui ou / non tout dépend de l'argumentation avancée. (Justifiez par un argument.)"}]}, {"texte": "**Sujet :** Dans son œuvre *Le Dernier Jour d'un Condamné*, V. Hugo met en valeur l'écriture comme un moyen pour changer les mentalités sur la question de la peine de mort.\n\nCroyez-vous vraiment que l'écriture comme moyen d'expression (romans, journaux et revues, réseaux sociaux…) est capable de changer les personnes et les sociétés ?\n\n**Dans une production écrite argumentée et avec des exemples à l'appui, développez votre réflexion en vous référant à votre expérience personnelle, à votre entourage et à vos lectures.**\n\n*(Votre copie sera corrigée à la lumière des critères suivants qu'il faut respecter lors de la rédaction)*\n\n| Critères d'évaluation | Note à accorder |\n|---|---|\n| Respect de la consigne (traiter le sujet proposé et non un autre). | 1 point. |\n| Produire un texte argumentatif, cohérent et bien structuré. | 4 points. |\n| Langue (vocabulaire, syntaxe, orthographe, conjugaison et ponctuation). | 5 points. |", "titre": "II. Production écrite", "points": 10, "questions": [], "redaction": true}]}$sujet$::jsonb
 )
 on conflict (matiere, annee, session, coalesce(academie, ''))
 do update set
@@ -100,4 +160,5 @@ do update set
   filiere_libelle = excluded.filiere_libelle,
   duree_minutes = excluded.duree_minutes,
   enonce_mdx = excluded.enonce_mdx,
+  corrige_mdx = excluded.corrige_mdx,
   questions = excluded.questions;
