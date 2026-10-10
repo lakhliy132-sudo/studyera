@@ -119,6 +119,7 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             epreuve={epreuve}
             enonceMdx={annale.enonce_mdx}
             corrigeMdx={annale.corrige_mdx}
+            arabe={matiere === "arabe"}
           />
         ) : (
           <>
