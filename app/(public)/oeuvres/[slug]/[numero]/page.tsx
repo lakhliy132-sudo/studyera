@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import BoutonMarquerLu from "@/components/BoutonMarquerLu";
 import FicheChapitre from "@/components/FicheChapitre";
+import FilArianeChapitre from "@/components/FilArianeChapitre";
 import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
@@ -171,14 +171,8 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
   return (
     <main className="flex flex-col">
-      <div className="w-full px-6 pt-6 text-sm sm:px-9 lg:px-16 xl:px-24 2xl:px-40 text-muted-foreground">
-        <Link href={`/oeuvres/${slug}`} className="hover:text-ink">
-          ← {oeuvre.titre_fr}
-        </Link>
-        <span className="mx-1.5">›</span>
-        <span>
-          {unite.numeroDejaDansTitre ? chapitre.titre_fr : `${unite.singulier} ${chapitre.numero} : ${chapitre.titre_fr}`}
-        </span>
+      <div className="w-full px-6 pt-6 pb-4 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
+        <FilArianeChapitre slug={slug} titreOeuvre={oeuvre.titre_fr} chapitre={chapitre} unite={unite} />
       </div>
 
       <div className="flex w-full flex-col gap-4 px-6 pb-16 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
