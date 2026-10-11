@@ -374,12 +374,14 @@ export default function EpreuveInteractive({
               </div>
 
               {partie.consigne && (
-                <p className="text-sm text-muted-foreground">{partie.consigne}</p>
+                <p className={`text-muted-foreground ${arabe ? "text-base" : "text-sm"}`}>{partie.consigne}</p>
               )}
 
               {partie.texte && (
                 <div className="rounded-[18px] border border-border bg-feuille p-5">
-                  <ContenuMarkdown texte={partie.texte} />
+                  {/* Texte arabe en grand corps, comme les cours d'arabe :
+                    * « fais le texte un peu plus grand ». */}
+                  <ContenuMarkdown texte={partie.texte} grandeTaille={arabe} />
                 </div>
               )}
 
