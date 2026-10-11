@@ -42,11 +42,14 @@ function EnLigne({ texte }: { texte: string }) {
   );
 }
 
-function Points({ points }: { points: number }) {
+/** Barème d'une question. Dans un sujet en arabe, l'unité est « ن »
+ * (نقطة), comme sur la feuille : « 1 pt » posé dans un bloc de droite
+ * à gauche s'affichait « pt 1 ». */
+function Points({ points, arabe = false }: { points: number; arabe?: boolean }) {
   if (!points) return null;
   return (
     <span className="shrink-0 text-xs font-semibold text-muted-foreground">
-      {points.toString().replace(".", ",")} pt
+      {arabe ? `${points} ن` : `${points.toString().replace(".", ",")} pt`}
     </span>
   );
 }
@@ -246,10 +249,17 @@ export default function EpreuveInteractive({
   epreuve,
   enonceMdx,
   corrigeMdx,
+  arabe = false,
 }: {
   epreuve: Epreuve;
   enonceMdx: string;
   corrigeMdx: string | null;
+  /** Sujet rédigé en arabe : les parties et les questions se lisent de
+   * droite à gauche, dans la police arabe et un corps plus grand (le
+   * texte arabe demande plus de corps pour rester lisible, comme
+   * `grandeTaille` dans ContenuMarkdown). Les libellés de l'interface
+   * (« Voir la correction »…) restent en français, comme le site. */
+  arabe?: boolean;
 }) {
   const [onglet, setOnglet] = useState<Onglet>("entrainement");
   const [reponses, setReponses] = useState<Record<string, unknown>>({});
@@ -341,14 +351,19 @@ export default function EpreuveInteractive({
           )}
 
           {epreuve.parties.map((partie, indexPartie) => (
-            <section key={partie.titre} className="flex flex-col gap-3">
+            <section
+              key={partie.titre}
+              dir={arabe ? "rtl" : undefined}
+              lang={arabe ? "ar" : undefined}
+              className={`flex flex-col gap-3 ${arabe ? "font-arabe" : ""}`}
+            >
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="font-serif text-xl font-bold text-ink">
+                <h2 className={`text-xl font-bold text-ink ${arabe ? "" : "font-serif"}`}>
                   {partie.titre}
                 </h2>
                 {partie.points > 0 && (
                   <span className="shrink-0 text-sm font-semibold text-muted-foreground">
-                    {partie.points} points
+                    {arabe ? `${partie.points} ن` : `${partie.points} points`}
                   </span>
                 )}
               </div>
@@ -363,7 +378,11 @@ export default function EpreuveInteractive({
                 </div>
               )}
 
+              {/* Le correcteur ne corrige que des expressions écrites en
+                  français (lib/correcteur.ts) : pas de renvoi vers lui
+                  depuis un sujet d'arabe. */}
               {partie.redaction ? (
+                arabe ? null : (
                 <div className="flex flex-col gap-4 rounded-[18px] border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="font-serif text-base font-bold text-ink">
@@ -382,6 +401,7 @@ export default function EpreuveInteractive({
                     <IconeFleche className="size-4" />
                   </Link>
                 </div>
+                )
               ) : (
                 <ul className="flex flex-col gap-3">
                   {partie.questions.map((question, indexQuestion) => {
@@ -393,11 +413,11 @@ export default function EpreuveInteractive({
                         className="flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 sm:p-5"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <p className="text-sm leading-relaxed font-semibold text-ink">
+                          <p className={`leading-relaxed font-semibold text-ink ${arabe ? "text-[17px]" : "text-sm"}`}>
                             {question.numero && `${question.numero}. `}
                             <EnLigne texte={question.enonce} />
                           </p>
-                          <Points points={question.points} />
+                          <Points points={question.points} arabe={arabe} />
                         </div>
 
                         <CorpsQuestion
