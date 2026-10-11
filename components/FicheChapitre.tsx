@@ -1,5 +1,5 @@
 import CarteBilingue from "@/components/CarteBilingue";
-import { IconeLivreOuvert } from "@/components/icones";
+import { IconeIdee, IconeLivreOuvert } from "@/components/icones";
 import MotLexique from "@/components/MotLexique";
 import { indexerLexique, normaliserMot } from "@/lib/lexique";
 import type { EntreeLexique, Fiche } from "@/types/base-de-donnees";
@@ -71,14 +71,36 @@ export default function FicheChapitre({ fiche, lexique }: FicheChapitreProps) {
         />
       )}
 
+      {/* Thèmes du chapitre en carte (« change ça, fais-la stylée ») :
+          un en-tête avec une ampoule et le nombre de thèmes, puis des
+          pastilles numérotées au lieu d'une simple ligne de mots-clés. */}
       {themes.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Thèmes</span>
-          {themes.map((theme) => (
-            <span key={theme} className="rounded-full bg-primary-tint px-3 py-1 text-sm text-primary">
-              {theme}
+        <div className="relative overflow-hidden rounded-[18px] border border-border bg-surface p-5 shadow-[0_12px_32px_-22px_rgba(27,58,143,0.35)] sm:p-6">
+          <span aria-hidden="true" className="absolute inset-y-0 start-0 w-1 bg-primary" />
+          <div className="flex items-center justify-between gap-3">
+            <p className="flex items-center gap-3 font-serif text-lg font-bold text-ink">
+              <span className="flex size-10 items-center justify-center rounded-[12px] bg-primary text-primary-foreground shadow-sm">
+                <IconeIdee className="size-5" />
+              </span>
+              Thèmes du chapitre
+            </p>
+            <span className="shrink-0 rounded-full bg-primary-tint px-3 py-1 text-xs font-bold whitespace-nowrap text-primary">
+              {themes.length} thème{themes.length > 1 ? "s" : ""}
             </span>
-          ))}
+          </div>
+          <ul className="mt-4 flex flex-wrap gap-2.5">
+            {themes.map((theme, index) => (
+              <li
+                key={theme}
+                className="flex items-center gap-2.5 rounded-[16px] border sm:rounded-full border-border bg-surface py-1.5 ps-1.5 pe-4 text-sm font-medium text-ink shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md sm:text-[15px]"
+              >
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-tint text-xs font-bold text-primary tabular-nums">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                {theme}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
