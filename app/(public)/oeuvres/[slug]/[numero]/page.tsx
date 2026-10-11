@@ -6,6 +6,7 @@ import FicheChapitre from "@/components/FicheChapitre";
 import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
+import NavigationChapitres from "@/components/NavigationChapitres";
 import OngletPersonnages from "@/components/OngletPersonnages";
 import { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import RecitContexte, { type MotCle } from "@/components/RecitContexte";
@@ -246,35 +247,12 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
           {ongletActif === "lieux" && <LieuxChapitre lieux={chapitre.lieux} />}
           {ongletActif === "sujets" && <SujetsChapitre sujets={sujets} />}
 
-          <nav
-            aria-label={`${unite.pluriel} précédent et suivant`}
-            className="flex items-center justify-between gap-4 border-t border-border pt-6"
-          >
-            {chapitrePrecedent ? (
-              <Link
-                href={`/oeuvres/${slug}/${chapitrePrecedent.numero}`}
-                className="text-sm font-medium text-foreground hover:text-primary"
-              >
-                ←{" "}
-                {unite.numeroDejaDansTitre
-                  ? chapitrePrecedent.titre_fr
-                  : `${unite.singulier} ${chapitrePrecedent.numero}`}
-              </Link>
-            ) : (
-              <span />
-            )}
-            {chapitreSuivant && (
-              <Link
-                href={`/oeuvres/${slug}/${chapitreSuivant.numero}`}
-                className="text-sm font-medium text-foreground hover:text-primary"
-              >
-                {unite.numeroDejaDansTitre
-                  ? chapitreSuivant.titre_fr
-                  : `${unite.singulier} ${chapitreSuivant.numero}`}{" "}
-                →
-              </Link>
-            )}
-          </nav>
+          <NavigationChapitres
+            slug={slug}
+            unite={unite}
+            precedent={chapitrePrecedent}
+            suivant={chapitreSuivant}
+          />
         </div>
       </div>
     </main>
