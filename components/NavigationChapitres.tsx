@@ -63,7 +63,9 @@ export default function NavigationChapitres({
   return (
     <nav
       aria-label={`${unite.pluriel} précédent et suivant`}
-      className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_18px_44px_-22px_rgba(27,58,143,0.35)]"
+      // Centrée et moins large que la page : « fais la largeur un peu
+      // plus petite ».
+      className="relative mx-auto w-full overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_18px_44px_-22px_rgba(27,58,143,0.35)] sm:max-w-[900px]"
     >
       <span
         aria-hidden="true"
@@ -120,7 +122,7 @@ function Voisin({
         <span className="block text-[11px] font-bold tracking-[0.22em] text-muted-foreground uppercase sm:text-[13px]">
           {surTitre}
         </span>
-        <span className="mt-1 block text-base font-semibold sm:truncate text-ink transition-colors group-hover:text-primary sm:mt-1.5 sm:text-xl">
+        <span className="mt-1 block text-base font-semibold sm:line-clamp-2 text-ink transition-colors group-hover:text-primary sm:mt-1.5 sm:text-xl">
           {titre}
         </span>
       </span>
