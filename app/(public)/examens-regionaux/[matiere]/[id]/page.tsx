@@ -7,7 +7,10 @@ import CorrectionRepliable from "@/components/CorrectionRepliable";
 import EpreuveInteractive from "@/components/EpreuveInteractive";
 import { IconeFleche } from "@/components/icones";
 import { lireEpreuve } from "@/lib/annales-questions";
-import { recupererAnnaleParId } from "@/lib/supabase/annales";
+import {
+  recupererAnnaleParId,
+  recupererSujetsRedaction,
+} from "@/lib/supabase/annales";
 
 interface PagePropsAnnale {
   params: Promise<{ matiere: string; id: string }>;
@@ -66,6 +69,12 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
   if (!annale || annale.matiere !== matiere) notFound();
 
   const epreuve = lireEpreuve(annale.questions);
+  // Le correcteur ne corrige que le français : seules ses productions
+  // écrites ont un sujet à présélectionner.
+  const sujetsRedaction =
+    epreuve && matiere === "francais"
+      ? await recupererSujetsRedaction(annale, epreuve.parties)
+      : {};
   const titreMatiere = TITRES[matiere] ?? matiere;
 
   return (
@@ -120,6 +129,7 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             enonceMdx={annale.enonce_mdx}
             corrigeMdx={annale.corrige_mdx}
             arabe={matiere === "arabe"}
+            sujetsRedaction={sujetsRedaction}
           />
         ) : (
           <>

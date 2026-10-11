@@ -267,7 +267,8 @@ export default function FormulaireCopie({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-xs text-muted-foreground">
-                  {[sujet.oeuvreTitre, sujet.oeuvreAuteur].filter(Boolean).join(" · ") || "Sujet libre"}
+                  {[sujet.oeuvreTitre, sujet.oeuvreAuteur].filter(Boolean).join(" · ") ||
+                    (sujet.type === "régional" ? "Examen régional" : "Sujet libre")}
                 </span>
                 <span className="block truncate font-serif text-lg text-ink">{sujet.titre}</span>
               </span>

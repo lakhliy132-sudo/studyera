@@ -175,3 +175,52 @@ export async function recupererAnnaleParId(
   if (error) throw error;
   return data;
 }
+
+/** Titre du sujet du correcteur qui reprend la production écrite d'une
+ * annale de français. Il rattache l'annale à son sujet et doit rester
+ * identique à celui de la migration
+ * 20261031000000_sujets_regionaux_production_ecrite.sql. */
+export function titreSujetRegional(
+  annale: Pick<Annale, "annee" | "academie" | "session">,
+  titrePartie: string,
+  plusieurs: boolean,
+): string {
+  let titre = `Régional ${annale.annee} · ${annale.academie}`;
+  if (annale.session === "rattrapage") titre += " · rattrapage";
+  if (plusieurs) titre += ` · ${titrePartie.split(" — ")[0]}`;
+  return titre;
+}
+
+/** Pour chaque partie de rédaction d'une annale de français, l'id du
+ * sujet correspondant dans le correcteur (« quand tu veux corriger ta
+ * feuille tu passes directement par le bouton ») : clé = rang de la
+ * partie dans l'épreuve. Une partie sans sujet (migration pas encore
+ * appliquée, annale ajoutée depuis) n'a pas d'entrée, et le bouton
+ * ouvre alors le correcteur sans présélection. */
+export async function recupererSujetsRedaction(
+  annale: Pick<Annale, "annee" | "academie" | "session">,
+  parties: { titre: string; redaction?: boolean }[],
+): Promise<Record<number, string>> {
+  const redactions = parties
+    .map((partie, rang) => ({ partie, rang }))
+    .filter(({ partie }) => partie.redaction);
+  if (redactions.length === 0 || !annale.academie) return {};
+  const titres = redactions.map(({ partie }) =>
+    titreSujetRegional(annale, partie.titre, redactions.length > 1),
+  );
+
+  const supabase = await creerClientServeur();
+  const { data, error } = await supabase
+    .from("sujets")
+    .select("id, titre")
+    .eq("type", "régional")
+    .in("titre", titres);
+  if (error) return {};
+
+  const liens: Record<number, string> = {};
+  redactions.forEach(({ rang }, i) => {
+    const sujet = data?.find((s) => s.titre === titres[i]);
+    if (sujet) liens[rang] = sujet.id;
+  });
+  return liens;
+}

@@ -60,7 +60,15 @@ export default async function PageNouvelleRedaction({ searchParams }: { searchPa
   ]);
   const derniereNote = derniere?.note_total == null ? null : Number(derniere.note_total);
 
-  const sujets: SujetChoisissable[] = (lignes ?? []).map((s) => ({
+  // Les sujets des examens régionaux d'abord, du plus récent au plus
+  // ancien (« prend les sujets des régionaux aussi et mets-les en premier
+  // dans le scroll ») ; leur titre commence par l'année, d'où le tri
+  // alphabétique inversé. Les autres sujets gardent leur ordre.
+  const regionaux = (lignes ?? [])
+    .filter((s) => s.type === "régional")
+    .sort((a, b) => b.titre.localeCompare(a.titre, "fr"));
+  const autres = (lignes ?? []).filter((s) => s.type !== "régional");
+  const sujets: SujetChoisissable[] = [...regionaux, ...autres].map((s) => ({
     id: s.id,
     titre: s.titre,
     type: s.type,
