@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { supprimerPhotoPublication } from "@/app/(eleve)/communaute/actions";
 import { IconeBulles, IconeCoeur } from "@/components/icones";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 
@@ -204,6 +205,9 @@ export default function PublicationCommunaute({
       setConfirmeSuppression(true);
       return;
     }
+    // La photo d'abord : une fois la publication supprimée, l'action
+    // serveur ne pourrait plus vérifier qu'elle était la sienne.
+    await supprimerPhotoPublication(messageId).catch(() => undefined);
     const supabase = creerClientNavigateur();
     const { error } = await supabase.from("communaute_messages").delete().eq("id", messageId);
     if (!error) router.refresh();

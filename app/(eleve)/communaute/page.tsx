@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import FormulaireCommunaute from "@/components/FormulaireCommunaute";
@@ -354,6 +355,19 @@ export default async function PageCommunaute({
                           <p className="mt-2 font-lecture text-[15px] leading-relaxed whitespace-pre-line text-foreground">
                             {message.contenu}
                           </p>
+
+                          {message.photoUrl && (
+                            <a href={message.photoUrl} target="_blank" rel="noreferrer" className="mt-3 block w-fit">
+                              <Image
+                                src={message.photoUrl}
+                                alt={`Photo partagée par ${message.auteur}`}
+                                width={1200}
+                                height={900}
+                                sizes="(min-width: 1024px) 560px, 100vw"
+                                className="h-auto max-h-[420px] w-auto max-w-full rounded-[14px] border border-border object-contain"
+                              />
+                            </a>
+                          )}
 
                           <PublicationCommunaute
                             messageId={message.id}

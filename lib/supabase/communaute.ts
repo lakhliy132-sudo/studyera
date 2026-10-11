@@ -1,4 +1,26 @@
 import { creerClientServeur } from "@/lib/supabase/server";
+import { creerClientService } from "@/lib/supabase/service";
+
+/** Ids des publications qui ont une photo dans le stockage
+ * `communaute` (rangée sous `<id>.jpg`, voir
+ * supabase/migrations/20261101000000_communaute_photos.sql). La liste
+ * est lue par pages de 1000 ; un stockage absent ou illisible donne
+ * simplement des publications sans photo. */
+async function idsAvecPhoto(): Promise<Set<string>> {
+  const ids = new Set<string>();
+  try {
+    const stockage = creerClientService().storage.from("communaute");
+    for (let decalage = 0; ; decalage += 1000) {
+      const { data, error } = await stockage.list("", { limit: 1000, offset: decalage });
+      if (error || !data) break;
+      for (const objet of data) if (objet.name.endsWith(".jpg")) ids.add(objet.name.slice(0, -4));
+      if (data.length < 1000) break;
+    }
+  } catch (erreur) {
+    console.error("idsAvecPhoto:", erreur);
+  }
+  return ids;
+}
 
 /** Catégories de publication de la maquette : les onglets du fil
  * ("Tout / Questions / Astuces / Objectifs / Ressources"). */
@@ -25,6 +47,8 @@ export interface MessageCommunaute {
   nombreReponses: number;
   /** `true` si la personne connectée a déjà réagi. */
   reactionPersonnelle: boolean;
+  /** Adresse publique de la photo jointe, ou `null`. */
+  photoUrl: string | null;
 }
 
 export interface ReponseCommunaute {
@@ -98,13 +122,14 @@ export async function recupererMessagesCommunaute(
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [noms, reactions, reponses] = await Promise.all([
+  const [noms, reactions, reponses, photos] = await Promise.all([
     nomsDesAuteurs(
       supabase,
       lignes.map((l) => l.auteur_id),
     ),
     supabase.from("communaute_reactions").select("message_id, auteur_id").in("message_id", ids),
     supabase.from("communaute_reponses").select("message_id").in("message_id", ids),
+    idsAvecPhoto(),
   ]);
 
   const parMessage = new Map<string, { total: number; sienne: boolean }>();
@@ -131,6 +156,9 @@ export async function recupererMessagesCommunaute(
     nombreReactions: parMessage.get(ligne.id)?.total ?? 0,
     nombreReponses: comptesReponses.get(ligne.id) ?? 0,
     reactionPersonnelle: parMessage.get(ligne.id)?.sienne ?? false,
+    photoUrl: photos.has(ligne.id)
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/communaute/${ligne.id}.jpg`
+      : null,
   }));
 }
 
