@@ -250,6 +250,7 @@ export default function EpreuveInteractive({
   enonceMdx,
   corrigeMdx,
   arabe = false,
+  sujetsRedaction = {},
 }: {
   epreuve: Epreuve;
   enonceMdx: string;
@@ -260,6 +261,10 @@ export default function EpreuveInteractive({
    * `grandeTaille` dans ContenuMarkdown). Les libellés de l'interface
    * (« Voir la correction »…) restent en français, comme le site. */
   arabe?: boolean;
+  /** Pour une partie de rédaction, l'id du même sujet dans le
+   * correcteur, que « Envoyer ma copie » présélectionne (clé = rang de
+   * la partie). */
+  sujetsRedaction?: Record<number, string>;
 }) {
   const [onglet, setOnglet] = useState<Onglet>("entrainement");
   const [reponses, setReponses] = useState<Record<string, unknown>>({});
@@ -391,10 +396,16 @@ export default function EpreuveInteractive({
                     <p className="mt-1 text-sm text-muted-foreground">
                       Rédige ton expression écrite, puis envoie-la au correcteur :
                       note sur 20, erreurs expliquées et conseils.
+                      {sujetsRedaction[indexPartie] &&
+                        " Ce sujet y est déjà choisi pour toi."}
                     </p>
                   </div>
                   <Link
-                    href="/redaction/nouvelle"
+                    href={
+                      sujetsRedaction[indexPartie]
+                        ? `/redaction/nouvelle?sujet=${sujetsRedaction[indexPartie]}`
+                        : "/redaction/nouvelle"
+                    }
                     className="flex w-fit shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                   >
                     Envoyer ma copie
