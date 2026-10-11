@@ -76,9 +76,15 @@ export default function BanniereOeuvre({
         </div>
       )}
 
+      {/* Carte compacte et centrée, d'après la capture de l'utilisateur
+       * (« mets-la comme ça sur les romans ») : sur toute la largeur de
+       * la page, la barre s'étirait sur plus de 1 000 px pour quelques
+       * mots. */}
       {progression && (
-        <div className="mt-[22px]">
-          <BarreProgression slug={slug} lus={progression.lus} total={progression.total} />
+        <div className="mt-[22px] flex justify-center">
+          <div className="w-full sm:max-w-[472px]">
+            <BarreProgression slug={slug} lus={progression.lus} total={progression.total} />
+          </div>
         </div>
       )}
     </>
