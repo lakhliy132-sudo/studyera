@@ -9,20 +9,16 @@ interface TexteChapitreProps {
  * côte en desktop, empilés en mobile — même logique que le reste du
  * site pour le contenu bilingue).
  *
- * Affiche un message de remplacement tant qu'aucun paragraphe n'a été
- * saisi pour ce chapitre : c'est le cas courant pour l'instant, le
- * fichier Excel importé n'a pas encore de feuille "Paragraphes" (voir
+ * N'affiche rien tant qu'aucun paragraphe n'a été saisi pour ce
+ * chapitre : c'est le cas courant pour l'instant, le fichier Excel
+ * importé n'a pas encore de feuille "Paragraphes" (voir
  * scripts/importer.ts).
  */
 export default function TexteChapitre({ paragraphes }: TexteChapitreProps) {
-  if (paragraphes.length === 0) {
-    return (
-      <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-semibold text-foreground">Texte intégral</h2>
-        <p className="text-muted-foreground">Bientôt disponible.</p>
-      </section>
-    );
-  }
+  // Rien du tout tant qu'aucun paragraphe n'est saisi : le bloc
+  // « Texte intégral — Bientôt disponible » a été retiré à la demande
+  // de l'utilisateur (« enlève texte intégral bientôt »).
+  if (paragraphes.length === 0) return null;
 
   return (
     <section className="flex flex-col gap-6">

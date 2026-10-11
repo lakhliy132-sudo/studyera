@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { IconeFleche } from "@/components/icones";
+import { IconeChevronBas, IconeFleche } from "@/components/icones";
 import {
   decouperTitreChapitre,
   type LibelleUniteChapitre,
@@ -59,40 +59,72 @@ export default function NavigationChapitres({
   suivant,
 }: NavigationChapitresProps) {
   if (!precedent && !suivant) return null;
+  // « Scène » est féminin : « Scène précédente ».
+  const feminin = unite.singulier === "Scène";
 
   return (
-    <nav
-      aria-label={`${unite.pluriel} précédent et suivant`}
-      // Centrée et moins large que la page : « fais la largeur un peu
-      // plus petite ».
-      className="relative mx-auto w-full overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_18px_44px_-22px_rgba(27,58,143,0.35)] sm:max-w-[900px]"
-    >
-      <span
-        aria-hidden="true"
-        className="absolute inset-y-0 start-0 w-2 sm:w-4"
-        style={{
-          background:
-            "linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 55%, #0a1020), var(--color-primary))",
-        }}
-      />
-      {/* Sur téléphone, les deux liens l'un sous l'autre : côte à côte,
-          les titres étaient tronqués après deux mots. */}
-      <div className="grid grid-cols-1 items-center gap-4 py-5 ps-6 pe-4 sm:grid-cols-[1fr_auto_1fr] sm:gap-6 sm:py-9 sm:ps-12 sm:pe-10">
+    <>
+      <nav
+        aria-label={`${unite.pluriel} précédent et suivant`}
+        // Un peu en retrait des bords de la page, comme sur la seconde
+        // capture de l'utilisateur (« fais la largeur un peu plus
+        // petite », puis « comme ça ») : quelques dizaines de pixels de
+        // chaque côté, pas une carte étroite au milieu.
+        className="relative overflow-hidden rounded-[22px] border border-border bg-surface shadow-[0_18px_44px_-22px_rgba(27,58,143,0.35)] sm:mx-6 lg:mx-10"
+      >
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-0 start-0 w-2 sm:w-4"
+          style={{
+            background:
+              "linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 55%, #0a1020), var(--color-primary))",
+          }}
+        />
+        {/* Sur téléphone, les deux liens l'un sous l'autre : côte à côte,
+            les titres étaient tronqués après deux mots. */}
+        <div className="grid grid-cols-1 items-center gap-4 py-5 ps-6 pe-4 sm:grid-cols-[1fr_auto_1fr] sm:gap-6 sm:py-9 sm:ps-12 sm:pe-10">
+          {precedent ? (
+            <Voisin slug={slug} chapitre={precedent} unite={unite} sens="precedent" />
+          ) : (
+            <span className="hidden sm:block" />
+          )}
+
+          <Embleme theatre={unite.numeroDejaDansTitre} />
+
+          {suivant ? (
+            <Voisin slug={slug} chapitre={suivant} unite={unite} sens="suivant" />
+          ) : (
+            <span className="hidden sm:block" />
+          )}
+        </div>
+      </nav>
+
+      {/* Rangée de liens simples sous la carte, séparée par un filet,
+          reprise de la même capture (« Chapitre précédent » / « Chapitre
+          suivant »). */}
+      <div className="flex items-center justify-between gap-4 border-t border-border pt-6 text-sm sm:text-base">
         {precedent ? (
-          <Voisin slug={slug} chapitre={precedent} unite={unite} sens="precedent" />
+          <Link
+            href={`/oeuvres/${slug}/${precedent.numero}`}
+            className="flex items-center gap-3 font-medium text-primary hover:underline sm:gap-5"
+          >
+            <IconeChevronBas className="size-5 rotate-90" />
+            {unite.singulier} {feminin ? "précédente" : "précédent"}
+          </Link>
         ) : (
-          <span className="hidden sm:block" />
+          <span />
         )}
-
-        <Embleme theatre={unite.numeroDejaDansTitre} />
-
-        {suivant ? (
-          <Voisin slug={slug} chapitre={suivant} unite={unite} sens="suivant" />
-        ) : (
-          <span className="hidden sm:block" />
+        {suivant && (
+          <Link
+            href={`/oeuvres/${slug}/${suivant.numero}`}
+            className="flex items-center gap-3 font-medium text-primary hover:underline sm:gap-5"
+          >
+            {unite.singulier} {feminin ? "suivante" : "suivant"}
+            <IconeChevronBas className="size-5 -rotate-90" />
+          </Link>
         )}
       </div>
-    </nav>
+    </>
   );
 }
 
