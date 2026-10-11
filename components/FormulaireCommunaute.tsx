@@ -1,13 +1,32 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { ajouterPhotoPublication } from "@/app/(eleve)/communaute/actions";
 
 import { IconeFleche } from "@/components/icones";
 import { MATIERES } from "@/lib/matieres";
 import { creerClientNavigateur } from "@/lib/supabase/client";
 
 const LONGUEUR_MAX = 1000;
+const COTE_MAX = 1600;
+
+/** Réduit la photo avant l'envoi (côté le plus long à 1600 px, JPEG),
+ * comme pour les copies du correcteur : une photo de téléphone pèse
+ * souvent plusieurs Mo, au-delà de ce qu'accepte l'envoi (next.config). */
+async function reduirePhoto(fichier: File): Promise<File> {
+  const image = await createImageBitmap(fichier);
+  const echelle = Math.min(1, COTE_MAX / Math.max(image.width, image.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(image.width * echelle);
+  canvas.height = Math.round(image.height * echelle);
+  canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+  image.close();
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+  if (!blob) throw new Error("Photo illisible.");
+  return new File([blob], "photo.jpg", { type: "image/jpeg" });
+}
 
 /** Les catégories proposées à la publication, dans l'ordre de la
  * maquette. Recopiées ici plutôt qu'importées de
@@ -29,6 +48,11 @@ const TYPES = [
  * Écriture directe depuis le navigateur ; la policy RLS
  * `communaute_publication` garantit qu'on ne publie que sous sa propre
  * identité. `router.refresh()` recharge le fil rendu côté serveur.
+ *
+ * Photo (« quand je veux envoyer un message, ajoute pour ajouter une
+ * photo avec le message ») : une seule par publication, réduite dans le
+ * navigateur, envoyée après la publication par une action serveur qui
+ * vérifie que la publication est bien la sienne (voir actions.ts).
  */
 export default function FormulaireCommunaute() {
   const router = useRouter();
@@ -37,6 +61,26 @@ export default function FormulaireCommunaute() {
   const [matiere, setMatiere] = useState("");
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<{ fichier: File; apercu: string } | null>(null);
+  const champPhoto = useRef<HTMLInputElement>(null);
+
+  // Libère l'aperçu local quand la photo change ou que le formulaire
+  // disparaît.
+  useEffect(() => () => {
+    if (photo) URL.revokeObjectURL(photo.apercu);
+  }, [photo]);
+
+  function choisirPhoto(evenement: React.ChangeEvent<HTMLInputElement>) {
+    const fichier = evenement.target.files?.[0];
+    evenement.target.value = "";
+    if (!fichier) return;
+    if (!fichier.type.startsWith("image/")) {
+      setErreur("Choisis une image (photo, capture d'écran…).");
+      return;
+    }
+    setErreur(null);
+    setPhoto({ fichier, apercu: URL.createObjectURL(fichier) });
+  }
 
   async function publier(evenement: React.FormEvent) {
     evenement.preventDefault();
@@ -57,20 +101,38 @@ export default function FormulaireCommunaute() {
       return;
     }
 
-    const { error } = await supabase.from("communaute_messages").insert({
-      auteur_id: user.id,
-      contenu: texte,
-      type,
-      matiere: matiere || null,
-    });
+    const { data: publication, error } = await supabase
+      .from("communaute_messages")
+      .insert({
+        auteur_id: user.id,
+        contenu: texte,
+        type,
+        matiere: matiere || null,
+      })
+      .select("id")
+      .single();
 
-    if (error) {
-      setErreur(error.message);
+    if (error || !publication) {
+      setErreur(error?.message ?? "La publication n'a pas pu être envoyée.");
       setEnvoi(false);
       return;
     }
 
+    if (photo) {
+      let message: string | undefined;
+      try {
+        const donnees = new FormData();
+        donnees.set("message_id", publication.id);
+        donnees.set("photo", await reduirePhoto(photo.fichier));
+        message = (await ajouterPhotoPublication(donnees)).erreur;
+      } catch {
+        message = "La photo n'a pas pu être lue.";
+      }
+      if (message) setErreur(`Ta publication est en ligne, mais pas la photo : ${message}`);
+    }
+
     setContenu("");
+    setPhoto(null);
     setEnvoi(false);
     router.refresh();
   }
@@ -89,6 +151,21 @@ export default function FormulaireCommunaute() {
         placeholder="Pose une question, partage une astuce, annonce ton objectif…"
         className="w-full resize-none rounded-[14px] border border-border bg-surface p-3.5 text-sm text-foreground transition-colors placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
       />
+
+      {photo && (
+        <div className="relative w-fit">
+          {/* eslint-disable-next-line @next/next/no-img-element -- aperçu local (blob:), pas une image du site */}
+          <img src={photo.apercu} alt="Photo jointe" className="max-h-48 rounded-[12px] border border-border object-contain" />
+          <button
+            type="button"
+            onClick={() => setPhoto(null)}
+            aria-label="Retirer la photo"
+            className="absolute -top-2 -right-2 flex size-7 items-center justify-center rounded-full bg-ink text-sm font-bold text-surface shadow-md"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         {TYPES.map((choix) => (
@@ -129,9 +206,22 @@ export default function FormulaireCommunaute() {
       {erreur && <p className="text-xs font-semibold text-erreur">{erreur}</p>}
 
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xs text-subtle-foreground">
-          {contenu.trim().length}/{LONGUEUR_MAX}
-        </span>
+        <div className="flex items-center gap-3">
+          <input ref={champPhoto} type="file" accept="image/*" onChange={choisirPhoto} className="hidden" />
+          <button
+            type="button"
+            onClick={() => champPhoto.current?.click()}
+            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4" aria-hidden="true">
+              <path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8" />
+            </svg>
+            {photo ? "Changer la photo" : "Ajouter une photo"}
+          </button>
+          <span className="text-xs text-subtle-foreground">
+            {contenu.trim().length}/{LONGUEUR_MAX}
+          </span>
+        </div>
         <button
           type="submit"
           disabled={envoi || contenu.trim().length === 0}
