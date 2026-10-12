@@ -3,6 +3,8 @@ import type { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { CLASSES_CONSIGNES, estTitreExercice } from "@/lib/texteNoeud";
+
 interface ContenuMarkdownProps {
   texte: string | null;
   /** Section (`##`) numérotée dans une pastille pleine couleur au lieu
@@ -121,7 +123,13 @@ export default function ContenuMarkdown({
     // `marker:text-[var(--couleur-feuille)]` ci-dessous reste lui une
     // chaîne littérale (seule la valeur de la variable change), donc
     // bien repéré par Tailwind.
-    <div dir={sensDeLecture} style={{ "--couleur-feuille": couleurAccent } as CSSProperties}>
+    <div
+      dir={sensDeLecture}
+      style={{ "--couleur-feuille": couleurAccent } as CSSProperties}
+      // Consignes d'exercice dans leur propre couleur, voir
+      // lib/texteNoeud.ts.
+      className={CLASSES_CONSIGNES}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -161,6 +169,10 @@ export default function ContenuMarkdown({
               />
             ) : (
               <h3
+                // Repère des titres « Exercice N » : le paragraphe qui
+                // suit (la consigne) prend sa propre couleur, voir la
+                // classe du conteneur plus bas.
+                data-exercice={estTitreExercice(props.children) ? "" : undefined}
                 style={schemaCouleursArabe ? { color: COULEUR_PETIT_TITRE } : undefined}
                 className={`mt-7 mb-2 font-serif font-bold ${schemaCouleursArabe ? "" : "text-primary"} ${grandeTaille ? "text-[23px]" : "text-lg"}`}
                 {...props}

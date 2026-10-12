@@ -88,6 +88,12 @@
   --color-validation: #0f7a57;
   --color-validation-tint: #dcf2ea;
 
+  /* Consignes d'exercice des cours (« les consignes d'exercices avec
+   * une autre couleur ») : valeur de repli ; recalculée plus bas à
+   * partir de la palette pour rester toujours distincte de la couleur
+   * principale. */
+  --color-consigne: #a1520b;
+
   /* Couleurs d'accent des pastilles d'icône et barres de progression
    * de "Mes matières" sur l'accueil connecté
    * (GrilleMatieresAccueil.tsx) — reprises exactement du code HTML/CSS
@@ -254,6 +260,7 @@ body {
     --color-erreur-foreground: #1a0d0c;
     --color-validation: #4fd39a;
     --color-validation-tint: #0f261e;
+    --color-consigne: #f2b35c;
   }
 }
 
@@ -276,6 +283,7 @@ body {
   --color-erreur-foreground: #1a0d0c;
   --color-validation: #4fd39a;
   --color-validation-tint: #0f261e;
+  --color-consigne: #f2b35c;
 }
 
 /**
@@ -663,4 +671,24 @@ body {
   --fond-sombre-haut: color-mix(in srgb, var(--color-primary) 16%, #0d1020);
   --fond-sombre-bas: color-mix(in srgb, var(--color-primary) 7%, #090b12);
   --fond-sombre-actif: color-mix(in srgb, var(--color-primary) 48%, #0a1020);
+}
+
+/* Couleur des consignes d'exercice : la teinte opposée (+150°) à la
+ * couleur de la palette, pour qu'elle s'en distingue toujours — ambre
+ * avec le bleu par défaut, bleu-vert avec une palette orangée… Plus
+ * foncée en mode clair, plus claire en mode sombre, pour rester
+ * lisible sur le fond. Les navigateurs qui ne connaissent pas les
+ * couleurs relatives gardent les valeurs fixes déclarées plus haut. */
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --color-consigne: oklch(from var(--color-primary) 0.52 0.13 calc(h + 150));
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-consigne: oklch(from var(--color-primary) 0.82 0.12 calc(h + 150));
+    }
+  }
+  :root[data-theme="dark"] {
+    --color-consigne: oklch(from var(--color-primary) 0.82 0.12 calc(h + 150));
+  }
 }
