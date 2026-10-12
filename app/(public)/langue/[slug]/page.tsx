@@ -21,6 +21,7 @@ import QuizFigures from "@/components/QuizFigures";
 import QuizRegistres from "@/components/QuizRegistres";
 import { DONNEES_FIGURES } from "@/lib/exercices-figures";
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
+import { CLASSES_CONSIGNES, estTitreExercice } from "@/lib/texteNoeud";
 
 interface PagePropsCours {
   params: Promise<{ slug: string }>;
@@ -114,7 +115,7 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
         <OngletsLecon slug={slug} ongletActif={ongletActif} />
 
         {ongletActif === "cours" && (
-          <div className="rounded-lg border border-border bg-surface p-5 sm:p-9 shadow-sm">
+          <div className={`rounded-lg border border-border bg-surface p-5 sm:p-9 shadow-sm ${CLASSES_CONSIGNES}`}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -125,7 +126,13 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
                   />
                 ),
                 h3: (props) => (
-                  <h3 className="mt-7 mb-2 font-serif text-lg font-bold text-primary" {...props} />
+                  <h3
+                    // Repère des titres « Exercice N » : la consigne qui
+                    // suit prend sa propre couleur (CLASSES_CONSIGNES).
+                    data-exercice={estTitreExercice(props.children) ? "" : undefined}
+                    className="mt-7 mb-2 font-serif text-lg font-bold text-primary"
+                    {...props}
+                  />
                 ),
                 p: (props) => (
                   <p
