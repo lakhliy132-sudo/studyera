@@ -153,6 +153,10 @@
   /* Manuscrite (Caveat) : réservée à la note décorative de la bannière
    * /calendrier (EnteteCalendrier.tsx) — jamais un texte fonctionnel. */
   --font-manuscrit: var(--font-caveat), cursive;
+  /* Accueil visiteur seulement (voir app/layout.tsx) : grands titres en
+   * darija, et notes manuscrites en ruqʿa. */
+  --font-affiche: var(--font-lalezar), var(--font-ibm-plex-arabic), sans-serif;
+  --font-ruqaa: var(--font-aref-ruqaa), var(--font-ibm-plex-arabic), serif;
 
   /* Entrée des cartes de /oeuvres (CarteOeuvre) — léger glissement vers
    * le haut + fondu, demandé explicitement par l'utilisateur ("je veux
@@ -175,6 +179,8 @@
   --animate-pulsation: pulsation 2.2s ease-out infinite;
   --animate-brillance: brillance 4s linear infinite;
   --animate-coucou: coucou 2.6s ease-in-out infinite;
+  --animate-flotter-lent: flotter 9s ease-in-out infinite;
+  --animate-ping-doux: pulsation 1.8s ease-out infinite;
 }
 
 @keyframes entree-carte {
@@ -232,6 +238,28 @@
 [data-reveler="cache"] {
   opacity: 0;
   transform: translateY(32px) scale(0.97);
+}
+[data-reveler="cache"][data-depuis="gauche"] {
+  transform: translateX(-56px) rotate(-1.5deg);
+}
+[data-reveler="cache"][data-depuis="droite"] {
+  transform: translateX(56px) rotate(1.5deg);
+}
+
+/* Traits « à la main » de l'accueil visiteur (soulignés, cercles,
+ * flèches) : chaque tracé (`pathLength="1"`) se dessine une fois, quand
+ * son bloc apparaît. Tant que le bloc est caché, il attend. */
+.trace-main {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: tracer 1.1s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+  animation-delay: var(--delai-trace, 0.5s);
+}
+[data-reveler="cache"] .trace-main {
+  animation: none;
+}
+@keyframes tracer {
+  to { stroke-dashoffset: 0; }
 }
 
 /* Personnes ayant demandé à leur système de limiter les animations :
@@ -752,4 +780,24 @@ body {
   :root[data-theme="dark"] {
     --color-consigne: oklch(from var(--color-primary) 0.82 0.12 calc(h + 150));
   }
+}
+
+/* Captures du site sur l'accueil visiteur (components/AccueilVisiteur.tsx) :
+ * la version sombre remplace la claire dans les deux cas du mode sombre. */
+.apercu-sombre {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .apercu-clair {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .apercu-sombre {
+    display: block;
+  }
+}
+:root[data-theme="dark"] .apercu-clair {
+  display: none;
+}
+:root[data-theme="dark"] .apercu-sombre {
+  display: block;
 }
