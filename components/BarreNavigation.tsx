@@ -65,7 +65,7 @@ export default function BarreNavigation({
 }: BarreNavigationProps) {
   const logo = (
     <Link href="/" className="flex shrink-0 items-center gap-3">
-      <LogoStudyera className="h-[46px] text-primary" />
+      <LogoStudyera className="h-9 text-primary" />
       <span className="hidden text-[10.5px] font-semibold tracking-[0.18em] text-subtle-foreground whitespace-nowrap uppercase 2xl:block">
         Révisez · Comprenez · Progressez
       </span>
@@ -76,15 +76,14 @@ export default function BarreNavigation({
     // Pas de `relative` sur ce `<details>` : sa propre boîte ne fait que
     // la largeur du bouton hamburger, donc un `relative` ici ferait
     // résoudre `inset-x-0` du panneau ci-dessous contre cette boîte
-    // étroite plutôt que contre la largeur de l'écran. `<header>` est
-    // déjà `sticky`, donc déjà positionné : c'est lui qui sert de
-    // référence pour `inset-x-0`/`top-full` du panneau.
+    // étroite. C'est la pilule (`relative`) qui sert de référence : le
+    // panneau s'ouvre juste dessous, à sa largeur, en carte arrondie.
     <details className="justify-self-end xl:hidden">
-      <summary className="list-none rounded-md border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
+      <summary className="list-none rounded-full border border-border p-2 text-ink [&::-webkit-details-marker]:hidden">
         <IconeMenu className="size-6" />
         <span className="sr-only">Ouvrir le menu</span>
       </summary>
-      <div className="absolute inset-x-0 top-full z-30 flex flex-col gap-1 border-b border-border bg-surface p-4 shadow-sm">
+      <div className="absolute inset-x-0 top-full z-30 mt-2 flex flex-col gap-1 rounded-[24px] border border-border bg-surface p-4 shadow-[0_18px_40px_-18px_rgba(15,23,42,0.35)]">
         {connecte && <ChampRecherche pleineLargeur />}
         <LiensNavigation pleineLargeur connecte={connecte} />
         <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
@@ -108,9 +107,17 @@ export default function BarreNavigation({
     return <MenuLateral prenom={prenom} email={email} />;
   }
 
+  // Barre flottante en forme de pilule, détachée des bords et du haut
+  // de l'écran — demandé par l'utilisateur (« le navbar, mets-le qui
+  // prend pas toute la largeur mais comme un rectangle aux côtés ronds,
+  // et tous les côtés ne touchent pas les côtés »). Le `<header>`
+  // collant est transparent : seule la pilule a un fond, le contenu
+  // défile derrière et autour. Ses marges sont celles de la page
+  // (ConteneurMarges), pour rester alignée sur le contenu.
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-border bg-surface/85 backdrop-blur-md">
-      <ConteneurMarges className="grid h-[88px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-7">
+    <header className="sticky top-0 z-20 w-full pt-3 sm:pt-4">
+      <ConteneurMarges className="w-full px-3 sm:px-6">
+        <div className="relative grid h-[64px] w-full grid-cols-[auto_1fr_auto] items-center gap-4 rounded-full border border-border bg-surface/80 ps-4 pe-2.5 shadow-[0_10px_30px_-14px_rgba(15,23,42,0.28)] backdrop-blur-xl sm:ps-6">
         {logo}
 
         <nav
@@ -125,6 +132,7 @@ export default function BarreNavigation({
         </div>
 
         {menuMobile}
+        </div>
       </ConteneurMarges>
     </header>
   );
@@ -238,14 +246,14 @@ function EtatConnexion({
       <BoutonModeNuit />
       <Link
         href="/connexion"
-        className={`flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-[22px] py-[13px] text-[15.5px] font-semibold text-primary transition-colors hover:bg-surface-muted ${classeBase}`}
+        className={`flex items-center gap-2 rounded-full border border-border-strong bg-surface px-5 py-2.5 text-[15px] font-semibold text-primary transition-colors hover:bg-surface-muted ${classeBase}`}
       >
         <IconePersonne className="size-[17px]" />
         Se connecter
       </Link>
       <Link
         href="/connexion"
-        className={`flex items-center gap-2 rounded-[10px] bg-primary px-[22px] py-[13px] text-[15.5px] font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink hover:shadow-[0_4px_16px_rgba(29,78,216,0.3)] ${classeBase}`}
+        className={`flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-[15px] font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink hover:shadow-[0_4px_16px_rgba(29,78,216,0.3)] ${classeBase}`}
       >
         <IconePersonne className="size-[17px]" />
         S&apos;inscrire

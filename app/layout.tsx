@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import {
+  Aref_Ruqaa,
   Arimo,
   Caveat,
+  Lalezar,
   IBM_Plex_Mono,
   IBM_Plex_Sans_Arabic,
   Unbounded,
@@ -96,6 +98,27 @@ const caveat = Caveat({
 });
 
 /**
+ * Deux polices arabes réservées à l'accueil visiteur
+ * (components/AccueilVisiteur.tsx), après « c'est très IA » : Lalezar,
+ * épaisse et ronde, pour les grands titres en darija (token
+ * `font-affiche`), et Aref Ruqaa, l'écriture ruqʿa de tous les jours,
+ * pour les petites notes écrites « à la main » (token `font-ruqaa`).
+ * `preload: false` : les autres pages ne les chargent pas d'emblée.
+ */
+const lalezar = Lalezar({
+  subsets: ["arabic", "latin"],
+  weight: "400",
+  variable: "--font-lalezar",
+  preload: false,
+});
+const arefRuqaa = Aref_Ruqaa({
+  subsets: ["arabic"],
+  weight: "700",
+  variable: "--font-aref-ruqaa",
+  preload: false,
+});
+
+/**
  * Layout racine : s'applique à toutes les pages, quel que soit leur
  * groupe de routes ((public), (eleve), (admin)).
  *
@@ -147,7 +170,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${ibmPlexArabic.variable} ${arimo.variable} ${unbounded.variable} ${ibmPlexMono.variable} ${caveat.variable}`}
+      className={`${ibmPlexArabic.variable} ${arimo.variable} ${unbounded.variable} ${ibmPlexMono.variable} ${caveat.variable} ${lalezar.variable} ${arefRuqaa.variable}`}
     >
       {/* `flex` : la colonne de navigation (BarreNavigation, verticale
        * pour un élève connecté) occupe la gauche, le contenu prend le
