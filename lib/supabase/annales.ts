@@ -82,6 +82,8 @@ export interface ResumeAnnalesMatiere {
   nombre: number;
   /** Années distinctes, de la plus ancienne à la plus récente. */
   annees: number[];
+  /** Nombre de sujets par année (barres des chiffres de l'accueil). */
+  parAnnee: Record<number, number>;
 }
 
 /** Nombre de sujets et années par matière, en une seule requête plutôt
@@ -96,8 +98,9 @@ export async function resumerAnnalesParMatiere(): Promise<
 
   const resumes: Record<string, ResumeAnnalesMatiere> = {};
   for (const ligne of data ?? []) {
-    const r = (resumes[ligne.matiere] ??= { nombre: 0, annees: [] });
+    const r = (resumes[ligne.matiere] ??= { nombre: 0, annees: [], parAnnee: {} });
     r.nombre += 1;
+    r.parAnnee[ligne.annee] = (r.parAnnee[ligne.annee] ?? 0) + 1;
     if (!r.annees.includes(ligne.annee)) r.annees.push(ligne.annee);
   }
   for (const r of Object.values(resumes)) r.annees.sort((x, y) => x - y);

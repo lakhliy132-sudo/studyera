@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
-import CompteurAnime from "@/components/CompteurAnime";
+import ChiffresAccueil from "@/components/ChiffresAccueil";
 import MotTournant from "@/components/MotTournant";
 import RevelerAuDefilement from "@/components/RevelerAuDefilement";
 import {
@@ -45,6 +45,14 @@ const MOIS_DARIJA = ["يناير", "فبراير", "مارس", "أبريل", "م
 
 function dateDarija(date: Date): string {
   return `${date.getDate()} ${MOIS_DARIJA[date.getMonth()]}`;
+}
+
+/** Part de l'année scolaire déjà écoulée, de la rentrée (1ᵉʳ septembre
+ * précédant l'examen, comme sur /calendrier) au jour de l'examen. */
+function progressionAnnee(examen: Date): number {
+  const rentree = new Date(examen.getFullYear() - 1, 8, 1);
+  const total = joursAvant(examen) - joursAvant(rentree);
+  return total > 0 ? Math.min(100, Math.max(0, (-joursAvant(rentree) / total) * 100)) : 0;
 }
 
 /** Délai d'apparition au défilement (voir RevelerAuDefilement). */
@@ -124,12 +132,19 @@ export default async function AccueilVisiteur() {
   const [trimestre, annee] = FORMULES;
   const economie = economieMensuelle(annee, trimestre);
 
-  const chiffres = [
-    { valeur: nombreCours, libelle: "درس مكتوب" },
-    { valeur: nombreAnnales, libelle: "امتحان جهوي" },
-    { valeur: nombreChapitres, libelle: "فصل ديال المؤلفات" },
-    ...(jours !== null ? [{ valeur: jours, libelle: "يوم باقي للجهوي" }] : []),
-  ].filter((c) => c.valeur > 0);
+  // Sujets régionaux par année, toutes matières confondues, années sans
+  // sujet comprises (une colonne vide dit qu'il n'y en a pas).
+  const comptesParAnnee: Record<number, number> = {};
+  for (const r of Object.values(annales)) {
+    for (const [an, n] of Object.entries(r.parAnnee)) comptesParAnnee[Number(an)] = (comptesParAnnee[Number(an)] ?? 0) + n;
+  }
+  const annalesParAnnee =
+    premiereAnnee && derniereAnnee
+      ? Array.from({ length: derniereAnnee - premiereAnnee + 1 }, (_, i) => ({
+          annee: premiereAnnee + i,
+          nombre: comptesParAnnee[premiereAnnee + i] ?? 0,
+        }))
+      : [];
 
   const parMatiere = (nombre: number, nom: string) => (nombre > 0 ? `${nom}: ${nombre} درس` : null);
 
@@ -272,23 +287,24 @@ export default async function AccueilVisiteur() {
         </section>
 
         {/* ——— Les chiffres, comptés en base ——— */}
-        {chiffres.length > 0 && (
-          <section className="grid grid-cols-2 border-y border-border lg:grid-cols-4">
-            {chiffres.map((c, i) => (
-              <div
-                key={c.libelle}
-                data-reveler=""
-                style={delai(i * 90)}
-                className={`flex flex-col gap-1 px-2 py-8 sm:px-8 ${i % 2 === 1 ? "border-s border-border" : ""} ${i > 1 ? "border-t border-border lg:border-t-0" : ""} ${i === 2 ? "lg:border-s" : ""}`}
-              >
-                <span className="font-affiche text-5xl leading-none text-ink sm:text-6xl">
-                  <CompteurAnime valeur={c.valeur} />
-                </span>
-                <span className="text-[15px] font-semibold text-muted-foreground">{c.libelle}</span>
-              </div>
-            ))}
-          </section>
-        )}
+        <ChiffresAccueil
+          examen={
+            session && jours !== null
+              ? { jours, date: dateDarija(session.debut), progression: progressionAnnee(session.debut) }
+              : null
+          }
+          nombreCours={nombreCours}
+          coursParMatiere={[
+            { nom: "العربية", nombre: coursParCategorie["arabe"] ?? 0, couleur: couleurMatiere("arabe") },
+            { nom: "التربية الإسلامية", nombre: coursParCategorie["education-islamique"] ?? 0, couleur: couleurMatiere("education-islamique") },
+            { nom: "الاجتماعيات", nombre: coursParCategorie["histoire-geo"] ?? 0, couleur: couleurMatiere("histoire-geo") },
+            { nom: "الفرنسية", nombre: leconsFrancais, couleur: couleurMatiere("francais") },
+          ]}
+          nombreAnnales={nombreAnnales}
+          annalesParAnnee={annalesParAnnee}
+          nombreChapitres={nombreChapitres}
+          chapitresParOeuvre={oeuvres.map((o) => ({ titre: o.titre_fr, nombre: o.nombreChapitres }))}
+        />
 
         {/* ——— Ce qu'il y a dans le site, un outil par rangée ——— */}
         <section className="mt-24 flex flex-col gap-6 sm:mt-32">
