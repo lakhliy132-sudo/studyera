@@ -148,7 +148,9 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             epreuve={epreuve}
             enonceMdx={annale.enonce_mdx}
             corrigeMdx={annale.corrige_mdx}
-            arabe={matiere === "arabe"}
+            // Sujets rédigés en arabe (arabe, éducation islamique) : de
+            // droite à gauche, police arabe, barème en « ن ».
+            arabe={matiere === "arabe" || matiere === "education-islamique"}
             sujetsRedaction={sujetsRedaction}
           />
         ) : (
