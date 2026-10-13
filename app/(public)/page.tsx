@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import AccueilVisiteur from "@/components/AccueilVisiteur";
 import BandeauBienvenueAccueil from "@/components/BandeauBienvenueAccueil";
 import BarreObjectifAccueil from "@/components/BarreObjectifAccueil";
 import BoutonModeNuit from "@/components/BoutonModeNuit";
@@ -8,21 +7,13 @@ import CarteMotivationAccueil from "@/components/CarteMotivationAccueil";
 import TuilesStatsAccueil from "@/components/TuilesStatsAccueil";
 import CompteARebourExamenLive from "@/components/CompteARebourExamenLive";
 import GrilleMatieresAccueil from "@/components/GrilleMatieresAccueil";
-import {
-  IconeCalendrier,
-  IconeFleche,
-  IconeLivreOuvert,
-  IconePlume,
-  IconeTexte,
-} from "@/components/icones";
 import { deriverPrenom } from "@/lib/prenom";
 import { creerClientServeur } from "@/lib/supabase/server";
 import { recupererEvenementsEleve } from "@/lib/supabase/evenements";
 import { recupererProgressionParOeuvre } from "@/lib/supabase/tableauDeBord";
-import { compterCours, compterCoursParCategorie } from "@/lib/supabase/contenu";
+import { compterCours } from "@/lib/supabase/contenu";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { MATIERES } from "@/lib/matieres";
-import { couleurMatiere } from "@/lib/palette-matieres";
 import { joursAvant, prochaineSession } from "@/lib/calendrier";
 
 /**
@@ -185,8 +176,8 @@ async function AccueilConnecte({
 /**
  * Page d'accueil : /
  *
- * Pour un visiteur non connecté : contenu marketing minimal inchangé
- * (vague décorative + hero, voir plus bas). Pour un élève connecté :
+ * Pour un visiteur non connecté : présentation de tout le site en
+ * darija, avec les prix (AccueilVisiteur). Pour un élève connecté :
  * accueil personnalisé (AccueilConnecte ci-dessus) — demandé
  * explicitement par l'utilisateur.
  */
@@ -209,250 +200,9 @@ export default async function PageAccueil() {
     return <AccueilConnecte prenom={prenom} userId={user.id} />;
   }
 
-  // ———————————————————————————————————————————————————————————
-  // Visiteur non connecté : page d'accueil publique.
-  //
-  // Elle ne montrait qu'un titre ("Réussis ton français, chapitre par
-  // chapitre"), un sous-titre et un bouton, puis une grande bande vide
-  // jusqu'au pied de page — alors que le site couvre désormais quatre
-  // matières. Elle présente maintenant ce qui existe vraiment : les
-  // matières (avec leur nombre de leçons, compté en base), les trois
-  // espaces de français, et la date du prochain examen régional.
-  // Rien d'inventé : aucun chiffre de fréquentation, aucun
-  // témoignage, aucune fonctionnalité annoncée qui n'existe pas.
-  // Pleine largeur, conformément au reste du site.
-  const [coursParCategorie, session] = await Promise.all([
-    compterCoursParCategorie(FILIERE_ACTUELLE),
-    Promise.resolve(prochaineSession()),
-  ]);
-  const joursRestants = session ? joursAvant(session.debut) : null;
-
-  const espacesFrancais = [
-    {
-      href: "/oeuvres",
-      titre: "Œuvres au programme",
-      texte: "Résumés, personnages, axes de lecture et sujets.",
-      Icone: IconeLivreOuvert,
-    },
-    {
-      href: "/langue",
-      titre: "Langue",
-      texte: "Figures de style, énonciation, discours rapporté, lexique.",
-      Icone: IconeTexte,
-    },
-    {
-      href: "/production-ecrite",
-      titre: "Production écrite",
-      texte: "Méthodes et sujets guidés pour rédiger au propre.",
-      Icone: IconePlume,
-    },
-  ];
-
-  return (
-    <>
-      <style>{`
-        @keyframes vague-accueil-respire {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(14px) scale(1.015); }
-        }
-      `}</style>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 top-0 -z-10 w-full"
-      >
-        <svg
-          viewBox="0 0 1440 620"
-          preserveAspectRatio="none"
-          className="h-[88vh] w-full"
-          style={{
-            animation: "vague-accueil-respire 10s ease-in-out infinite",
-          }}
-        >
-          <defs>
-            <linearGradient
-              id="dégradé-vague-accueil"
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="100%"
-            >
-              <stop
-                offset="0%"
-                stopColor="color-mix(in srgb, var(--color-primary) 14%, var(--color-background))"
-              />
-              <stop
-                offset="55%"
-                stopColor="color-mix(in srgb, var(--color-primary) 22%, var(--color-background))"
-              />
-              <stop offset="100%" stopColor="var(--color-background)" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M0,0 H1440 V220 C1300,260 1160,180 980,220 C740,270 560,360 340,340 C180,326 60,290 0,260 Z"
-            fill="url(#dégradé-vague-accueil)"
-          />
-        </svg>
-      </div>
-
-      <main className="flex w-full flex-col px-6 pb-20 sm:px-9">
-        <section className="flex flex-col items-center gap-6 py-12 sm:py-20 text-center">
-          <span className="rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            1<sup>ère</sup> année du baccalauréat · Maroc
-          </span>
-          <h1 className="max-w-3xl font-titre text-3xl sm:text-4xl leading-tight font-bold text-ink sm:text-[46px]">
-            Révise tout ton programme,{" "}
-            <span className="text-primary italic">chapitre par chapitre</span>.
-          </h1>
-          <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
-            Français, arabe, histoire-géographie et éducation islamique : les
-            cours du programme, réécrits pour être lus et révisés, au même
-            endroit.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/matieres"
-              className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Voir les matières →
-            </Link>
-            <Link
-              href="/calendrier"
-              className="rounded-full border border-border bg-surface px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-border-strong"
-            >
-              Le calendrier de l&apos;examen
-            </Link>
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-6">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h2 className="font-serif text-2xl font-bold text-ink">
-                Les matières
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Chaque matière mène à ses leçons, en lecture libre.
-              </p>
-            </div>
-            <Link
-              href="/matieres"
-              className="shrink-0 text-sm font-semibold text-primary hover:underline"
-            >
-              Tout voir →
-            </Link>
-          </div>
-
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3 sm:gap-[18px]">
-            {[{ slug: "francais", href: "/francais" }, ...MATIERES.map((m) => ({ slug: m.slug, href: `/${m.slug}` }))].map(
-              ({ slug, href }) => {
-                const matiere = MATIERES.find((m) => m.slug === slug);
-                const couleur = couleurMatiere(slug);
-                const nombre = coursParCategorie[slug] ?? 0;
-                const titre = matiere
-                  ? `${matiere.titreAvantAccent}${matiere.titreAccent}`
-                  : "Français";
-                const texte = matiere
-                  ? matiere.description
-                  : "Œuvres au programme, langue et production écrite.";
-                const Icone = matiere ? matiere.Icone : IconeLivreOuvert;
-                return (
-                  <li key={slug}>
-                    <Link
-                      href={href}
-                      className="group flex h-full flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-[26px] shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
-                    >
-                      <span
-                        style={{
-                          backgroundColor: `color-mix(in srgb, ${couleur} 14%, var(--color-surface))`,
-                          color: couleur,
-                        }}
-                        className="flex size-[52px] items-center justify-center rounded-full"
-                      >
-                        <Icone className="size-6" />
-                      </span>
-                      <h3 className="mt-4 font-serif text-lg leading-snug font-bold text-ink">
-                        {titre}
-                      </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                        {texte}
-                      </p>
-                      <span
-                        style={{ color: couleur }}
-                        className="mt-4 flex items-center gap-1.5 text-sm font-semibold"
-                      >
-                        {nombre > 0
-                          ? `${nombre} leçon${nombre > 1 ? "s" : ""}`
-                          : "Découvrir"}
-                        <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </Link>
-                  </li>
-                );
-              },
-            )}
-          </ul>
-        </section>
-
-        <section className="mt-10 sm:mt-16 flex flex-col gap-6">
-          <div>
-            <h2 className="font-serif text-2xl font-bold text-ink">
-              Le français en trois espaces
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Les trois épreuves de l&apos;examen, chacune avec ses pages.
-            </p>
-          </div>
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 sm:gap-[18px]">
-            {espacesFrancais.map(({ href, titre, texte, Icone }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="group flex h-full items-start gap-4 rounded-[20px] border border-border bg-surface p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
-                >
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
-                    <Icone className="size-5" />
-                  </span>
-                  <span className="flex flex-col gap-1">
-                    <span className="font-serif text-base font-bold text-ink">
-                      {titre}
-                    </span>
-                    <span className="text-sm leading-relaxed text-muted-foreground">
-                      {texte}
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {session && joursRestants !== null && joursRestants >= 0 && (
-          <section className="mt-10 sm:mt-16">
-            <div className="flex flex-col items-start gap-5 rounded-[22px] border border-border bg-surface p-5 sm:p-8 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-primary-tint text-primary">
-                  <IconeCalendrier className="size-6" />
-                </span>
-                <div>
-                  <p className="font-serif text-xl font-bold text-ink">
-                    {session.titre}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {session.libelle} — dans {joursRestants} jour
-                    {joursRestants > 1 ? "s" : ""}.
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/calendrier"
-                className="shrink-0 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong"
-              >
-                Voir le calendrier →
-              </Link>
-            </div>
-          </section>
-        )}
-      </main>
-    </>
-  );
+  // Visiteur non connecté : la page de présentation en darija, avec
+  // les prix (components/AccueilVisiteur.tsx). Elle remplace l'ancienne
+  // présentation en français (titre, grille des matières, trois espaces
+  // de français, date de l'examen), à la demande de l'utilisateur.
+  return <AccueilVisiteur />;
 }
