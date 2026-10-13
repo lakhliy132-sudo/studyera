@@ -88,7 +88,7 @@ export default async function PageAcces() {
     <main dir="rtl" lang="ar" className="flex w-full flex-col gap-14 px-6 pt-16 pb-20 font-arabe sm:px-9 sm:pt-10 lg:px-16 xl:px-24 2xl:px-40">
       {/* ——— Bandeau : où en est le compte ——— */}
       <header
-        className="animate-entree-carte relative overflow-hidden rounded-[34px] p-7 text-white sm:p-12"
+        className="animate-entree-carte relative grid grid-cols-1 items-center gap-8 overflow-hidden rounded-[28px] p-6 text-white sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-12 lg:px-10"
         style={{ background: "linear-gradient(150deg, var(--fond-sombre-actif) 0%, var(--fond-sombre-haut) 50%, var(--fond-sombre-bas) 100%)" }}
       >
         <div
@@ -104,10 +104,10 @@ export default async function PageAcces() {
         />
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-28 -left-20 size-80 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="relative flex flex-col gap-4">
-          <span className="font-ruqaa text-2xl text-white/80">مرحبا بيك</span>
-          <h1 className="font-affiche text-[44px] leading-[1.1] sm:text-7xl">{titre}</h1>
-          <p className="max-w-2xl text-lg leading-loose text-white/80">{texte}</p>
+        <div className="relative flex flex-col gap-3">
+          <span className="font-ruqaa text-xl text-white/80">مرحبا بيك</span>
+          <h1 className="font-affiche text-[34px] leading-[1.15] sm:text-5xl">{titre}</h1>
+          <p className="max-w-2xl text-base leading-relaxed text-white/80">{texte}</p>
           {acces.email && (
             <p className="flex flex-wrap items-center gap-3 text-sm text-white/70">
               الحساب:
@@ -120,7 +120,7 @@ export default async function PageAcces() {
           {acces.complet && (
             <Link
               href="/tableau-de-bord"
-              className="mt-2 self-start rounded-full bg-white px-8 py-4 text-base font-bold transition-transform hover:-translate-y-0.5"
+              className="mt-1 self-start rounded-full bg-white px-6 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5"
               style={{ color: "var(--fond-sombre-haut)" }}
             >
               دخل للتابلو ديالك
@@ -128,23 +128,25 @@ export default async function PageAcces() {
           )}
         </div>
 
-        {/* Les trois étapes, sur une piste qui se remplit. */}
-        <ol className="relative mt-12 grid grid-cols-3">
-          <span aria-hidden="true" className="absolute inset-x-[16.66%] top-6 h-1 rounded-full bg-white/15" />
+        {/* Les trois étapes, sur une piste qui se remplit. Bandeau
+            raccourci (« réduis la longueur de ça, c'est très grand ») :
+            sur grand écran, elles sont à côté du texte, pas dessous. */}
+        <ol className="relative grid grid-cols-3">
+          <span aria-hidden="true" className="absolute inset-x-[16.66%] top-5 h-1 rounded-full bg-white/15" />
           <span
             aria-hidden="true"
-            className="barre-croit absolute top-6 right-[16.66%] h-1 rounded-full bg-white"
+            className="barre-croit absolute top-5 right-[16.66%] h-1 rounded-full bg-white"
             style={{ width: `${(Math.min(etapeCourante, 2) / 2) * 66.66}%` }}
           />
           {etapes.map((e, i) => {
             const fait = i < etapeCourante || acces.complet;
             const courante = i === etapeCourante && !acces.complet;
             return (
-              <li key={e.titre} className="relative flex flex-col items-center gap-3 text-center">
-                <span className="relative flex size-12 items-center justify-center">
+              <li key={e.titre} className="relative flex flex-col items-center gap-2 text-center">
+                <span className="relative flex size-10 items-center justify-center">
                   {courante && <span aria-hidden="true" className="absolute inset-0 rounded-full bg-white animate-ping-doux" />}
                   <span
-                    className={`relative flex size-12 items-center justify-center rounded-full font-affiche text-xl ${
+                    className={`relative flex size-10 items-center justify-center rounded-full font-affiche text-lg ${
                       fait ? "bg-white" : courante ? "bg-white" : "border-2 border-dashed border-white/40 bg-transparent text-white/70"
                     }`}
                     style={fait || courante ? { color: "var(--fond-sombre-haut)" } : undefined}
@@ -152,8 +154,8 @@ export default async function PageAcces() {
                     {fait ? <IconeCoche className="size-5" /> : courante ? i + 1 : <e.Icone className="size-5" />}
                   </span>
                 </span>
-                <span className={`text-sm font-bold sm:text-base ${fait || courante ? "text-white" : "text-white/60"}`}>{e.titre}</span>
-                {courante && <span className="-mt-2 font-ruqaa text-lg text-white/80">دابا</span>}
+                <span className={`text-[13px] font-bold sm:text-sm ${fait || courante ? "text-white" : "text-white/60"}`}>{e.titre}</span>
+                {courante && <span className="-mt-1.5 font-ruqaa text-base text-white/80">دابا</span>}
               </li>
             );
           })}
