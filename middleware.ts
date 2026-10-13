@@ -22,7 +22,13 @@ const CHEMINS_PROTEGES = [
   "/progres",
   "/communaute",
   "/parametres",
+  "/acces",
 ];
+/** Chemins élève ouverts à un compte connecté mais pas encore activé
+ * (accès payant, lib/acces.ts) : la page qui explique comment activer
+ * son accès, et les paramètres du compte. Tous les autres chemins de
+ * CHEMINS_PROTEGES renvoient un tel compte vers /acces. */
+const CHEMINS_SANS_ACCES = ["/acces", "/parametres"];
 const CHEMINS_ADMIN = ["/administration"];
 
 function cheminCorrespond(chemin: string, liste: string[]) {
@@ -102,6 +108,25 @@ export async function middleware(requete: NextRequest) {
       const urlTableauDeBord = requete.nextUrl.clone();
       urlTableauDeBord.pathname = "/tableau-de-bord";
       return NextResponse.redirect(urlTableauDeBord);
+    }
+  }
+
+  if (user && cheminEleve && !cheminCorrespond(pathname, CHEMINS_SANS_ACCES)) {
+    // Accès payant (lib/acces.ts, même règle) : admin, ou ligne
+    // d'acces_eleves qui court encore. Table absente (migration pas
+    // encore lancée) : pas de verrou.
+    const [{ data: profil }, { data: ligne, error }] = await Promise.all([
+      supabase.from("profils").select("role").eq("id", user.id).maybeSingle(),
+      supabase.from("acces_eleves").select("fin").eq("user_id", user.id).maybeSingle(),
+    ]);
+    const tableAbsente = error?.code === "PGRST205" || error?.code === "42P01";
+    const aujourdhui = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Casablanca" }).format(new Date());
+    const actif = tableAbsente || profil?.role === "admin" || (ligne?.fin != null && ligne.fin >= aujourdhui);
+    if (!actif) {
+      const urlAcces = requete.nextUrl.clone();
+      urlAcces.pathname = "/acces";
+      urlAcces.search = "";
+      return NextResponse.redirect(urlAcces);
     }
   }
 

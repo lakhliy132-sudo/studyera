@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { PageVerrouillee } from "@/components/ContenuVerrouille";
+import { chapitreGratuit, lireAcces } from "@/lib/acces";
 
 import BoutonMarquerLu from "@/components/BoutonMarquerLu";
 import FicheChapitre from "@/components/FicheChapitre";
@@ -105,6 +107,24 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
 
   const chapitre = await recupererChapitreParNumero(oeuvre.id, numero);
   if (!chapitre) notFound();
+
+  // Accès payant (lib/acces.ts) : sans accès complet, seul le premier
+  // chapitre (ou la première scène) de l'œuvre s'ouvre.
+  const acces = await lireAcces();
+  if (!acces.complet) {
+    const gratuit = await chapitreGratuit(oeuvre.id);
+    if (gratuit?.numero !== chapitre.numero) {
+      return (
+        <PageVerrouillee
+          retour={{ href: `/oeuvres/${slug}`, libelle: oeuvre.titre_fr }}
+          etat={acces}
+          ceci={`${unite.singulier === "Scène" ? "Cette scène" : "Ce chapitre"}`}
+          titre={chapitre.titre_fr}
+          gratuit={gratuit ? { href: `/oeuvres/${slug}/${gratuit.numero}`, titre: gratuit.titre } : null}
+        />
+      );
+    }
+  }
 
   const supabase = await creerClientServeur();
   const {

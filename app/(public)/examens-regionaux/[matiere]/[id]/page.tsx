@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PageVerrouillee } from "@/components/ContenuVerrouille";
+import { annaleGratuite, lireAcces } from "@/lib/acces";
 
 import ChronometreEpreuve from "@/components/ChronometreEpreuve";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
@@ -67,6 +69,24 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
   const { matiere, id } = await params;
   const annale = await recupererAnnaleParId(id);
   if (!annale || annale.matiere !== matiere) notFound();
+
+  // Accès payant (lib/acces.ts) : sans accès complet, seul le sujet le
+  // plus récent de la matière s'ouvre.
+  const acces = await lireAcces();
+  if (!acces.complet) {
+    const gratuit = await annaleGratuite(matiere);
+    if (gratuit?.id !== annale.id) {
+      return (
+        <PageVerrouillee
+          retour={{ href: `/examens-regionaux/${matiere}`, libelle: "Tous les sujets" }}
+          etat={acces}
+          ceci="Ce sujet"
+          titre={[`Régional ${annale.annee}`, annale.academie, annale.session === "rattrapage" ? "rattrapage" : null].filter(Boolean).join(" · ")}
+          gratuit={gratuit ? { href: `/examens-regionaux/${matiere}/${gratuit.id}`, titre: gratuit.titre } : null}
+        />
+      );
+    }
+  }
 
   const epreuve = lireEpreuve(annale.questions);
   // Le correcteur ne corrige que le français : seules ses productions

@@ -252,7 +252,7 @@ function EtatConnexion({
         Se connecter
       </Link>
       <Link
-        href="/connexion"
+        href="/connexion?mode=inscription"
         className={`flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-[15px] font-semibold text-white shadow-[0_2px_10px_rgba(29,78,216,0.22)] transition-all hover:-translate-y-px hover:bg-ink hover:shadow-[0_4px_16px_rgba(29,78,216,0.3)] ${classeBase}`}
       >
         <IconePersonne className="size-[17px]" />

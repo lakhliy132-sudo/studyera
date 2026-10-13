@@ -1,4 +1,7 @@
 import type { CSSProperties } from "react";
+import { PageVerrouillee } from "@/components/ContenuVerrouille";
+import { leconGratuite, lireAcces } from "@/lib/acces";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -107,6 +110,24 @@ export default async function PageCoursMatiere({
 
   const cours = await recupererCoursParSlug(slug);
   if (!cours || cours.categorie !== matiere.slug) notFound();
+
+  // Accès payant (lib/acces.ts) : sans accès complet, seule la première
+  // leçon de la matière s'ouvre.
+  const acces = await lireAcces();
+  if (!acces.complet) {
+    const gratuit = await leconGratuite(matiere.slug, cours.filiere ?? FILIERE_ACTUELLE);
+    if (gratuit?.slug !== cours.slug) {
+      return (
+        <PageVerrouillee
+          retour={{ href: `/${matiere.slug}`, libelle: "Toutes les leçons" }}
+          etat={acces}
+          ceci="Cette leçon"
+          titre={cours.titre}
+          gratuit={gratuit ? { href: `/${matiere.slug}/${gratuit.slug}`, titre: gratuit.titre } : null}
+        />
+      );
+    }
+  }
 
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estIslamique = matiere.slug === "education-islamique";

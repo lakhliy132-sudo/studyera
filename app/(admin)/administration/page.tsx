@@ -46,6 +46,15 @@ export default async function PageAdministration() {
         <p className="text-sm text-muted-foreground">Connecté en tant que : {user?.email}</p>
       </div>
 
+      {/* Activation des comptes après paiement sur WhatsApp (accès payant). */}
+      <Link
+        href="/administration/acces"
+        className="flex items-center justify-between rounded-2xl border border-primary/30 bg-primary-tint px-5 py-4 font-semibold text-primary transition-colors hover:border-primary"
+      >
+        Accès des élèves : activer un compte après paiement
+        <span aria-hidden="true">→</span>
+      </Link>
+
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-foreground">Copies déposées</h2>
         <TableauCopies copies={copies} />

@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import ContenuVerrouille from "@/components/ContenuVerrouille";
+import { lireAcces } from "@/lib/acces";
 
 import BanniereOeuvre from "@/components/BanniereOeuvre";
 import OngletFicheLecture from "@/components/OngletFicheLecture";
@@ -56,6 +58,16 @@ interface PagePropsOeuvre {
  * (lib/supabase/contenu.ts) restent dans le code, juste plus
  * référencés depuis cette page.
  */
+/** Onglets réservés aux comptes activés, avec leur nom pour la carte
+ * de verrou. */
+const ONGLETS_RESERVES: Record<string, string> = {
+  personnages: "Personnages",
+  lexique: "Lexique",
+  lieux: "Lieux",
+  sujets: "Sujets d'analyse",
+  quiz: "Quiz",
+};
+
 export default async function PageOeuvre({ params, searchParams }: PagePropsOeuvre) {
   const { slug } = await params;
   const { onglet } = await searchParams;
@@ -100,6 +112,12 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
   // Fiches de lecture saisies à la main (lib/fichesLecture.ts).
   const ficheLecture: FicheLecture | null = FICHES_LECTURE_PAR_SLUG[slug] ?? null;
 
+  // Accès payant (lib/acces.ts) : sans accès complet, la fiche de
+  // lecture et la liste des chapitres restent ouvertes ; les autres
+  // onglets sont réservés.
+  const acces = await lireAcces();
+  const ongletVerrouille = !acces.complet && ongletActif in ONGLETS_RESERVES;
+
   return (
     <main className="flex flex-col">
       <div className="flex w-full flex-col gap-4 px-6 pt-6 pb-16 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
@@ -121,7 +139,15 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
         <OngletsOeuvre slug={slug} ongletActif={ongletActif} />
 
         <div className="py-2">
-          {ongletActif === "resume" && (
+          {ongletVerrouille && (
+            <ContenuVerrouille
+              etat={acces}
+              ceci="Cet onglet"
+              titre={`${oeuvre.titre_fr} — ${ONGLETS_RESERVES[ongletActif]}`}
+              gratuit={premierChapitre ? { href: `/oeuvres/${slug}/${premierChapitre.numero}`, titre: premierChapitre.titre_fr } : null}
+            />
+          )}
+          {!ongletVerrouille && ongletActif === "resume" && (
             <OngletResume
               slug={slug}
               chapitres={chapitres}
@@ -142,18 +168,18 @@ export default async function PageOeuvre({ params, searchParams }: PagePropsOeuv
               }
             />
           )}
-          {ongletActif === "fiche" && (
+          {!ongletVerrouille && ongletActif === "fiche" && (
             <OngletFicheLecture oeuvre={oeuvre} fiche={ficheLecture} />
           )}
-          {ongletActif === "personnages" && (
+          {!ongletVerrouille && ongletActif === "personnages" && (
             <OngletPersonnages slug={slug} personnages={personnages} chapitreParId={chapitreParId} />
           )}
-          {ongletActif === "lexique" && (
+          {!ongletVerrouille && ongletActif === "lexique" && (
             <OngletLexique slug={slug} entrees={lexique} chapitreParId={chapitreParId} />
           )}
-          {ongletActif === "lieux" && <OngletLieux slug={slug} chapitres={chapitres} />}
-          {ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
-          {ongletActif === "quiz" && (
+          {!ongletVerrouille && ongletActif === "lieux" && <OngletLieux slug={slug} chapitres={chapitres} />}
+          {!ongletVerrouille && ongletActif === "sujets" && <OngletSujets sujets={sujets} />}
+          {!ongletVerrouille && ongletActif === "quiz" && (
             <OngletQuiz slug={slug} chapitres={chapitres} questionsParChapitre={questionsParChapitreQuiz} />
           )}
         </div>
