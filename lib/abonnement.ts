@@ -55,12 +55,23 @@ export function couvreJusqua(formule: Formule, date: Date): boolean {
  * de paiement, le message déjà écrit (la formule choisie et son prix),
  * pour que l'élève n'ait plus qu'à l'envoyer. */
 export function lienWhatsapp(formule: Formule, email: string | null = null): string {
-  // Avec l'e-mail du compte (page /acces) : c'est lui qui dit quel compte
-  // activer sur /administration/acces.
-  const message =
+  return `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(messageWhatsapp(formule, email))}`;
+}
+
+/** Le message déjà écrit dans WhatsApp, aussi montré en aperçu sur
+ * /acces. Avec l'e-mail du compte : c'est lui qui dit quel compte
+ * activer sur /administration/acces. */
+export function messageWhatsapp(formule: Formule, email: string | null = null): string {
+  return (
     `سلام 👋 بغيت نشترك فـ StudyEra — عرض ${formule.nom} (${formule.prix} درهم).` +
-    (email ? `\nالإيميل ديال الحساب: ${email}` : "");
-  return `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    (email ? `\nالإيميل ديال الحساب: ${email}` : "")
+  );
+}
+
+/** « +33 6 09 52 78 98 », pour l'afficher. */
+export function numeroWhatsappLisible(): string {
+  const n = NUMERO_WHATSAPP;
+  return `+${n.slice(0, 2)} ${n.slice(2, 3)} ${n.slice(3).replace(/(\d{2})(?=\d)/g, "$1 ")}`;
 }
 
 /** Un « + » d'une formule ; `fort` pour ceux qui la distinguent de
