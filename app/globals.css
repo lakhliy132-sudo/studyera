@@ -262,6 +262,30 @@
   to { stroke-dashoffset: 0; }
 }
 
+/* Barres des chiffres de l'accueil (components/ChiffresAccueil.tsx) :
+ * elles poussent depuis leur base quand leur carte apparaît. Le départ
+ * est à droite, où commence la ligne dans la page en arabe. */
+.barre-croit,
+.barre-croit-y {
+  animation: croitre-x 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--delai, 0ms) + var(--delai-barre, 0ms) + 250ms);
+  transform-origin: right;
+}
+.barre-croit-y {
+  animation-name: croitre-y;
+  transform-origin: bottom;
+}
+[data-reveler="cache"] .barre-croit,
+[data-reveler="cache"] .barre-croit-y {
+  animation: none;
+}
+@keyframes croitre-x {
+  from { transform: scaleX(0); }
+}
+@keyframes croitre-y {
+  from { transform: scaleY(0); }
+}
+
 /* Personnes ayant demandé à leur système de limiter les animations :
  * les entrées de cartes (accueil, /oeuvres) et les transitions de
  * survol sont neutralisées plutôt que jouées au ralenti. */
