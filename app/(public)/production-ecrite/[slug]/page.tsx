@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { PageVerrouillee } from "@/components/ContenuVerrouille";
+import { leconGratuite, lireAcces } from "@/lib/acces";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
 
@@ -314,6 +317,24 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
   const { slug } = await params;
   const cours = await recupererCoursParSlug(slug);
   if (!cours || cours.categorie !== "production-ecrite" || !cours.contenu_mdx) notFound();
+
+  // Accès payant (lib/acces.ts) : sans accès complet, seule la première
+  // fiche de production écrite s'ouvre.
+  const acces = await lireAcces();
+  if (!acces.complet) {
+    const gratuit = await leconGratuite("production-ecrite", cours.filiere ?? FILIERE_ACTUELLE);
+    if (gratuit?.slug !== cours.slug) {
+      return (
+        <PageVerrouillee
+          retour={{ href: "/production-ecrite", libelle: "Production écrite" }}
+          etat={acces}
+          ceci="Cette fiche"
+          titre={cours.titre}
+          gratuit={gratuit ? { href: `/production-ecrite/${gratuit.slug}`, titre: gratuit.titre } : null}
+        />
+      );
+    }
+  }
 
   const segments = segmenter(cours.contenu_mdx);
 

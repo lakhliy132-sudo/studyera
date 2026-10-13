@@ -15,6 +15,8 @@ import { compterCours } from "@/lib/supabase/contenu";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 import { MATIERES } from "@/lib/matieres";
 import { joursAvant, prochaineSession } from "@/lib/calendrier";
+import { redirect } from "next/navigation";
+import { lireAcces } from "@/lib/acces";
 
 /**
  * Accueil d'un élève connecté. Dernière refonte d'après une nouvelle
@@ -188,6 +190,11 @@ export default async function PageAccueil() {
   } = await supabase.auth.getUser();
 
   if (user) {
+    // Compte créé mais pas encore activé (accès payant, lib/acces.ts) :
+    // son accueil est la page qui explique comment l'activer.
+    const acces = await lireAcces();
+    if (!acces.complet) redirect("/acces");
+
     const { data: profil } = await supabase
       .from("profils")
       .select("nom_complet")

@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { PageVerrouillee } from "@/components/ContenuVerrouille";
+import { leconGratuite, lireAcces } from "@/lib/acces";
+import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import ExercicesChampLexical from "@/components/ExercicesChampLexical";
 import ExercicesConnecteurs from "@/components/ExercicesConnecteurs";
@@ -89,6 +92,24 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
 
   const cours = await recupererCoursParSlug(slug);
   if (!cours) notFound();
+
+  // Accès payant (lib/acces.ts) : sans accès complet, seule la première
+  // leçon de langue s'ouvre.
+  const acces = await lireAcces();
+  if (!acces.complet) {
+    const gratuit = await leconGratuite(cours.categorie ?? "langue", cours.filiere ?? FILIERE_ACTUELLE);
+    if (gratuit?.slug !== cours.slug) {
+      return (
+        <PageVerrouillee
+          retour={{ href: "/langue", libelle: "Toutes les leçons de langue" }}
+          etat={acces}
+          ceci="Cette leçon"
+          titre={cours.titre}
+          gratuit={gratuit ? { href: `/langue/${gratuit.slug}`, titre: gratuit.titre } : null}
+        />
+      );
+    }
+  }
 
   const Exercices = EXERCICES_PAR_SLUG[cours.slug];
   const Quiz = QUIZ_PAR_SLUG[cours.slug];

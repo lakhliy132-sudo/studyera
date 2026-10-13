@@ -54,7 +54,42 @@ export function couvreJusqua(formule: Formule, date: Date): boolean {
 /** Lien wa.me qui ouvre WhatsApp sur une conversation avec le numéro
  * de paiement, le message déjà écrit (la formule choisie et son prix),
  * pour que l'élève n'ait plus qu'à l'envoyer. */
-export function lienWhatsapp(formule: Formule): string {
-  const message = `سلام 👋 بغيت نشترك فـ StudyEra — عرض ${formule.nom} (${formule.prix} درهم).`;
+export function lienWhatsapp(formule: Formule, email: string | null = null): string {
+  // Avec l'e-mail du compte (page /acces) : c'est lui qui dit quel compte
+  // activer sur /administration/acces.
+  const message =
+    `سلام 👋 بغيت نشترك فـ StudyEra — عرض ${formule.nom} (${formule.prix} درهم).` +
+    (email ? `\nالإيميل ديال الحساب: ${email}` : "");
   return `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+}
+
+/** Un « + » d'une formule ; `fort` pour ceux qui la distinguent de
+ * l'autre (mis en gras). */
+export interface PlusFormule {
+  texte: string;
+  fort?: boolean;
+}
+
+const MOIS_DARIJA = ["يناير", "فبراير", "مارس", "أبريل", "ماي", "يونيو", "يوليوز", "غشت", "شتنبر", "أكتوبر", "نونبر", "دجنبر"];
+
+/** « 28 ماي » */
+export function dateDarija(date: Date): string {
+  return `${date.getDate()} ${MOIS_DARIJA[date.getMonth()]}`;
+}
+
+/** Les « + » d'une formule : ce que le site contient (`communs`, comptés
+ * par l'appelant), précédés, pour la formule à l'année, de ce qui se
+ * calcule (couvre-t-elle l'examen si on la prend aujourd'hui, de
+ * combien revient-elle moins cher au mois). */
+export function plusFormule(formule: Formule, communs: string[], examen: Date | null): PlusFormule[] {
+  const extras: PlusFormule[] = [];
+  if (formule.cle === "annee") {
+    if (examen && couvreJusqua(formule, examen)) {
+      extras.push({ texte: `كيوصلك حتى لنهار الجهوي (${dateDarija(examen)})`, fort: true });
+    }
+    const autre = FORMULES.find((f) => f.cle !== formule.cle);
+    const economie = autre ? economieMensuelle(formule, autre) : 0;
+    if (economie > 0) extras.push({ texte: `أرخص بـ ${economie}% فالشهر من التريمستر`, fort: true });
+  }
+  return [...extras, ...communs.map((texte) => ({ texte }))];
 }

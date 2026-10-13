@@ -265,6 +265,26 @@ Tables principales : `cours`, `oeuvres`, `chapitres`, `sujets`,
 
 ---
 
+## 7 bis. L'accès payant
+
+L'élève crée son compte (`/connexion`, Google ou e-mail), paie sur
+WhatsApp, puis l'admin active l'accès à la main sur
+`/administration/acces` (3 ou 12 mois). Table `acces_eleves`, écrite
+seulement par la clé de service ; logique dans `lib/acces.ts`.
+
+- Sans accès complet : **aperçu gratuit** (première leçon de chaque
+  catégorie, premier chapitre de chaque œuvre, sujet régional le plus
+  récent de chaque matière, onglets Fiche et Chapitres d'une œuvre).
+  Le reste affiche `ContenuVerrouille`. Toute nouvelle page de contenu
+  doit passer par `lireAcces()` de la même façon.
+- Un compte connecté non activé est renvoyé vers `/acces` (middleware,
+  accueil), qui explique la démarche et envoie l'e-mail du compte dans
+  le message WhatsApp.
+- **Table absente = pas de verrou** : tant que la migration
+  `20261102000000_acces_eleves.sql` n'est pas lancée, tout reste ouvert.
+- Le verrou est sur les pages, pas en RLS : l'API REST donne toujours
+  le texte des tables de contenu à qui l'interroge directement.
+
 ## 8. Vérifier son travail
 
 L'utilisateur juge sur ce qu'il voit, pas sur ce que dit le code.
