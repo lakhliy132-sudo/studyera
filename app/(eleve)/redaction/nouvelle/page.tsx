@@ -84,11 +84,11 @@ export default async function PageNouvelleRedaction({ searchParams }: { searchPa
        * gauche (la page n'est vue que par un élève connecté). */}
       <div className="flex w-full flex-col gap-6 px-6 pt-16 pb-10 sm:px-9 lg:px-16 xl:px-24 xl:pt-9 2xl:px-40 sm:pb-16">
         <Link
-          href="/tableau-de-bord"
+          href="/"
           className="flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
         >
           <IconeFleche className="size-4 rotate-180" />
-          Retour au tableau de bord
+          Retour à l&apos;accueil
         </Link>
 
         {/* En-tête d'après la maquette de l'utilisateur ("change le design

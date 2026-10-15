@@ -194,7 +194,7 @@ function EtatConnexion({
         }
       >
         <Link
-          href="/tableau-de-bord"
+          href="/"
           className="flex items-center gap-2"
           title={email ?? undefined}
         >

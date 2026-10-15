@@ -93,7 +93,7 @@ export default function FormulaireConnexion({ modeInitial }: { modeInitial: Mode
       }
       // Rechargement complet : la barre de navigation et le menu
       // dépendent de la session, lue côté serveur.
-      window.location.assign("/tableau-de-bord");
+      window.location.assign("/");
       return;
     }
 

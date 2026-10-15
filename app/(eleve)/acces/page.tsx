@@ -119,11 +119,11 @@ export default async function PageAcces() {
           )}
           {acces.complet && (
             <Link
-              href="/tableau-de-bord"
+              href="/"
               className="mt-1 self-start rounded-full bg-white px-6 py-3 text-sm font-bold transition-transform hover:-translate-y-0.5"
               style={{ color: "var(--fond-sombre-haut)" }}
             >
-              دخل للتابلو ديالك
+              دخل للموقع
             </Link>
           )}
         </div>

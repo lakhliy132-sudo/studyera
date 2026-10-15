@@ -34,7 +34,7 @@ export default async function PageConnexion({ searchParams }: PagePropsConnexion
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user) redirect("/tableau-de-bord");
+  if (user) redirect("/");
 
   const { mode } = await searchParams;
   const modeInitial = mode === "inscription" ? "inscription" : mode === "oubli" ? "oubli" : "connexion";

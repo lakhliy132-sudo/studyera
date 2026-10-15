@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
  * marges larges du reste du site : demandé pour l'accueil, le tableau
  * de bord et le calendrier ("pour accueil tableau de bord et calendrier
  * laisse les tailles comme avant cad sans marge"). */
-export const PAGES_SANS_MARGES = ["/", "/tableau-de-bord", "/calendrier"];
+export const PAGES_SANS_MARGES = ["/", "/calendrier"];
 
 const MARGES_LARGES = "lg:px-16 xl:px-24 2xl:px-40";
 

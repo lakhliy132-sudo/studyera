@@ -27,15 +27,15 @@ export async function GET(requete: Request) {
   // site est accepté (commence par « / » mais pas par « // »), pour
   // qu'un lien forgé ne puisse pas renvoyer vers un autre site.
   const suiteDemandee = searchParams.get("suite");
-  const suite = suiteDemandee && /^\/(?!\/)/.test(suiteDemandee) ? suiteDemandee : "/tableau-de-bord";
+  const suite = suiteDemandee && /^\/(?!\/)/.test(suiteDemandee) ? suiteDemandee : "/";
 
   if (code) {
     const supabase = await creerClientServeur();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // /tableau-de-bord : le middleware y renvoie vers /acces un compte
-      // pas encore activé (accès payant, lib/acces.ts).
+      // L'accueil renvoie vers /acces un compte pas encore activé
+      // (accès payant, lib/acces.ts).
       return NextResponse.redirect(`${origin}${suite}`);
     }
   }
