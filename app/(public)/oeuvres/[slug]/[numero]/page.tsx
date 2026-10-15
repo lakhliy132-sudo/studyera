@@ -8,7 +8,6 @@ import EnTeteChapitre from "@/components/EnTeteChapitre";
 import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
-import NavigationChapitres from "@/components/NavigationChapitres";
 import OngletPersonnages from "@/components/OngletPersonnages";
 import { versCleOngletChapitre } from "@/components/OngletsChapitre";
 import RecitContexte, { type MotCle } from "@/components/RecitContexte";
@@ -182,13 +181,6 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
     ressourceTitre: `${oeuvre.titre_fr} — ${chapitre.titre_fr}`,
   });
 
-  const indexActuel = tousLesChapitres.findIndex((c) => c.id === chapitre.id);
-  const chapitrePrecedent = indexActuel > 0 ? tousLesChapitres[indexActuel - 1] : null;
-  const chapitreSuivant =
-    indexActuel >= 0 && indexActuel < tousLesChapitres.length - 1
-      ? tousLesChapitres[indexActuel + 1]
-      : null;
-
   return (
     <main className="flex flex-col overflow-x-clip">
       <div className="flex w-full flex-col gap-8 px-6 pt-16 pb-16 sm:px-9 lg:px-16 xl:px-24 xl:pt-10 2xl:px-40">
@@ -243,13 +235,6 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
           {ongletActif === "lexique" && <LexiqueChapitre entrees={lexique} />}
           {ongletActif === "lieux" && <LieuxChapitre lieux={chapitre.lieux} />}
           {ongletActif === "sujets" && <SujetsChapitre sujets={sujets} />}
-
-          <NavigationChapitres
-            slug={slug}
-            unite={unite}
-            precedent={chapitrePrecedent}
-            suivant={chapitreSuivant}
-          />
         </div>
       </div>
     </main>
