@@ -4,7 +4,7 @@ import { chapitreGratuit, lireAcces } from "@/lib/acces";
 
 import BoutonMarquerLu from "@/components/BoutonMarquerLu";
 import FicheChapitre from "@/components/FicheChapitre";
-import FilArianeChapitre from "@/components/FilArianeChapitre";
+import EnTeteChapitre from "@/components/EnTeteChapitre";
 import FicheChapitreApercu from "@/components/FicheChapitreApercu";
 import LexiqueChapitre from "@/components/LexiqueChapitre";
 import LieuxChapitre from "@/components/LieuxChapitre";
@@ -190,33 +190,16 @@ export default async function PageChapitre({ params, searchParams }: PagePropsCh
       : null;
 
   return (
-    <main className="flex flex-col">
-      <div className="w-full px-6 pt-6 pb-4 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
-        <FilArianeChapitre slug={slug} titreOeuvre={oeuvre.titre_fr} chapitre={chapitre} unite={unite} />
-      </div>
-
-      <div className="flex w-full flex-col gap-4 px-6 pb-16 sm:px-9 lg:px-16 xl:px-24 2xl:px-40">
-        <header className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-5 sm:p-7 shadow-sm">
-          {/* Pastille "Chapitre N" masquée quand le titre contient déjà
-           * l'ordinal (Antigone : "Scène 1"...) — sinon doublon
-           * incohérent avec le h1 juste en dessous, voir
-           * lib/uniteChapitre.ts. */}
-          {!unite.numeroDejaDansTitre && (
-            <p className="inline-flex w-fit items-center rounded-full bg-primary-tint px-3.5 py-1.5 text-sm font-medium text-primary">
-              {unite.singulier} {chapitre.numero}
-            </p>
-          )}
-          <h1 className="mt-2 font-titre text-2xl font-semibold text-ink md:text-4xl">
-            {chapitre.titre_fr}
-          </h1>
-          {chapitre.titre_ar && (
-            // `w-fit` : garde ce titre arabe aligné à gauche avec le h1
-            // au-dessus (voir le même correctif sur les pages du site).
-            <p dir="rtl" lang="ar" className="w-fit font-arabe text-lg text-primary">
-              {chapitre.titre_ar}
-            </p>
-          )}
-        </header>
+    <main className="flex flex-col overflow-x-clip">
+      <div className="flex w-full flex-col gap-8 px-6 pt-16 pb-16 sm:px-9 lg:px-16 xl:px-24 xl:pt-10 2xl:px-40">
+        <EnTeteChapitre
+          slug={slug}
+          titreOeuvre={oeuvre.titre_fr}
+          chapitre={chapitre}
+          chapitres={tousLesChapitres}
+          unite={unite}
+          lu={chapitreLu}
+        />
 
         <div className="flex flex-col gap-8 py-2">
           {ongletActif === "resume" && (
