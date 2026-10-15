@@ -35,7 +35,7 @@ export default function FormulaireNouveauMotDePasse() {
       setEnCours(false);
       return;
     }
-    window.location.assign("/tableau-de-bord");
+    window.location.assign("/");
   }
 
   const classeChamp =

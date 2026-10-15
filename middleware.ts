@@ -49,7 +49,7 @@ function cheminCorrespond(chemin: string, liste: string[]) {
  *    CHEMINS_ADMIN).
  * 3. Pour les chemins de CHEMINS_ADMIN, vérifier en plus que
  *    l'utilisateur connecté a bien le rôle 'admin' (table `profils`),
- *    et le rediriger vers /tableau-de-bord sinon.
+ *    et le rediriger vers l'accueil sinon.
  */
 export async function middleware(requete: NextRequest) {
   let reponse = NextResponse.next({ request: requete });
@@ -106,7 +106,7 @@ export async function middleware(requete: NextRequest) {
 
     if (profil?.role !== "admin") {
       const urlTableauDeBord = requete.nextUrl.clone();
-      urlTableauDeBord.pathname = "/tableau-de-bord";
+      urlTableauDeBord.pathname = "/";
       return NextResponse.redirect(urlTableauDeBord);
     }
   }

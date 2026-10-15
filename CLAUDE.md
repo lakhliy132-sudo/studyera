@@ -53,7 +53,8 @@ app/
     examens-regionaux/    annales (structure prête, contenu à venir)
     oeuvres/ langue/ production-ecrite/   le français
   (eleve)/      pages protégées (middleware.ts → CHEMINS_PROTEGES)
-    tableau-de-bord/ progres/ communaute/ calendrier/ redaction/
+    progres/ communaute/ calendrier/ redaction/
+    (tableau-de-bord/ renvoie vers l'accueil : retiré à la demande)
   (admin)/      espace d'administration
 components/     composants partagés
 lib/            logique métier, accès Supabase (lib/supabase/)
@@ -161,7 +162,7 @@ demande de l'utilisateur** : l'incohérence entre la section française
   avec l'écran (« avoir de la marge dans les côtés ») ; la barre du haut
   et le pied de page prennent les mêmes, pour rester alignés. Toute
   nouvelle page reprend cette suite de classes telle quelle.
-  **Exception** : l'accueil, le tableau de bord et le calendrier gardent
+  **Exception** : l'accueil et le calendrier gardent
   `px-6 sm:px-9` (« laisse les tailles comme avant cad sans marge »).
   La liste est dans `components/ConteneurMarges.tsx`
   (`PAGES_SANS_MARGES`), qui aligne la barre et le pied sur la page.

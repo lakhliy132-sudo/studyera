@@ -33,10 +33,10 @@ export default async function PageActivite() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-8">
       <Link
-        href="/tableau-de-bord"
+        href="/"
         className="text-sm text-muted-foreground hover:text-foreground"
       >
-        ← Retour au tableau de bord
+        ← Retour à l&apos;accueil
       </Link>
       <h1 className="text-xl font-semibold text-foreground">Mon activité</h1>
 

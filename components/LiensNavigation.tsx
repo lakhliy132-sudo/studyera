@@ -27,10 +27,6 @@ const LIENS = [
  * calendrier aussi progres"). "Progrès" n'a pas de sens pour un
  * visiteur non connecté (page protégée, voir middleware.ts), donc
  * absent sinon — même logique que "Tableau de bord". */
-const LIEN_TABLEAU_DE_BORD = {
-  href: "/tableau-de-bord",
-  libelle: "Tableau de bord",
-} as const;
 const LIEN_COMMUNAUTE = { href: "/communaute", libelle: "Communauté" } as const;
 const LIEN_PROGRES = { href: "/progres", libelle: "Progrès" } as const;
 
@@ -74,9 +70,7 @@ export default function LiensNavigation({
   const chemin = usePathname();
   const liens = connecte
     ? [
-        LIENS[0],
-        LIEN_TABLEAU_DE_BORD,
-        ...LIENS.slice(1),
+        ...LIENS,
         LIEN_COMMUNAUTE,
         LIEN_PROGRES,
       ]

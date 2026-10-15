@@ -64,12 +64,10 @@ function Icone({
  * routes réelles du site (son "/dashboard" est "/tableau-de-bord"
  * ici). */
 const LIENS = [
+  // « Tableau de bord » retiré à la demande de l'utilisateur (« enlève
+  // du menu Tableau de bord, je le veux plus ») : l'accueil élève fait
+  // désormais ce travail.
   { libelle: "Accueil", href: "/", trace: TRACES.accueil },
-  {
-    libelle: "Tableau de bord",
-    href: "/tableau-de-bord",
-    trace: TRACES.tableau,
-  },
   { libelle: "Matières", href: "/matieres", trace: TRACES.livre },
   {
     libelle: "Examens régionaux",
@@ -339,16 +337,6 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         <div ref={refMenu} className="relative border-t border-white/10 p-3">
           {menuCompte && (
             <div className="absolute right-3 bottom-full left-3 mb-2 overflow-hidden rounded-[12px] border border-border bg-surface py-1 shadow-lg">
-              <Link
-                href="/tableau-de-bord"
-                className="flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-surface-muted"
-              >
-                <Icone
-                  trace={TRACES.tableau}
-                  className="size-4 text-subtle-foreground"
-                />
-                Mon tableau de bord
-              </Link>
               <button
                 type="button"
                 onClick={() => setSombre((valeur) => !valeur)}
