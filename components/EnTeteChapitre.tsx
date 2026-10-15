@@ -29,11 +29,54 @@ interface EnTeteChapitreProps {
  * - le retour à l'œuvre en petit, au-dessus du titre ;
  * - « Chapitre 7 » (ou « Scène 11 » lu dans le titre pour Antigone) et
  *   « Lu » si l'élève l'a marqué comme lu ;
- * - la frise de tous les chapitres de l'œuvre, le courant en plein :
- *   chaque pastille mène au chapitre. Pour Antigone, une scène sans
- *   numéro (Prologue, Mythe d'Œdipe) prend un point, son titre restant
- *   lisible au survol.
+ * - un sélecteur compact : flèches précédent/suivant, le premier et le
+ *   dernier chapitre, et ceux qui entourent le chapitre courant (voir
+ *   `fenetre`), puis une fine barre de position dans l'œuvre.
  */
+/** Numéro affiché sur une pastille : pour Antigone, le numéro de scène
+ * lu dans le titre (un point pour le Prologue ou le Mythe d'Œdipe). */
+function etiquette(c: ChapitreEnTete, unite: LibelleUniteChapitre): string | number {
+  return unite.numeroDejaDansTitre ? (decouperTitreChapitre(c).numeroScene ?? "•") : c.numero;
+}
+
+/** Les pastilles à montrer : le premier, le dernier, et deux de chaque
+ * côté du chapitre courant ; `null` marque un saut (« … »). Ajouté
+ * après « j'ai pas aimé qu'elle soit aussi longue » : Le Dernier Jour
+ * d'un condamné a 49 chapitres, soit deux lignes de pastilles. */
+function fenetre(position: number, total: number): (number | null)[] {
+  const garde = new Set([0, total - 1]);
+  for (let i = position - 2; i <= position + 2; i++) if (i >= 0 && i < total) garde.add(i);
+  const tries = [...garde].sort((a, b) => a - b);
+  const sortie: (number | null)[] = [];
+  tries.forEach((i, k) => {
+    if (k > 0 && i - tries[k - 1] > 1) sortie.push(null);
+    sortie.push(i);
+  });
+  return sortie;
+}
+
+function Fleche({ slug, chapitre, sens }: { slug: string; chapitre: ChapitreEnTete | undefined; sens: "precedent" | "suivant" }) {
+  const classe = "flex size-9 items-center justify-center rounded-full pb-0.5 text-lg leading-none font-bold transition-all";
+  const fleche = sens === "precedent" ? "←" : "→";
+  if (!chapitre) {
+    return (
+      <span aria-hidden="true" className={`${classe} text-border`}>
+        {fleche}
+      </span>
+    );
+  }
+  return (
+    <Link
+      href={`/oeuvres/${slug}/${chapitre.numero}`}
+      title={chapitre.titre_fr}
+      aria-label={sens === "precedent" ? "Chapitre précédent" : "Chapitre suivant"}
+      className={`${classe} bg-primary-tint text-primary hover:scale-105`}
+    >
+      {fleche}
+    </Link>
+  );
+}
+
 export default function EnTeteChapitre({ slug, titreOeuvre, chapitre, chapitres, unite, lu }: EnTeteChapitreProps) {
   const { numeroScene, titre } = decouperTitreChapitre(chapitre);
   const numero = unite.numeroDejaDansTitre ? numeroScene : chapitre.numero;
@@ -109,33 +152,46 @@ export default function EnTeteChapitre({ slug, titreOeuvre, chapitre, chapitres,
       </div>
 
       {chapitres.length > 1 && position >= 0 && (
-        <nav aria-label={`${unite.pluriel} de l'œuvre`} className="flex flex-col gap-2">
+        <nav aria-label={`${unite.pluriel} de l'œuvre`} className="flex w-fit max-w-full flex-col gap-2.5">
           <span className="text-xs font-bold tracking-[0.16em] text-muted-foreground uppercase">
             {unite.pluriel} · {position + 1} sur {chapitres.length}
           </span>
-          <ol className="flex flex-wrap gap-1.5">
-            {chapitres.map((c, i) => {
-              const courant = i === position;
-              const { numeroScene: n } = decouperTitreChapitre(c);
-              const etiquette = unite.numeroDejaDansTitre ? (n ?? "•") : c.numero;
-              return (
-                <li key={c.numero}>
+          <ol className="flex items-center gap-1.5">
+            <li>
+              <Fleche slug={slug} chapitre={chapitres[position - 1]} sens="precedent" />
+            </li>
+            {fenetre(position, chapitres.length).map((i, k) =>
+              i === null ? (
+                <li key={`trou-${k}`} aria-hidden="true" className="w-5 text-center text-sm font-bold text-muted-foreground">
+                  …
+                </li>
+              ) : (
+                <li key={chapitres[i].numero} className={Math.abs(i - position) === 2 && i !== 0 && i !== chapitres.length - 1 ? "hidden sm:block" : undefined}>
                   <Link
-                    href={`/oeuvres/${slug}/${c.numero}`}
-                    title={c.titre_fr}
-                    aria-current={courant ? "page" : undefined}
-                    className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-bold tabular-nums transition-all ${
-                      courant
+                    href={`/oeuvres/${slug}/${chapitres[i].numero}`}
+                    title={chapitres[i].titre_fr}
+                    aria-current={i === position ? "page" : undefined}
+                    className={`flex h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm font-bold tabular-nums transition-all ${
+                      i === position
                         ? "scale-110 bg-primary text-primary-foreground shadow-[0_8px_18px_-8px_var(--color-primary)]"
                         : "border border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-primary hover:text-primary"
                     }`}
                   >
-                    {etiquette}
+                    {etiquette(chapitres[i], unite)}
                   </Link>
                 </li>
-              );
-            })}
+              ),
+            )}
+            <li>
+              <Fleche slug={slug} chapitre={chapitres[position + 1]} sens="suivant" />
+            </li>
           </ol>
+          <span className="h-1 overflow-hidden rounded-full bg-surface-muted">
+            <span
+              className="barre-croit block h-full rounded-full bg-primary"
+              style={{ width: `${((position + 1) / chapitres.length) * 100}%`, transformOrigin: "left" }}
+            />
+          </span>
         </nav>
       )}
     </header>
