@@ -384,14 +384,33 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
                   "linear-gradient(160deg, color-mix(in srgb, var(--fond-sombre-actif) 30%, var(--fond-sombre-haut)) 0%, var(--fond-sombre-bas) 100%)",
               }}
             >
-              <div className="flex items-center gap-3 rounded-[16px] bg-white/[0.06] p-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-lg font-extrabold" style={{ color: "var(--fond-sombre-haut)" }}>
-                  {(prenom ?? email ?? "?").charAt(0).toUpperCase()}
+              {/* En-tête en « carte de membre » (« ça aussi c'est pas
+               * stylé ») : dégradé de l'accent de la palette, cercles
+               * comme la carte du compte à rebours, initiale en Lalezar. */}
+              <div
+                className="relative overflow-hidden rounded-[16px] p-4"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--fond-sombre-actif) 0%, color-mix(in srgb, var(--fond-sombre-actif) 45%, var(--fond-sombre-haut)) 100%)",
+                }}
+              >
+                <svg aria-hidden="true" viewBox="0 0 200 200" className="pointer-events-none absolute -top-16 -right-14 size-44 text-white/15">
+                  {[90, 66, 42].map((r) => (
+                    <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  ))}
+                </svg>
+                <span dir="rtl" className="absolute top-2.5 right-4 font-ruqaa text-base text-white/75" style={{ transform: "rotate(-4deg)" }}>
+                  مرحبا
                 </span>
-                <span className="min-w-0">
-                  <span className="block truncate font-bold">{prenom ?? "Mon compte"}</span>
-                  {email && <span className="block truncate text-xs text-white/55">{email}</span>}
-                </span>
+                <div className="relative flex items-center gap-3.5">
+                  <span className="flex size-12 shrink-0 -rotate-3 items-center justify-center rounded-[14px] bg-white font-affiche text-[26px] leading-none shadow-[0_8px_18px_-8px_rgba(0,0,0,0.6)]" style={{ color: "var(--fond-sombre-haut)" }}>
+                    {(prenom ?? email ?? "?").charAt(0).toUpperCase()}
+                  </span>
+                  <span className="min-w-0 pt-2">
+                    <span className="block truncate font-affiche text-[22px] leading-none">{prenom ?? "Mon compte"}</span>
+                    {email && <span className="mt-1 block truncate text-[11px] text-white/70">{email}</span>}
+                  </span>
+                </div>
               </div>
 
               <div className="mt-2 flex flex-col">
@@ -439,12 +458,15 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
               reduit ? "justify-center" : "gap-3"
             }`}
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white ring-2 ring-white/25">
+            <span
+              className="flex size-10 shrink-0 -rotate-3 items-center justify-center rounded-[12px] font-affiche text-xl leading-none text-white shadow-[0_6px_14px_-6px_rgba(0,0,0,0.6)]"
+              style={{ background: "linear-gradient(135deg, var(--fond-sombre-actif), color-mix(in srgb, var(--fond-sombre-actif) 45%, var(--fond-sombre-haut)))" }}
+            >
               {(prenom ?? email ?? "?").charAt(0).toUpperCase()}
             </span>
             {!reduit && (
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px] font-semibold text-white">
+                <span className="block truncate font-affiche text-lg leading-tight text-white">
                   {prenom ?? "Mon compte"}
                 </span>
                 {email && (
