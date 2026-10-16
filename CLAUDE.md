@@ -286,6 +286,22 @@ seulement par la clé de service ; logique dans `lib/acces.ts`.
 - Le verrou est sur les pages, pas en RLS : l'API REST donne toujours
   le texte des tables de contenu à qui l'interroge directement.
 
+## 7 ter. Le suivi des élèves
+
+`/administration/eleves` (et la fiche `/administration/eleves/[id]`)
+montre aux admins ce que chaque élève a fait : pages ouvertes, jours de
+révision, chapitres lus, copies. Lecture par la clé de service dans
+`lib/supabase/suiviEleves.ts`, après `exigerAdmin()`.
+
+- Le journal est la table `activite`, avec trois types :
+  `consultation_chapitre`, `consultation_lecon`, `consultation_sujet`
+  (`noterActivite` dans `lib/supabase/activite.ts`). Les leçons et les
+  sujets ne sont notés que depuis l'ajout de ce suivi.
+- Une page de contenu ne note la visite qu'une fois le verrou passé :
+  une page verrouillée n'est pas une leçon ouverte.
+- Rien n'est enregistré sur le temps passé ni sur les réponses aux
+  quiz : ne pas les afficher.
+
 ## 8. Vérifier son travail
 
 L'utilisateur juge sur ce qu'il voit, pas sur ce que dit le code.

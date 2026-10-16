@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { PageVerrouillee } from "@/components/ContenuVerrouille";
 import { leconGratuite, lireAcces } from "@/lib/acces";
+import { noterActivite } from "@/lib/supabase/activite";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import ExercicesChampLexical from "@/components/ExercicesChampLexical";
@@ -110,6 +111,9 @@ export default async function PageCours({ params, searchParams }: PagePropsCours
       );
     }
   }
+
+  // Suivi des élèves : leçon ouverte (seulement quand elle s'affiche).
+  await noterActivite({ type: "consultation_lecon", ressourceId: cours.id, ressourceTitre: `Français (langue) — ${cours.titre}` });
 
   const Exercices = EXERCICES_PAR_SLUG[cours.slug];
   const Quiz = QUIZ_PAR_SLUG[cours.slug];

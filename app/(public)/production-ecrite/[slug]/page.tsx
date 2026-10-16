@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { PageVerrouillee } from "@/components/ContenuVerrouille";
 import { leconGratuite, lireAcces } from "@/lib/acces";
+import { noterActivite } from "@/lib/supabase/activite";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import { recupererCoursParSlug } from "@/lib/supabase/contenu";
@@ -335,6 +336,9 @@ export default async function PageProductionEcriteDetail({ params }: PageProps) 
       );
     }
   }
+
+  // Suivi des élèves : fiche ouverte (seulement quand elle s'affiche).
+  await noterActivite({ type: "consultation_lecon", ressourceId: cours.id, ressourceTitre: `Français (production écrite) — ${cours.titre}` });
 
   const segments = segmenter(cours.contenu_mdx);
 

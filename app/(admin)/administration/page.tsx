@@ -55,6 +55,16 @@ export default async function PageAdministration() {
         <span aria-hidden="true">→</span>
       </Link>
 
+      {/* Ce que chaque élève a fait sur le site (« où je peux voir ce que
+          l'élève a fait dans le site »). */}
+      <Link
+        href="/administration/eleves"
+        className="flex items-center justify-between rounded-2xl border border-primary/30 bg-primary-tint px-5 py-4 font-semibold text-primary transition-colors hover:border-primary"
+      >
+        Suivi des élèves : ce que chacun a fait sur le site
+        <span aria-hidden="true">→</span>
+      </Link>
+
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-foreground">Copies déposées</h2>
         <TableauCopies copies={copies} />
