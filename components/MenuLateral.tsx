@@ -37,6 +37,41 @@ const TRACES = {
   fermer: "M6 6l12 12M18 6 6 18",
 };
 
+/** Une ligne du menu du compte avec un interrupteur qui montre l'état
+ * réel du réglage (allumé / éteint). */
+function LigneInterrupteur({
+  trace,
+  libelle,
+  actif,
+  onChange,
+}: {
+  trace: string;
+  libelle: string;
+  actif: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={actif}
+      onClick={onChange}
+      className="flex items-center gap-3 rounded-[14px] px-2 py-2 text-left text-sm font-semibold transition-colors hover:bg-white/[0.08]"
+    >
+      <span className="flex size-9 items-center justify-center rounded-[11px] bg-white/10">
+        <Icone trace={trace} className="size-[18px]" />
+      </span>
+      <span className="flex-1">{libelle}</span>
+      <span className={`relative h-6 w-11 rounded-full transition-colors ${actif ? "bg-white" : "bg-white/15"}`}>
+        <span
+          className={`absolute top-1 size-4 rounded-full transition-all ${actif ? "left-6" : "left-1 bg-white/70"}`}
+          style={actif ? { backgroundColor: "var(--fond-sombre-haut)" } : undefined}
+        />
+      </span>
+    </button>
+  );
+}
+
 function Icone({
   trace,
   className = "size-5",
@@ -335,37 +370,60 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
         </button>
 
         <div ref={refMenu} className="relative border-t border-white/10 p-3">
+          {/* Menu du compte, refait après « ça c'est pas stylé » : un
+           * panneau sombre dans la couleur de la colonne (jetons
+           * `--fond-sombre-*`, qui suivent la palette), l'élève en tête,
+           * de vrais interrupteurs qui montrent l'état du mode sombre et
+           * des animations, et la déconnexion à part. Largeur fixe, pour
+           * rester lisible quand la colonne est réduite. */}
           {menuCompte && (
-            <div className="absolute right-3 bottom-full left-3 mb-2 overflow-hidden rounded-[12px] border border-border bg-surface py-1 shadow-lg">
-              <button
-                type="button"
-                onClick={() => setSombre((valeur) => !valeur)}
-                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-surface-muted"
-              >
-                <Icone
-                  trace={sombre ? TRACES.soleil : TRACES.lune}
-                  className="size-4 text-subtle-foreground"
+            <div
+              className="animate-entree-carte absolute bottom-full left-3 z-10 mb-3 w-[264px] rounded-[22px] border border-white/10 p-2 text-white shadow-[0_28px_60px_-18px_rgba(0,0,0,0.75)]"
+              style={{
+                background:
+                  "linear-gradient(160deg, color-mix(in srgb, var(--fond-sombre-actif) 30%, var(--fond-sombre-haut)) 0%, var(--fond-sombre-bas) 100%)",
+              }}
+            >
+              <div className="flex items-center gap-3 rounded-[16px] bg-white/[0.06] p-3">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-lg font-extrabold" style={{ color: "var(--fond-sombre-haut)" }}>
+                  {(prenom ?? email ?? "?").charAt(0).toUpperCase()}
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate font-bold">{prenom ?? "Mon compte"}</span>
+                  {email && <span className="block truncate text-xs text-white/55">{email}</span>}
+                </span>
+              </div>
+
+              <div className="mt-2 flex flex-col">
+                <LigneInterrupteur
+                  trace={sombre ? TRACES.lune : TRACES.soleil}
+                  libelle="Mode sombre"
+                  actif={sombre === true}
+                  onChange={() => setSombre((valeur) => !valeur)}
                 />
-                {sombre ? "Mode clair" : "Mode sombre"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setAnimations((valeur) => !valeur)}
-                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-surface-muted"
-              >
-                <Icone
+                <LigneInterrupteur
                   trace={TRACES.eclair}
-                  className="size-4 text-subtle-foreground"
+                  libelle="Animations"
+                  actif={animations !== false}
+                  onChange={() => setAnimations((valeur) => !valeur)}
                 />
-                {animations === false
-                  ? "Réactiver les animations"
-                  : "Couper les animations"}
-              </button>
-              <div className="my-1 border-t border-border" />
+                <Link
+                  href="/parametres"
+                  onClick={() => setMenuCompte(false)}
+                  className="group flex items-center gap-3 rounded-[14px] px-2 py-2 text-sm font-semibold transition-colors hover:bg-white/[0.08]"
+                >
+                  <span className="flex size-9 items-center justify-center rounded-[11px] bg-white/10">
+                    <Icone trace={TRACES.parametres} className="size-[18px]" />
+                  </span>
+                  <span className="flex-1">Paramètres</span>
+                  <span className="text-white/45 transition-transform group-hover:translate-x-0.5">→</span>
+                </Link>
+              </div>
+
               <button
                 type="button"
                 onClick={seDeconnecter}
-                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-erreur hover:bg-erreur/10"
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-[14px] border border-white/10 py-2.5 text-sm font-bold text-white/80 transition-colors hover:border-transparent hover:bg-erreur hover:text-erreur-foreground"
               >
                 <Icone trace={TRACES.deconnexion} className="size-4" />
                 Se déconnecter
