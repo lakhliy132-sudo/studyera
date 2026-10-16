@@ -37,6 +37,33 @@ const TRACES = {
   fermer: "M6 6l12 12M18 6 6 18",
 };
 
+/** L'e-mail de l'élève en petite pastille (« juste l'e-mail de
+ * l'utilisateur, je veux qu'elle soit bien stylée ») : une enveloppe,
+ * le nom en blanc et le domaine plus discret ; si l'adresse est trop
+ * longue, seul le nom est raccourci, le domaine reste lisible. Le texte
+ * complet reste au survol. */
+function EmailStylise({ email, className = "" }: { email: string; className?: string }) {
+  const arobase = email.lastIndexOf("@");
+  const nom = arobase > 0 ? email.slice(0, arobase) : email;
+  const domaine = arobase > 0 ? email.slice(arobase) : "";
+  return (
+    <span
+      title={email}
+      className={`flex w-fit max-w-full items-center gap-1.5 rounded-full border border-white/15 bg-white/10 py-0.5 ps-1 pe-2.5 text-[11px] leading-5 ${className}`}
+    >
+      <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-white/20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="size-2.5" aria-hidden="true">
+          <path d="M3 6h18v12H3zM3 7l9 6 9-6" />
+        </svg>
+      </span>
+      <span className="flex min-w-0">
+        <span className="truncate font-semibold text-white">{nom}</span>
+        <span className="shrink-0 text-white/55">{domaine}</span>
+      </span>
+    </span>
+  );
+}
+
 /** Une ligne du menu du compte avec un interrupteur qui montre l'état
  * réel du réglage (allumé / éteint). */
 function LigneInterrupteur({
@@ -408,7 +435,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
                   </span>
                   <span className="min-w-0 pt-2">
                     <span className="block truncate font-affiche text-[22px] leading-none">{prenom ?? "Mon compte"}</span>
-                    {email && <span className="mt-1 block truncate text-[11px] text-white/70">{email}</span>}
+                    {email && <EmailStylise email={email} className="mt-1.5" />}
                   </span>
                 </div>
               </div>
@@ -469,11 +496,7 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
                 <span className="block truncate font-affiche text-lg leading-tight text-white">
                   {prenom ?? "Mon compte"}
                 </span>
-                {email && (
-                  <span className="block truncate text-xs text-white/60">
-                    {email}
-                  </span>
-                )}
+                {email && <EmailStylise email={email} className="mt-1" />}
               </span>
             )}
             {!reduit && (
