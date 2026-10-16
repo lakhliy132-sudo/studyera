@@ -92,14 +92,12 @@ export default function BanniereOeuvre({
 }
 
 /**
- * Bandeau titre : sur desktop, une photo de couverture (si définie)
- * occupe le côté droit et se fond en blanc vers la gauche (masque CSS
- * + dégradé blanc superposé) pour laisser le titre lisible par-dessus.
- * Sans couverture, la carte reste simplement blanche avec le titre.
+ * Bandeau titre : sur desktop, la couverture (si définie) est posée
+ * entière à droite, inclinée, sur un fond flou tiré d'elle-même ; le
+ * titre reste à gauche sur la surface de la carte. Sans couverture, la
+ * carte reste simplement unie avec le titre.
  *
- * Sur mobile, l'effet de fondu est abandonné (illisible en dessous de
- * ~640px) : la photo redevient une simple bande pleine largeur
- * au-dessus du titre, sans masque.
+ * Sur mobile, la photo est une bande pleine largeur au-dessus du titre.
  */
 function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
   const aUnePhoto = Boolean(oeuvre.couverture_url);
@@ -114,40 +112,30 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
     >
       {aUnePhoto && (
         <>
-          {/* Bande photo pleine largeur en mobile, sans masque. */}
+          {/* Couvertures verticales depuis « change ces photos par ça » :
+              en fond étiré sur toute la largeur, elles n'auraient montré
+              qu'une tranche de l'image. La couverture est donc posée
+              entière à droite, inclinée, sur un fond flou tiré d'elle ;
+              plus de dégradé blanc en dur, qui cachait le titre en mode
+              sombre. */}
           <div
             aria-hidden="true"
-            className="h-[160px] w-full bg-cover bg-[center_74%] sm:hidden"
+            className="h-[200px] w-full bg-cover bg-[center_30%] sm:hidden"
             style={{ backgroundImage: `url(${oeuvre.couverture_url})` }}
           />
-          {/* Photo en fondu, desktop uniquement : masquée à gauche,
-              pleine à droite, puis un dégradé blanc par-dessus pour
-              garder le titre lisible côté gauche. */}
           <div
             aria-hidden="true"
-            className="absolute inset-y-0 top-0 right-0 left-[22%] hidden bg-cover bg-[center_74%] sm:block md:left-[30%]"
+            className="absolute inset-y-0 right-0 hidden w-[60%] scale-110 bg-cover bg-center opacity-45 blur-2xl sm:block"
             style={{
               backgroundImage: `url(${oeuvre.couverture_url})`,
-              maskImage:
-                "linear-gradient(100deg, transparent 0%, rgba(0,0,0,.55) 22%, #000 48%)",
-              WebkitMaskImage:
-                "linear-gradient(100deg, transparent 0%, rgba(0,0,0,.55) 22%, #000 48%)",
+              maskImage: "linear-gradient(90deg, transparent 0%, #000 60%)",
+              WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 60%)",
             }}
           />
-          {/* Voile qui fond la photo vers la surface de la carte, pour
-              que le titre reste lisible. Autrefois en blanc écrit en dur :
-              en mode nuit, le titre clair était posé sur du blanc et ne se
-              voyait plus (« dans le mode nuit les titres ne sont plus
-              visibles »). Il suit maintenant `--color-surface`, en style
-              en ligne pour que la variable soit lue à l'exécution
-              (CLAUDE.md §3, piège `color-mix`). */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 hidden sm:block"
-            style={{
-              background:
-                "linear-gradient(95deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 93%, transparent) 34%, color-mix(in srgb, var(--color-surface) 18%, transparent) 62%, transparent 78%)",
-            }}
+            className="absolute top-1/2 right-8 hidden h-[210px] w-[150px] -translate-y-1/2 rotate-3 rounded-2xl bg-cover bg-center shadow-[0_24px_44px_-18px_rgba(15,23,42,0.65)] ring-4 ring-[var(--color-surface)] sm:block md:right-14"
+            style={{ backgroundImage: `url(${oeuvre.couverture_url})` }}
           />
         </>
       )}
