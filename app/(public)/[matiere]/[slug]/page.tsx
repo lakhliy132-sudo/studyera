@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { PageVerrouillee } from "@/components/ContenuVerrouille";
 import { leconGratuite, lireAcces } from "@/lib/acces";
+import { noterActivite } from "@/lib/supabase/activite";
 import { FILIERE_ACTUELLE } from "@/lib/filiere";
 
 import Link from "next/link";
@@ -128,6 +129,13 @@ export default async function PageCoursMatiere({
       );
     }
   }
+
+  // Suivi des élèves : leçon ouverte (seulement quand elle s'affiche).
+  await noterActivite({
+    type: "consultation_lecon",
+    ressourceId: cours.id,
+    ressourceTitre: `${matiere.titreAvantAccent}${matiere.titreAccent} — ${cours.titre}`,
+  });
 
   const estHistoireGeo = matiere.slug === "histoire-geo";
   const estIslamique = matiere.slug === "education-islamique";

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageVerrouillee } from "@/components/ContenuVerrouille";
 import { annaleGratuite, lireAcces } from "@/lib/acces";
+import { noterActivite } from "@/lib/supabase/activite";
 
 import ChronometreEpreuve from "@/components/ChronometreEpreuve";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
@@ -87,6 +88,15 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
       );
     }
   }
+
+  // Suivi des élèves : sujet ouvert (seulement quand il s'affiche).
+  await noterActivite({
+    type: "consultation_sujet",
+    ressourceId: annale.id,
+    ressourceTitre: [`${TITRES[matiere] ?? matiere} · Régional ${annale.annee}`, annale.academie, annale.session === "rattrapage" ? "rattrapage" : null]
+      .filter(Boolean)
+      .join(" · "),
+  });
 
   const epreuve = lireEpreuve(annale.questions);
   // Le correcteur ne corrige que le français : seules ses productions

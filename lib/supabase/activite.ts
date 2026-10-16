@@ -71,3 +71,31 @@ export async function enregistrerActivite(
     console.error("[activite] écriture impossible :", erreurEcriture.message);
   }
 }
+
+/** Libellés des types d'activité écrits par le site, pour le suivi des
+ * élèves (/administration/eleves). */
+export const LIBELLES_ACTIVITE: Record<string, string> = {
+  consultation_chapitre: "A ouvert un chapitre",
+  consultation_lecon: "A ouvert une leçon",
+  consultation_sujet: "A ouvert un sujet régional",
+};
+
+/**
+ * Comme `enregistrerActivite`, pour une page qui ne connaît pas encore
+ * l'élève : lit la session elle-même. Ajouté avec le suivi des élèves
+ * (« où je peux voir ce que l'élève a fait dans le site ») pour noter
+ * aussi les leçons et les sujets régionaux ouverts, pas seulement les
+ * chapitres d'œuvres. Même règle : rien pour un visiteur, et jamais
+ * d'erreur affichée à cause du journal.
+ */
+export async function noterActivite(parametres: ParametresActivite): Promise<void> {
+  try {
+    const supabase = await creerClientServeur();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    await enregistrerActivite(user?.id ?? null, parametres);
+  } catch (erreur) {
+    console.error("[activite] impossible de noter :", erreur);
+  }
+}
