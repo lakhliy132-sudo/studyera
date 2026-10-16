@@ -134,9 +134,20 @@ function Hero({ oeuvre }: { oeuvre: Oeuvre }) {
                 "linear-gradient(100deg, transparent 0%, rgba(0,0,0,.55) 22%, #000 48%)",
             }}
           />
+          {/* Voile qui fond la photo vers la surface de la carte, pour
+              que le titre reste lisible. Autrefois en blanc écrit en dur :
+              en mode nuit, le titre clair était posé sur du blanc et ne se
+              voyait plus (« dans le mode nuit les titres ne sont plus
+              visibles »). Il suit maintenant `--color-surface`, en style
+              en ligne pour que la variable soit lue à l'exécution
+              (CLAUDE.md §3, piège `color-mix`). */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 hidden bg-[linear-gradient(95deg,#fff_0%,rgba(255,255,255,.93)_34%,rgba(255,255,255,.18)_62%,transparent_78%)] sm:block"
+            className="absolute inset-0 hidden sm:block"
+            style={{
+              background:
+                "linear-gradient(95deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 93%, transparent) 34%, color-mix(in srgb, var(--color-surface) 18%, transparent) 62%, transparent 78%)",
+            }}
           />
         </>
       )}
