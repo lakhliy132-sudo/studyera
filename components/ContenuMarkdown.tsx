@@ -27,7 +27,13 @@ interface ContenuMarkdownProps {
    * ("je veux l ecriture taille soit encore plus dans les cours d
    * arabe"). L'arabe se lit mal à la taille prévue pour le français :
    * pas de hampes/jambages, beaucoup de signes distinctifs (points,
-   * hamza, chadda) qui demandent plus de corps pour rester nets. */
+   * hamza, chadda) qui demandent plus de corps pour rester nets.
+   *
+   * Encore agrandi d'environ 20 % (24px pour un paragraphe, contre 20)
+   * — demandé explicitement par l'utilisateur, capture d'une leçon
+   * d'arabe à l'appui ("agrand les phrases un peu trop petit ca pour
+   * tout les lecons du matiere"). Un peu moins sous `sm` : sur
+   * téléphone, 24px ne laissait que quelques mots par ligne. */
   grandeTaille?: boolean;
   /** Jeu de couleurs des cours d'arabe, demandé pièce par pièce par
    * l'utilisateur : grands titres (`##`) en rouge et petits titres
@@ -146,7 +152,7 @@ export default function ContenuMarkdown({
               return (
                 <h2
                   style={schemaCouleursArabe ? { color: COULEUR_GRAND_TITRE, borderColor: COULEUR_GRAND_TITRE } : undefined}
-                  className={`mt-10 mb-4 border-s-4 ps-4 font-serif font-bold first:mt-0 ${schemaCouleursArabe ? "" : "border-primary text-ink"} ${grandeTaille ? "text-[30px]" : "text-[24px]"}`}
+                  className={`mt-10 mb-4 border-s-4 ps-4 font-serif font-bold first:mt-0 ${schemaCouleursArabe ? "" : "border-primary text-ink"} ${grandeTaille ? "text-[27px] sm:text-[34px]" : "text-[24px]"}`}
                   {...props}
                 />
               );
@@ -156,11 +162,11 @@ export default function ContenuMarkdown({
               <h2
                 id={`section-${compteurSection}`}
                 style={{ color: couleurAccent, scrollMarginTop: "6rem" }}
-                className={`mt-11 mb-5 flex items-center gap-3.5 font-serif font-bold first:mt-0 ${grandeTaille ? "text-[28px]" : "text-[22px]"}`}
+                className={`mt-11 mb-5 flex items-center gap-3.5 font-serif font-bold first:mt-0 ${grandeTaille ? "text-[26px] sm:text-[32px]" : "text-[22px]"}`}
               >
                 <span
                   style={{ backgroundColor: couleurAccent }}
-                  className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white shadow-sm ${grandeTaille ? "size-11 text-[17px]" : "size-9 text-[14px]"}`}
+                  className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white shadow-sm ${grandeTaille ? "size-12 text-[18px]" : "size-9 text-[14px]"}`}
                 >
                   {compteurSection}
                 </span>
@@ -172,7 +178,7 @@ export default function ContenuMarkdown({
             styleFeuille ? (
               <h3
                 style={{ color: COULEUR_PETIT_TITRE }}
-                className={`mt-7 mb-2 font-serif font-bold ${grandeTaille ? "text-[22px]" : "text-lg"}`}
+                className={`mt-7 mb-2 font-serif font-bold ${grandeTaille ? "text-[22px] sm:text-[25px]" : "text-lg"}`}
                 {...props}
               />
             ) : (
@@ -182,7 +188,7 @@ export default function ContenuMarkdown({
                 // classe du conteneur plus bas.
                 data-exercice={estTitreExercice(props.children) ? "" : undefined}
                 style={schemaCouleursArabe ? { color: COULEUR_PETIT_TITRE } : undefined}
-                className={`mt-7 mb-2 font-serif font-bold ${schemaCouleursArabe ? "" : "text-primary"} ${grandeTaille ? "text-[23px]" : "text-lg"}`}
+                className={`mt-7 mb-2 font-serif font-bold ${schemaCouleursArabe ? "" : "text-primary"} ${grandeTaille ? "text-[23px] sm:text-[26px]" : "text-lg"}`}
                 {...props}
               />
             ),
@@ -192,7 +198,7 @@ export default function ContenuMarkdown({
           // à `false`) garde le texte normal, inchangé.
           p: (props) => (
             <p
-              className={`mb-4 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[20px]" : "text-[16px]"} ${styleFeuille ? "font-bold" : ""}`}
+              className={`mb-4 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[21px] sm:text-[24px]" : "text-[16px]"} ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
@@ -210,7 +216,7 @@ export default function ContenuMarkdown({
           ),
           li: (props) => (
             <li
-              className={`ps-1 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
+              className={`ps-1 font-lecture leading-relaxed text-foreground ${grandeTaille ? "text-[20.5px] sm:text-[23.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""}`}
               {...props}
             />
           ),
@@ -237,7 +243,7 @@ export default function ContenuMarkdown({
           // pas.
           blockquote: (props) => (
             <blockquote
-              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[19.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""} ${schemaCouleursArabe ? "py-6 [&_p]:text-center [&_p]:text-[23px] [&_p]:leading-loose" : ""}`}
+              className={`my-5 rounded-lg border border-border bg-background p-4 ps-5 font-lecture text-foreground ${grandeTaille ? "text-[20.5px] sm:text-[23.5px]" : "text-[15.5px]"} ${styleFeuille ? "font-bold" : ""} ${schemaCouleursArabe ? "py-6 [&_p]:text-center [&_p]:text-[24px] sm:[&_p]:text-[27px] [&_p]:leading-loose" : ""}`}
               {...props}
             />
           ),
@@ -286,13 +292,13 @@ export default function ContenuMarkdown({
                     }
                   : undefined
               }
-              className={`border-b border-border px-4 py-2.5 text-start font-semibold text-ink ${styleFeuille ? "" : "bg-primary-tint"} ${grandeTaille ? "text-[17px]" : "text-sm"}`}
+              className={`border-b border-border px-4 py-2.5 text-start font-semibold text-ink ${styleFeuille ? "" : "bg-primary-tint"} ${grandeTaille ? "text-[18px] sm:text-[19px]" : "text-sm"}`}
               {...props}
             />
           ),
           td: (props) => (
             <td
-              className={`border-b border-border px-4 py-2 text-start font-lecture text-foreground ${grandeTaille ? "text-[18px]" : "text-[15px]"}`}
+              className={`border-b border-border px-4 py-2 text-start font-lecture text-foreground ${grandeTaille ? "text-[19px] sm:text-[21px]" : "text-[15px]"}`}
               {...props}
             />
           ),
