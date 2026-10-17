@@ -28,7 +28,9 @@ export const metadata: Metadata = {
  */
 const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
-  weight: ["400", "500", "600"],
+  // 700 : le gras des leçons (titres, mots-clés, texte des feuilles
+  // d'histoire-géo), sans quoi le navigateur fabrique un faux gras.
+  weight: ["400", "500", "600", "700"],
   variable: "--font-ibm-plex-arabic",
 });
 
