@@ -54,6 +54,95 @@ const TYPES = [
  * navigateur, envoyée après la publication par une action serveur qui
  * vérifie que la publication est bien la sienne (voir actions.ts).
  */
+const OPTIONS_MATIERE = [
+  { valeur: "", libelle: "Aucune matière" },
+  { valeur: "francais", libelle: "Français" },
+  ...MATIERES.map((m) => ({ valeur: m.slug, libelle: `${m.titreAvantAccent}${m.titreAccent}` })),
+];
+
+/**
+ * Le choix de la matière d'une publication. Remplace la liste
+ * déroulante du navigateur (« ça aussi mets-la stylée ») : une pastille
+ * qui ouvre un petit panneau arrondi, la matière choisie cochée. Se
+ * ferme au clic dehors, à Échap, ou au choix.
+ */
+function ChoixMatiere({ valeur, onChange }: { valeur: string; onChange: (v: string) => void }) {
+  const [ouvert, setOuvert] = useState(false);
+  const zone = useRef<HTMLDivElement>(null);
+  const actuelle = OPTIONS_MATIERE.find((o) => o.valeur === valeur) ?? OPTIONS_MATIERE[0];
+
+  useEffect(() => {
+    if (!ouvert) return;
+    const fermer = (e: MouseEvent) => {
+      if (zone.current && !zone.current.contains(e.target as Node)) setOuvert(false);
+    };
+    const touche = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOuvert(false);
+    };
+    document.addEventListener("mousedown", fermer);
+    document.addEventListener("keydown", touche);
+    return () => {
+      document.removeEventListener("mousedown", fermer);
+      document.removeEventListener("keydown", touche);
+    };
+  }, [ouvert]);
+
+  return (
+    <div ref={zone} className="relative ms-auto">
+      <button
+        type="button"
+        onClick={() => setOuvert((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={ouvert}
+        className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold transition-colors ${
+          valeur ? "border-primary bg-primary-tint text-primary" : "border-border bg-surface text-muted-foreground hover:border-primary hover:text-primary"
+        }`}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5" aria-hidden="true">
+          <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7" />
+        </svg>
+        {actuelle.libelle}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`size-3.5 transition-transform ${ouvert ? "rotate-180" : ""}`} aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      {ouvert && (
+        <ul
+          role="listbox"
+          aria-label="Matière de la publication"
+          className="animate-entree-carte absolute right-0 z-20 mt-2 w-60 rounded-[18px] border border-border bg-surface p-1.5 shadow-[0_24px_50px_-20px_rgba(15,23,42,0.45)]"
+        >
+          {OPTIONS_MATIERE.map((o) => {
+            const choisie = o.valeur === valeur;
+            return (
+              <li key={o.valeur || "aucune"} role="option" aria-selected={choisie}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(o.valeur);
+                    setOuvert(false);
+                  }}
+                  className={`flex w-full items-center justify-between gap-3 rounded-[12px] px-3 py-2.5 text-left text-sm font-semibold transition-colors ${
+                    choisie ? "bg-primary-tint text-primary" : "text-ink hover:bg-surface-muted"
+                  }`}
+                >
+                  <span className={o.valeur ? "" : "text-muted-foreground"}>{o.libelle}</span>
+                  {choisie && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0" aria-hidden="true">
+                      <path d="m5 12 5 5 9-10" />
+                    </svg>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function FormulaireCommunaute() {
   const router = useRouter();
   const [contenu, setContenu] = useState("");
@@ -184,23 +273,7 @@ export default function FormulaireCommunaute() {
           </button>
         ))}
 
-        <label className="ms-auto flex items-center gap-2 text-xs text-muted-foreground">
-          Matière
-          <select
-            value={matiere}
-            onChange={(evenement) => setMatiere(evenement.target.value)}
-            className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-ink focus:border-primary focus:outline-none"
-          >
-            <option value="">Aucune</option>
-            <option value="francais">Français</option>
-            {MATIERES.map((m) => (
-              <option key={m.slug} value={m.slug}>
-                {m.titreAvantAccent}
-                {m.titreAccent}
-              </option>
-            ))}
-          </select>
-        </label>
+        <ChoixMatiere valeur={matiere} onChange={setMatiere} />
       </div>
 
       {erreur && <p className="text-xs font-semibold text-erreur">{erreur}</p>}
