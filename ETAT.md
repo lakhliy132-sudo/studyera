@@ -2,6 +2,27 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-13.
 >
+> **Fiches de production écrite en mise en page "feuille"** — demandé
+> explicitement par l'utilisateur ("pour les leçons de la production
+> écrite fais le style comme dans les autres matières leçons pas juste
+> placé comme ça"). `/production-ecrite/[slug]` reprend l'habillage des
+> leçons d'histoire-géo et d'éducation islamique : lien de retour
+> fléché, pastille "Production écrite", grand titre, feuille ivoire à
+> bandeau et plume en filigrane, sections numérotées
+> (`ContenuMarkdown styleFeuille`) et sommaire à côté
+> (`SommaireHistoireGeo`). Le rendu est sorti dans
+> `components/FicheProductionEcrite.tsx` ; la page ne garde que
+> l'accès, le suivi et le cadre. Cases des plans, rédactions modèles
+> encadrées, pastilles d'expressions et grille d'auto-évaluation sont
+> conservées, posées en blanc sur la feuille ; les cases d'expressions
+> et de la grille deviennent des sections numérotées du sommaire.
+> Nouveau prop `premierNumero` sur `ContenuMarkdown` : le contenu est
+> rendu en plusieurs morceaux (autour des marqueurs `<!-- PLANS -->` et
+> `<!-- REDACTION -->`), la numérotation et les ancres `#section-N`
+> suivent d'un morceau à l'autre. Vérifié par capture Playwright sur
+> un contenu d'essai (pas d'accès à la base dans cette session) : clair
+> palette par défaut, sombre palette lavender, téléphone 390 px.
+>
 > **Corrigés repliables** (`components/CorrectionRepliable.tsx`) —
 > demandé explicitement par l'utilisateur ("fais l option de afficher
 > la correction ou pas") : dans `app/(public)/[matiere]/[slug]/page.tsx`,
