@@ -10,6 +10,7 @@
     "importer": "tsx scripts/importer.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "exceljs": "^4.4.0",

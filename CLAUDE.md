@@ -247,6 +247,15 @@ Tables principales : `cours`, `oeuvres`, `chapitres`, `sujets`,
   l'envoi au lieu de proposer un formulaire qui échouerait.
 - Tout ce que renvoie le modèle est **revérifié avant d'entrer en
   base** : notes bornées à leur barème, listes nettoyées.
+- Appel par le **SDK officiel** (`@anthropic-ai/sdk`), qui réessaie
+  seul sur 429 / 529 / erreurs réseau. La correction impose son format
+  (structured outputs, `FORMAT_CORRECTION`) et garde un `max_tokens`
+  large : le modèle réfléchit avant de répondre, et cette réflexion
+  compte dans la limite (à 4 000, des corrections échouaient).
+- Le formulaire (`FormulaireCopie`) envoie le sujet et le texte **depuis
+  son état React**, pas par `<form action>` : React vide le formulaire
+  après chaque envoi par `action`, ce qui remettait le sujet sur le
+  premier de la liste et faisait corriger la copie suivante hors sujet.
 - Quota et longueur sont revalidés **dans l'action serveur**, pas
   seulement à l'affichage : un formulaire peut être rejoué.
 - **Copie en photo** (« quand l'étudiant envoie son expression écrite

@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { useFormStatus } from "react-dom";
+import { startTransition, useActionState, useEffect, useRef, useState, useTransition } from "react";
 
 import {
   corrigerEtEnregistrer,
@@ -87,10 +86,7 @@ const CONSEILS = [
   { trace: TRACES.ordre, libelle: "Pages dans l'ordre" },
 ];
 
-function BoutonEnvoyer({ desactive, libelle }: { desactive: boolean; libelle: string }) {
-  // `useFormStatus` doit être appelé dans un composant enfant du
-  // `<form>` : il lit l'état de la soumission en cours.
-  const { pending } = useFormStatus();
+function BoutonEnvoyer({ desactive, libelle, pending }: { desactive: boolean; libelle: string; pending: boolean }) {
   return (
     <button
       type="submit"
@@ -166,7 +162,7 @@ export default function FormulaireCopie({
   quotaRestant: number;
   correcteurPret: boolean;
 }) {
-  const [etat, action] = useActionState<EtatCorrection, FormData>(corrigerEtEnregistrer, { erreur: null });
+  const [etat, action, envoiEnCours] = useActionState<EtatCorrection, FormData>(corrigerEtEnregistrer, { erreur: null });
   const [sujetId, setSujetId] = useState(sujetInitial ?? sujets[0]?.id ?? "");
   const [mode, setMode] = useState<Mode>("photo");
   const [texte, setTexte] = useState("");
@@ -247,7 +243,24 @@ export default function FormulaireCopie({
   const longueurConsigne = sujet ? longueurDemandee(sujet.consigne) : null;
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <form
+      // Envoi construit depuis l'état du composant, et non `action={action}` :
+      // React vide un formulaire après chaque envoi par `action`, ce qui
+      // remettait la liste des sujets sur le premier (Régional 2026 ·
+      // Casablanca-Settat). Après un échec, « réessayer » corrigeait donc
+      // la copie sur le mauvais sujet (« il me change le sujet [...] donc
+      // je suis en hors sujet »). Ici, le sujet choisi et le texte partent
+      // tels qu'ils sont à l'écran, et rien n'est remis à zéro.
+      onSubmit={(evenement) => {
+        evenement.preventDefault();
+        if (envoiEnCours) return;
+        const donnees = new FormData();
+        donnees.set("sujet_id", sujetId);
+        donnees.set("texte", texte);
+        startTransition(() => action(donnees));
+      }}
+      className="flex flex-col gap-5"
+    >
       {/* Le sujet : carte cliquable posée sur un <select> natif
        * transparent, qui reste accessible au clavier et au lecteur
        * d'écran. */}
@@ -535,6 +548,7 @@ export default function FormulaireCopie({
               </button>
             ) : (
               <BoutonEnvoyer
+                pending={envoiEnCours}
                 desactive={bloque || tropCourt || illisibles > 0}
                 libelle={mode === "photo" ? "Valider et corriger" : "Corriger ma copie"}
               />
