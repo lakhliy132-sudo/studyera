@@ -2,9 +2,10 @@
  * Appels du modèle pour le correcteur : lecture des photos d'une copie
  * manuscrite (`transcrireCopie`) et correction du texte (`corrigerCopie`).
  *
- * Le modèle est joint directement par l'API Messages d'Anthropic
- * (`fetch`), sans SDK : un seul appel, un seul endpoint, aucune
- * dépendance de plus à maintenir.
+ * Le modèle est joint par le SDK officiel d'Anthropic. Il remplace le
+ * `fetch` d'origine après « parfois quand il le lit, il me dit qu'il y a
+ * un problème » : le SDK réessaie de lui-même quand l'API est saturée
+ * (429, 529, erreurs réseau), ce que le `fetch` ne faisait pas.
  *
  * La clé se met dans `.env.local` sous le nom `ANTHROPIC_API_KEY`.
  * Elle n'est pas préfixée `NEXT_PUBLIC_` : elle reste donc côté
@@ -13,6 +14,8 @@
  * le dit à l'élève au lieu de lui laisser remplir un formulaire qui
  * échouerait à l'envoi.
  */
+
+import Anthropic from "@anthropic-ai/sdk";
 
 /** Modèle utilisé pour la correction. */
 export const MODELE_CORRECTEUR = "claude-sonnet-5";
@@ -68,51 +71,93 @@ Réponds uniquement par un objet JSON, sans texte autour, de la forme :
 
 /** Bloc de contenu envoyé au modèle : du texte, ou une image en base64
  * (photo d'une page de copie). */
-type BlocContenu =
-  | { type: "text"; text: string }
-  | { type: "image"; source: { type: "base64"; media_type: string; data: string } };
+type BlocContenu = Anthropic.TextBlockParam | Anthropic.ImageBlockParam;
 
-interface ReponseModele {
-  content?: { type: string; text?: string }[];
-  usage?: { input_tokens?: number; output_tokens?: number };
+let client: Anthropic | null = null;
+function clientAnthropic(): Anthropic {
+  const cle = process.env.ANTHROPIC_API_KEY;
+  if (!cle) throw new Error("ANTHROPIC_API_KEY absente.");
+  // Trois nouvelles tentatives sur 429 / 5xx / 529 et coupure réseau,
+  // et au plus deux minutes par tentative.
+  client ??= new Anthropic({ apiKey: cle, maxRetries: 3, timeout: 120_000 });
+  return client;
 }
 
 /** Un appel à l'API Messages, partagé par la correction et la
- * transcription. Lève une erreur si la clé manque ou si l'API répond
- * autre chose qu'un succès. */
+ * transcription. Lève une erreur si la clé manque, si l'API échoue
+ * après ses nouvelles tentatives, ou si la réponse est incomplète.
+ *
+ * `max_tokens` large : le modèle réfléchit avant de répondre, et cette
+ * réflexion compte dans la limite. Avec 4 000, une copie longue
+ * pouvait épuiser la limite avant la fin du JSON, d'où l'échec
+ * intermittent de la correction. */
 async function appelerModele({
   system,
   maxTokens,
   contenu,
+  format,
 }: {
   system: string;
   maxTokens: number;
   contenu: BlocContenu[];
-}): Promise<ReponseModele> {
-  const cle = process.env.ANTHROPIC_API_KEY;
-  if (!cle) throw new Error("ANTHROPIC_API_KEY absente.");
-
-  const reponse = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": cle,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODELE_CORRECTEUR,
-      max_tokens: maxTokens,
-      system,
-      messages: [{ role: "user", content: contenu }],
-    }),
+  format?: Anthropic.JSONOutputFormat;
+}): Promise<{ texte: string; coutTokens: number }> {
+  const reponse = await clientAnthropic().messages.create({
+    model: MODELE_CORRECTEUR,
+    max_tokens: maxTokens,
+    system,
+    messages: [{ role: "user", content: contenu }],
+    ...(format ? { output_config: { format } } : {}),
   });
 
-  if (!reponse.ok) {
-    const detail = await reponse.text();
-    throw new Error(`L'API a répondu ${reponse.status}. ${detail.slice(0, 300)}`);
+  if (reponse.stop_reason === "max_tokens") {
+    throw new Error(`Réponse coupée par max_tokens (${maxTokens}).`);
   }
-  return (await reponse.json()) as ReponseModele;
+  if (reponse.stop_reason === "refusal") {
+    throw new Error("Le modèle a refusé de répondre.");
+  }
+  const texte = reponse.content
+    .filter((bloc): bloc is Anthropic.TextBlock => bloc.type === "text")
+    .map((bloc) => bloc.text)
+    .join("");
+  return { texte, coutTokens: reponse.usage.input_tokens + reponse.usage.output_tokens };
 }
+
+/** Le format exact de la correction, imposé au modèle (structured
+ * outputs) : la réponse est toujours un JSON valide de cette forme. */
+const FORMAT_CORRECTION: Anthropic.JSONOutputFormat = {
+  type: "json_schema",
+  schema: {
+    type: "object",
+    additionalProperties: false,
+    required: ["note_forme", "note_fond", "erreurs", "points_forts", "axes", "commentaire"],
+    properties: {
+      note_forme: { type: "number" },
+      note_fond: { type: "number" },
+      erreurs: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["type", "extrait", "correction", "explication", "regle"],
+          properties: {
+            type: {
+              type: "string",
+              enum: ["hors sujet", "orthographe", "grammaire", "syntaxe", "vocabulaire", "ponctuation", "méthode", "contenu"],
+            },
+            extrait: { type: "string" },
+            correction: { type: "string" },
+            explication: { type: "string" },
+            regle: { type: "string" },
+          },
+        },
+      },
+      points_forts: { type: "array", items: { type: "string" } },
+      axes: { type: "array", items: { type: "string" } },
+      commentaire: { type: "string" },
+    },
+  },
+};
 
 /** Isole l'objet JSON d'une réponse qui contiendrait du texte autour. */
 function extraireJson(texte: string): unknown {
@@ -177,7 +222,8 @@ export async function corrigerCopie({
 }): Promise<CorrectionCopie> {
   const donnees = await appelerModele({
     system: CONSIGNE_SYSTEME,
-    maxTokens: 4000,
+    maxTokens: 16000,
+    format: FORMAT_CORRECTION,
     contenu: [
       {
         type: "text",
@@ -185,9 +231,7 @@ export async function corrigerCopie({
       },
     ],
   });
-  const texteReponse =
-    donnees.content?.find((bloc) => bloc.type === "text")?.text ?? "";
-  const brut = extraireJson(texteReponse) as Record<string, unknown>;
+  const brut = extraireJson(donnees.texte) as Record<string, unknown>;
 
   const noteForme = nombreBorne(brut.note_forme, 10);
   const noteFond = nombreBorne(brut.note_fond, 10);
@@ -201,8 +245,7 @@ export async function corrigerCopie({
     axes: listeDeTextes(brut.axes),
     commentaire:
       typeof brut.commentaire === "string" ? brut.commentaire.trim() : "",
-    coutTokens:
-      (donnees.usage?.input_tokens ?? 0) + (donnees.usage?.output_tokens ?? 0),
+    coutTokens: donnees.coutTokens,
   };
 }
 
@@ -248,12 +291,12 @@ export interface TranscriptionCopie {
 export async function transcrireCopie(pages: PageCopie[]): Promise<TranscriptionCopie> {
   const donnees = await appelerModele({
     system: CONSIGNE_TRANSCRIPTION,
-    maxTokens: 6000,
+    maxTokens: 16000,
     contenu: [
       ...pages.map(
         (page): BlocContenu => ({
           type: "image",
-          source: { type: "base64", media_type: page.typeMime, data: page.base64 },
+          source: { type: "base64", media_type: page.typeMime as Anthropic.Base64ImageSource["media_type"], data: page.base64 },
         }),
       ),
       {
@@ -263,8 +306,8 @@ export async function transcrireCopie(pages: PageCopie[]): Promise<Transcription
     ],
   });
 
-  const brut = (donnees.content?.find((bloc) => bloc.type === "text")?.text ?? "").trim();
-  const coutTokens = (donnees.usage?.input_tokens ?? 0) + (donnees.usage?.output_tokens ?? 0);
+  const brut = donnees.texte.trim();
+  const coutTokens = donnees.coutTokens;
   if (!brut || brut === "AUCUN_TEXTE") return { texte: "", incertains: [], coutTokens };
 
   const incertains: string[] = [];
