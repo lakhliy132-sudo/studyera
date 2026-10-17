@@ -39,6 +39,13 @@ interface ContenuMarkdownProps {
    * des cours d'arabe portent déjà leur propre numérotation ("I-",
    * "1-1/"...), une pastille en plus ferait doublon. */
   schemaCouleursArabe?: boolean;
+  /** Numéro de la première section (`##`) en mise en page "feuille".
+   * Utile quand un même cours est rendu en plusieurs morceaux (fiches
+   * de production écrite, coupées autour des cases de plans et des
+   * rédactions modèles) : chaque morceau reprend la numérotation là
+   * où le précédent l'a laissée, pour que les pastilles et les ancres
+   * `#section-N` du sommaire restent continues et uniques. */
+  premierNumero?: number;
 }
 
 /** Grands titres (`h2`) entièrement en rouge, petits titres (`h3`)
@@ -107,12 +114,13 @@ export default function ContenuMarkdown({
   couleurAccent = "var(--color-primary)",
   grandeTaille = false,
   schemaCouleursArabe = false,
+  premierNumero = 1,
 }: ContenuMarkdownProps) {
   const sensDeLecture = texte && contientArabe(texte) ? "rtl" : "ltr";
   // Incrémenté à chaque `##` rencontré par ReactMarkdown, dans l'ordre
   // du document — simple variable de fermeture (pas un state React,
   // recalculée à chaque rendu de la fonction), pas de compteur CSS.
-  let compteurSection = 0;
+  let compteurSection = premierNumero - 1;
 
   return (
     // `--couleur-feuille` posée ici (plutôt qu'une classe Tailwind
