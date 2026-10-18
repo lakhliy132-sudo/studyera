@@ -38,15 +38,51 @@ export default function DefiSemaine({
   libelleMatiere: (slug: string) => string;
 }) {
   if (!defi) {
+    // Pas de défi en cours : la carte explique comment il fonctionne
+    // plutôt que de rester une bande vide — refait à la demande de
+    // l'utilisateur (« TU PEUX FAIRE MIEUX QUE CE DESIGN »). Les trois
+    // étapes sont la vraie règle du défi, pas des données d'exemple.
     return (
-      <section className="flex items-center gap-4 rounded-[24px] border-2 border-dashed border-border px-6 py-7">
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary-tint text-primary">
-          <IconeCible className="size-6" />
-        </span>
-        <div>
-          <p className="font-serif text-lg font-bold text-ink">Défi de la semaine</p>
-          <p className="text-sm text-muted-foreground">Le prochain défi sera publié ici par l&apos;équipe StudyEra.</p>
+      <section
+        className="relative grid grid-cols-1 gap-6 overflow-hidden rounded-[24px] border p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:items-center"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--color-primary) 6%, var(--color-surface))",
+          borderColor: "color-mix(in srgb, var(--color-primary) 22%, var(--color-border))",
+        }}
+      >
+        <svg aria-hidden="true" viewBox="0 0 200 200" className="pointer-events-none absolute -bottom-24 -left-20 size-72 text-primary/10">
+          {[96, 74, 52, 30].map((r) => (
+            <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="currentColor" strokeWidth="1.5" />
+          ))}
+        </svg>
+        <div className="relative flex flex-col gap-3">
+          <span className="flex w-fit items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+            <IconeCible className="size-3.5" />
+            Défi de la semaine
+          </span>
+          <p className="font-affiche text-3xl leading-tight text-ink sm:text-4xl">Le prochain défi arrive bientôt.</p>
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+            Chaque semaine, l&apos;équipe StudyEra publie ici une question, souvent tirée d&apos;un examen régional.
+          </p>
         </div>
+        <ol className="relative grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[
+            { titre: "Réponds", detail: "Une réponse par élève, avant la date limite.", Icone: IconeHorloge },
+            { titre: "Vote", detail: "Pour les meilleures réponses des autres.", Icone: IconeCible },
+            { titre: "Découvre le corrigé", detail: "Publié par l'équipe à la fin du défi.", Icone: IconeCoche },
+          ].map((etape, index) => (
+            <li key={etape.titre} className="flex flex-col gap-2 rounded-[18px] border border-border bg-surface p-4 shadow-sm">
+              <span className="flex items-center justify-between">
+                <span className="flex size-9 items-center justify-center rounded-[11px] bg-primary-tint text-primary">
+                  <etape.Icone className="size-4.5" />
+                </span>
+                <span className="font-affiche text-2xl text-primary/30">{index + 1}</span>
+              </span>
+              <span className="font-bold text-ink">{etape.titre}</span>
+              <span className="text-sm leading-snug text-muted-foreground">{etape.detail}</span>
+            </li>
+          ))}
+        </ol>
       </section>
     );
   }
