@@ -7,11 +7,14 @@
  * ils envoient directement au numéro +33609527898 ». Tout le reste
  * (prix au mois, écart entre les deux) est calculé à partir de ces
  * deux prix, jamais écrit à côté.
+ *
+ * Numéro changé ensuite à la demande de l'utilisateur : « FAIS CE
+ * NUMERO + 212716925373 ».
  */
 
 /** Numéro WhatsApp au format international sans « + » ni espaces,
  * comme l'attend wa.me. */
-export const NUMERO_WHATSAPP = "33609527898";
+export const NUMERO_WHATSAPP = "212716925373";
 
 export interface Formule {
   cle: "trimestre" | "annee";
@@ -68,10 +71,15 @@ export function messageWhatsapp(formule: Formule, email: string | null = null): 
   );
 }
 
-/** « +33 6 09 52 78 98 », pour l'afficher. */
+/** « +212 7 16 92 53 73 » (ou « +33 6 09 52 78 98 »), pour l'afficher :
+ * l'indicatif, le premier chiffre, puis les autres par deux. L'indicatif
+ * marocain a trois chiffres, le français deux. */
 export function numeroWhatsappLisible(): string {
   const n = NUMERO_WHATSAPP;
-  return `+${n.slice(0, 2)} ${n.slice(2, 3)} ${n.slice(3).replace(/(\d{2})(?=\d)/g, "$1 ")}`;
+  const longueurIndicatif = n.startsWith("212") ? 3 : 2;
+  const indicatif = n.slice(0, longueurIndicatif);
+  const reste = n.slice(longueurIndicatif);
+  return `+${indicatif} ${reste.slice(0, 1)} ${reste.slice(1).replace(/(\d{2})(?=\d)/g, "$1 ")}`;
 }
 
 /** Un « + » d'une formule ; `fort` pour ceux qui la distinguent de
