@@ -183,61 +183,68 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
       </div>
 
       {/* ——— Questions des élèves ——— */}
+      {/* Refait à la demande de l'utilisateur (« TU PEUX FAIRE MIEUX
+       * QUE CE DESIGN ») : les matières passent en pastilles sous le
+       * titre (la colonne de gauche n'affichait presque que des zéros),
+       * et la colonne de droite donne les règles d'une bonne question. */}
       <section id="questions" className="flex scroll-mt-24 flex-col gap-5">
-        <div className="flex items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-[13px] bg-primary-tint text-primary">
-            <IconeBulles className="size-5" />
-          </span>
-          <div>
-            <h2 className="font-serif text-2xl font-bold text-ink">Questions des élèves</h2>
-            <p className="text-sm text-muted-foreground">Bloqué·e sur une leçon ? Demande, quelqu&apos;un a sûrement la réponse.</p>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-11 shrink-0 -rotate-3 items-center justify-center rounded-[13px] bg-primary text-primary-foreground">
+              <IconeBulles className="size-5" />
+            </span>
+            <div>
+              <h2 className="font-affiche text-3xl leading-tight text-ink">Questions des élèves</h2>
+              <p className="text-sm text-muted-foreground">Bloqué·e sur une leçon ? Demande : quelqu&apos;un a sûrement la réponse.</p>
+            </div>
           </div>
+
+          <nav aria-label="Filtrer par matière" className="flex flex-wrap gap-2">
+            {[
+              { slug: undefined, nom: "Toutes", n: stats.total },
+              ...["francais", ...MATIERES.map((m) => m.slug)].map((slug) => ({
+                slug,
+                nom: libelleMatiere(slug),
+                n: stats.publicationsParMatiere[slug] ?? 0,
+              })),
+            ].map((m) => {
+              const actif = matiere === m.slug;
+              return (
+                <Link
+                  key={m.slug ?? "toutes"}
+                  href={lienMatiere(m.slug)}
+                  aria-current={actif ? "page" : undefined}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
+                    actif
+                      ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_22px_-12px_var(--color-primary)]"
+                      : "border-border bg-surface text-ink hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  {m.nom}
+                  {m.n > 0 && (
+                    <span className={`rounded-full px-1.5 text-xs tabular-nums ${actif ? "bg-white/20" : "bg-primary-tint text-primary"}`}>{m.n}</span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[250px_minmax(0,1fr)]">
-          <aside className={`flex flex-col gap-3 p-5 xl:sticky xl:top-6 ${carte}`}>
-            <p className="font-affiche text-xl text-ink">Par matière</p>
-            <ul className="flex flex-wrap gap-1 xl:flex-col">
-              {[
-                { slug: undefined, nom: "Toutes les matières", n: stats.total },
-                ...["francais", ...MATIERES.map((m) => m.slug)].map((slug) => ({
-                  slug,
-                  nom: libelleMatiere(slug),
-                  n: stats.publicationsParMatiere[slug] ?? 0,
-                })),
-              ].map((m) => {
-                const actif = matiere === m.slug;
-                return (
-                  <li key={m.slug ?? "toutes"}>
-                    <Link
-                      href={lienMatiere(m.slug)}
-                      className={`flex items-center justify-between gap-2 rounded-[12px] px-3 py-2.5 text-sm font-semibold transition-colors ${
-                        actif ? "bg-primary text-primary-foreground" : "text-ink hover:bg-surface-muted"
-                      }`}
-                    >
-                      <span className="truncate">{m.nom}</span>
-                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs tabular-nums ${actif ? "bg-white/20" : "bg-surface-muted text-muted-foreground"}`}>
-                        {m.n}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </aside>
-
+        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="flex min-w-0 flex-col gap-5">
-            <section className={`p-5 sm:p-6 ${carte}`}>
+            <section className={carte}>
               <FormulaireCommunaute />
             </section>
 
             {questions.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-[24px] border-2 border-dashed border-border px-6 py-12 text-center">
-                <span className="flex size-14 -rotate-6 items-center justify-center rounded-2xl bg-primary-tint text-primary">
-                  <IconeBulles className="size-7" />
+              <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface/70 px-6 py-6">
+                <span className="flex size-12 shrink-0 -rotate-6 items-center justify-center rounded-2xl bg-primary-tint text-primary">
+                  <IconeBulles className="size-6" />
                 </span>
-                <p className="font-affiche text-2xl text-ink">Aucune question{matiere ? " dans cette matière" : ""}</p>
-                <p className="text-sm text-muted-foreground">Pose la première : d&apos;autres élèves se demandent sûrement la même chose.</p>
+                <div>
+                  <p className="font-bold text-ink">Aucune question{matiere ? ` en ${libelleMatiere(matiere)}` : ""} pour l&apos;instant</p>
+                  <p className="text-sm text-muted-foreground">Pose la première : d&apos;autres élèves se demandent sûrement la même chose.</p>
+                </div>
               </div>
             ) : (
               <ul className="flex flex-col gap-4">
@@ -287,6 +294,30 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
               </ul>
             )}
           </div>
+
+          <aside className={`flex flex-col gap-4 p-6 xl:sticky xl:top-6 ${carte}`}>
+            <p className="font-affiche text-xl text-ink">Une bonne question</p>
+            <ol className="flex flex-col gap-3.5">
+              {[
+                { titre: "Choisis la matière", detail: "Elle range ta question au bon endroit." },
+                { titre: "Dis où tu bloques", detail: "La leçon, l'exercice, la phrase que tu ne comprends pas." },
+                { titre: "Ajoute une photo", detail: "L'énoncé ou ton brouillon : c'est plus clair qu'un long texte." },
+              ].map((conseil, index) => (
+                <li key={conseil.titre} className="flex gap-3">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-tint text-xs font-bold text-primary">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm leading-snug">
+                    <span className="block font-bold text-ink">{conseil.titre}</span>
+                    <span className="text-muted-foreground">{conseil.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p dir="rtl" lang="ar" className="mt-1 border-t border-border pt-4 text-center font-ruqaa text-xl text-primary">
+              اللي عرف شي حاجة، يعلّمها
+            </p>
+          </aside>
         </div>
       </section>
     </main>
