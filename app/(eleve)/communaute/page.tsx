@@ -141,7 +141,24 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
             Annonces de l&apos;équipe StudyEra
           </p>
           {annonces.length === 0 ? (
-            <p className="relative text-[15px] text-white/75">Aucune annonce pour l&apos;instant.</p>
+            // Sans annonce, une phrase d'accueil plutôt qu'une carte vide —
+            // demandé explicitement par l'utilisateur, capture à l'appui
+            // (« ici fait une phrase ensemble etc »). Le proverbe en
+            // ruqʿa, comme les notes manuscrites de l'accueil.
+            <div className="relative flex flex-1 flex-col justify-center gap-3">
+              <span dir="rtl" lang="ar" className="w-fit font-ruqaa text-2xl text-white/85" style={{ transform: "rotate(-3deg)" }}>
+                يد وحدة ما تصفّقش
+              </span>
+              <p className="font-affiche text-3xl leading-tight sm:text-4xl">
+                Ici, on révise
+                <br />
+                et on réussit ensemble.
+              </p>
+              <p className="max-w-md text-[15px] leading-relaxed text-white/80">
+                Les nouvelles de l&apos;équipe StudyEra arriveront ici. En attendant, relève le défi de la semaine ou
+                aide un camarade avec sa question.
+              </p>
+            </div>
           ) : (
             <ul className="relative flex flex-col gap-2.5">
               {annonces.map((annonce, index) => (
