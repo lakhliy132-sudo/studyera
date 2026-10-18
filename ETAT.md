@@ -2,6 +2,41 @@
 
 > Mis à jour à la fin de chaque session. Dernière mise à jour : 2026-09-13.
 >
+> **Communauté : nouveau concept (annonces, défi de la semaine,
+> questions)** — demandé explicitement par l'utilisateur, qui a combiné
+> deux des propositions : « Chaque semaine, l'équipe publie un défi […]
+> Les élèves envoient leur réponse, votent pour les meilleures, puis le
+> corrigé est publié » et « en haut, les annonces de l'équipe
+> StudyEra ; en dessous, seulement les questions des élèves. On retire
+> astuces, objectifs, ressources et le classement ».
+>
+> - `/communaute` : présentation + les 3 dernières annonces (table
+>   `annonces`, déjà publiées depuis /administration) dans la carte
+>   sombre qui montrait le classement ; puis le défi (`DefiSemaine`) ;
+>   puis les questions, filtrables par matière. Le formulaire ne
+>   propose plus de catégorie : tout est une question. Les anciennes
+>   publications d'un autre type restent en base, non affichées.
+> - Défi : nouvelle migration **à lancer à la main**
+>   `20261103000000_defis.sql` (tables `defis`, `defis_reponses`,
+>   `defis_votes`). RLS : défi écrit par un admin ; une réponse par
+>   élève, avant la date limite ; un vote par réponse, jamais pour la
+>   sienne. Les réponses des autres ne s'affichent qu'après avoir
+>   envoyé la sienne (ou le défi terminé), pour éviter la copie — le
+>   masquage est sur la page, pas en RLS. Le corrigé s'affiche dès que
+>   l'admin le publie.
+> - `/administration` : section « Défi de la semaine » (publier un
+>   défi, puis son corrigé). Le plus récent est celui affiché.
+> - ⚠️ `supabase/migrations/20260928000000_communaute_v2.sql` ne
+>   contient que « pr » : le schéma réel de `communaute_reactions`,
+>   `communaute_reponses` et des colonnes `type`/`matiere` n'est pas
+>   dans le dépôt. Non reconstitué de mémoire ; à réexporter depuis
+>   Supabase.
+>
+> Vérifié par capture Playwright du bloc défi sur données d'essai
+> (avant réponse, après réponse avec corrigé, sans défi ; clair,
+> sombre palette lavender, téléphone 390 px). La page complète n'a pas
+> pu être rendue ici : elle demande une session et la vraie base.
+>
 > **Fiches de production écrite en mise en page "feuille"** — demandé
 > explicitement par l'utilisateur ("pour les leçons de la production
 > écrite fais le style comme dans les autres matières leçons pas juste

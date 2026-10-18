@@ -1,9 +1,11 @@
 import Link from "next/link";
 
 import FormulaireAnnonce from "@/components/FormulaireAnnonce";
+import FormulaireDefi, { FormulaireCorrigeDefi } from "@/components/FormulaireDefi";
 import TableauCopies from "@/components/TableauCopies";
 import { recupererCopiesPourAdmin } from "@/lib/supabase/admin";
 import { recupererAnnonces, recupererFilsMessagesPourAdmin } from "@/lib/supabase/communication";
+import { recupererDefisPourAdmin } from "@/lib/supabase/defis";
 import { creerClientServeur } from "@/lib/supabase/server";
 
 function formaterDate(dateIso: string) {
@@ -33,10 +35,11 @@ export default async function PageAdministration() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [copies, annonces, filsMessages] = await Promise.all([
+  const [copies, annonces, filsMessages, defis] = await Promise.all([
     recupererCopiesPourAdmin(),
     recupererAnnonces(),
     recupererFilsMessagesPourAdmin(),
+    recupererDefisPourAdmin(),
   ]);
 
   return (
@@ -84,6 +87,35 @@ export default async function PageAdministration() {
                   <p className="text-xs text-subtle-foreground">{formaterDate(annonce.created_at)}</p>
                 </div>
                 <p className="mt-1 text-sm whitespace-pre-line text-muted-foreground">{annonce.contenu}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Défi de la semaine de la page Communauté (« Chaque semaine,
+          l'équipe publie un défi […] puis le corrigé est publié »). Le
+          plus récent est celui que voient les élèves. */}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-foreground">Défi de la semaine</h2>
+        <FormulaireDefi />
+        {defis.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun défi publié pour l&apos;instant.</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {defis.map((defi, index) => (
+              <li key={defi.id} className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="font-medium text-foreground">
+                    {defi.titre}
+                    {index === 0 && <span className="ms-2 rounded-full bg-primary-tint px-2 py-0.5 text-xs font-semibold text-primary">en ligne</span>}
+                  </p>
+                  <p className="text-xs text-subtle-foreground">
+                    Jusqu&apos;au {formaterDate(defi.dateLimite)} · {defi.nombreReponses} réponse{defi.nombreReponses > 1 ? "s" : ""}
+                    {defi.corrige ? " · corrigé publié" : ""}
+                  </p>
+                </div>
+                <FormulaireCorrigeDefi defiId={defi.id} corrigeActuel={defi.corrige} />
               </li>
             ))}
           </ul>

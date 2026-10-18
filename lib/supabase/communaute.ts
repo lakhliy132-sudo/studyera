@@ -203,10 +203,17 @@ export interface StatistiquesCommunaute {
   total: number;
 }
 
-export async function recupererStatistiquesCommunaute(limiteClassement: number): Promise<StatistiquesCommunaute> {
+export async function recupererStatistiquesCommunaute(
+  limiteClassement: number,
+  options?: { type?: TypePublication },
+): Promise<StatistiquesCommunaute> {
   const supabase = await creerClientServeur();
 
-  const { data, error } = await supabase.from("communaute_messages").select("auteur_id, matiere");
+  let requete = supabase.from("communaute_messages").select("auteur_id, matiere");
+  // Compteurs limités à une catégorie : la page Communauté ne montre
+  // plus que les questions.
+  if (options?.type) requete = requete.eq("type", options.type);
+  const { data, error } = await requete;
   if (error) {
     console.error("recupererStatistiquesCommunaute:", error.message);
     return { publicationsParMatiere: {}, classement: [], total: 0 };

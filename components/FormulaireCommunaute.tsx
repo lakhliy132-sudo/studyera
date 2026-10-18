@@ -28,22 +28,13 @@ async function reduirePhoto(fichier: File): Promise<File> {
   return new File([blob], "photo.jpg", { type: "image/jpeg" });
 }
 
-/** Les catégories proposées à la publication, dans l'ordre de la
- * maquette. Recopiées ici plutôt qu'importées de
- * lib/supabase/communaute.ts : ce fichier-là importe `next/headers`,
- * un composant client ne peut donc rien en importer. */
-const TYPES = [
-  { cle: "question", libelle: "Question" },
-  { cle: "astuce", libelle: "Astuce" },
-  { cle: "objectif", libelle: "Objectif" },
-  { cle: "ressource", libelle: "Ressource" },
-  { cle: "discussion", libelle: "Discussion" },
-] as const;
-
 /**
- * Champ de publication du fil de communauté : texte, catégorie et
- * matière concernée — les deux étiquettes que montre la maquette sur
- * chaque publication.
+ * Champ de publication du fil de communauté : une question, et la
+ * matière qu'elle concerne. Depuis le nouveau concept de la page
+ * (annonces de l'équipe, défi de la semaine, questions des élèves —
+ * demandé explicitement par l'utilisateur, qui retire « astuces,
+ * objectifs, ressources et le classement »), toute publication est
+ * une question : plus de choix de catégorie.
  *
  * Écriture directe depuis le navigateur ; la policy RLS
  * `communaute_publication` garantit qu'on ne publie que sous sa propre
@@ -146,7 +137,6 @@ function ChoixMatiere({ valeur, onChange }: { valeur: string; onChange: (v: stri
 export default function FormulaireCommunaute() {
   const router = useRouter();
   const [contenu, setContenu] = useState("");
-  const [type, setType] = useState<(typeof TYPES)[number]["cle"]>("question");
   const [matiere, setMatiere] = useState("");
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
@@ -195,7 +185,7 @@ export default function FormulaireCommunaute() {
       .insert({
         auteur_id: user.id,
         contenu: texte,
-        type,
+        type: "question",
         matiere: matiere || null,
       })
       .select("id")
@@ -229,7 +219,7 @@ export default function FormulaireCommunaute() {
   return (
     <form onSubmit={publier} className="flex flex-col gap-3">
       <label htmlFor="message-communaute" className="sr-only">
-        Ta publication
+        Ta question
       </label>
       <textarea
         id="message-communaute"
@@ -237,7 +227,7 @@ export default function FormulaireCommunaute() {
         onChange={(evenement) => setContenu(evenement.target.value)}
         maxLength={LONGUEUR_MAX}
         rows={3}
-        placeholder="Pose une question, partage une astuce, annonce ton objectif…"
+        placeholder="Pose ta question : sur une leçon, un exercice, un sujet d'examen…"
         className="w-full resize-none rounded-[14px] border border-border bg-surface p-3.5 text-sm text-foreground transition-colors placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
       />
 
@@ -257,22 +247,6 @@ export default function FormulaireCommunaute() {
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        {TYPES.map((choix) => (
-          <button
-            key={choix.cle}
-            type="button"
-            onClick={() => setType(choix.cle)}
-            aria-pressed={type === choix.cle}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-              type === choix.cle
-                ? "bg-primary text-white"
-                : "bg-surface-muted text-muted-foreground hover:text-primary"
-            }`}
-          >
-            {choix.libelle}
-          </button>
-        ))}
-
         <ChoixMatiere valeur={matiere} onChange={setMatiere} />
       </div>
 
@@ -300,7 +274,7 @@ export default function FormulaireCommunaute() {
           disabled={envoi || contenu.trim().length === 0}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {envoi ? "Envoi…" : "Publier"}
+          {envoi ? "Envoi…" : "Poser la question"}
           <IconeFleche className="size-3.5" />
         </button>
       </div>
