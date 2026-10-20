@@ -315,14 +315,11 @@ révision, chapitres lus, copies. Lecture par la clé de service dans
 
 Deux cases du menu de gauche (seulement là), pages protégées.
 
-- **`/live`** : l'admin démarre un live depuis la page, les élèves dont
-  l'accès est complet le regardent dans la page. Diffusion par **Daily**
-  (`lib/live.ts`, clé `DAILY_API_KEY`, serveur uniquement). Salle
-  privée par live, jetons créés côté serveur, seul l'admin diffuse
-  (`owner_only_broadcast`) ; « Terminer » supprime la salle. Table
-  `lives` (migration `20261104000000_lives.sql`), lue et écrite par la
-  clé de service. Sans clé ou sans table : l'admin voit ce qui manque,
-  l'élève voit la carte « Bientôt disponible ».
+- **`/live`** : la case seule. Les admins voient un espace vide
+  (contenu à définir), les élèves la carte « Bientôt disponible ». Une
+  diffusion par Daily a été branchée puis **retirée à la demande** (« non,
+  enlève ça du live, laisse juste la case ») : ne pas la remettre sans
+  nouvelle demande.
 - **`/annonces`** : les admins publient, tout compte connecté lit. Table
   `annonces` déjà prévue (et lue par `/communaute`), créée par
   `20261104000001_annonces.sql` (rejouable) ; écriture par RLS
