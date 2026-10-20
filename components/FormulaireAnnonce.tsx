@@ -66,29 +66,34 @@ export default function FormulaireAnnonce() {
   }
 
   return (
-    <form onSubmit={publier} className="flex flex-col gap-3 rounded-lg border border-border bg-surface-muted p-5">
+    <form onSubmit={publier} className="flex flex-col gap-3">
       <input
         type="text"
         value={titre}
         onChange={(e) => setTitre(e.target.value)}
+        maxLength={120}
         placeholder="Titre de l'annonce"
-        className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+        className="w-full rounded-[14px] border border-border bg-surface px-4 py-3 text-base font-semibold text-foreground transition-colors placeholder:font-normal placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
       />
       <textarea
         value={contenu}
         onChange={(e) => setContenu(e.target.value)}
-        rows={3}
+        rows={4}
+        maxLength={2000}
         placeholder="Contenu de l'annonce"
-        className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+        className="w-full resize-y rounded-[14px] border border-border bg-surface px-4 py-3 text-[15px] leading-relaxed text-foreground transition-colors placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
       />
-      {erreur && <p className="text-sm text-erreur">{erreur}</p>}
-      <button
-        type="submit"
-        disabled={enCours || !titre.trim() || !contenu.trim()}
-        className="self-start rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
-      >
-        {enCours ? "Publication..." : "Publier"}
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="submit"
+          disabled={enCours || !titre.trim() || !contenu.trim()}
+          className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[15px] font-bold text-primary-foreground shadow-[0_10px_24px_-12px_var(--color-primary)] transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+        >
+          {enCours ? "Publication…" : "Publier"}
+          <span aria-hidden="true">→</span>
+        </button>
+        {erreur && <p className="text-sm font-semibold text-erreur">{erreur}</p>}
+      </div>
     </form>
   );
 }
