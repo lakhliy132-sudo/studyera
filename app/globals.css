@@ -262,6 +262,17 @@
   to { stroke-dashoffset: 0; }
 }
 
+/* Ondes de la page /live (« Bientôt disponible ») : des cercles qui
+ * partent du centre et s'effacent, décalés par `--delai`. */
+.onde-live {
+  animation: onde-live 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  animation-delay: var(--delai, 0ms);
+}
+@keyframes onde-live {
+  from { transform: scale(0.35); opacity: 0.7; }
+  to { transform: scale(1); opacity: 0; }
+}
+
 /* Barres des chiffres de l'accueil (components/ChiffresAccueil.tsx) :
  * elles poussent depuis leur base quand leur carte apparaît. Le départ
  * est à droite, où commence la ligne dans la page en arabe. */
