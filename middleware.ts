@@ -22,6 +22,7 @@ const CHEMINS_PROTEGES = [
   "/progres",
   "/communaute",
   "/live",
+  "/annonces",
   "/parametres",
   "/acces",
 ];
