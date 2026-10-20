@@ -21,6 +21,7 @@ const CHEMINS_PROTEGES = [
   "/messages",
   "/progres",
   "/communaute",
+  "/live",
   "/parametres",
   "/acces",
 ];

@@ -35,6 +35,8 @@ const TRACES = {
   examen:
     "M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H9zM9 12h6M9 16h4",
   fermer: "M6 6l12 12M18 6 6 18",
+  // Un point entouré d'ondes : le direct.
+  live: "M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4M8.5 15.5a5 5 0 0 1 0-7M15.5 8.5a5 5 0 0 1 0 7M5.6 18.4a9 9 0 0 1 0-12.8M18.4 5.6a9 9 0 0 1 0 12.8",
 };
 
 /** L'e-mail de l'élève en petite pastille (« juste l'e-mail de
@@ -138,6 +140,9 @@ const LIENS = [
   },
   { libelle: "Calendrier", href: "/calendrier", trace: TRACES.calendrier },
   { libelle: "Communauté", href: "/communaute", trace: TRACES.communaute },
+  // « Une nouvelle case qui s'appelle LIVE » : le contenu pour les
+  // admins, « bientôt » pour les élèves (app/(eleve)/live).
+  { libelle: "Live", href: "/live", trace: TRACES.live },
   { libelle: "Progrès", href: "/progres", trace: TRACES.progres },
   { libelle: "Paramètres", href: "/parametres", trace: TRACES.parametres },
 ];
