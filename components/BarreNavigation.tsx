@@ -20,6 +20,10 @@ interface BarreNavigationProps {
   /** Prénom affiché à côté de l'avatar — `null` pour un visiteur non
    * connecté (voir app/layout.tsx). */
   prenom?: string | null;
+  /** Compte admin : ajoute la case « Administration » au menu latéral. */
+  admin?: boolean;
+  /** Messages d'élèves pas encore lus, pastille de cette case. */
+  messagesNonLus?: number;
 }
 
 /**
@@ -62,6 +66,8 @@ export default function BarreNavigation({
   connecte,
   email,
   prenom = null,
+  admin = false,
+  messagesNonLus = 0,
 }: BarreNavigationProps) {
   const logo = (
     <Link href="/" className="flex shrink-0 items-center gap-3">
@@ -104,7 +110,7 @@ export default function BarreNavigation({
   // page"), qui montre une recherche et une cloche de notifications en
   // plus de ce qui existait déjà (avatar, mode nuit, déconnexion).
   if (connecte) {
-    return <MenuLateral prenom={prenom} email={email} />;
+    return <MenuLateral prenom={prenom} email={email} admin={admin} messagesNonLus={messagesNonLus} />;
   }
 
   // Barre flottante en forme de pilule, détachée des bords et du haut
