@@ -1,5 +1,6 @@
 import BoutonSupprimerAnnonce from "@/components/BoutonSupprimerAnnonce";
 import FormulaireAnnonce from "@/components/FormulaireAnnonce";
+import LogoStudyera from "@/components/LogoStudyera";
 import { lireAcces } from "@/lib/acces";
 import { creerClientServeur } from "@/lib/supabase/server";
 import type { Annonce } from "@/types/base-de-donnees";
@@ -91,15 +92,18 @@ export default async function PageAnnonces() {
         </p>
       </header>
 
+      {/* Le formulaire reste replié derrière un bouton : la page de
+       * l'admin ressemble ainsi à celle des élèves (« fais-la stylée
+       * plus »). */}
       {admin && (
-        <section className="flex flex-col gap-5 rounded-[28px] border border-border bg-surface p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)] sm:p-8">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="flex size-11 items-center justify-center rounded-2xl bg-primary-tint text-primary">
-              <PorteVoix className="size-5" />
+        <details className="group rounded-[28px] border border-border bg-surface shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)] open:p-6 sm:open:p-8">
+          <summary className="flex cursor-pointer list-none items-center gap-3 p-4 group-open:mb-5 group-open:p-0 sm:p-5 [&::-webkit-details-marker]:hidden">
+            <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_10px_24px_-12px_var(--color-primary)]">
+              <span aria-hidden="true" className="text-2xl leading-none transition-transform group-open:rotate-45">+</span>
             </span>
-            <p className="font-affiche text-2xl text-ink">Nouvelle annonce</p>
+            <span className="font-affiche text-xl text-ink sm:text-2xl">Nouvelle annonce</span>
             <span className="rounded-full bg-primary-tint px-3 py-1 text-xs font-bold text-primary">Espace administrateur</span>
-          </div>
+          </summary>
           {annonces === null ? (
             <p className="text-[15px] text-muted-foreground">
               Lance d&apos;abord la migration{" "}
@@ -109,7 +113,7 @@ export default async function PageAnnonces() {
           ) : (
             <FormulaireAnnonce />
           )}
-        </section>
+        </details>
       )}
 
       {!une ? (
@@ -122,9 +126,11 @@ export default async function PageAnnonces() {
         </section>
       ) : (
         <>
-          {/* La plus récente, à la une : la carte sombre de l'accueil. */}
+          {/* La plus récente, à la une : la carte sombre de l'accueil,
+           * avec à droite sa date en grand chiffre détouré, un reflet qui
+           * passe, et la signature de l'équipe. */}
           <article
-            className="animate-entree-carte relative overflow-hidden rounded-[32px] p-7 text-white shadow-[0_34px_70px_-34px_rgba(10,16,32,0.75)] sm:p-11"
+            className="animate-entree-carte relative overflow-hidden rounded-[32px] text-white shadow-[0_34px_70px_-34px_rgba(10,16,32,0.75)]"
             style={{ background: "linear-gradient(150deg, var(--fond-sombre-actif) 0%, var(--fond-sombre-haut) 50%, var(--fond-sombre-bas) 100%)" }}
           >
             <div
@@ -135,22 +141,74 @@ export default async function PageAnnonces() {
                 backgroundSize: "34px 34px",
               }}
             />
-            <PorteVoix className="pointer-events-none absolute -right-6 -bottom-8 size-56 rotate-[-12deg] text-white/[0.06] sm:size-72" />
-            <div className="relative flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="flex items-center gap-2 rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-[0.14em] uppercase" style={{ color: "var(--fond-sombre-haut)" }}>
-                  {estNouveau(une) && <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-erreur" />}
-                  {estNouveau(une) ? "Nouveau" : "La dernière"}
-                </span>
-                <span className="text-sm font-semibold text-white/70 first-letter:uppercase">{dateLongue(une.created_at)}</span>
-              </div>
-              <h2 className="max-w-[900px] font-affiche text-3xl leading-tight sm:text-5xl">{une.titre}</h2>
-              <p className="max-w-[760px] text-base leading-relaxed whitespace-pre-line text-white/85 sm:text-lg">{une.contenu}</p>
-              {admin && (
-                <div className="text-white/60 [&_button]:text-white/60 [&_button:hover]:text-white">
-                  <BoutonSupprimerAnnonce id={une.id} />
+            <div
+              aria-hidden="true"
+              className="animate-brillance pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage: "linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.09) 50%, transparent 65%)",
+                backgroundSize: "200% 100%",
+              }}
+            />
+            <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-24 size-80 rounded-full bg-white/10 blur-3xl" />
+
+            <div className="relative grid gap-8 p-7 sm:p-11 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+              <div className="flex min-w-0 flex-col gap-5">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span
+                    className="flex items-center gap-2 rounded-full bg-white px-3.5 py-1 text-xs font-bold tracking-[0.14em] uppercase"
+                    style={{ color: "var(--fond-sombre-haut)" }}
+                  >
+                    {estNouveau(une) && (
+                      <span aria-hidden="true" className="relative flex size-2">
+                        <span className="absolute inset-0 animate-ping rounded-full bg-erreur opacity-70" />
+                        <span className="relative size-2 rounded-full bg-erreur" />
+                      </span>
+                    )}
+                    {estNouveau(une) ? "Nouveau" : "La dernière"}
+                  </span>
+                  <span className="text-sm font-semibold text-white/70 first-letter:uppercase lg:hidden">{dateLongue(une.created_at)}</span>
                 </div>
-              )}
+                <h2 className="max-w-[900px] font-affiche text-[34px] leading-[1.05] break-words sm:text-6xl">{une.titre}</h2>
+                <svg aria-hidden="true" viewBox="0 0 300 24" preserveAspectRatio="none" className="-mt-3 h-4 w-32 text-[#f2b35c] sm:w-44">
+                  <path className="trace-main" pathLength={1} d="M4 16C60 6 120 4 180 9s90 8 116-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+                </svg>
+                <p className="max-w-[760px] text-base leading-relaxed whitespace-pre-line text-white/85 sm:text-lg">{une.contenu}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/15 pt-5">
+                  <span className="flex items-center gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-full bg-white" style={{ color: "var(--fond-sombre-haut)" }}>
+                      <LogoStudyera className="h-5" />
+                    </span>
+                    <span className="flex flex-col leading-tight">
+                      <span className="text-sm font-bold">L&apos;équipe StudyEra</span>
+                      <span className="text-xs text-white/60">Annonce officielle</span>
+                    </span>
+                  </span>
+                  {admin && (
+                    <span className="ms-auto [&_button]:text-white/60 [&_button:hover]:text-white">
+                      <BoutonSupprimerAnnonce id={une.id} />
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* La date en grand, sur ordinateur. */}
+              <div aria-hidden="true" className="relative hidden flex-col items-center gap-1 pe-4 lg:flex">
+                <span
+                  className="font-affiche text-[150px] leading-[0.85] text-transparent"
+                  style={{ WebkitTextStroke: "2.5px rgba(255,255,255,0.85)" }}
+                >
+                  {jourMois(une.created_at).jour}
+                </span>
+                <span className="font-affiche text-2xl tracking-[0.2em] uppercase">{jourMois(une.created_at).mois}</span>
+                <span className="text-sm text-white/60 first-letter:uppercase">
+                  {new Date(une.created_at).toLocaleDateString("fr-FR", { timeZone: "Africa/Casablanca", weekday: "long" })}
+                </span>
+                {estNouveau(une) && (
+                  <span dir="rtl" lang="ar" className="mt-2 -rotate-6 font-ruqaa text-3xl text-[#f2b35c]">
+                    جديد
+                  </span>
+                )}
+              </div>
             </div>
           </article>
 
