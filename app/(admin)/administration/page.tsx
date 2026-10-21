@@ -41,13 +41,69 @@ export default async function PageAdministration() {
     recupererFilsMessagesPourAdmin(),
     recupererDefisPourAdmin(),
   ]);
+  const nonLus = filsMessages.reduce((n, f) => n + f.nonLusDeLEleve, 0);
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8">
+    <main className="flex w-full flex-col gap-6 px-6 pt-16 pb-20 sm:px-9 sm:pt-12 lg:px-16 xl:px-24 2xl:px-40">
       <div>
         <h1 className="text-xl font-semibold text-foreground">Espace administrateur</h1>
         <p className="text-sm text-muted-foreground">Connecté en tant que : {user?.email}</p>
       </div>
+
+      {/* Messages des élèves, en premier (« et les admins, où ils voient
+          les messages ? », puis « non, [rien dans la] partie de
+          l'administration ») : ils étaient tout en bas, après les copies,
+          les annonces et le défi. Ils arrivent de « Un problème ? »
+          (/communaute) et de /messages. */}
+      <section id="messages" className="flex scroll-mt-24 flex-col gap-4 rounded-[24px] border border-border bg-surface p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)] sm:p-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="size-5" aria-hidden="true">
+              <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12" />
+            </svg>
+          </span>
+          <h2 className="font-affiche text-2xl text-ink">Messages des élèves</h2>
+          {nonLus > 0 && (
+            <span className="rounded-full bg-erreur px-3 py-1 text-xs font-bold text-white">
+              {nonLus} non lu{nonLus > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        {filsMessages.length === 0 ? (
+          <p className="rounded-[16px] border border-dashed border-border-strong px-4 py-6 text-center text-sm text-muted-foreground">
+            Aucun élève ne vous a encore écrit. Les messages envoyés depuis « Un problème ? » (page Communauté) arriveront
+            ici.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {filsMessages.map((fil) => (
+              <li key={fil.eleveId}>
+                <Link
+                  href={`/administration/messages/${fil.eleveId}`}
+                  className="flex items-center justify-between gap-3 rounded-[16px] border border-border bg-surface p-4 transition-colors hover:border-primary"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-foreground">
+                      {fil.eleveNomComplet ?? fil.eleveEmail ?? "Élève"}
+                    </p>
+                    <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
+                      {fil.dernierMessage.contenu}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    {fil.nonLusDeLEleve > 0 && (
+                      <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+                        {fil.nonLusDeLEleve}
+                      </span>
+                    )}
+                    <p className="hidden text-xs text-subtle-foreground sm:block">{formaterDate(fil.dernierMessage.created_at)}</p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {/* Activation des comptes après paiement sur WhatsApp (accès payant). */}
       <Link
@@ -122,40 +178,6 @@ export default async function PageAdministration() {
         )}
       </section>
 
-      <section id="messages" className="flex scroll-mt-24 flex-col gap-3">
-        <h2 className="text-lg font-semibold text-foreground">Messages des élèves</h2>
-        {filsMessages.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucun message pour l&apos;instant.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {filsMessages.map((fil) => (
-              <li key={fil.eleveId}>
-                <Link
-                  href={`/administration/messages/${fil.eleveId}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4 hover:border-border-strong"
-                >
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {fil.eleveNomComplet ?? fil.eleveEmail ?? "Élève"}
-                    </p>
-                    <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
-                      {fil.dernierMessage.contenu}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-3">
-                    {fil.nonLusDeLEleve > 0 && (
-                      <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-                        {fil.nonLusDeLEleve}
-                      </span>
-                    )}
-                    <p className="text-xs text-subtle-foreground">{formaterDate(fil.dernierMessage.created_at)}</p>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </main>
   );
 }
