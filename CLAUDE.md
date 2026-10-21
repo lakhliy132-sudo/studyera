@@ -324,6 +324,11 @@ Deux cases du menu de gauche (seulement là), pages protégées.
   `annonces` déjà prévue (et lue par `/communaute`), créée par
   `20261104000001_annonces.sql` (rejouable) ; écriture par RLS
   (`est_admin()`).
+- **Contacter l'administration** : carte « Un problème ? » dans la
+  colonne de droite de `/communaute` (`ContactAdministration`). Le
+  message part dans le fil privé de l'élève (table `messages`, migration
+  rejouable `20261104000002_messages.sql`), lu sur `/messages` ; les
+  admins répondent depuis `/administration`.
 
 ## 8. Vérifier son travail
 

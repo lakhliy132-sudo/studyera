@@ -15,6 +15,10 @@ import { creerClientServeur } from "@/lib/supabase/server";
  * toujours l'élève, jamais un admin précis) : n'importe quel admin
  * peut répondre, l'élève voit toutes les réponses dans la même
  * conversation, sans avoir à choisir un destinataire.
+ *
+ * On y arrive aussi depuis « Un problème ? » de /communaute. Mise en page
+ * reprise aux règles du site (pleine largeur, titre Lalezar) à cette
+ * occasion.
  */
 export default async function PageMessages() {
   const supabase = await creerClientServeur();
@@ -27,13 +31,17 @@ export default async function PageMessages() {
   const messages = await recupererMessagesEleve(userId);
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
-      <div>
-        <h1 className="text-xl font-semibold text-foreground">Messages</h1>
-        <p className="text-sm text-muted-foreground">Écris directement à l&apos;administration du site.</p>
-      </div>
+    <main className="flex w-full flex-col gap-8 px-6 pt-16 pb-20 sm:px-9 sm:pt-12 lg:px-16 xl:px-24 2xl:px-40">
+      <header className="flex flex-col gap-2">
+        <h1 className="font-affiche text-[40px] leading-[1.05] text-ink sm:text-6xl">Mes messages</h1>
+        <p className="text-base text-muted-foreground sm:text-lg">
+          Ta conversation privée avec l&apos;administration de StudyEra. Seuls toi et l&apos;équipe la voyez.
+        </p>
+      </header>
 
-      <FilMessages eleveId={userId} messagesInitiaux={messages} idUtilisateurConnecte={userId} />
+      <section className="rounded-[28px] border border-border bg-surface p-5 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)] sm:p-8">
+        <FilMessages eleveId={userId} messagesInitiaux={messages} idUtilisateurConnecte={userId} />
+      </section>
     </main>
   );
 }

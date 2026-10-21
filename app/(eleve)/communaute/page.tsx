@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import ContactAdministration from "@/components/ContactAdministration";
 import DefiSemaine from "@/components/DefiSemaine";
 import FormulaireCommunaute from "@/components/FormulaireCommunaute";
 import PublicationCommunaute from "@/components/PublicationCommunaute";
 import { IconeBulles, IconeCible, IconeInfo } from "@/components/icones";
 import { MATIERES } from "@/lib/matieres";
-import { recupererAnnonces } from "@/lib/supabase/communication";
+import { recupererAnnonces, recupererMessagesEleve } from "@/lib/supabase/communication";
 import { recupererMessagesCommunaute, recupererStatistiquesCommunaute } from "@/lib/supabase/communaute";
 import { recupererDefiCourant } from "@/lib/supabase/defis";
 import { creerClientServeur } from "@/lib/supabase/server";
@@ -66,6 +67,8 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
     recupererDefiCourant(),
   ]);
   const monId = utilisateur.user?.id ?? null;
+  // Réponses de l'administration pas encore lues, pour « Mes messages ».
+  const reponsesNonLues = monId ? (await recupererMessagesEleve(monId)).filter((m) => m.auteur_id !== monId && !m.lu).length : 0;
 
   const lienMatiere = (slug?: string) => (slug ? `/communaute?matiere=${encodeURIComponent(slug)}#questions` : "/communaute#questions");
   const carte = "rounded-[24px] border border-border bg-surface shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)]";
@@ -295,29 +298,40 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
             )}
           </div>
 
-          <aside className={`flex flex-col gap-4 p-6 xl:sticky xl:top-6 ${carte}`}>
-            <p className="font-affiche text-xl text-ink">Une bonne question</p>
-            <ol className="flex flex-col gap-3.5">
-              {[
-                { titre: "Choisis la matière", detail: "Elle range ta question au bon endroit." },
-                { titre: "Dis où tu bloques", detail: "La leçon, l'exercice, la phrase que tu ne comprends pas." },
-                { titre: "Ajoute une photo", detail: "L'énoncé ou ton brouillon : c'est plus clair qu'un long texte." },
-              ].map((conseil, index) => (
-                <li key={conseil.titre} className="flex gap-3">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-tint text-xs font-bold text-primary">
-                    {index + 1}
-                  </span>
-                  <span className="text-sm leading-snug">
-                    <span className="block font-bold text-ink">{conseil.titre}</span>
-                    <span className="text-muted-foreground">{conseil.detail}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-            <p dir="rtl" lang="ar" className="mt-1 border-t border-border pt-4 text-center font-ruqaa text-xl text-primary">
-              اللي عرف شي حاجة، يعلّمها
-            </p>
-          </aside>
+          <div className="flex flex-col gap-4 xl:sticky xl:top-6">
+            <aside className={`flex flex-col gap-4 p-6 ${carte}`}>
+              <p className="font-affiche text-xl text-ink">Une bonne question</p>
+              <ol className="flex flex-col gap-3.5">
+                {[
+                  { titre: "Choisis la matière", detail: "Elle range ta question au bon endroit." },
+                  { titre: "Dis où tu bloques", detail: "La leçon, l'exercice, la phrase que tu ne comprends pas." },
+                  { titre: "Ajoute une photo", detail: "L'énoncé ou ton brouillon : c'est plus clair qu'un long texte." },
+                ].map((conseil, index) => (
+                  <li key={conseil.titre} className="flex gap-3">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-tint text-xs font-bold text-primary">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm leading-snug">
+                      <span className="block font-bold text-ink">{conseil.titre}</span>
+                      <span className="text-muted-foreground">{conseil.detail}</span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p dir="rtl" lang="ar" className="mt-1 border-t border-border pt-4 text-center font-ruqaa text-xl text-primary">
+                اللي عرف شي حاجة، يعلّمها
+              </p>
+            </aside>
+
+            {/* « Ajoute une petite partie où l'élève contacte
+             * l'administration s'il a un problème » : sous les conseils,
+             * un message privé à l'équipe (components/ContactAdministration). */}
+            {monId && (
+              <section aria-label="Contacter l'administration" className={`p-6 ${carte}`}>
+                <ContactAdministration reponsesNonLues={reponsesNonLues} />
+              </section>
+            )}
+          </div>
         </div>
       </section>
     </main>

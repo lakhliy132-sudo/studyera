@@ -132,7 +132,7 @@ export default function FilMessages({ eleveId, messagesInitiaux, idUtilisateurCo
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-3">
         {messages.length === 0 && (
-          <li className="rounded-lg border border-border bg-surface-muted p-4 text-center text-muted-foreground">
+          <li className="rounded-[18px] border border-dashed border-border-strong px-4 py-8 text-center text-muted-foreground">
             Aucun message pour le moment. Écris le premier ci-dessous.
           </li>
         )}
@@ -143,8 +143,8 @@ export default function FilMessages({ eleveId, messagesInitiaux, idUtilisateurCo
               <div
                 className={
                   estDeMoi
-                    ? "max-w-[80%] rounded-lg bg-primary px-4 py-2.5 text-primary-foreground"
-                    : "max-w-[80%] rounded-lg border border-border bg-surface px-4 py-2.5 text-foreground"
+                    ? "max-w-[80%] rounded-[20px] rounded-br-[6px] bg-primary px-4 py-2.5 text-primary-foreground"
+                    : "max-w-[80%] rounded-[20px] rounded-bl-[6px] border border-border bg-surface-muted px-4 py-2.5 text-foreground"
                 }
               >
                 <p className="text-[15px] leading-relaxed whitespace-pre-line">{message.contenu}</p>
@@ -163,13 +163,13 @@ export default function FilMessages({ eleveId, messagesInitiaux, idUtilisateurCo
           onChange={(e) => setBrouillon(e.target.value)}
           rows={3}
           placeholder="Écris ton message..."
-          className="w-full rounded-lg border border-border bg-surface p-3 text-[15px] text-foreground focus:border-primary focus:outline-none"
+          className="w-full rounded-[16px] border border-border bg-surface p-3.5 text-[15px] text-foreground focus:border-primary focus:outline-none"
         />
         {erreur && <p className="text-sm text-erreur">{erreur}</p>}
         <button
           type="submit"
           disabled={envoiEnCours || !brouillon.trim()}
-          className="self-end rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          className="self-end rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground shadow-[0_10px_22px_-12px_var(--color-primary)] transition-transform hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
         >
           {envoiEnCours ? "Envoi..." : "Envoyer"}
         </button>
