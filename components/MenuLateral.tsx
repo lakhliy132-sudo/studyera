@@ -35,6 +35,8 @@ const TRACES = {
   examen:
     "M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H9zM9 12h6M9 16h4",
   fermer: "M6 6l12 12M18 6 6 18",
+  // Un bouclier : l'espace des administrateurs.
+  admin: "M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6zM9 12l2 2 4-4",
   // Un point entouré d'ondes : le direct.
   // Un porte-voix : les annonces.
   annonce: "M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1M15 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11",
@@ -157,6 +159,8 @@ const CLE_ANIMATIONS = "studyera-animations";
 interface MenuLateralProps {
   prenom: string | null;
   email: string | null;
+  admin?: boolean;
+  messagesNonLus?: number;
 }
 
 /**
@@ -180,7 +184,22 @@ interface MenuLateralProps {
  * - le bouton "couper les animations" du site est ajouté au menu de
  *   compte, pour ne pas le perdre en route.
  */
-export default function MenuLateral({ prenom, email }: MenuLateralProps) {
+export default function MenuLateral({ prenom, email, admin = false, messagesNonLus = 0 }: MenuLateralProps) {
+  // « Une case Administration, visible seulement pour les admins, avec une
+  // pastille rouge du nombre de messages non lus » : elle mène droit aux
+  // messages (#messages) quand il y en a.
+  const liens = admin
+    ? [
+        ...LIENS,
+        {
+          libelle: "Administration",
+          href: "/administration",
+          cible: messagesNonLus > 0 ? "/administration#messages" : "/administration",
+          trace: TRACES.admin,
+          pastille: messagesNonLus,
+        },
+      ]
+    : LIENS;
   const chemin = usePathname();
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
@@ -359,12 +378,14 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
           className="flex-1 overflow-y-auto px-3 py-2"
         >
           <ul className="flex flex-col gap-1.5">
-            {LIENS.map((lien) => {
+            {liens.map((lien) => {
               const actif = estActif(lien.href);
+              const cible = "cible" in lien ? lien.cible : lien.href;
+              const pastille = "pastille" in lien ? lien.pastille : 0;
               return (
                 <li key={lien.href}>
                   <Link
-                    href={lien.href}
+                    href={cible}
                     aria-current={actif ? "page" : undefined}
                     title={reduit ? lien.libelle : undefined}
                     className={`group relative flex items-center rounded-[12px] text-[16px] font-semibold transition ${
@@ -382,6 +403,18 @@ export default function MenuLateral({ prenom, email }: MenuLateralProps) {
                       className={`size-[22px] ${actif ? "text-white" : "text-white/60 group-hover:text-white"}`}
                     />
                     {!reduit && lien.libelle}
+                    {pastille > 0 && (
+                      <span
+                        aria-label={`${pastille} message${pastille > 1 ? "s" : ""} non lu${pastille > 1 ? "s" : ""}`}
+                        className={
+                          reduit
+                            ? "absolute top-1.5 right-1.5 flex size-[18px] items-center justify-center rounded-full bg-erreur text-[10px] font-bold text-white"
+                            : "ms-auto rounded-full bg-erreur px-2 py-0.5 text-xs font-bold text-white tabular-nums"
+                        }
+                      >
+                        {pastille > 9 ? "9+" : pastille}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );

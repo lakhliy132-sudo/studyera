@@ -155,13 +155,24 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // l'utilisateur) — une requête de plus uniquement pour un utilisateur
   // connecté, comme AccueilConnecte le fait déjà pour la même donnée.
   let prenom: string | null = null;
+  let admin = false;
+  let messagesNonLus = 0;
   if (user) {
     const { data: profil } = await supabase
       .from("profils")
-      .select("nom_complet")
+      .select("nom_complet, role")
       .eq("id", user.id)
       .maybeSingle();
     prenom = deriverPrenom(profil?.nom_complet ?? null, user.email ?? null);
+    admin = profil?.role === "admin";
+    // Pour la pastille de la case « Administration » (« et les admins,
+    // où ils voient les messages ? ») : messages écrits par des élèves
+    // dans leur fil et pas encore lus. La RLS laisse un admin lire tous
+    // les fils ; table absente ou erreur : pas de pastille.
+    if (admin) {
+      const { data: nonLus } = await supabase.from("messages").select("eleve_id, auteur_id").eq("lu", false);
+      messagesNonLus = (nonLus ?? []).filter((m) => m.auteur_id === m.eleve_id).length;
+    }
   }
 
   return (
@@ -194,6 +205,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           connecte={Boolean(user)}
           email={user?.email ?? null}
           prenom={prenom}
+          admin={admin}
+          messagesNonLus={messagesNonLus}
         />
         {/* Le décalage n'est réservé que pour un élève connecté : c'est
          * lui seul qui voit la colonne de navigation (MenuLateral, qui
