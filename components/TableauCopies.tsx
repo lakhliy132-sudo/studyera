@@ -29,27 +29,27 @@ export default function TableauCopies({ copies }: TableauCopiesProps) {
       <table className="w-full min-w-max text-sm">
         <thead>
           <tr className="border-b border-border bg-surface-muted text-left text-muted-foreground">
-            <th className="p-3 font-medium">Date</th>
-            <th className="p-3 font-medium">Élève</th>
-            <th className="p-3 font-medium">Sujet</th>
-            <th className="p-3 font-medium">Note</th>
-            <th className="p-3 font-medium">Copie</th>
+            <th className="px-3 py-2 font-medium">Date</th>
+            <th className="px-3 py-2 font-medium">Élève</th>
+            <th className="px-3 py-2 font-medium">Sujet</th>
+            <th className="px-3 py-2 font-medium">Note</th>
+            <th className="px-3 py-2 font-medium">Copie</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
           {copies.map((copie) => (
             <tr key={copie.id}>
-              <td className="p-3 whitespace-nowrap text-foreground">
+              <td className="px-3 py-2 whitespace-nowrap text-foreground">
                 {formaterDate(copie.created_at)}
               </td>
-              <td className="p-3 text-foreground">
+              <td className="px-3 py-2 text-foreground">
                 {copie.eleveNomComplet ?? copie.eleveEmail ?? "—"}
               </td>
-              <td className="p-3 text-foreground">{copie.sujetTitre ?? "—"}</td>
-              <td className="p-3 text-foreground">
+              <td className="px-3 py-2 text-foreground">{copie.sujetTitre ?? "—"}</td>
+              <td className="px-3 py-2 text-foreground">
                 {copie.note_total !== null ? copie.note_total : "En attente"}
               </td>
-              <td className="p-3">
+              <td className="px-3 py-2">
                 {copie.image_url ? (
                   <a
                     href={copie.image_url}

@@ -14,8 +14,9 @@ function formaterDate(dateIso: string) {
   return new Date(dateIso).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-/** Copies montrées d'emblée ; les autres sont repliées sous le tableau. */
-const COPIES_VISIBLES = 8;
+/** Copies montrées d'emblée ; les autres sont repliées sous le tableau
+ * (8, puis 3 : « copies déposées, réduis-la encore »). */
+const COPIES_VISIBLES = 3;
 const ANNONCES_VISIBLES = 3;
 
 /** Icônes des cartes, dans le trait du menu de gauche (1.9, 24×24). */
