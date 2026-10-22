@@ -170,7 +170,7 @@ export default async function PageCommunaute({ searchParams }: PagePropsCommunau
                     <p className="min-w-0 font-bold">{annonce.titre}</p>
                     <span className="shrink-0 text-xs text-white/65">{depuis(annonce.created_at)}</span>
                   </div>
-                  <p className={`mt-1 text-sm leading-relaxed whitespace-pre-line text-white/80 ${index === 0 ? "" : "line-clamp-2"}`}>
+                  <p className={`mt-1 text-sm leading-relaxed font-semibold whitespace-pre-line text-white/90 ${index === 0 ? "" : "line-clamp-2"}`}>
                     {annonce.contenu}
                   </p>
                 </li>

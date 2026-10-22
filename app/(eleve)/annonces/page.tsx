@@ -174,7 +174,8 @@ export default async function PageAnnonces() {
                 <svg aria-hidden="true" viewBox="0 0 300 24" preserveAspectRatio="none" className="-mt-2 h-3 w-24 text-[#f2b35c] sm:w-32">
                   <path className="trace-main" pathLength={1} d="M4 16C60 6 120 4 180 9s90 8 116-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
                 </svg>
-                <p className="max-w-[760px] text-[15px] leading-relaxed whitespace-pre-line text-white/85 sm:text-base">{une.contenu}</p>
+                {/* Le texte en gras (« je veux que ça soit en gras »). */}
+                <p className="max-w-[760px] text-[15px] leading-relaxed font-bold whitespace-pre-line text-white sm:text-base">{une.contenu}</p>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/15 pt-4">
                   <span className="flex items-center gap-3">
                     <span className="flex size-8 items-center justify-center rounded-full bg-white" style={{ color: "var(--fond-sombre-haut)" }}>
@@ -237,7 +238,7 @@ export default async function PageAnnonces() {
                             <span className="w-fit rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground">Nouveau</span>
                           )}
                           <span className="font-affiche text-xl leading-snug text-ink sm:text-2xl">{a.titre}</span>
-                          <span className="text-[15px] leading-relaxed whitespace-pre-line text-foreground">{a.contenu}</span>
+                          <span className="text-[15px] leading-relaxed font-bold whitespace-pre-line text-foreground">{a.contenu}</span>
                           {admin && <BoutonSupprimerAnnonce id={a.id} />}
                         </span>
                       </article>
