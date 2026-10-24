@@ -463,9 +463,11 @@ export default function EpreuveInteractive({
         </>
       )}
 
+      {/* Sujet original en taille normale lui aussi (« aussi le
+          sujet ») ; grand corps pour l'arabe seulement. */}
       {onglet === "sujet" && (
         <div className="rounded-[22px] border border-border bg-feuille p-5 shadow-sm sm:p-9">
-          <ContenuMarkdown texte={enonceMdx} grandeTaille />
+          <ContenuMarkdown texte={enonceMdx} grandeTaille={arabe} />
         </div>
       )}
 
