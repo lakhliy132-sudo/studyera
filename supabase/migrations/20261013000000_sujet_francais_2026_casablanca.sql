@@ -11,7 +11,9 @@
 -- réelle n'a pas pu être vérifiée.
 --
 -- En-tête recopié : « Session : Juin 2026 » (session normale),
--- « Durée : 2 heures », « Coefficient : 3 ». Pas de filière indiquée.
+-- « Durée : 2 heures ». Pas de filière indiquée. Coefficient : 4, corrigé
+-- à la demande de l'utilisateur (« coefficient 4, corrige ça ») ; la
+-- transcription avait lu 3.
 --
 -- Les questions 2, 3, 4 et 7 ont deux parties (a, b) notées ensemble
 -- sur 1 point, sans répartition : chacune reste une seule question à
@@ -29,7 +31,7 @@ values (
   $sujet$Casablanca-Settat$sujet$,
   $sujet$Antigone$sujet$,
   120,
-  3,
+  4,
   $sujet$## Texte
 
 **HÉMON :** Qu'est-ce que tu vas me dire encore ?
