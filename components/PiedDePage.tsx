@@ -8,13 +8,27 @@ interface ColonnePied {
   liens: { href: string; libelle: string }[];
 }
 
+/** Colonnes refaites après « corrige ça » : le pied ne parlait que du
+ * français (une colonne entière, plus « Français » répété dans
+ * « Plateforme ») et ignorait les trois autres matières et les examens
+ * régionaux. */
 const COLONNES: ColonnePied[] = [
   {
     titre: "Plateforme",
     liens: [
       { href: "/matieres", libelle: "Matières" },
-      { href: "/francais", libelle: "Français" },
+      { href: "/examens-regionaux", libelle: "Examens régionaux" },
       { href: "/calendrier", libelle: "Calendrier" },
+      { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
+    ],
+  },
+  {
+    titre: "Matières",
+    liens: [
+      { href: "/francais", libelle: "Français" },
+      { href: "/arabe", libelle: "Arabe" },
+      { href: "/histoire-geo", libelle: "Histoire-Géographie" },
+      { href: "/education-islamique", libelle: "Éducation islamique" },
     ],
   },
   {
@@ -23,7 +37,6 @@ const COLONNES: ColonnePied[] = [
       { href: "/oeuvres", libelle: "Œuvres" },
       { href: "/langue", libelle: "Cours de langue" },
       { href: "/production-ecrite", libelle: "Production écrite" },
-      { href: "/redaction/nouvelle", libelle: "Correcteur IA" },
     ],
   },
   {
@@ -58,12 +71,13 @@ export default function PiedDePage() {
              * l'éducation islamique ont rejoint le français : il
              * annonçait encore un site de français seul. */}
             <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Révise le bac marocain : français, arabe, histoire-géographie et
-              éducation islamique — cours, langue et production écrite.
+              Révise la 1<sup>re</sup> année du bac marocain : français, arabe,
+              histoire-géographie et éducation islamique. Cours, examens
+              régionaux et correcteur de copies.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4">
             {COLONNES.map((colonne) => (
               <div key={colonne.titre} className="flex flex-col gap-2">
                 <p className="text-[13px] font-semibold text-ink">
@@ -87,7 +101,7 @@ export default function PiedDePage() {
         </div>
 
         <p className="border-t border-border pt-4 text-[11.5px] text-subtle-foreground">
-          © {new Date().getFullYear()} Studyera. Tous droits réservés.
+          © {new Date().getFullYear()} StudyEra. Tous droits réservés.
         </p>
       </ConteneurMarges>
     </footer>
