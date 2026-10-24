@@ -469,9 +469,11 @@ export default function EpreuveInteractive({
         </div>
       )}
 
+      {/* Corrigé en taille normale (« la taille du corrigé est trop
+          grande ») : le grand corps ne sert que pour l'arabe. */}
       {onglet === "corrige" && corrigeMdx && (
         <div className="rounded-[22px] border border-border bg-feuille p-5 shadow-sm sm:p-9">
-          <ContenuMarkdown texte={corrigeMdx} grandeTaille />
+          <ContenuMarkdown texte={corrigeMdx} grandeTaille={arabe} />
         </div>
       )}
     </div>
