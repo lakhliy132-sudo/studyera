@@ -19,6 +19,10 @@ const CLE_THEME = "studyera-theme";
  *   interrupteur ;
  * - les palettes en tuiles, avec une bande de leurs quatre couleurs.
  *
+ * Puis « style-la encore plus » : l'aperçu dans une fenêtre de
+ * navigateur avec un halo, les étapes numérotées, un ciel de jour et un
+ * ciel de nuit pour le mode, une pastille dégradée sur chaque palette.
+ *
  * La palette est posée sur `<html data-palette="...">` et mémorisée en
  * `localStorage`, comme le thème clair/sombre (BoutonModeNuit.tsx) :
  * aucune table n'est nécessaire, et la préférence suit l'élève d'une
@@ -56,14 +60,25 @@ export default function ChoixPalette() {
   return (
     <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       {/* ——— Aperçu en direct ——— */}
-      <section aria-label="Aperçu" className={`flex flex-col gap-4 xl:sticky xl:top-6 ${carte}`}>
+      <section aria-label="Aperçu" className={`animate-entree-carte flex flex-col gap-4 xl:sticky xl:top-6 ${carte}`}>
         <div className="flex items-center justify-between gap-3">
           <p className="font-affiche text-2xl text-ink">Aperçu</p>
           <span className="rounded-full bg-primary-tint px-3 py-1 text-xs font-bold text-primary">
             {nomPalette} · {sombre ? "Sombre" : "Clair"}
           </span>
         </div>
-        <div aria-hidden="true" className="flex h-[300px] overflow-hidden rounded-[18px] border border-border bg-background sm:h-[340px]">
+        <div aria-hidden="true" className="relative">
+        <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[32px] opacity-30 blur-2xl" style={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-consigne))" }} />
+        <div className="overflow-hidden rounded-[18px] border border-border bg-background shadow-[0_30px_60px_-30px_rgba(15,23,42,0.55)]">
+        <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-2.5">
+          <span className="flex gap-1.5">
+            <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+            <span className="size-2.5 rounded-full bg-[#febc2e]" />
+            <span className="size-2.5 rounded-full bg-[#28c840]" />
+          </span>
+          <span className="flex-1 truncate rounded-full bg-surface-muted px-3 py-1 text-center text-[11px] font-semibold text-muted-foreground">studyeraprod.vercel.app</span>
+        </div>
+        <div className="flex h-[280px] sm:h-[320px]">
           <div
             className="flex w-14 shrink-0 flex-col items-center gap-3 py-4 sm:w-16"
             style={{ background: "linear-gradient(180deg, var(--fond-sombre-haut), var(--fond-sombre-bas))" }}
@@ -96,19 +111,21 @@ export default function ChoixPalette() {
             <span className="flex h-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">Commencer</span>
           </div>
         </div>
+        </div>
+        </div>
         <p className="text-sm text-muted-foreground">Le site entier change en même temps que cet aperçu.</p>
       </section>
 
       <div className="flex min-w-0 flex-col gap-6">
         {/* ——— Mode ——— */}
-        <section aria-label="Mode" className={carte}>
-          <p className="font-affiche text-2xl text-ink">Mode</p>
+        <section aria-label="Mode" className={`animate-entree-carte ${carte}`} style={{ animationDelay: "80ms" }}>
+          <p className="flex items-center gap-3 font-affiche text-2xl text-ink"><span className="flex size-8 items-center justify-center rounded-full bg-primary font-sans text-sm font-bold text-primary-foreground">1</span>Mode</p>
           <p className="text-sm text-muted-foreground">Clair le jour, sombre le soir : à toi de voir.</p>
           <div role="radiogroup" aria-label="Mode" className="mt-4 grid grid-cols-2 gap-3">
             {[
-              { valeur: false, nom: "Clair", Icone: IconeSoleil, fond: "#f6f8fc", trait: "#d9e0ee", encre: "#14213d" },
-              { valeur: true, nom: "Sombre", Icone: IconeLune, fond: "#12141c", trait: "#2a2f3d", encre: "#e8ebf5" },
-            ].map(({ valeur, nom, Icone, fond, trait, encre }) => {
+              { valeur: false, nom: "Clair", Icone: IconeSoleil },
+              { valeur: true, nom: "Sombre", Icone: IconeLune },
+            ].map(({ valeur, nom, Icone }) => {
               const actif = sombre === valeur;
               return (
                 <button
@@ -121,13 +138,30 @@ export default function ChoixPalette() {
                     actif ? "border-primary shadow-[0_12px_28px_-16px_var(--color-primary)]" : "border-border hover:border-border-strong"
                   }`}
                 >
-                  {/* Vignette aux couleurs fixes du mode, pour qu'on voie
-                      ce qu'on choisit quel que soit le mode actuel. */}
-                  <span className="flex h-20 flex-col gap-1.5 rounded-xl p-3" style={{ backgroundColor: fond }} aria-hidden="true">
-                    <span className="h-2 w-1/2 rounded-full" style={{ backgroundColor: encre }} />
-                    <span className="h-1.5 w-3/4 rounded-full" style={{ backgroundColor: trait }} />
-                    <span className="h-1.5 w-2/3 rounded-full" style={{ backgroundColor: trait }} />
-                    <span className="mt-auto h-3 w-10 rounded-full bg-primary" />
+                  {/* Vignette aux couleurs fixes du mode (un ciel de jour,
+                      un ciel de nuit), pour qu'on voie ce qu'on choisit
+                      quel que soit le mode actuel. */}
+                  <span
+                    aria-hidden="true"
+                    className="relative flex h-24 overflow-hidden rounded-xl sm:h-28"
+                    style={{ background: valeur ? "linear-gradient(160deg, #1e1b4b 0%, #0f172a 70%)" : "linear-gradient(160deg, #bfdbfe 0%, #fef3c7 100%)" }}
+                  >
+                    {valeur ? (
+                      <>
+                        <span className="absolute top-4 right-6 size-9 rounded-full bg-[#e5e7f5] shadow-[0_0_24px_6px_rgba(229,231,245,0.35)]" />
+                        <span className="absolute top-3 right-[18px] size-8 rounded-full bg-[#1a1840]" />
+                        {[[18, 22], [40, 60], [28, 110], [62, 34], [12, 150], [50, 170]].map(([t, l]) => (
+                          <span key={`${t}-${l}`} className="absolute size-1 rounded-full bg-white/80" style={{ top: t, left: l }} />
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <span className="absolute top-4 right-6 size-10 rounded-full bg-[#fbbf24] shadow-[0_0_30px_10px_rgba(251,191,36,0.45)]" />
+                        <span className="absolute bottom-3 left-4 h-4 w-16 rounded-full bg-white/80" />
+                        <span className="absolute bottom-6 left-9 h-4 w-10 rounded-full bg-white/80" />
+                      </>
+                    )}
+                    <span className="absolute inset-x-3 bottom-3 ms-auto h-5 w-14 rounded-full bg-primary" />
                   </span>
                   <span className="flex items-center gap-2 px-1">
                     <Icone className={`size-4 ${actif ? "text-primary" : "text-muted-foreground"}`} />
@@ -145,9 +179,9 @@ export default function ChoixPalette() {
         </section>
 
         {/* ——— Palettes ——— */}
-        <section aria-label="Thème de couleurs" className={carte}>
+        <section aria-label="Thème de couleurs" className={`animate-entree-carte ${carte}`} style={{ animationDelay: "160ms" }}>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="font-affiche text-2xl text-ink">Thème de couleurs</p>
+            <p className="flex items-center gap-3 font-affiche text-2xl text-ink"><span className="flex size-8 items-center justify-center rounded-full bg-primary font-sans text-sm font-bold text-primary-foreground">2</span>Thème de couleurs</p>
             <span className="text-sm text-muted-foreground">{PALETTES.length} palettes</span>
           </div>
           <p className="text-sm text-muted-foreground">Choisis la couleur de ton site.</p>
@@ -161,20 +195,27 @@ export default function ChoixPalette() {
                     type="button"
                     onClick={() => choisir(choix.cle)}
                     aria-pressed={actif}
-                    className={`flex w-full flex-col overflow-hidden rounded-[16px] border-2 text-left transition-all hover:-translate-y-0.5 ${
-                      actif ? "border-primary shadow-[0_12px_28px_-16px_var(--color-primary)]" : "border-border hover:border-border-strong"
+                    className={`flex w-full flex-col overflow-hidden rounded-[16px] border-2 bg-surface text-left transition-all hover:-translate-y-1 hover:shadow-[0_16px_30px_-20px_rgba(15,23,42,0.5)] ${
+                      actif ? "border-primary ring-4 ring-primary/20 shadow-[0_14px_30px_-16px_var(--color-primary)]" : "border-border hover:border-border-strong"
                     }`}
                   >
-                    <span className="flex h-12" aria-hidden="true">
-                      {choix.apercu.map((couleur, rang) => (
-                        <span key={rang} className="flex-1" style={{ backgroundColor: couleur }} />
-                      ))}
+                    <span className="relative p-1.5 pb-0" aria-hidden="true">
+                      <span className="flex h-14 overflow-hidden rounded-[11px]">
+                        {choix.apercu.map((couleur, rang) => (
+                          <span key={rang} className="flex-1" style={{ backgroundColor: couleur }} />
+                        ))}
+                      </span>
+                      <span
+                        className="absolute -bottom-4 left-4 size-8 rounded-full ring-4 ring-surface"
+                        style={{ background: `linear-gradient(135deg, ${choix.vif}, ${choix.primaire})` }}
+                      />
                     </span>
-                    <span className="flex items-center gap-2 bg-surface px-3 py-2.5">
+                    <span className="flex items-center gap-2 bg-surface px-3 pt-5 pb-3">
                       <span className={`flex-1 truncate text-sm font-bold ${actif ? "text-primary" : "text-ink"}`}>{choix.nom}</span>
                       {actif && (
-                        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <span className="flex shrink-0 items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">
                           <IconeCoche className="size-3" />
+                          <span className="hidden sm:inline">Choisi</span>
                         </span>
                       )}
                     </span>
