@@ -324,28 +324,30 @@ export default async function AccueilVisiteur() {
             }
           />
 
-          {/* Le français écrit (« ajoute le truc pour la production écrite
-              aussi », juste avant les examens régionaux) : les cours de
-              production écrite et le correcteur. Visuels pris sur le vrai
-              site : la page Production écrite, et le correcteur sur
-              téléphone à partir du sujet traité. */}
+          {/* Le correcteur de copies (« ajoute le truc pour la production
+              écrite aussi », juste avant les examens régionaux ; puis « non,
+              ne mets pas le truc des cours de l'expression écrite » : le
+              correcteur seul). Visuels pris sur le vrai site, à la page du
+              correcteur : sur ordinateur, et l'envoi en photo sur téléphone.
+              L'avis « clé manquante » de la copie locale, sans clé, a été
+              retiré de la capture : le site en ligne ne l'affiche pas. */}
           <Rangee
             numero="03"
-            titre="الإنشاء، مع مصحح كيعطيك النقطة"
-            texte="المنهجية، نماذج ديال إنشاءات مصححة، شبكة التقييم، والتعابير اللي كتعاونك تكتب. ومن بعد كتب الإنشاء ديالك ولا صورو، والمصحح كيعطيك نقطة على 20 مع الأخطاء مصححة وشنو خاصك تحسن."
+            titre="مصحح الإنشاء، كيعطيك النقطة"
+            texte="كتب الإنشاء ديالك بالفرنسية ولا صورو، والمصحح كيعطيك نقطة على 20، مع الأخطاء مشروحة وشنو خاصك تخدم عليه باش تحسن."
             points={[
-              (coursParCategorie["production-ecrite"] ?? 0) > 0 ? `${coursParCategorie["production-ecrite"]} دروس ديال الإنشاء` : null,
               "صوّر الورقة ديالك ولا كتب النص",
+              "نقطة على 20 والأخطاء مشروحة",
               correcteur ? `حتى ${QUOTA_QUOTIDIEN_MAX} تصحيحات فالنهار` : "المصحح: قريبا",
             ]}
-            lien={{ href: "/production-ecrite", texte: "شوف الإنشاء" }}
+            lien={{ href: "/redaction/nouvelle", texte: "جرب المصحح" }}
             visuel={
               <div className="relative pb-10">
-                <CadreNavigateur chemin="/production-ecrite" nom="production-ecrite" alt="صفحة الإنشاء فالموقع" />
-                <div className="absolute bottom-0 left-[4%] w-[26%] min-w-[110px] rotate-3">
-                  <CadreTelephone nom="correcteur-telephone" alt="المصحح فالتيليفون" />
+                <CadreNavigateur chemin="/redaction/nouvelle" nom="correcteur" alt="المصحح فالموقع" />
+                <div className="absolute right-[4%] bottom-0 w-[26%] min-w-[110px] -rotate-3">
+                  <CadreTelephone nom="correcteur-photo" alt="صوّر الورقة ديالك من التيليفون" />
                 </div>
-                <NoteMain className="absolute -top-12 right-[8%] hidden sm:flex" sens="bas-droite">
+                <NoteMain className="absolute -top-12 left-[8%] hidden sm:flex" sens="bas-gauche">
                   نقطة على 20
                 </NoteMain>
               </div>
