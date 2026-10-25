@@ -11,7 +11,6 @@ import {
   IconeCoche,
   IconeGraphique,
   IconePalette,
-  IconePlume,
 } from "@/components/icones";
 import { FORMULES, dateDarija, plusFormule } from "@/lib/abonnement";
 import { plusCommunsFormules } from "@/lib/plusFormules";
@@ -325,8 +324,37 @@ export default async function AccueilVisiteur() {
             }
           />
 
+          {/* Le français écrit (« ajoute le truc pour la production écrite
+              aussi », juste avant les examens régionaux) : les cours de
+              production écrite et le correcteur. Visuels pris sur le vrai
+              site : la page Production écrite, et le correcteur sur
+              téléphone à partir du sujet traité. */}
           <Rangee
             numero="03"
+            titre="الإنشاء، مع مصحح كيعطيك النقطة"
+            texte="المنهجية، نماذج ديال إنشاءات مصححة، شبكة التقييم، والتعابير اللي كتعاونك تكتب. ومن بعد كتب الإنشاء ديالك ولا صورو، والمصحح كيعطيك نقطة على 20 مع الأخطاء مصححة وشنو خاصك تحسن."
+            points={[
+              (coursParCategorie["production-ecrite"] ?? 0) > 0 ? `${coursParCategorie["production-ecrite"]} دروس ديال الإنشاء` : null,
+              "صوّر الورقة ديالك ولا كتب النص",
+              correcteur ? `حتى ${QUOTA_QUOTIDIEN_MAX} تصحيحات فالنهار` : "المصحح: قريبا",
+            ]}
+            lien={{ href: "/production-ecrite", texte: "شوف الإنشاء" }}
+            visuel={
+              <div className="relative pb-10">
+                <CadreNavigateur chemin="/production-ecrite" nom="production-ecrite" alt="صفحة الإنشاء فالموقع" />
+                <div className="absolute bottom-0 left-[4%] w-[26%] min-w-[110px] rotate-3">
+                  <CadreTelephone nom="correcteur-telephone" alt="المصحح فالتيليفون" />
+                </div>
+                <NoteMain className="absolute -top-12 right-[8%] hidden sm:flex" sens="bas-droite">
+                  نقطة على 20
+                </NoteMain>
+              </div>
+            }
+          />
+
+          <Rangee
+            inverse
+            numero="04"
             titre="الامتحانات الجهوية، بحال نهار الامتحان"
             texte={
               premiereAnnee && derniereAnnee
@@ -350,8 +378,7 @@ export default async function AccueilVisiteur() {
           />
 
           <Rangee
-            inverse
-            numero="04"
+            numero="05"
             titre="تمارين وفلاش كارت، باش يتحفظ"
             texte="دروس اللغة الفرنسية فيهم تمارين وكويز، ودروس الاجتماعيات فيهم كارطات كتقلبهم باش تحفظ التواريخ والمفاهيم."
             points={[
@@ -370,7 +397,8 @@ export default async function AccueilVisiteur() {
           />
 
           <Rangee
-            numero="05"
+            inverse
+            numero="06"
             titre="الكالندريي، باش ما يفوتك والو"
             texte={
               session
@@ -393,17 +421,11 @@ export default async function AccueilVisiteur() {
         </section>
 
         {/* ——— Le reste, en liste ——— */}
-        <section className="mt-28 grid grid-cols-1 gap-x-10 gap-y-10 border-t border-border pt-12 sm:mt-36 sm:grid-cols-2 xl:grid-cols-4">
-          <div data-reveler="" className="sm:col-span-2 xl:col-span-4">
+        <section className="mt-28 grid grid-cols-1 gap-x-10 gap-y-10 border-t border-border pt-12 sm:mt-36 sm:grid-cols-3">
+          <div data-reveler="" className="sm:col-span-3">
             <h2 className="font-affiche text-4xl text-ink sm:text-5xl">وزيد…</h2>
           </div>
           {[
-            {
-              Icone: IconePlume,
-              titre: "مصحح الإنشاء",
-              texte: `كتب الإنشاء بالفرنسية ولا صورها، وخود نقطة على 20 مع الأخطاء مصححة وشنو خاصو يتحسن. حتى ${QUOTA_QUOTIDIEN_MAX} تصحيحات فالنهار.`,
-              bientot: !correcteur,
-            },
             { Icone: IconeGraphique, titre: "تتبع التقدم", texte: "التابلو ديالك كيبين ليك شحال قريتي من الفصول ديال المؤلفات." },
             { Icone: IconeBulles, titre: "الجماعة", texte: "سول، جاوب، علّق وزيد تصاور مع التلاميذ اللي كيوجدو بحالك." },
             { Icone: IconePalette, titre: `${PALETTES.length} لون والوضع الليلي`, texte: "ختار اللون اللي عجبك، وقرا فالليل بلا ما تعيا عينيك." },
@@ -411,7 +433,6 @@ export default async function AccueilVisiteur() {
             <div key={o.titre} data-reveler="" style={delai(i * 90)} className="flex flex-col gap-3">
               <span className="flex items-center gap-3">
                 <o.Icone className="size-7 text-primary" />
-                {o.bientot && <span className="font-ruqaa text-lg text-[var(--color-consigne)]">قريبا</span>}
               </span>
               <span className="text-xl font-bold text-ink">{o.titre}</span>
               <span className="text-[15px] leading-relaxed text-muted-foreground">{o.texte}</span>
