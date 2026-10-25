@@ -26,6 +26,9 @@ const cle = (partie: number, question: number) => `${partie}-${question}`;
  * - la production écrite dans sa propre étape, avec le renvoi vers le
  *   correcteur.
  *
+ * Étendue ensuite à tous les sujets (« fais comme ça pour tous les
+ * examens »), y compris ceux rédigés en arabe (`arabe`).
+ *
  * Les questions et leurs corrections sont celles de EpreuveInteractive
  * (CorpsQuestion) : seule la disposition change. Comme là-bas, rien
  * n'est enregistré, l'élève compare lui-même au corrigé.
@@ -39,6 +42,7 @@ export default function FeuilleExamen({
   details,
   dureeMinutes,
   retour,
+  arabe = false,
 }: {
   epreuve: Epreuve;
   enonceMdx: string;
@@ -48,6 +52,11 @@ export default function FeuilleExamen({
   details: string;
   dureeMinutes: number | null;
   retour: string;
+  /** Sujet rédigé en arabe (arabe, éducation islamique) : le contenu se
+   * lit de droite à gauche, en police arabe et en grand corps, barème
+   * en « ن » ; pas de renvoi vers le correcteur, qui ne corrige que le
+   * français. Les libellés de l'interface restent en français. */
+  arabe?: boolean;
 }) {
   const [vue, setVue] = useState<Vue>({ type: "partie", index: 0 });
   const [reponses, setReponses] = useState<Record<string, unknown>>({});
@@ -161,7 +170,7 @@ export default function FeuilleExamen({
       </div>
 
       {/* ——— Le contenu ——— */}
-      <div className="pt-8">
+      <div className={`pt-8 ${arabe ? "font-arabe" : ""}`} dir={arabe ? "rtl" : undefined} lang={arabe ? "ar" : undefined}>
         {partie && (
           <>
             {sansCorrige && vue.type === "partie" && vue.index === 0 && (
@@ -172,19 +181,20 @@ export default function FeuilleExamen({
             )}
 
             {partie.redaction ? (
-              <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className={`grid grid-cols-1 items-start gap-8 ${arabe ? "" : "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"}`}>
                 <section className="flex flex-col gap-3">
                   <div className="flex items-baseline justify-between gap-3">
                     <h2 className="font-affiche text-2xl text-ink">{partie.titre}</h2>
-                    {partie.points > 0 && <span className="text-sm font-bold text-muted-foreground">{partie.points} points</span>}
+                    {partie.points > 0 && <span className="text-sm font-bold text-muted-foreground">{arabe ? `${partie.points} ن` : `${partie.points} points`}</span>}
                   </div>
                   {partie.consigne && <p className="text-sm text-muted-foreground">{partie.consigne}</p>}
                   {partie.texte && (
                     <div className="rounded-[20px] border border-border bg-feuille p-6 shadow-sm">
-                      <ContenuMarkdown texte={partie.texte} />
+                      <ContenuMarkdown texte={partie.texte} grandeTaille={arabe} />
                     </div>
                   )}
                 </section>
+                {!arabe && (
                 <aside className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-6 shadow-sm lg:sticky lg:top-[150px]">
                   <p className="font-affiche text-2xl text-ink">Fais corriger ta copie</p>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -200,6 +210,7 @@ export default function FeuilleExamen({
                     <IconeFleche className="size-4" />
                   </Link>
                 </aside>
+                )}
               </div>
             ) : (
               <div className={`grid grid-cols-1 gap-8 ${partie.texte ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" : ""}`}>
@@ -210,7 +221,7 @@ export default function FeuilleExamen({
                       <span className="hidden text-xs text-muted-foreground lg:inline">reste sous tes yeux</span>
                     </div>
                     <div className="overflow-y-auto rounded-[20px] border border-border bg-feuille p-6 shadow-sm">
-                      <ContenuMarkdown texte={partie.texte} />
+                      <ContenuMarkdown texte={partie.texte} grandeTaille={arabe} />
                     </div>
                   </section>
                 )}
@@ -218,7 +229,7 @@ export default function FeuilleExamen({
                 <section className="flex min-w-0 flex-col gap-4">
                   <div className="flex items-baseline justify-between gap-3">
                     <h2 className="font-affiche text-2xl text-ink">{partie.titre}</h2>
-                    {partie.points > 0 && <span className="shrink-0 text-sm font-bold text-muted-foreground">{partie.points} points</span>}
+                    {partie.points > 0 && <span className="shrink-0 text-sm font-bold text-muted-foreground">{arabe ? `${partie.points} ن` : `${partie.points} points`}</span>}
                   </div>
                   {partie.consigne && <p className="-mt-2 text-sm text-muted-foreground">{partie.consigne}</p>}
 
@@ -243,11 +254,11 @@ export default function FeuilleExamen({
                           >
                             {question.numero}
                           </span>
-                          <p className="flex-1 pt-1 text-[15px] leading-relaxed font-semibold text-ink">
+                          <p className={`flex-1 pt-1 leading-relaxed font-semibold text-ink ${arabe ? "text-[18px]" : "text-[15px]"}`}>
                             <EnLigne texte={question.enonce} />
                           </p>
                           <span className="pt-1.5">
-                            <Points points={question.points} />
+                            <Points points={question.points} arabe={arabe} />
                           </span>
                         </div>
                         <CorpsQuestion
@@ -268,7 +279,7 @@ export default function FeuilleExamen({
                           )}
                           {prochaine && (
                             <a href={prochaine} className="text-primary hover:underline">
-                              Suivante →
+                              Suivante ↓
                             </a>
                           )}
                         </div>
@@ -286,7 +297,7 @@ export default function FeuilleExamen({
                       <span className="flex flex-col gap-1">
                         <span className="text-xs font-bold tracking-[0.16em] text-white/60 uppercase">Étape suivante</span>
                         <span className="font-affiche text-2xl">{suivante.titre}</span>
-                        {suivante.points > 0 && <span className="text-sm text-white/70">{suivante.points} points</span>}
+                        {suivante.points > 0 && <span className="text-sm text-white/70">{arabe ? `${suivante.points} ن` : `${suivante.points} points`}</span>}
                       </span>
                       <span className="w-fit rounded-full bg-white px-5 py-2.5 text-sm font-bold" style={{ color: "var(--fond-sombre-haut)" }}>
                         Passer →
@@ -301,12 +312,12 @@ export default function FeuilleExamen({
 
         {vue.type === "sujet" && (
           <div className="rounded-[22px] border border-border bg-feuille p-5 shadow-sm sm:p-9">
-            <ContenuMarkdown texte={enonceMdx} />
+            <ContenuMarkdown texte={enonceMdx} grandeTaille={arabe} />
           </div>
         )}
         {vue.type === "corrige" && corrigeMdx && (
           <div className="rounded-[22px] border border-border bg-feuille p-5 shadow-sm sm:p-9">
-            <ContenuMarkdown texte={corrigeMdx} />
+            <ContenuMarkdown texte={corrigeMdx} grandeTaille={arabe} />
           </div>
         )}
       </div>
