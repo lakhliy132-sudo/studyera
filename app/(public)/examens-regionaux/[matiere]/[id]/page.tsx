@@ -8,6 +8,7 @@ import ChronometreEpreuve from "@/components/ChronometreEpreuve";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import CorrectionRepliable from "@/components/CorrectionRepliable";
 import EpreuveInteractive from "@/components/EpreuveInteractive";
+import FeuilleExamen from "@/components/FeuilleExamen";
 import { IconeFleche } from "@/components/icones";
 import { lireEpreuve } from "@/lib/annales-questions";
 import {
@@ -66,6 +67,10 @@ function Repere({
  * qu'un sujet puisse être mis en ligne avant d'être découpé en
  * questions.
  */
+/** Sujets qui ont la nouvelle feuille (FeuilleExamen) : pour l'instant
+ * le français 2015, Casablanca-Settat, session normale. */
+const SUJETS_FEUILLE = new Set(["4b5f2477-e2d4-4ead-afad-fe78f5bd3cf3"]);
+
 export default async function PageAnnale({ params }: PagePropsAnnale) {
   const { matiere, id } = await params;
   const annale = await recupererAnnaleParId(id);
@@ -106,6 +111,33 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
       ? await recupererSujetsRedaction(annale, epreuve.parties)
       : {};
   const titreMatiere = TITRES[matiere] ?? matiere;
+
+  // Nouvelle disposition de la feuille (texte à gauche, questions à
+  // droite, barre d'examen en haut), d'abord sur un seul sujet : « pour
+  // un premier temps, tu me la fais pour un seul examen de français ».
+  if (epreuve && SUJETS_FEUILLE.has(annale.id)) {
+    return (
+      <main className="flex w-full flex-col px-6 pt-14 pb-16 sm:px-9 lg:px-16 lg:pt-0 xl:px-24 2xl:px-40">
+        <FeuilleExamen
+          epreuve={epreuve}
+          enonceMdx={annale.enonce_mdx}
+          corrigeMdx={annale.corrige_mdx}
+          sujetsRedaction={sujetsRedaction}
+          titre={`${titreMatiere} ${annale.annee}${annale.academie ? ` · ${annale.academie}` : ""}`}
+          details={[
+            annale.oeuvre,
+            annale.session === "rattrapage" ? "session de rattrapage" : "session normale",
+            annale.duree_minutes ? dureeLisible(annale.duree_minutes) : null,
+            annale.coefficient !== null ? `coefficient ${annale.coefficient}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+          dureeMinutes={annale.duree_minutes}
+          retour={`/examens-regionaux/${matiere}`}
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col">
