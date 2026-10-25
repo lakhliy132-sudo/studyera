@@ -27,7 +27,7 @@ const cle = (partie: number, question: number) => `${partie}-${question}`;
  * quels. Volontairement limité à ces deux marques : un rendu Markdown
  * complet ferait d'un libellé commençant par « 1. » ou « - » une
  * liste, et le numéro disparaîtrait. */
-function EnLigne({ texte }: { texte: string }) {
+export function EnLigne({ texte }: { texte: string }) {
   const morceaux = texte.split(/(\*\*[^*]+\*\*|\*[^*\s()][^*]*?[^*\s()]\*|\*[^*\s()]\*)/g);
   return (
     <>
@@ -45,7 +45,7 @@ function EnLigne({ texte }: { texte: string }) {
 /** Barème d'une question. Dans un sujet en arabe, l'unité est « ن »
  * (نقطة), comme sur la feuille : « 1 pt » posé dans un bloc de droite
  * à gauche s'affichait « pt 1 ». */
-function Points({ points, arabe = false }: { points: number; arabe?: boolean }) {
+export function Points({ points, arabe = false }: { points: number; arabe?: boolean }) {
   if (!points) return null;
   return (
     <span className="shrink-0 text-xs font-semibold text-muted-foreground">
@@ -64,7 +64,7 @@ function Correction({ children }: { children: React.ReactNode }) {
   );
 }
 
-function CorpsQuestion({
+export function CorpsQuestion({
   question,
   reponse,
   surReponse,
@@ -229,6 +229,17 @@ function CorpsQuestion({
   );
 }
 
+/** Une réponse compte dès qu'elle contient quelque chose : un texte non
+ * vide, un choix, une case de tableau remplie ou un vrai/faux coché. */
+export function estRepondue(valeur: unknown): boolean {
+  if (typeof valeur === "string") return valeur.trim().length > 0;
+  if (typeof valeur === "number") return true;
+  if (typeof valeur === "object" && valeur !== null) {
+    return Object.values(valeur).some((v) => v === true || v === false || String(v).trim().length > 0);
+  }
+  return false;
+}
+
 /**
  * L'épreuve telle que la maquette fournie par l'utilisateur la
  * demande : trois onglets (s'entraîner, sujet original, corrigé), une
@@ -271,20 +282,7 @@ export default function EpreuveInteractive({
   const [corrections, setCorrections] = useState<Record<string, boolean>>({});
 
   const total = useMemo(() => compterQuestions(epreuve), [epreuve]);
-  const traitees = useMemo(
-    () =>
-      Object.values(reponses).filter((valeur) => {
-        if (typeof valeur === "string") return valeur.trim().length > 0;
-        if (typeof valeur === "number") return true;
-        if (typeof valeur === "object" && valeur !== null) {
-          return Object.values(valeur).some(
-            (v) => v === true || v === false || String(v).trim().length > 0,
-          );
-        }
-        return false;
-      }).length,
-    [reponses],
-  );
+  const traitees = useMemo(() => Object.values(reponses).filter(estRepondue).length, [reponses]);
 
   const sansCorrige = useMemo(
     () =>
