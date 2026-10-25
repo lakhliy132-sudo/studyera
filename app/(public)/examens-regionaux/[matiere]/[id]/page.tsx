@@ -7,7 +7,6 @@ import { noterActivite } from "@/lib/supabase/activite";
 import ChronometreEpreuve from "@/components/ChronometreEpreuve";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import CorrectionRepliable from "@/components/CorrectionRepliable";
-import EpreuveInteractive from "@/components/EpreuveInteractive";
 import FeuilleExamen from "@/components/FeuilleExamen";
 import { IconeFleche } from "@/components/icones";
 import { lireEpreuve } from "@/lib/annales-questions";
@@ -67,10 +66,6 @@ function Repere({
  * qu'un sujet puisse être mis en ligne avant d'être découpé en
  * questions.
  */
-/** Sujets qui ont la nouvelle feuille (FeuilleExamen) : pour l'instant
- * le français 2015, Casablanca-Settat, session normale. */
-const SUJETS_FEUILLE = new Set(["4b5f2477-e2d4-4ead-afad-fe78f5bd3cf3"]);
-
 export default async function PageAnnale({ params }: PagePropsAnnale) {
   const { matiere, id } = await params;
   const annale = await recupererAnnaleParId(id);
@@ -112,10 +107,11 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
       : {};
   const titreMatiere = TITRES[matiere] ?? matiere;
 
-  // Nouvelle disposition de la feuille (texte à gauche, questions à
-  // droite, barre d'examen en haut), d'abord sur un seul sujet : « pour
-  // un premier temps, tu me la fais pour un seul examen de français ».
-  if (epreuve && SUJETS_FEUILLE.has(annale.id)) {
+  // Disposition de la feuille (texte à gauche, questions à droite,
+  // barre d'examen en haut) : d'abord sur un seul sujet (« pour un
+  // premier temps, tu me la fais pour un seul examen de français »),
+  // puis sur tous (« fais comme ça pour tous les examens »).
+  if (epreuve) {
     return (
       <main className="flex w-full flex-col px-6 pt-14 pb-16 sm:px-9 lg:px-16 lg:pt-0 xl:px-24 2xl:px-40">
         <FeuilleExamen
@@ -134,6 +130,9 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             .join(" · ")}
           dureeMinutes={annale.duree_minutes}
           retour={`/examens-regionaux/${matiere}`}
+          // Sujets rédigés en arabe (arabe, éducation islamique) : de
+          // droite à gauche, police arabe, barème en « ن ».
+          arabe={matiere === "arabe" || matiere === "education-islamique"}
         />
       </main>
     );
@@ -185,17 +184,8 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
           </dl>
         </section>
 
-        {epreuve ? (
-          <EpreuveInteractive
-            epreuve={epreuve}
-            enonceMdx={annale.enonce_mdx}
-            corrigeMdx={annale.corrige_mdx}
-            // Sujets rédigés en arabe (arabe, éducation islamique) : de
-            // droite à gauche, police arabe, barème en « ن ».
-            arabe={matiere === "arabe" || matiere === "education-islamique"}
-            sujetsRedaction={sujetsRedaction}
-          />
-        ) : (
+        {/* Sujet dont les questions ne sont pas structurées : l'énoncé
+            en Markdown et le corrigé replié. */}
           <>
             <article className="rounded-[22px] border border-border bg-feuille p-5 shadow-sm sm:p-9">
               <ContenuMarkdown texte={annale.enonce_mdx} grandeTaille />
@@ -208,7 +198,6 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
               </p>
             )}
           </>
-        )}
       </div>
     </main>
   );
