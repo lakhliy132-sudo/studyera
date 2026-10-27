@@ -30,71 +30,19 @@ function Etat({ actif, libelle }: { actif: boolean; libelle: string }) {
   );
 }
 
-/** Un bouton de filtre de la colonne de gauche : libellé, nombre de
- * sujets concernés (compté sur la liste, jamais écrit en dur), et état
- * actif. Sur téléphone, ces boutons deviennent des pastilles en ligne. */
-function Choix({
-  actif,
-  libelle,
-  nombre,
-  onClick,
-}: {
-  actif: boolean;
-  libelle: string;
-  nombre: number;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={actif}
-      className={`flex shrink-0 items-center justify-between gap-3 rounded-[10px] px-3 py-2 text-start text-sm transition-colors lg:w-full ${
-        actif
-          ? "bg-primary font-semibold text-white"
-          : "border border-border bg-surface text-foreground hover:border-border-strong lg:border-transparent lg:bg-transparent lg:hover:bg-surface-muted"
-      }`}
-    >
-      <span>{libelle}</span>
-      <span
-        className={`rounded-full px-1.5 text-xs font-bold tabular-nums ${actif ? "bg-white/20 text-white" : "text-subtle-foreground"}`}
-      >
-        {nombre}
-      </span>
-    </button>
-  );
-}
-
-function Groupe({ titre, children }: { titre: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs font-bold tracking-[0.14em] text-subtle-foreground uppercase">
-        {titre}
-      </p>
-      <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 sm:-mx-9 sm:px-9 lg:mx-0 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-0 lg:pb-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
 /**
- * La liste filtrable des sujets d'une matière. Recomposée à la demande
- * de l'utilisateur (« une autre composition pour les examens régionaux,
- * filtres année… ») : les filtres passent dans une colonne à gauche
- * (année, session, académie, œuvre), chacun avec le nombre de sujets
- * qu'il donne, et les sujets sont rangés par année, la plus récente
- * d'abord. Sur téléphone, la colonne passe au-dessus et chaque filtre
- * devient une rangée de pastilles qui défile.
+ * La liste filtrable des sujets d'une matière, d'après la maquette
+ * fournie par l'utilisateur : recherche, bascule de session, choix de
+ * l'œuvre, puis une carte par sujet.
  *
- * Composant client : les filtres agissent sans aller-retour serveur. La
- * liste complète d'une matière tient largement en mémoire (quelques
- * dizaines de sujets au plus).
+ * Composant client : les trois filtres agissent sans aller-retour
+ * serveur. La liste complète d'une matière tient largement en mémoire
+ * (quelques dizaines de sujets au plus), inutile de repasser par une
+ * requête à chaque frappe.
  *
- * Un filtre n'apparaît que s'il départage quelque chose : pas de menu
- * des œuvres en arabe ni en histoire-géographie (pas d'œuvre au
- * programme), pas de choix de session tant que tous les sujets sont de
- * la session normale.
+ * Le menu des œuvres ne propose que celles qui apparaissent vraiment
+ * dans les sujets, et disparaît si aucun sujet n'en porte — en arabe et
+ * en histoire-géographie, il n'y a pas d'œuvre au programme.
  */
 export default function ListeAnnales({
   annales,
@@ -106,35 +54,27 @@ export default function ListeAnnales({
   titreMatiere: string;
 }) {
   const [recherche, setRecherche] = useState("");
-  const [annee, setAnnee] = useState<number | "toutes">("toutes");
   const [session, setSession] = useState<CleSession>("toutes");
   const [oeuvre, setOeuvre] = useState("toutes");
   const [academie, setAcademie] = useState("toutes");
 
-  const compter = <T,>(valeurs: (T | null)[]) => {
-    const comptes = new Map<T, number>();
-    for (const v of valeurs) if (v !== null && v !== "") comptes.set(v, (comptes.get(v) ?? 0) + 1);
-    return comptes;
-  };
-
-  const annees = useMemo(
-    () => [...compter(annales.map((a) => a.annee)).entries()].sort((a, b) => b[0] - a[0]),
-    [annales],
-  );
-  const academies = useMemo(
-    () => [...compter(annales.map((a) => a.academie)).entries()].sort((a, b) => a[0].localeCompare(b[0], "fr")),
-    [annales],
-  );
   const oeuvres = useMemo(
-    () => [...compter(annales.map((a) => a.oeuvre)).entries()].sort((a, b) => a[0].localeCompare(b[0], "fr")),
+    () =>
+      [...new Set(annales.map((a) => a.oeuvre).filter((o): o is string => Boolean(o)))].sort(),
     [annales],
   );
-  const sessions = useMemo(() => compter(annales.map((a) => a.session)), [annales]);
+
+  // Même règle que les œuvres : le menu n'apparaît que si des sujets
+  // portent une académie (« Examen 2025 CASA », « Examen 2025 RABAT »).
+  const academies = useMemo(
+    () =>
+      [...new Set(annales.map((a) => a.academie).filter((o): o is string => Boolean(o)))].sort(),
+    [annales],
+  );
 
   const visibles = useMemo(() => {
     const termes = recherche.trim().toLowerCase();
     return annales.filter((annale) => {
-      if (annee !== "toutes" && annale.annee !== annee) return false;
       if (session !== "toutes" && annale.session !== session) return false;
       if (oeuvre !== "toutes" && annale.oeuvre !== oeuvre) return false;
       if (academie !== "toutes" && annale.academie !== academie) return false;
@@ -143,34 +83,11 @@ export default function ListeAnnales({
         `${annale.annee} ${annale.session} ${annale.oeuvre ?? ""} ${annale.academie ?? ""}`.toLowerCase();
       return termes.split(/\s+/).every((mot) => texte.includes(mot));
     });
-  }, [annales, recherche, annee, session, oeuvre, academie]);
-
-  // Les sujets visibles, rangés par année (déjà triés du plus récent
-  // au plus ancien par la requête).
-  const parAnnee = useMemo(() => {
-    const groupes: { annee: number; sujets: AnnaleResumee[] }[] = [];
-    for (const a of visibles) {
-      const dernier = groupes[groupes.length - 1];
-      if (dernier?.annee === a.annee) dernier.sujets.push(a);
-      else groupes.push({ annee: a.annee, sujets: [a] });
-    }
-    return groupes;
-  }, [visibles]);
-
-  const filtre =
-    recherche !== "" || annee !== "toutes" || session !== "toutes" || oeuvre !== "toutes" || academie !== "toutes";
-
-  function toutEffacer() {
-    setRecherche("");
-    setAnnee("toutes");
-    setSession("toutes");
-    setOeuvre("toutes");
-    setAcademie("toutes");
-  }
+  }, [annales, recherche, session, oeuvre, academie]);
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
-      <aside className="flex flex-col gap-5 lg:sticky lg:top-6 lg:self-start">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3 rounded-[18px] border border-border bg-surface p-3 sm:flex-row sm:items-center sm:p-4">
         <label htmlFor="recherche-annales" className="sr-only">
           Rechercher un sujet
         </label>
@@ -179,123 +96,124 @@ export default function ListeAnnales({
           type="search"
           value={recherche}
           onChange={(e) => setRecherche(e.target.value)}
-          placeholder={oeuvres.length > 0 ? "2022, Antigone…" : "2023, Casablanca…"}
-          className="w-full rounded-[12px] border border-border bg-surface px-4 py-2.5 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
+          placeholder="2022, Antigone…"
+          className="min-w-0 flex-1 rounded-[12px] border border-border bg-surface px-4 py-2.5 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
         />
 
-        {annees.length > 1 && (
-          <Groupe titre="Année">
-            <Choix actif={annee === "toutes"} libelle="Toutes" nombre={annales.length} onClick={() => setAnnee("toutes")} />
-            {annees.map(([a, n]) => (
-              <Choix key={a} actif={annee === a} libelle={String(a)} nombre={n} onClick={() => setAnnee(a)} />
-            ))}
-          </Groupe>
-        )}
-
-        {sessions.size > 1 && (
-          <Groupe titre="Session">
-            {SESSIONS.map((s) => (
-              <Choix
-                key={s.cle}
-                actif={session === s.cle}
-                libelle={s.cle === "toutes" ? "Toutes" : s.libelle}
-                nombre={s.cle === "toutes" ? annales.length : (sessions.get(s.cle) ?? 0)}
-                onClick={() => setSession(s.cle)}
-              />
-            ))}
-          </Groupe>
-        )}
-
-        {academies.length > 1 && (
-          <Groupe titre="Académie">
-            <Choix actif={academie === "toutes"} libelle="Toutes" nombre={annales.length} onClick={() => setAcademie("toutes")} />
-            {academies.map(([a, n]) => (
-              <Choix key={a} actif={academie === a} libelle={a} nombre={n} onClick={() => setAcademie(a)} />
-            ))}
-          </Groupe>
-        )}
-
-        {oeuvres.length > 1 && (
-          <Groupe titre="Œuvre">
-            <Choix actif={oeuvre === "toutes"} libelle="Toutes" nombre={annales.length} onClick={() => setOeuvre("toutes")} />
-            {oeuvres.map(([o, n]) => (
-              <Choix key={o} actif={oeuvre === o} libelle={o} nombre={n} onClick={() => setOeuvre(o)} />
-            ))}
-          </Groupe>
-        )}
-      </aside>
-
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            <strong className="font-bold text-ink">{visibles.length}</strong>{" "}
-            {visibles.length > 1 ? "sujets" : "sujet"}
-            {filtre && ` sur ${annales.length}`}
-          </p>
-          {filtre && (
-            <button type="button" onClick={toutEffacer} className="text-sm font-semibold text-primary hover:underline">
-              Effacer les filtres
+        <div
+          role="group"
+          aria-label="Filtrer par session"
+          className="flex shrink-0 rounded-[12px] bg-surface-muted p-1"
+        >
+          {SESSIONS.map((s) => (
+            <button
+              key={s.cle}
+              type="button"
+              onClick={() => setSession(s.cle)}
+              aria-pressed={session === s.cle}
+              className={`rounded-[9px] px-3 py-1.5 text-sm font-semibold transition-colors ${
+                session === s.cle
+                  ? "bg-surface text-ink shadow-sm"
+                  : "text-muted-foreground hover:text-ink"
+              }`}
+            >
+              {s.libelle}
             </button>
-          )}
+          ))}
         </div>
 
-        {visibles.length === 0 ? (
-          <p className="rounded-[18px] border border-dashed border-border-strong bg-surface p-8 text-center text-sm text-muted-foreground">
-            Aucun sujet ne correspond à cette recherche.
-          </p>
-        ) : (
-          parAnnee.map((groupe) => (
-            <section key={groupe.annee} className="flex flex-col gap-4">
-              <div className="flex items-baseline gap-4">
-                <h2 className="font-serif text-[34px] leading-none font-bold text-ink sm:text-[42px]">
-                  {groupe.annee}
-                </h2>
-                <span className="text-sm text-muted-foreground">
-                  {groupe.sujets.length} {groupe.sujets.length > 1 ? "sujets" : "sujet"}
-                </span>
-                <span aria-hidden="true" className="h-px flex-1 bg-border" />
-              </div>
+        {academies.length > 0 && (
+          <>
+            <label htmlFor="academie-annales" className="sr-only">
+              Filtrer par académie
+            </label>
+            <select
+              id="academie-annales"
+              value={academie}
+              onChange={(e) => setAcademie(e.target.value)}
+              className="shrink-0 rounded-[12px] border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+            >
+              <option value="toutes">Toutes les académies</option>
+              {academies.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
 
-              <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 2xl:grid-cols-3">
-                {groupe.sujets.map((annale) => (
-                  <li key={annale.id}>
-                    <Link
-                      href={`/examens-regionaux/${matiereSlug}/${annale.id}`}
-                      className="group flex h-full items-center gap-4 rounded-[16px] border border-border bg-surface p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)] sm:p-5"
-                    >
-                      <div className="flex min-w-0 flex-1 flex-col gap-2">
-                        <span className="font-titre text-lg leading-snug font-bold text-ink">
-                          {annale.academie ?? titreMatiere}
-                        </span>
-                        <span className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-primary-tint px-2.5 py-0.5 text-xs font-bold text-primary">
-                            Session {annale.session}
-                          </span>
-                          {annale.oeuvre && (
-                            <span className="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-ink">
-                              {annale.oeuvre}
-                            </span>
-                          )}
-                        </span>
-                        <span className="flex items-center gap-3">
-                          <Etat actif={annale.aCorrige} libelle="Corrigé" />
-                          <Etat actif={annale.aEntrainement} libelle="Entraînement" />
-                        </span>
-                      </div>
-                      <span
-                        aria-hidden="true"
-                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-muted text-primary transition-colors group-hover:bg-primary group-hover:text-white"
-                      >
-                        <IconeFleche className="size-4 transition-transform group-hover:translate-x-0.5" />
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
+        {oeuvres.length > 0 && (
+          <>
+            <label htmlFor="oeuvre-annales" className="sr-only">
+              Filtrer par œuvre
+            </label>
+            <select
+              id="oeuvre-annales"
+              value={oeuvre}
+              onChange={(e) => setOeuvre(e.target.value)}
+              className="shrink-0 rounded-[12px] border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+            >
+              <option value="toutes">Toutes les œuvres</option>
+              {oeuvres.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+          </>
         )}
       </div>
+
+      {visibles.length === 0 ? (
+        <p className="rounded-[18px] border border-dashed border-border-strong bg-surface p-8 text-center text-sm text-muted-foreground">
+          Aucun sujet ne correspond à cette recherche.
+        </p>
+      ) : (
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-[18px] lg:grid-cols-3">
+          {visibles.map((annale) => (
+            <li key={annale.id}>
+              <Link
+                href={`/examens-regionaux/${matiereSlug}/${annale.id}`}
+                className="group flex h-full flex-col gap-3 rounded-[18px] border border-border bg-surface p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[0_10px_30px_rgba(27,58,143,0.11)]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="font-serif text-[32px] leading-none font-bold text-ink">
+                    {annale.annee}
+                  </span>
+                  {/* La matière, comme sur la maquette (« Français »),
+                   * et non plus la durée, déjà donnée dans le bandeau. */}
+                  <span className="shrink-0 rounded-full bg-primary-tint px-2.5 py-1 text-xs font-bold text-primary">
+                    {titreMatiere}
+                  </span>
+                </div>
+
+                <span className="text-sm text-muted-foreground">
+                  Session {annale.session}
+                  {annale.academie && ` · ${annale.academie}`}
+                </span>
+
+                {annale.oeuvre && (
+                  <span className="w-fit rounded-full border border-border px-2.5 py-1 text-xs font-medium text-ink">
+                    {annale.oeuvre}
+                  </span>
+                )}
+
+                <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
+                  <span className="flex items-center gap-3">
+                    <Etat actif={annale.aCorrige} libelle="Corrigé" />
+                    <Etat actif={annale.aEntrainement} libelle="Entraînement" />
+                  </span>
+                  <span className="flex items-center gap-1 text-sm font-bold text-primary">
+                    Ouvrir
+                    <IconeFleche className="size-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
