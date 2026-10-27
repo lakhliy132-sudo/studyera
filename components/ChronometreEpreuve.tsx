@@ -52,6 +52,39 @@ export default function ChronometreEpreuve({
   const affichage = `${heures}:${String(minutes).padStart(2, "0")}:${String(secondes).padStart(2, "0")}`;
   const termine = restant === 0;
 
+  // Sur fond clair (feuille d'examen) : une seule capsule sombre, le
+  // temps et le bouton à l'intérieur, un point qui bat pendant que le
+  // temps tourne.
+  if (clair) {
+    return (
+      <div
+        className={`flex shrink-0 items-center gap-3 rounded-full py-1.5 ps-4 pe-1.5 text-white shadow-[0_10px_24px_-14px_rgba(16,23,44,0.8)] ${
+          termine ? "bg-erreur" : "bg-[#10172c]"
+        }`}
+      >
+        <span aria-hidden="true" className="relative flex size-2">
+          {enMarche && <span className="absolute inset-0 animate-ping rounded-full bg-[#4ade80] opacity-75" />}
+          <span className={`relative size-2 rounded-full ${enMarche ? "bg-[#4ade80]" : "bg-white/40"}`} />
+        </span>
+        <span role="timer" aria-live="off" aria-label="Temps restant" className="font-mono text-lg font-bold tabular-nums">
+          {affichage}
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            if (termine) {
+              setRestant(total);
+              setEnMarche(false);
+            } else setEnMarche((v) => !v);
+          }}
+          className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#10172c] transition-transform hover:scale-105"
+        >
+          {termine ? "Recommencer" : enMarche ? "Pause" : restant === total ? "Démarrer" : "Reprendre"}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex shrink-0 items-center gap-3">
       <span
