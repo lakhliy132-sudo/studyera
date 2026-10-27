@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { IconeFleche } from "@/components/icones";
 import ListeAnnales from "@/components/ListeAnnales";
-import { VueAnnees, VueGrille } from "@/components/ListeAnnalesVariantes";
+import { VueAnnees, VueCopies, VueGrille } from "@/components/ListeAnnalesVariantes";
 import { recupererAnnalesParMatiere } from "@/lib/supabase/annales";
 
 interface PagePropsAnnalesMatiere {
@@ -114,6 +114,8 @@ export default async function PageAnnalesMatiere({
             Aucun sujet d&apos;examen n&apos;est encore enregistré pour cette
             matière.
           </p>
+        ) : vue === "c" ? (
+          <VueCopies annales={annales} matiereSlug={matiere} />
         ) : vue === "a" ? (
           <VueAnnees annales={annales} matiereSlug={matiere} />
         ) : vue === "b" ? (
