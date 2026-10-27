@@ -130,9 +130,10 @@ export default async function PageAnnale({ params }: PagePropsAnnale) {
             .join(" · ")}
           dureeMinutes={annale.duree_minutes}
           retour={`/examens-regionaux/${matiere}`}
-          // Sujets rédigés en arabe (arabe, éducation islamique) : de
-          // droite à gauche, police arabe, barème en « ن ».
-          arabe={matiere === "arabe" || matiere === "education-islamique"}
+          // Sujets rédigés en arabe (arabe, éducation islamique,
+          // histoire-géographie) : de droite à gauche, police arabe,
+          // barème en « ن ».
+          arabe={matiere === "arabe" || matiere === "education-islamique" || matiere === "histoire-geo"}
         />
       </main>
     );
