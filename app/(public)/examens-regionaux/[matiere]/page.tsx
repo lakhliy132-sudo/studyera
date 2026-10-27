@@ -3,12 +3,10 @@ import { notFound } from "next/navigation";
 
 import { IconeFleche } from "@/components/icones";
 import ListeAnnales from "@/components/ListeAnnales";
-import { VueAnnees, VueCopies, VueGrille } from "@/components/ListeAnnalesVariantes";
 import { recupererAnnalesParMatiere } from "@/lib/supabase/annales";
 
 interface PagePropsAnnalesMatiere {
   params: Promise<{ matiere: string }>;
-  searchParams: Promise<{ vue?: string }>;
 }
 
 const TITRES: Record<string, string> = {
@@ -47,10 +45,8 @@ function dureeDominante(durees: (number | null)[]): string | null {
  */
 export default async function PageAnnalesMatiere({
   params,
-  searchParams,
 }: PagePropsAnnalesMatiere) {
   const { matiere } = await params;
-  const { vue } = await searchParams;
   const titre = TITRES[matiere];
   if (!titre) notFound();
 
@@ -114,12 +110,6 @@ export default async function PageAnnalesMatiere({
             Aucun sujet d&apos;examen n&apos;est encore enregistré pour cette
             matière.
           </p>
-        ) : vue === "c" ? (
-          <VueCopies annales={annales} matiereSlug={matiere} />
-        ) : vue === "a" ? (
-          <VueAnnees annales={annales} matiereSlug={matiere} />
-        ) : vue === "b" ? (
-          <VueGrille annales={annales} matiereSlug={matiere} />
         ) : (
           <ListeAnnales
             annales={annales}
