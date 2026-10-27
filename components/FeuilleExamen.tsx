@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import ChronometreEpreuve from "@/components/ChronometreEpreuve";
 import ContenuMarkdown from "@/components/ContenuMarkdown";
 import { CorpsQuestion, EnLigne, Points, estRepondue } from "@/components/EpreuveInteractive";
-import { IconeFleche } from "@/components/icones";
+import { IconeCoche, IconeFleche } from "@/components/icones";
 import { aUneCorrection, compterQuestions, type Epreuve } from "@/lib/annales-questions";
 
 type Vue = { type: "partie"; index: number } | { type: "sujet" } | { type: "corrige" };
@@ -82,43 +82,93 @@ export default function FeuilleExamen({
   const enCours = partie ? partie.questions.findIndex((_, i) => !estRepondue(reponses[cle(indexPartie, i)])) : -1;
 
   const ongletClasse = (actif: boolean) =>
-    `shrink-0 rounded-full px-4 py-1.5 text-sm font-bold whitespace-nowrap transition-colors ${
-      actif ? "bg-surface text-ink shadow-sm" : "text-muted-foreground hover:text-ink"
+    `shrink-0 rounded-full px-4 py-1.5 text-sm font-bold whitespace-nowrap transition-all ${
+      actif
+        ? "bg-primary text-primary-foreground shadow-[0_8px_18px_-10px_var(--color-primary)]"
+        : "text-muted-foreground hover:bg-surface hover:text-ink"
     }`;
 
   return (
     <div className="flex flex-col">
-      {/* ——— Barre d'examen ——— */}
-      <div className="z-30 -mx-6 border-b border-border bg-surface/95 backdrop-blur sm:-mx-9 lg:sticky lg:top-0 lg:-mx-16 xl:-mx-24 2xl:-mx-40">
+      {/* ——— Barre d'examen ———
+       * Refaite « un peu plus stylée » : un filet de la couleur du thème
+       * en haut, les détails en étiquettes, l'avancement en anneau, le
+       * chronomètre en capsule, et les questions reliées comme les
+       * étapes d'un parcours. */}
+      <div className="z-30 -mx-6 border-b border-border bg-surface/90 shadow-[0_12px_30px_-24px_rgba(16,23,44,0.45)] backdrop-blur-md sm:-mx-9 lg:sticky lg:top-0 lg:-mx-16 xl:-mx-24 2xl:-mx-40">
+        <div
+          aria-hidden="true"
+          className="h-[3px]"
+          style={{ background: "linear-gradient(90deg, var(--color-primary), var(--color-primary-vif), transparent)" }}
+        />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3 sm:px-9 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
-          <Link href={retour} className="flex w-full items-center gap-1 text-sm font-semibold text-muted-foreground hover:text-primary sm:w-auto">
-            <IconeFleche className="size-4 rotate-180" />
-            Sujets
+          <Link
+            href={retour}
+            className="group flex w-full items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary sm:w-auto"
+          >
+            <span className="flex size-9 items-center justify-center rounded-full border border-border bg-surface transition-colors group-hover:border-primary">
+              <IconeFleche className="size-4 rotate-180" />
+            </span>
+            <span className="sm:sr-only xl:not-sr-only">Sujets</span>
           </Link>
-          <div className="flex min-w-0 basis-full flex-col sm:flex-1 sm:basis-0">
+          <div className="flex min-w-0 basis-full flex-col gap-1.5 sm:flex-1 sm:basis-0">
             <h1 className="truncate font-affiche text-xl leading-tight text-ink sm:text-2xl">{titre}</h1>
-            <p className="truncate text-xs text-muted-foreground">{details}</p>
+            <p className="flex flex-wrap gap-1.5">
+              {details
+                .split(" · ")
+                .filter(Boolean)
+                .map((d, i) => (
+                  <span
+                    key={d}
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                      i === 0 ? "bg-primary-tint text-primary" : "border border-border bg-surface text-muted-foreground"
+                    }`}
+                  >
+                    {d}
+                  </span>
+                ))}
+            </p>
           </div>
-          <div className="order-last flex w-full items-center gap-3 sm:order-none sm:w-auto">
+          <div className="order-last ms-auto flex items-center gap-3 sm:order-none sm:ms-0">
             <div
-              className="h-2 w-full overflow-hidden rounded-full bg-surface-muted sm:w-40"
+              className="relative size-11 shrink-0"
               role="progressbar"
               aria-valuenow={traitees}
               aria-valuemin={0}
               aria-valuemax={total}
               aria-label="Questions traitées"
             >
-              <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: total > 0 ? `${(traitees / total) * 100}%` : "0%" }} />
+              <svg viewBox="0 0 44 44" className="size-11 -rotate-90">
+                <circle cx="22" cy="22" r="18" fill="none" stroke="var(--color-surface-muted)" strokeWidth="5" />
+                <circle
+                  cx="22"
+                  cy="22"
+                  r="18"
+                  fill="none"
+                  stroke="var(--color-primary)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray={`${total > 0 ? (traitees / total) * 100 : 0} 100`}
+                  className="transition-[stroke-dasharray] duration-500"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-ink tabular-nums">
+                {total > 0 ? Math.round((traitees / total) * 100) : 0}%
+              </span>
             </div>
-            <span className="shrink-0 text-xs font-semibold text-muted-foreground tabular-nums">
-              {traitees}/{total}
+            <span className="flex flex-col leading-tight">
+              <span className="text-sm font-bold text-ink tabular-nums">
+                {traitees}/{total}
+              </span>
+              <span className="text-[11px] text-muted-foreground">questions</span>
             </span>
           </div>
           {dureeMinutes && <ChronometreEpreuve dureeMinutes={dureeMinutes} clair />}
         </div>
 
-        <div className="flex items-center gap-4 overflow-x-auto px-6 pb-3 sm:px-9 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
-          <div role="tablist" aria-label="Parties de l'épreuve" className="flex shrink-0 rounded-full bg-surface-muted p-1">
+        <div className="flex items-center gap-5 overflow-x-auto px-6 pb-3 sm:px-9 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
+          <div role="tablist" aria-label="Parties de l'épreuve" className="flex shrink-0 gap-1 rounded-full border border-border bg-surface-muted p-1">
             {epreuve.parties.map((p, i) => (
               <button
                 key={p.titre}
@@ -144,23 +194,26 @@ export default function FeuilleExamen({
           </div>
 
           {partie && partie.questions.length > 0 && (
-            <nav aria-label="Questions" className="flex shrink-0 gap-1.5">
+            <nav aria-label="Questions" className="relative flex shrink-0 items-center gap-2">
+              {/* Le fil qui relie les questions. */}
+              <span aria-hidden="true" className="absolute inset-x-4 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-border" />
               {partie.questions.map((q, i) => {
                 const fait = estRepondue(reponses[cle(indexPartie, i)]);
+                const courante = !fait && i === enCours;
                 return (
                   <a
                     key={cle(indexPartie, i)}
                     href={`#question-${cle(indexPartie, i)}`}
                     aria-label={`Question ${q.numero}${fait ? ", répondue" : ""}`}
-                    className={`flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold tabular-nums transition-colors ${
+                    className={`relative flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold tabular-nums transition-all ${
                       fait
-                        ? "bg-primary text-primary-foreground"
-                        : i === enCours
-                          ? "border-2 border-primary text-primary"
+                        ? "bg-validation text-white"
+                        : courante
+                          ? "scale-110 bg-primary text-primary-foreground shadow-[0_6px_16px_-6px_var(--color-primary)] ring-4 ring-[color-mix(in_srgb,var(--color-primary)_18%,transparent)]"
                           : "border border-border bg-surface text-muted-foreground hover:border-primary hover:text-primary"
                     }`}
                   >
-                    {q.numero}
+                    {fait ? <IconeCoche className="size-3.5" /> : q.numero}
                   </a>
                 );
               })}
