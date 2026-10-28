@@ -58,7 +58,7 @@ export default function ChronometreEpreuve({
   if (clair) {
     return (
       <div
-        className={`flex shrink-0 items-center gap-3 rounded-full py-1.5 ps-4 pe-1.5 text-white shadow-[0_10px_24px_-14px_rgba(16,23,44,0.8)] ${
+        className={`flex shrink-0 items-center gap-3 rounded-full py-1.5 ps-4 pe-1.5 text-white sm:gap-4 sm:py-2 sm:ps-6 sm:pe-2 shadow-[0_10px_24px_-14px_rgba(16,23,44,0.8)] ${
           termine ? "bg-erreur" : "bg-[#10172c]"
         }`}
       >
@@ -66,7 +66,7 @@ export default function ChronometreEpreuve({
           {enMarche && <span className="absolute inset-0 animate-ping rounded-full bg-[#4ade80] opacity-75" />}
           <span className={`relative size-2 rounded-full ${enMarche ? "bg-[#4ade80]" : "bg-white/40"}`} />
         </span>
-        <span role="timer" aria-live="off" aria-label="Temps restant" className="font-mono text-lg font-bold tabular-nums">
+        <span role="timer" aria-live="off" aria-label="Temps restant" className="font-mono text-lg font-bold tabular-nums sm:text-2xl">
           {affichage}
         </span>
         <button
@@ -77,7 +77,7 @@ export default function ChronometreEpreuve({
               setEnMarche(false);
             } else setEnMarche((v) => !v);
           }}
-          className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#10172c] transition-transform hover:scale-105"
+          className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#10172c] transition-transform hover:scale-105 sm:px-6 sm:py-2.5 sm:text-base"
         >
           {termine ? "Recommencer" : enMarche ? "Pause" : restant === total ? "Démarrer" : "Reprendre"}
         </button>

@@ -82,7 +82,7 @@ export default function FeuilleExamen({
   const enCours = partie ? partie.questions.findIndex((_, i) => !estRepondue(reponses[cle(indexPartie, i)])) : -1;
 
   const ongletClasse = (actif: boolean) =>
-    `shrink-0 rounded-full px-4 py-1.5 text-sm font-bold whitespace-nowrap transition-all ${
+    `shrink-0 rounded-full px-4 py-1.5 text-sm font-bold whitespace-nowrap transition-all sm:px-5 sm:py-2 sm:text-base ${
       actif
         ? "bg-primary text-primary-foreground shadow-[0_8px_18px_-10px_var(--color-primary)]"
         : "text-muted-foreground hover:bg-surface hover:text-ink"
@@ -101,18 +101,18 @@ export default function FeuilleExamen({
           className="h-[3px]"
           style={{ background: "linear-gradient(90deg, var(--color-primary), var(--color-primary-vif), transparent)" }}
         />
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3 sm:px-9 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3 sm:gap-x-8 sm:px-9 sm:py-5 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
           <Link
             href={retour}
-            className="group flex w-full items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary sm:w-auto"
+            className="group flex w-full items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary sm:w-auto sm:gap-3 sm:text-base"
           >
-            <span className="flex size-9 items-center justify-center rounded-full border border-border bg-surface transition-colors group-hover:border-primary">
-              <IconeFleche className="size-4 rotate-180" />
+            <span className="flex size-9 items-center justify-center rounded-full border border-border bg-surface transition-colors group-hover:border-primary sm:size-11">
+              <IconeFleche className="size-4 rotate-180 sm:size-5" />
             </span>
             <span className="sm:sr-only xl:not-sr-only">Sujets</span>
           </Link>
-          <div className="flex min-w-0 basis-full flex-col gap-1.5 sm:flex-1 sm:basis-0">
-            <h1 className="truncate font-affiche text-xl leading-tight text-ink sm:text-2xl">{titre}</h1>
+          <div className="flex min-w-0 basis-full flex-col gap-1.5 sm:flex-1 sm:basis-[24rem] sm:gap-2.5">
+            <h1 className="truncate font-affiche text-xl leading-tight text-ink sm:whitespace-normal sm:text-3xl">{titre}</h1>
             <p className="flex flex-wrap gap-1.5">
               {details
                 .split(" · ")
@@ -120,7 +120,7 @@ export default function FeuilleExamen({
                 .map((d, i) => (
                   <span
                     key={d}
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold sm:px-3.5 sm:py-1 sm:text-[13px] ${
                       i === 0 ? "bg-primary-tint text-primary" : "border border-border bg-surface text-muted-foreground"
                     }`}
                   >
@@ -129,16 +129,16 @@ export default function FeuilleExamen({
                 ))}
             </p>
           </div>
-          <div className="order-last ms-auto flex items-center gap-3 sm:order-none sm:ms-0">
+          <div className="order-last ms-auto flex items-center gap-3 sm:order-none sm:ms-0 sm:gap-4">
             <div
-              className="relative size-11 shrink-0"
+              className="relative size-11 shrink-0 sm:size-14"
               role="progressbar"
               aria-valuenow={traitees}
               aria-valuemin={0}
               aria-valuemax={total}
               aria-label="Questions traitées"
             >
-              <svg viewBox="0 0 44 44" className="size-11 -rotate-90">
+              <svg viewBox="0 0 44 44" className="size-11 -rotate-90 sm:size-14">
                 <circle cx="22" cy="22" r="18" fill="none" stroke="var(--color-surface-muted)" strokeWidth="5" />
                 <circle
                   cx="22"
@@ -153,22 +153,22 @@ export default function FeuilleExamen({
                   className="transition-[stroke-dasharray] duration-500"
                 />
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-ink tabular-nums">
+              <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-ink tabular-nums sm:text-[13px]">
                 {total > 0 ? Math.round((traitees / total) * 100) : 0}%
               </span>
             </div>
             <span className="flex flex-col leading-tight">
-              <span className="text-sm font-bold text-ink tabular-nums">
+              <span className="text-sm font-bold text-ink tabular-nums sm:text-lg">
                 {traitees}/{total}
               </span>
-              <span className="text-[11px] text-muted-foreground">questions</span>
+              <span className="text-[11px] text-muted-foreground sm:text-[13px]">questions</span>
             </span>
           </div>
           {dureeMinutes && <ChronometreEpreuve dureeMinutes={dureeMinutes} clair />}
         </div>
 
-        <div className="flex items-center gap-5 overflow-x-auto px-6 pb-3 sm:px-9 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
-          <div role="tablist" aria-label="Parties de l'épreuve" className="flex shrink-0 gap-1 rounded-full border border-border bg-surface-muted p-1">
+        <div className="flex items-center gap-5 overflow-x-auto px-6 pb-3 sm:gap-6 sm:px-9 sm:pb-5 lg:px-16 lg:max-xl:ps-20 xl:px-24 2xl:px-40">
+          <div role="tablist" aria-label="Parties de l'épreuve" className="flex shrink-0 gap-1 rounded-full border border-border bg-surface-muted p-1 sm:p-1.5">
             {epreuve.parties.map((p, i) => (
               <button
                 key={p.titre}
@@ -205,7 +205,7 @@ export default function FeuilleExamen({
                     key={cle(indexPartie, i)}
                     href={`#question-${cle(indexPartie, i)}`}
                     aria-label={`Question ${q.numero}${fait ? ", répondue" : ""}`}
-                    className={`relative flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold tabular-nums transition-all ${
+                    className={`relative flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold tabular-nums transition-all sm:h-10 sm:min-w-10 sm:text-sm ${
                       fait
                         ? "bg-validation text-white"
                         : courante
@@ -213,7 +213,7 @@ export default function FeuilleExamen({
                           : "border border-border bg-surface text-muted-foreground hover:border-primary hover:text-primary"
                     }`}
                   >
-                    {fait ? <IconeCoche className="size-3.5" /> : q.numero}
+                    {fait ? <IconeCoche className="size-3.5 sm:size-4" /> : q.numero}
                   </a>
                 );
               })}
@@ -248,7 +248,7 @@ export default function FeuilleExamen({
                   )}
                 </section>
                 {!arabe && (
-                <aside className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-6 shadow-sm lg:sticky lg:top-[150px]">
+                <aside className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface p-6 shadow-sm lg:sticky lg:top-[190px]">
                   <p className="font-affiche text-2xl text-ink">Fais corriger ta copie</p>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Rédige ton expression écrite sur une feuille ou à l&apos;écran, puis envoie-la au correcteur : note sur 20, erreurs
@@ -268,7 +268,7 @@ export default function FeuilleExamen({
             ) : (
               <div className={`grid grid-cols-1 gap-8 ${partie.texte ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" : ""}`}>
                 {partie.texte && (
-                  <section className="flex flex-col gap-3 lg:sticky lg:top-[150px] lg:max-h-[calc(100vh-170px)] lg:self-start">
+                  <section className="flex flex-col gap-3 lg:sticky lg:top-[190px] lg:max-h-[calc(100vh-210px)] lg:self-start">
                     <div className="flex items-baseline justify-between gap-3">
                       <p className="font-affiche text-2xl text-ink">Le texte</p>
                       <span className="hidden text-xs text-muted-foreground lg:inline">reste sous tes yeux</span>
